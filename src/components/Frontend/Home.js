@@ -1,6 +1,9 @@
 import React from 'react'
-import Header from './Header'
+import OwlCarousel from "react-owl-carousel";
+import "owl.carousel/dist/assets/owl.carousel.css";
+import "owl.carousel/dist/assets/owl.theme.default.css";
 
+import {Link} from 'react-router-dom'
 const index = () => {
   return (
       <>
@@ -62,88 +65,88 @@ const index = () => {
                          </div>
                       </li>
                       <li className="">
-                         <a href="javascript:;">
+                         <Link to="javascript:;">
                             <div className="lp-box-wrp lp-green-bg">
                                <div className="text-center">
                                   <img src="./assets/img/banking-sector-icon.png" className="img img-fluid" alt=""/>
                                   <h5>Banking sector</h5>
                                </div>
                             </div>
-                         </a>
+                         </Link>
                       </li>
                       <li className="">
-                         <a href="javascript:;">
+                         <Link to="javascript:;">
                             <div className="lp-box-wrp lp-white-bg">
                                <div className="text-center">
                                   <img src="./assets/img/crime-la-icon.png" className="img img-fluid" alt=""/>
                                   <h5>Crime law</h5>
                                </div>
                             </div>
-                         </a>
+                         </Link>
                       </li>
                       <li className="">
-                         <a href="javascript:;">
+                         <Link to="javascript:;">
                             <div className="lp-box-wrp lp-green-bg">
                                <div className="text-center">
                                   <img src="./assets/img/case-services-icon.png" className="img img-fluid" alt=""/>
                                   <h5>Case services</h5>
                                </div>
                             </div>
-                         </a>
+                         </Link>
                       </li>
                       <li className="mb-hide">
                          <div className="lp-box-wrp-empty">
                          </div>
                       </li>
                       <li className="">
-                         <a href="javascript:;">
+                         <Link to="javascript:;">
                             <div className="lp-box-wrp lp-white-bg">
                                <div className="text-center">
                                   <img src="./assets/img/consumer-matter-icon.png" className="img img-fluid" alt=""/>
                                   <h5>Consumer matter</h5>
                                </div>
                             </div>
-                         </a>
+                         </Link>
                       </li>
                       <li className="">
                          <div className="lp-box-wrp lp-green-bg">
-                            <a href="javascript:;">
+                            <Link to="javascript:;">
                                <div className="text-center">
                                   <img src="./assets/img/banking-services-icon.png" className="img img-fluid" alt=""/>
                                   <h5>Banking services</h5>
                                </div>
-                            </a>
+                            </Link>
                          </div>
                       </li>
                       <li className="">
-                         <a href="javascript:;">
+                         <Link to="javascript:;">
                             <div className="lp-box-wrp lp-white-bg">
                                <div className="text-center">
                                   <img src="./assets/img/company-matter-icon.png" className="img img-fluid" alt=""/>
                                   <h5>Company matter</h5>
                                </div>
                             </div>
-                         </a>
+                         </Link>
                       </li>
                       <li className="">
-                         <a href="javascript:;">
+                         <Link to="javascript:;">
                             <div className="lp-box-wrp lp-green-bg">
                                <div className="text-center">
                                   <img src="./assets/img/recovery-matter-icon.png" className="img img-fluid" alt=""/>
                                   <h5>Recovery matter</h5>
                                </div>
                             </div>
-                         </a>
+                         </Link>
                       </li>
                       <li className="">
-                         <a href="javascript:;">
+                         <Link to="javascript:;">
                             <div className="lp-box-wrp lp-white-bg">
                                <div className="text-center">
                                   <img src="./assets/img/view-more-icon.png" className="img img-fluid" alt=""/>
                                   <h5>View more</h5>
                                </div>
                             </div>
-                         </a>
+                         </Link>
                       </li>
                    </ul>
                 </div>
@@ -161,9 +164,33 @@ const index = () => {
              </div>
           </div>
           <div className="row">
-             <div className="col-lg-12">
-                <div className="owl-carousel owl-theme our-experts-owl">
-                   <div className="item">
+             <div className="col-lg-12 ">
+             
+             <OwlCarousel
+                  className=" health-owl "
+                  items={7}
+                  loop={true}
+                  // nav={true}
+                  margin={10}
+                  // rewind={true}
+                  nav={true}
+                  autoplay={true}
+
+                  responsive={{
+                    0: {
+                      items: 1,
+                      nav: true,
+                    },
+                    600: {
+                      items: 4,
+                      nav: true,
+                    },
+                    1000: {
+                      items: 7,
+                    },
+                  }}
+                >
+                <div className="item">
                       <div className="expert-box-wrp">
                          <div className="position-relative">
                             <img src="./assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
@@ -184,112 +211,8 @@ const index = () => {
                          </div>
                       </div>
                    </div>
-                   <div className="item">
-                      <div className="expert-box-wrp">
-                         <div className="position-relative">
-                            <img src="./assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
-                            <span className="active-dot"></span>
-                         </div>
-                         <div className="p-3">
-                            <div className="star-rating">
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star"></span>
-                               <span className="fa fa-star"></span>
-                            </div>
-                            <h5>Heather Nikolaus</h5>
-                            <h6>Business & Finance Expert</h6>
-                            <p>20 Yrs Experience</p>
-                            <button className="btn">Connect Now</button>
-                         </div>
-                      </div>
-                   </div>
-                   <div className="item">
-                      <div className="expert-box-wrp">
-                         <div className="position-relative">
-                            <img src="./assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
-                            <span className="active-dot"></span>
-                         </div>
-                         <div className="p-3">
-                            <div className="star-rating">
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star"></span>
-                               <span className="fa fa-star"></span>
-                            </div>
-                            <h5>Heather Nikolaus</h5>
-                            <h6>Business & Finance Expert</h6>
-                            <p>20 Yrs Experience</p>
-                            <button className="btn">Connect Now</button>
-                         </div>
-                      </div>
-                   </div>
-                   <div className="item">
-                      <div className="expert-box-wrp">
-                         <div className="position-relative">
-                            <img src="./assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
-                            <span className="active-dot"></span>
-                         </div>
-                         <div className="p-3">
-                            <div className="star-rating">
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star"></span>
-                               <span className="fa fa-star"></span>
-                            </div>
-                            <h5>Heather Nikolaus</h5>
-                            <h6>Business & Finance Expert</h6>
-                            <p>20 Yrs Experience</p>
-                            <button className="btn">Connect Now</button>
-                         </div>
-                      </div>
-                   </div>
-                   <div className="item">
-                      <div className="expert-box-wrp">
-                         <div className="position-relative">
-                            <img src="./assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
-                            <span className="active-dot"></span>
-                         </div>
-                         <div className="p-3">
-                            <div className="star-rating">
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star"></span>
-                               <span className="fa fa-star"></span>
-                            </div>
-                            <h5>Heather Nikolaus</h5>
-                            <h6>Business & Finance Expert</h6>
-                            <p>20 Yrs Experience</p>
-                            <button className="btn">Connect Now</button>
-                         </div>
-                      </div>
-                   </div>
-                   <div className="item">
-                      <div className="expert-box-wrp">
-                         <div className="position-relative">
-                            <img src="./assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
-                            <span className="active-dot"></span>
-                         </div>
-                         <div className="p-3">
-                            <div className="star-rating">
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star"></span>
-                               <span className="fa fa-star"></span>
-                            </div>
-                            <h5>Heather Nikolaus</h5>
-                            <h6>Business & Finance Expert</h6>
-                            <p>20 Yrs Experience</p>
-                            <button className="btn">Connect Now</button>
-                         </div>
-                      </div>
-                   </div>
-                </div>
+                </OwlCarousel>
+                
              </div>
           </div>
        </div>
@@ -306,8 +229,28 @@ const index = () => {
           </div>
           <div className="row">
              <div className="col-lg-12">
-                <div className="owl-carousel owl-theme top-legal-owl">
-                   <div className="item">
+             <OwlCarousel
+                  className="health-owl"
+                  items={10}
+                  loop={true}
+                  // nav={true}
+                  margin={10}
+                  // rewind={true}
+                  responsive={{
+                    0: {
+                      items: 1,
+                      nav: true,
+                    },
+                    600: {
+                      items: 2,
+                      nav: true,
+                    },
+                    1000: {
+                      items: 4,
+                    },
+                  }}
+                >
+                <div className="item">
                       <div className="top-legal-box-wrp">
                          <div className="top-legal-user-img">
                             <img src="./assets/img/legal-expert-1.png" alt=""/>
@@ -327,127 +270,8 @@ const index = () => {
                          </div>
                       </div>
                    </div>
-                   <div className="item">
-                      <div className="top-legal-box-wrp">
-                         <div className="top-legal-user-img">
-                            <img src="./assets/img/legal-expert-2.png" alt=""/>
-                         </div>
-                         <div>
-                            <h4>Heather Nikolaus</h4>
-                            <p><img src="./assets/img/location-arrow-icon.png" alt=""/> Ruwi Muscat</p>
-                            <div className="star-rating">
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                            </div>
-                            <p>20 Yrs Experience</p>
-                            <p>Cheque Bouce , Civil law , Criminal law</p>
-                         </div>
-                      </div>
-                   </div>
-                   <div className="item">
-                      <div className="top-legal-box-wrp">
-                         <div className="top-legal-user-img">
-                            <img src="./assets/img/legal-expert-3.png" alt=""/>
-                         </div>
-                         <div>
-                            <h4>Heather Nikolaus</h4>
-                            <p><img src="./assets/img/location-arrow-icon.png" alt=""/> Ruwi Muscat</p>
-                            <div className="star-rating">
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                            </div>
-                            <p>20 Yrs Experience</p>
-                            <p>Cheque Bouce , Civil law , Criminal law</p>
-                         </div>
-                      </div>
-                   </div>
-                   <div className="item">
-                      <div className="top-legal-box-wrp">
-                         <div className="top-legal-user-img">
-                            <img src="./assets/img/legal-expert-4.png" alt=""/>
-                         </div>
-                         <div>
-                            <h4>Heather Nikolaus</h4>
-                            <p><img src="./assets/img/location-arrow-icon.png" alt=""/> Ruwi Muscat</p>
-                            <div className="star-rating">
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                            </div>
-                            <p>20 Yrs Experience</p>
-                            <p>Cheque Bouce , Civil law , Criminal law</p>
-                         </div>
-                      </div>
-                   </div>
-                   <div className="item">
-                      <div className="top-legal-box-wrp">
-                         <div className="top-legal-user-img">
-                            <img src="./assets/img/legal-expert-1.png" alt=""/>
-                         </div>
-                         <div>
-                            <h4>Heather Nikolaus</h4>
-                            <p><img src="./assets/img/location-arrow-icon.png" alt=""/> Ruwi Muscat</p>
-                            <div className="star-rating">
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                            </div>
-                            <p>20 Yrs Experience</p>
-                            <p>Cheque Bouce , Civil law , Criminal law</p>
-                         </div>
-                      </div>
-                   </div>
-                   <div className="item">
-                      <div className="top-legal-box-wrp">
-                         <div className="top-legal-user-img">
-                            <img src="./assets/img/legal-expert-2.png" alt=""/>
-                         </div>
-                         <div>
-                            <h4>Heather Nikolaus</h4>
-                            <p><img src="./assets/img/location-arrow-icon.png" alt=""/> Ruwi Muscat</p>
-                            <div className="star-rating">
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                            </div>
-                            <p>20 Yrs Experience</p>
-                            <p>Cheque Bouce , Civil law , Criminal law</p>
-                         </div>
-                      </div>
-                   </div>
-                   <div className="item">
-                      <div className="top-legal-box-wrp">
-                         <div className="top-legal-user-img">
-                            <img src="./assets/img/legal-expert-3.png" alt=""/>
-                         </div>
-                         <div>
-                            <h4>Heather Nikolaus</h4>
-                            <p><img src="./assets/img/location-arrow-icon.png" alt=""/> Ruwi Muscat</p>
-                            <div className="star-rating">
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                               <span className="fa fa-star checked"></span>
-                            </div>
-                            <p>20 Yrs Experience</p>
-                            <p>Cheque Bouce , Civil law , Criminal law</p>
-                         </div>
-                      </div>
-                   </div>
-                </div>
+                   
+             </OwlCarousel>
              </div>
           </div>
        </div>
@@ -579,7 +403,43 @@ const index = () => {
           </div>
           <div className="row mt-4">
              <div className="col-lg-12">
-                <div className="owl-carousel owl-theme client-feature-owl">
+             <OwlCarousel
+                  className="health-owl"
+                  items={10}
+                  loop={true}
+                  // nav={true}
+                  margin={10}
+                  // rewind={true}
+                  responsive={{
+                    0: {
+                      items: 1,
+                      nav: true,
+                    },
+                    600: {
+                      items: 1,
+                      nav: true,
+                    },
+                    1000: {
+                      items: 1,
+                    },
+                  }}
+                >
+                   <div className="item">
+                      <div className="client-feature-box">
+                         <div className="client-feature-img">
+                            <img src="./assets/img/legal-expert-1.png" className="img img-fluid" alt=""/>
+                         </div>
+                         <div className="client-feature-content">
+                            <p>A wonderful platform for clearing your doubts on all the Legal Matters, all the Legal
+                               Practitioners registered with the platform are really helpful. Got answer to my query
+                               within minutes of posting the question.
+                            </p>
+                            <h5>Afnan Zari</h5>
+                         </div>
+                      </div>
+                   </div>  
+                </OwlCarousel>
+                {/* <div className="owl-carousel owl-theme client-feature-owl">
                    <div className="item">
                       <div className="client-feature-box">
                          <div className="client-feature-img">
@@ -622,7 +482,7 @@ const index = () => {
                          </div>
                       </div>
                    </div>
-                </div>
+                </div> */}
              </div>
           </div>
        </div>
@@ -661,12 +521,12 @@ const index = () => {
                 <div className="footer-link-list">
                    <h3>Website</h3>
                    <ul>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
                    </ul>
                 </div>
              </div>
@@ -674,11 +534,11 @@ const index = () => {
                 <div className="footer-link-list">
                    <h3>Website</h3>
                    <ul>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
                    </ul>
                 </div>
              </div>
@@ -686,11 +546,11 @@ const index = () => {
                 <div className="footer-link-list">
                    <h3>Website</h3>
                    <ul>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
                    </ul>
                 </div>
              </div>
@@ -698,11 +558,11 @@ const index = () => {
                 <div className="footer-link-list">
                    <h3>Website</h3>
                    <ul>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
                    </ul>
                 </div>
              </div>
@@ -710,11 +570,11 @@ const index = () => {
                 <div className="footer-link-list">
                    <h3>Website</h3>
                    <ul>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
-                      <li><a href="javascript:;">Link</a></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
+                      <li><Link to="javascript:;">Link</Link></li>
                    </ul>
                 </div>
              </div>
@@ -723,289 +583,13 @@ const index = () => {
              <div className="row">
                 <div className="col-lg-12">
                    <div className="text-center">
-                      <p>Terms of service and Privacy Policy <a href="javascript:;">@Borhan</a></p>
+                      <p>Terms of service and Privacy Policy <Link to="javascript:;">@Borhan</Link></p>
                    </div>
                 </div>
              </div>
           </div>
        </div>
     </footer>
-    {/* <!-- Get Started Modal --> */}
-    <div className="modal fade authentication-modal" id="getstartedmodal" tabindex="-1" aria-labelledby="getstartedmodal" aria-hidden="true">
-       <div className="modal-dialog modal-dialog-centered modal-xl">
-          <div className="modal-content">
-             <div className="modal-body">
-                <div className="auth-modal-wrp">
-                   <div className="row">
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-artwork">
-                            <img src="./assets/img/human-right-artwok.png" className="img img-fluid" alt=""/>
-                         </div>
-                      </div>
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-content">
-                            <div className="w-100">
-                               <div className="auth-modal-logo"> 
-                                  <img src="./assets/img/main-logo.png" className="img img-fluid" alt=""/>
-                               </div>
-                               <h2>Get Started</h2>
-                               <div className="get-started-buttons">
-                                  <div>
-                                     <button data-bs-target="#sendOTPmodal" data-bs-toggle="modal" data-bs-dismiss="modal" className="btn" type="button">Borhan User</button>
-                                  </div>
-                                  <div>
-                                     <button data-bs-target="#createExpAccmodal" data-bs-toggle="modal" data-bs-dismiss="modal" className="btn" type="button">Expert</button>
-                                  </div>
-                               </div>
-                            </div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
-    </div>
-    {/* <!-- Send OTP Modal --> */}
-    <div className="modal fade authentication-modal" id="sendOTPmodal" tabindex="-1" aria-labelledby="sendOTPmodal" aria-hidden="true">
-       <div className="modal-dialog modal-dialog-centered modal-xl">
-          <div className="modal-content">
-             <div className="modal-body">
-                <div className="auth-modal-wrp">
-                   <div className="row">
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-artwork">
-                            <img src="./assets/img/human-right-artwok.png" className="img img-fluid" alt=""/>
-                         </div>
-                      </div>
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-content">
-                            <div className="w-100">
-                               <div className="auth-modal-logo"> 
-                                  <img src="./assets/img/main-logo.png" className="img img-fluid" alt=""/>
-                               </div>
-                               <h2>Please Sign in to Borhan</h2>
-                               <div className="auth-input-wrp">
-                                  <label for="">Enter Mobile Number</label>
-                                  <input type="text" className="form-control" placeholder=""/>
-                                  <button role="button" data-bs-target="#verifyOTPmodal" data-bs-toggle="modal" data-bs-dismiss="modal" className="btn auth-main-btn" type="button">Send OTP</button>
-                               </div>
-                               <p>Or Sign in with</p>
-                               <ul>
-                                  <li className="pe-2"><button className="btn"> <img src="./assets/img/login-with-google.png" className="img img-fluid" alt=""/>Log in with Gmail</button></li>
-                                  <li className="ps-2"><button className="btn"> <img src="./assets/img/login-with-facebook.png" className="img img-fluid" alt=""/>Log in with Facebook</button></li>
-                               </ul>
-                               <h5>Don’t have account ? <a role="button" data-bs-target="#createAccmodal" data-bs-toggle="modal" data-bs-dismiss="modal" href="javascript:;">Create now</a></h5>
-                            </div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
-    </div>
-    {/* <!-- Verify OTP Modal --> */}
-    <div className="modal fade authentication-modal" id="verifyOTPmodal" tabindex="-1" aria-labelledby="verifyOTPmodal" aria-hidden="true">
-       <div className="modal-dialog modal-dialog-centered modal-xl">
-          <div className="modal-content">
-             <div className="modal-body">
-                <div className="auth-modal-wrp">
-                   <div className="row">
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-artwork">
-                            <img src="./assets/img/human-right-artwok.png" className="img img-fluid" alt=""/>
-                         </div>
-                      </div>
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-content">
-                            <div className="w-100">
-                               <div className="auth-modal-logo"> 
-                                  <img src="./assets/img/main-logo.png" className="img img-fluid" alt=""/>
-                               </div>
-                               <h2>Please Sign in to Borhan</h2>
-                               <div className="auth-input-wrp">
-                                  <label for="">Please enter the OTP sent to <span>9090909090</span></label>
-                                  <input type="text" className="form-control" placeholder=""/>
-                                  <a className="w-100" href="user-dashboard.html"> <button className="btn auth-main-btn" type="button">Verify</button></a>
-                               </div>
-                               <h5>Not Received your code ? <a href="javascript:;"> Resend code</a></h5>
-                            </div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
-    </div>
-    {/* <!-- Create Account Modal --> */}
-    <div className="modal fade authentication-modal" id="createAccmodal" tabindex="-1" aria-labelledby="createAccmodal" aria-hidden="true">
-       <div className="modal-dialog modal-dialog-centered modal-xl">
-          <div className="modal-content">
-             <div className="modal-body">
-                <div className="auth-modal-wrp">
-                   <div className="row">
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-artwork">
-                            <img src="./assets/img/human-right-artwok.png" className="img img-fluid" alt=""/>
-                         </div>
-                      </div>
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-content">
-                            <div className="w-100">
-                               <div className="auth-profile-pic-wrp">
-                                  <img src="./assets/img/profile-picture-icon.png" className="img img-fluid" alt=""/>
-                                  <h6>Profile Picture</h6>
-                               </div>
-                               <div className="auth-input-wrp">
-                                  <div className="row">
-                                     <div className="col-lg-6">
-                                        <label for="">First Name</label>
-                                        <input type="text" className="form-control" placeholder=""/>
-                                     </div>
-                                     <div className="col-lg-6">
-                                        <label for="">Last Name</label>
-                                        <input type="text" className="form-control" placeholder=""/>
-                                     </div>
-                                     <div className="col-lg-12">
-                                        <label for="">Email ID</label>
-                                        <input type="email" className="form-control" placeholder=""/>
-                                     </div>
-                                     <div className="col-lg-12">
-                                        <label for="">Date of Birth</label>
-                                        <input type="date" className="form-control" placeholder=""/>
-                                     </div>
-                                     <div className="col-lg-12">
-                                        <label for="">Gender</label>
-                                        <div className="gender-buttons">
-                                           {/* <!-- add active class for active the tab --> */}
-                                           <button className="btn me-2" type="button">Male</button> 
-                                           <button className="btn ms-2" type="button">Female</button>
-                                        </div>
-                                     </div>
-                                  </div>
-                                  <button className="btn auth-main-btn" type="button">Create Account</button>
-                               </div>
-                               <h5>By signing up , you agree to <a href="javascript:;">terms and condition</a> and Borhan <a href="javascript:;">policy</a></h5>
-                            </div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
-    </div>
-    {/* <!-- Create Expert Account Modal --> */}
-    <div className="modal fade authentication-modal" id="createExpAccmodal" tabindex="-1" aria-labelledby="createExpAccmodal" aria-hidden="true">
-       <div className="modal-dialog modal-dialog-centered modal-xl">
-          <div className="modal-content">
-             <div className="modal-body">
-                <div className="auth-modal-wrp">
-                   <div className="row">
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-artwork">
-                            <img src="./assets/img/human-right-artwok.png" className="img img-fluid" alt=""/>
-                         </div>
-                      </div>
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-content">
-                            <div className="w-100">
-                               <div className="auth-profile-pic-wrp">
-                                  <img src="./assets/img/profile-picture-icon.png" className="img img-fluid" alt=""/>
-                                  <h6>Profile Picture</h6>
-                               </div>
-                               <div className="auth-input-wrp">
-                                  <div className="row">
-                                     <div className="col-lg-6">
-                                        <label for="">First Name</label>
-                                        <input type="text" className="form-control" placeholder=""/>
-                                     </div>
-                                     <div className="col-lg-6">
-                                        <label for="">Last Name</label>
-                                        <input type="text" className="form-control" placeholder=""/>
-                                     </div>
-                                     <div className="col-lg-12">
-                                        <label for="">Email ID</label>
-                                        <input type="email" className="form-control" placeholder=""/>
-                                     </div>
-                                     <div className="col-lg-12">
-                                        <label for="">Date of Birth</label>
-                                        <input type="date" className="form-control" placeholder=""/>
-                                     </div>
-                                     <div className="col-lg-12">
-                                        <label for="">Gender</label>
-                                        <div className="gender-buttons">
-                                           {/* <!-- add active class for active the tab --> */}
-                                           <button className="btn me-2" type="button">Male</button> 
-                                           <button className="btn ms-2" type="button">Female</button>
-                                        </div>
-                                     </div>
-                                  </div>
-                                  <button data-bs-target="#createExp2Accmodal" data-bs-toggle="modal" data-bs-dismiss="modal" className="btn auth-main-btn" type="button">Continue</button>
-                               </div>
-                               <h5>By signing up , you agree to <a href="javascript:;">terms and condition</a> and Borhan <a href="javascript:;">policy</a></h5>
-                            </div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
-    </div>
-    {/* <!-- Create Expert Account Modal --> */}
-    <div className="modal fade authentication-modal" id="createExp2Accmodal" tabindex="-1" aria-labelledby="createExp2Accmodal" aria-hidden="true">
-       <div className="modal-dialog modal-dialog-centered modal-xl">
-          <div className="modal-content">
-             <div className="modal-body">
-                <div className="auth-modal-wrp">
-                   <div className="row">
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-artwork">
-                            <img src="./assets/img/human-right-artwok.png" className="img img-fluid" alt=""/>
-                         </div>
-                      </div>
-                      <div className="col-lg-6 p-0">
-                         <div className="auth-modal-content">
-                            <div className="w-100">
-                               <div className="auth-input-wrp">
-                                  <div className="row">
-                                     <div className="col-lg-12">
-                                        <label for="">Bio</label>
-                                        <input type="text" className="form-control" placeholder=""/>
-                                     </div>
-                                     <div className="col-lg-12 pt-2">
-                                        <label for="">You can Record Audio and Video Bio ( Optional )</label>
-                                        <div className="record-buttons">
-                                           <button className="btn" type="button"><img src="./assets/img/audio-record-icon.png" className="img img-fluid" alt=""/> Audio record</button>
-                                           <button className="btn" type="button"><img src="./assets/img/video-record-icon.png" className="img img-fluid" alt=""/> Video record</button>
-                                        </div>
-                                     </div>
-                                     <div className="col-lg-12 pt-2">
-                                        <label for="">Upload Documents</label>
-                                        <div className="upload-doc-field">
-                                           <input type="file" className="form-input-file"/>
-                                           <div className="artifical-doc-feild">
-                                              <img src="./assets/img/upload-document-icon.png" className="img img-fluid" alt=""/>
-                                           </div>
-                                        </div>
-                                        <a href="javascript:;">Documents List</a>
-                                     </div>
-                                  </div>
-                                  <button className="btn auth-main-btn" type="button">Create Account</button>
-                               </div>
-                               <h5>By signing up , you agree to <a href="javascript:;">terms and condition</a> and Borhan <a href="javascript:;">policy</a></h5>
-                            </div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
-    </div>
     
 </>
 

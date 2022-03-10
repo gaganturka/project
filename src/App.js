@@ -1,5 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
+import FavExp from './components/Frontend/FavExperts'
 import AppointmentDetails from './components/Frontend/AppointmentDetails';
 import ErrorPage from './components/Frontend/ErrorPage';
 import ExpListing from './components/Frontend/ExpListing';
@@ -26,6 +26,13 @@ function App() {
               <Route exact path="/termsandconditions" key="termsandconditions" element={<Terms/>} />
                 
               <Route  path="/errorpage" key="errorpage" element={<ErrorPage/>}/>
+               
+
+              <Route  path="/appointmentdetails" key="appointmentdetails" element={<AppointmentDetails/>}/>
+              <Route  path="/expprofile" key="expprofile" element={<ExpProfile/>}/>
+              <Route  path="/wallet" key="wallet" element={<Wallet/>}/>
+              <Route  path="/userdashboard" key="userdashboard" element={<UserDashBoard/>}/>
+              <Route  path="/favexperts" key="favexperts" element={<FavExp/>}/>
 
               </Routes>
           </Router>

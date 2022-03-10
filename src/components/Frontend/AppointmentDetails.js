@@ -1,35 +1,14 @@
-import React from 'react'
-import Header from './Header'
-
+import {React,useState} from 'react'
+import Modal from 'react-awesome-modal'
+import {Link} from 'react-router-dom'
+import Sidebar from './Sidebaruser'
 const AppointmentDetails = () => {
+   const [reschedulemodal,setreschedulemodal]=useState(false);
   return (
+     
     <>
       <section className="admin-wrapper">
-         <div className="sidebar-toggle">
-            <button className="btn sidebar-mb-toggle-btn"><img src="./assets/img/expand-sidebar.png" alt="" /> User Menu</button>
-         </div>
-         <div className="sidebar-wrapper">
-            <div className="flex-shrink-0">
-               <div className="user-img-sidebar">
-                  <img src="./assets/img/mathew-wade.png" className="img img-fluid" alt="" />
-                  <h3>Mathew Wade</h3>
-               </div>
-               <ul className="list-unstyled ps-0">
-                  <li className=""><a href="user-dashboard.html" className=""><img src="./assets/img/profile-icon.png"
-                     className="img img-fluid" alt="" /> My Profile</a></li>
-                  <li className="active"><a href="appointment-details.html" className=""><img src="./assets/img/appointment-icon.png"
-                     className="img img-fluid" alt="" /> Appointment details</a></li>
-                  <li className=""><a href="wallet.html" className=""><img src="./assets/img/wallet-icon.png" className="img img-fluid"
-                     alt="" /> Wallet</a></li>
-                  <li className=""><a href="javascript:;" className=""><img src="./assets/img/saved-cards-icon.png" className="img img-fluid"
-                     alt="" /> Saved cards</a></li>
-                     <li className=""><a href="fav-experts.html" className=""><img src="./assets/img/favorite-icon.png" className="img img-fluid"
-                        alt="" /> Favorite experts</a></li>
-                  <li className=""><a href="index.html" className=""><img src="./assets/img/logout-icon.png" className="img img-fluid"
-                     alt="" /> Logout</a></li>
-               </ul>
-            </div>
-         </div>
+         <Sidebar/>
          <div className="admin-content-wrapper">
             <div className="row">
                <div className="col-lg-12">
@@ -560,7 +539,78 @@ const AppointmentDetails = () => {
                                              <td>
                                                 <div className="table-btn-group">
                                                    <button className="btn" type="button">Cancel</button>
-                                                   <button data-bs-target="#appointmentDetailsModal"  data-bs-dismiss="modal" data-bs-toggle="modal" className="btn" type="button">Reschedule</button>
+                                                   <input className="btn" type="button" value="Reschedule" onClick={()=>{setreschedulemodal(true)}} />
+                                                   <Modal visible={reschedulemodal}
+                                          effect="fadeInUp"
+                                          
+                                          onClickAway={()=>{
+                                             setreschedulemodal(false);
+                                          }}>
+                                             <div className="modal-content">
+               <div className="modal-body">
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  <div className="auth-modal-wrp">
+                     <div className="row">
+                        <div className="col-lg-12">
+                           <div className="auth-modal-content">
+                              <div className="w-100">
+                                 <div className="appointment-deatils-box">
+                                    <h1>Appointment details</h1>
+                                    <div className="row">
+                                       <div className="col-lg-12">
+                                          <div className="appointment-details-modal-wrp">
+                                             <div className="app-user-wrp">
+                                                <div>
+                                                   <img src="./assets/img/megan-smith.png" alt="" />
+                                                </div>
+                                                <div>
+                                                   <h4>Meghan Smith</h4>
+                                                   <h6>Legal Expert</h6>
+                                                </div>
+                                             </div>
+                                             <div className="">
+                                                <p>Date</p>
+                                                <h3>September 10th</h3>
+                                             </div>
+                                             <div className="">
+                                                <p>Time</p>
+                                                <h3>03:30 PM</h3>
+                                             </div>
+                                             <div className="">
+                                                <p>Mode</p>
+                                                <h3>Video call</h3>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div className="row mb-4">
+                                       <div className="col-lg-7">
+                                          <div className="app-agenda-box">
+                                             <Link to="javascript:;">Edit</Link>
+                                             <h3>Appointment Agenda</h3>
+                                             <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum pas</p>
+                                          </div>
+                                       </div>
+                                       <div className="col-lg-5">
+                                          <div className="app-agenda-box">
+                                             <h3>Available Balance</h3>
+                                             <h2>04 h 30 min</h2>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div className="modal-footer-btn-group">
+                                       <button className="btn" data-bs-dismiss="modal" type="button">Cancel</button>
+                                       <button className="btn" type="button">Reschedule</button>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+                                          </Modal>
                                                 </div>
                                              </td>
                                           </tr>
@@ -586,8 +636,79 @@ const AppointmentDetails = () => {
                                              </td>
                                              <td>
                                                 <div className="table-btn-group">
-                                                   <button className="btn" type="button">Cancel</button>
-                                                   <button data-bs-target="#appointmentDetailsModal"  data-bs-dismiss="modal" data-bs-toggle="modal"  className="btn" type="button">Reschedule</button>
+                                                       <button className="btn" type="button">Cancel</button>
+                                                   <input type="button" className="btn" type="button" value="Reschedule" onClick={()=>{setreschedulemodal(true)}}/>
+                                                   {reschedulemodal?<Modal visible={reschedulemodal}
+                                          effect="fadeInUp"                        
+                                          onClickAway={()=>{
+                                             setreschedulemodal(false)
+                                          }}>
+                                           
+                                               <div className="modal-content">
+               <div className="modal-body">
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  <div className="auth-modal-wrp">
+                     <div className="row">
+                        <div className="col-lg-12">
+                           <div className="auth-modal-content">
+                              <div className="w-100">
+                                 <div className="appointment-deatils-box">
+                                    <h1>Appointment details</h1>
+                                    <div className="row">
+                                       <div className="col-lg-12">
+                                          <div className="appointment-details-modal-wrp">
+                                             <div className="app-user-wrp">
+                                                <div>
+                                                   <img src="./assets/img/megan-smith.png" alt="" />
+                                                </div>
+                                                <div>
+                                                   <h4>Meghan Smith</h4>
+                                                   <h6>Legal Expert</h6>
+                                                </div>
+                                             </div>
+                                             <div className="">
+                                                <p>Date</p>
+                                                <h3>September 10th</h3>
+                                             </div>
+                                             <div className="">
+                                                <p>Time</p>
+                                                <h3>03:30 PM</h3>
+                                             </div>
+                                             <div className="">
+                                                <p>Mode</p>
+                                                <h3>Video call</h3>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div className="row mb-4">
+                                       <div className="col-lg-7">
+                                          <div className="app-agenda-box">
+                                             <Link to="javascript:;">Edit</Link>
+                                             <h3>Appointment Agenda</h3>
+                                             <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum pas</p>
+                                          </div>
+                                       </div>
+                                       <div className="col-lg-5">
+                                          <div className="app-agenda-box">
+                                             <h3>Available Balance</h3>
+                                             <h2>04 h 30 min</h2>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div className="modal-footer-btn-group">
+                                       <button className="btn" data-bs-dismiss="modal" type="button">Cancel</button>
+                                       <button className="btn" type="button">Reschedule</button>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+                                          </Modal>:""}
                                                 </div>
                                              </td>
                                           </tr>
@@ -698,7 +819,7 @@ const AppointmentDetails = () => {
                                     <div className="row mb-4">
                                        <div className="col-lg-7">
                                           <div className="app-agenda-box">
-                                             <a href="javascript:;">Edit</a>
+                                             <Link to="javascript:;">Edit</Link>
                                              <h3>Appointment Agenda</h3>
                                              <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum pas</p>
                                           </div>
