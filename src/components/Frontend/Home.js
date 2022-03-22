@@ -1,10 +1,12 @@
-import React from 'react'
+import {React,useState,useRef,useEffect} from 'react'
 import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 
 import {Link} from 'react-router-dom'
-const index = () => {
+const Home = () => {
+  
+   // const [expertcarousel,setexpertcarousel]=useState(null);
   return (
       <>
     <section className="main-bn-wrapper">
@@ -164,29 +166,36 @@ const index = () => {
              </div>
           </div>
           <div className="row">
-             <div className="col-lg-12 ">
+          
+             <div className="col-lg-12 " >
              
              <OwlCarousel
-                  className=" health-owl "
-                  items={7}
-                  loop={true}
-                  // nav={true}
-                  margin={10}
-                  // rewind={true}
+                  className="health-owl"
+                  items={10}
                   nav={true}
-                  autoplay={true}
-
+                  loop={true}
+                        margin={10}
+                        rewind={true}
+                        prevArrow={false}
+                        nextArrow={false}
                   responsive={{
                     0: {
                       items: 1,
-                      nav: true,
+                      nav:true,
+                     //  nav: true,
+                     //  dots:true,
                     },
                     600: {
                       items: 4,
-                      nav: true,
+                      nav:true,
+                     //  nav: true,
+                     //  dots:true,
                     },
                     1000: {
-                      items: 7,
+                      items: 5,
+                      nav:true,
+                     //  nav:true,
+                     //  dots:true,
                     },
                   }}
                 >
@@ -217,7 +226,7 @@ const index = () => {
           </div>
        </div>
     </section>
-    <section className="top-legal-wrp">
+    <section className="top-legal-wrp ">
        <div className="container">
           <div className="row">
              <div className="col-lg-12">
@@ -230,11 +239,19 @@ const index = () => {
           <div className="row">
              <div className="col-lg-12">
              <OwlCarousel
-                  className="health-owl"
+                  className="health-owl top-legal-owl"
                   items={10}
                   loop={true}
-                  // nav={true}
+                  nav={true}
+                  rewind={true}
                   margin={10}
+                  nextArrow={false}
+                  prevArrow={false}
+                  autoplay= {true}
+                  dots={true}
+        pagination ={true}
+        autoplayTimeout={3000}
+
                   // rewind={true}
                   responsive={{
                     0: {
@@ -247,11 +264,12 @@ const index = () => {
                     },
                     1000: {
                       items: 4,
+                      nav:true
                     },
                   }}
                 >
                 <div className="item">
-                      <div className="top-legal-box-wrp">
+                      <div className="top-legal-box-wrp ">
                          <div className="top-legal-user-img">
                             <img src="./assets/img/legal-expert-1.png" alt=""/>
                          </div>
@@ -404,9 +422,11 @@ const index = () => {
           <div className="row mt-4">
              <div className="col-lg-12">
              <OwlCarousel
-                  className="health-owl"
+                  className="health-owl client-feature-owl"
                   items={10}
                   loop={true}
+                  
+                  rewind={true}
                   // nav={true}
                   margin={10}
                   // rewind={true}
@@ -421,6 +441,7 @@ const index = () => {
                     },
                     1000: {
                       items: 1,
+                      nav:true,
                     },
                   }}
                 >
@@ -596,4 +617,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Home

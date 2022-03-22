@@ -49,6 +49,7 @@ const ExpListing = () => {
                   className="health-owl"
                   items={10}
                   loop={true}
+                  rewind={true}
                   // nav={true}
                   margin={10}
                   // rewind={true}
@@ -91,9 +92,10 @@ const ExpListing = () => {
 
                <div className="col-lg-12">
                <OwlCarousel
-                  className="health-owl"
+                  className="health-owl pratice-area-owl"
                   items={10}
                   loop={true}
+                  rewind={true}
                   // nav={true}
                   margin={10}
                   // rewind={true}

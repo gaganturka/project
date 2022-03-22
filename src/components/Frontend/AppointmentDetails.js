@@ -1,7 +1,8 @@
 import {React,useState} from 'react'
-import Modal from 'react-awesome-modal'
+import { Modal, ModalBody, ModalFooter, } from "reactstrap";
 import {Link} from 'react-router-dom'
 import Sidebar from './Sidebaruser'
+
 const AppointmentDetails = () => {
    const [reschedulemodal,setreschedulemodal]=useState(false);
   return (
@@ -539,16 +540,17 @@ const AppointmentDetails = () => {
                                              <td>
                                                 <div className="table-btn-group">
                                                    <button className="btn" type="button">Cancel</button>
-                                                   <input className="btn" type="button" value="Reschedule" onClick={()=>{setreschedulemodal(true)}} />
-                                                   <Modal visible={reschedulemodal}
-                                          effect="fadeInUp"
-                                          
-                                          onClickAway={()=>{
-                                             setreschedulemodal(false);
-                                          }}>
-                                             <div className="modal-content">
-               <div className="modal-body">
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                   <button data-bs-target="#appointmentDetailsModal"  data-bs-dismiss="modal" data-bs-toggle="modal"  className="btn" type="button">Reschedule</button>
+                                                </div>
+                                             </td>
+                                             {/* <td>
+                                                <div className="table-btn-group">
+                                                   <button className="btn" type="button">Cancel</button>
+                                                   <button className="btn" type="button"  onClick={()=>{setreschedulemodal(true)}} >
+                                                   Reschedule</button>
+                                                   {reschedulemodal?<Modal isOpen={reschedulemodal} >
+                                
+                                                   <ModalBody  id="appointmentDetailsModal" className=" authentication-modal">                                       
                   <div className="auth-modal-wrp">
                      <div className="row">
                         <div className="col-lg-12">
@@ -596,23 +598,26 @@ const AppointmentDetails = () => {
                                              <h3>Available Balance</h3>
                                              <h2>04 h 30 min</h2>
                                           </div>
+
                                        </div>
+                                       
                                     </div>
                                     <div className="modal-footer-btn-group">
-                                       <button className="btn" data-bs-dismiss="modal" type="button">Cancel</button>
-                                       <button className="btn" type="button">Reschedule</button>
+                                       <button className="btn" data-bs-dismiss="modal" type="button" onClick={()=>{setreschedulemodal(false)}}>Cancel</button>
+                                       <button className="btn" type="button" onClick={()=>{setreschedulemodal(false)}}>Reschedule</button>
                                     </div>
+                              
                                  </div>
                               </div>
                            </div>
                         </div>
                      </div>
-                  </div>
-               </div>
-            </div>
-                                          </Modal>
+                  
+            </div></ModalBody>
+                                          </Modal>:""}
+                                          
                                                 </div>
-                                             </td>
+                                             </td> */}
                                           </tr>
                                           <tr>
                                              <td>
@@ -637,16 +642,16 @@ const AppointmentDetails = () => {
                                              <td>
                                                 <div className="table-btn-group">
                                                        <button className="btn" type="button">Cancel</button>
-                                                   <input type="button" className="btn" type="button" value="Reschedule" onClick={()=>{setreschedulemodal(true)}}/>
-                                                   {reschedulemodal?<Modal visible={reschedulemodal}
-                                          effect="fadeInUp"                        
-                                          onClickAway={()=>{
-                                             setreschedulemodal(false)
-                                          }}>
+                                                   <button type="button" className="btn" type="button" value="Reschedule" onClick={()=>{setreschedulemodal(true)}}>Reschedule
+                                                   {reschedulemodal?<Modal isOpen={reschedulemodal}
+                                                   toggle={()=>{setreschedulemodal(false)}}
+                                                         className="authentication-modal modal-dialog modal-dialog-centered modal-xl"
+                                                         id="appointmentDetailsModal"         
+                                          >
+                                           <ModalBody >
                                            
-                                               <div className="modal-content">
-               <div className="modal-body">
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               <button type="button" className="btn-close" onClick={()=>{setreschedulemodal(false)}}></button>
+             
                   <div className="auth-modal-wrp">
                      <div className="row">
                         <div className="col-lg-12">
@@ -697,8 +702,10 @@ const AppointmentDetails = () => {
                                        </div>
                                     </div>
                                     <div className="modal-footer-btn-group">
-                                       <button className="btn" data-bs-dismiss="modal" type="button">Cancel</button>
-                                       <button className="btn" type="button">Reschedule</button>
+                                       <button className="btn" data-bs-dismiss="modal" type="button" onClick={()=>{setreschedulemodal(false);
+                                       setTimeout(()=>{setreschedulemodal(false)},100)}}>Cancel</button>
+                                       <button className="btn" type="button" onClick={()=>{setreschedulemodal(false);
+                                       setTimeout(()=>{setreschedulemodal(false)},100)}}>Reschedule</button>
                                     </div>
                                  </div>
                               </div>
@@ -706,9 +713,10 @@ const AppointmentDetails = () => {
                         </div>
                      </div>
                   </div>
-               </div>
-            </div>
+               
+            </ModalBody>
                                           </Modal>:""}
+                                          </button>
                                                 </div>
                                              </td>
                                           </tr>

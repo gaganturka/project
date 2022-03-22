@@ -1,5 +1,5 @@
 import {React,useState} from 'react'
-import Modal from 'react-awesome-modal'
+import {Modal,ModalBody} from 'reactstrap'
 
 const ExpProfile = () => {
    const [bookappointmentmodal,setbookappointmentmodal]=useState(false);
@@ -94,19 +94,20 @@ const ExpProfile = () => {
                      </div>
                      <div className="continue-booking-btn">
                         {/* <button data-bs-target="#bookAppointmentModal" data-bs-toggle="modal" className="btn" type="button"> Continue to Book Appointment </button> */}
-                         <input className="btn" onClick={()=>{setbookappointmentmodal(true)}} value="Continue to Book Appointment" type="button" />
+                         <button className="btn" onClick={()=>{setbookappointmentmodal(true)}} type="button" >Continue to Book Appointment
                          <Modal
-                                                              visible={
+                         className="authentication-modal modal-dialog modal-dialog-centered modal-xl"
+                                                              isOpen={
                                                                  bookappointmentmodal
                                                               }
-                                                              effect="fadeInUp"
-                                                              onClickAway={
+                                                              toggle={
                                                                 ()=>{setbookappointmentmodal(false)}
                                                               }
                                                             >
+                                                            <ModalBody>
                                                                <div className="modal-content">
                <div className="modal-body">
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={()=>setbookappointmentmodal(false)}></button>
                   <div className="auth-modal-wrp">
                      <div className="row">
                         <div className="col-lg-12">
@@ -170,19 +171,21 @@ const ExpProfile = () => {
                                  </div>
                                  <div className="continue-booking-btn p-0 mb-4">
                                     {/* <button data-bs-target="#scheduleAppointmentModal"  data-bs-dismiss="modal" data-bs-toggle="modal" className="btn" type="button"> Continue to Book Appointment </button> */}
-                                    <input className="btn" value="Continue to Book Appointment" onClick={()=>{setscheduleappointmentmodal(true)}} />
+                                    <button className="btn"  onClick={()=>{setscheduleappointmentmodal(true)}} >Continue to Book Appointment
                                     <Modal
-                                                              visible={
+                                                             className="authentication-modal modal-dialog modal-dialog-centered modal-xl"
+
+                                                              isOpen={
                                                                  scheduleappointmentmodal
                                                               }
-                                                              effect="fadeInUp"
-                                                              onClickAway={
-                                                                ()=>{setscheduleappointmentmodal(false)}
+                                                              
+                                                              toggle={
+                                                               ()=>{setscheduleappointmentmodal(false);setbookappointmentmodal(false);}
                                                               }
                                                             >
                                                             <div className="modal-content">
                <div className="modal-body">
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={     ()=>{setscheduleappointmentmodal(false)} }></button>
                   <div className="auth-modal-wrp">
                      <div className="row">
                         <div className="col-lg-12">
@@ -218,7 +221,7 @@ const ExpProfile = () => {
                </div>
             </div>
                                                             </Modal>
-         
+                                   </button>
                                  </div>
                               </div>
                            </div>
@@ -227,7 +230,9 @@ const ExpProfile = () => {
                   </div>
                </div>
             </div>
+            </ModalBody>
                                                             </Modal>
+                                                            </button>
                      </div>
                      <div className="exp-wallet-amount">
                         <p>Burhan Wallet Amount - <a href="javascript:;">06 h 30 min remaining</a></p>
