@@ -1,12 +1,11 @@
 import Boom from "boom";
-import Joi from "joi";
+import Joi from "@hapi/joi";
 import responseMessages from "../resources/response.json";
 
 const validateRequestPayload = async (requestObj, res, schema) => {
   return new Promise((resolve, reject) => {
     const { error } = Joi.validate(requestObj, schema);
     if (error) {
-      console.log("validate",error)
       let message = sendBadRequestError(error, res);
       reject(Boom.badRequest(message));
     } else {
