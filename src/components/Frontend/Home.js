@@ -4,6 +4,7 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 
 import {Link} from 'react-router-dom'
+import Footer from './Footer';
 const Home = () => {
   
    // const [expertcarousel,setexpertcarousel]=useState(null);
@@ -403,7 +404,7 @@ const Home = () => {
                          the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley
                          of type and scrambled it to make a
                       </p>
-                      <button className="btn" type="button">View all Premium Expert</button>
+                      <button className="btn text-dark" type="button" ><Link to="/premiumexpert" class="text-dark" >View all Premium Expert</Link></button>
                    </div>
                 </div>
              </div>
@@ -532,85 +533,7 @@ const Home = () => {
           </div>
        </div>
     </section>
-    <footer className="footer-wrp">
-       <div className="footer-print">
-          <img src="./assets/img/footer-print.png" className="img img-fluid" alt=""/>
-       </div>
-       <div className="container">
-          <div className="row">
-             <div className="col-lg col-sm col-6">
-                <div className="footer-link-list">
-                   <h3>Website</h3>
-                   <ul>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                   </ul>
-                </div>
-             </div>
-             <div className="col-lg col-sm col-6">
-                <div className="footer-link-list">
-                   <h3>Website</h3>
-                   <ul>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                   </ul>
-                </div>
-             </div>
-             <div className="col-lg col-sm col-6">
-                <div className="footer-link-list">
-                   <h3>Website</h3>
-                   <ul>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                   </ul>
-                </div>
-             </div>
-             <div className="col-lg col-sm col-6">
-                <div className="footer-link-list">
-                   <h3>Website</h3>
-                   <ul>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                   </ul>
-                </div>
-             </div>
-             <div className="col-lg col-sm col-6">
-                <div className="footer-link-list">
-                   <h3>Website</h3>
-                   <ul>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                      <li><Link to="javascript:;">Link</Link></li>
-                   </ul>
-                </div>
-             </div>
-          </div>
-          <div className="footer-bottom">
-             <div className="row">
-                <div className="col-lg-12">
-                   <div className="text-center">
-                      <p>Terms of service and Privacy Policy <Link to="javascript:;">@Borhan</Link></p>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
-    </footer>
+    <Footer/>
     
 </>
 

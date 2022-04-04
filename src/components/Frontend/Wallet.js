@@ -1,6 +1,16 @@
-import React from 'react'
+import {React,useEffect} from 'react'
 import Sidebar from './Sidebaruser'
+import { useNavigate } from 'react-router-dom';
 const Wallet = () => {
+   const history=useNavigate();
+   useEffect(() => {
+      if(localStorage.getItem('token'))
+      {
+      }
+      else{
+       history('/')
+      }
+   }, [])
   return (
     <>
     <section className="admin-wrapper">

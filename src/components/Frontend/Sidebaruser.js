@@ -24,8 +24,8 @@ const Sidebar = () => {
                      alt="" /> Wallet</Link></li>
                   <li className=""><Link to="javascript:;" className=""><img src="./assets/img/saved-cards-icon.png" className="img img-fluid"
                      alt="" /> Saved cards</Link></li>
-                     <li className={`${location.pathname==='/favexperts'?'active':''}`}><Link to="/favexperts" className=""><img src="./assets/img/favorite-icon.png" className="img img-fluid"
-                        alt="" /> Favorite experts</Link></li>
+                     <li className={`${location.pathname==='/managemembership'?'active':''}`}><Link to="/managemembership" className=""><img src="./assets/img/vuesax-linear-chart-white.png" className="img img-fluid"
+                        alt="" /> Manage Membership</Link></li>
                   <li className=""><Link to="/" className=""><img src="./assets/img/logout-icon.png" className="img img-fluid"
                      alt="" /> Logout</Link></li>
                </ul>

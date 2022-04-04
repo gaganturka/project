@@ -1,9 +1,17 @@
-import React from 'react'
+import {React,useEffect} from 'react'
 
-import {Link} from 'react-router-dom'
+import {Link,useNavigate} from 'react-router-dom'
 import Sidebar from './Sidebaruser';
 const FavExp =()=>{
-
+   const history=useNavigate();
+   useEffect(() => {
+      if(localStorage.getItem('token'))
+      {
+      }
+      else{
+       history('/')
+      }
+   }, [])
     return(
         <>
               <section className="admin-wrapper">

@@ -1,10 +1,35 @@
-import React from 'react'
+import {React,useState,useEffect} from 'react'
 import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 
 import {Link} from 'react-router-dom'
+import Footer from './Footer';
 const ExpListing = () => {
+   const [getCategories,setGetCategories]=useState([]);
+   const [dummy,setDummy]=useState(false);
+
+   const fetchAllCategories = async () => {
+      const response = await fetch(
+        `http://localhost:5000/admin/getCategoriesData`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      );
+      const jsonnn = await response.json();
+      console.log("satyamtomar", jsonnn);
+    setGetCategories(jsonnn.data);
+    setDummy(true)
+      console.log("llllllllllll", getCategories);
+    };
+    useEffect(() => {
+      fetchAllCategories();
+    }, [])
+    
   return (
    <>
         
@@ -112,16 +137,28 @@ const ExpListing = () => {
                       items: 5,
                     },
                   }}
-                ><div className="item">
+                >
+                {console.log(getCategories,"ashishsirissayinggodblessyouall")}
+                {
+
+                   getCategories.length &&
+                            getCategories.map((obj, index) => {
+                              return (
+                                 <div className="item" key={index}>
                         <div className="pratice-area-box">
                            <div>
-                              <img src="./assets/img/pratice-area-thumb.png" className="img img-fluid" alt=""/>
-                           </div>
+                           <img src={`http://localhost:5000/public/images/${obj.url.original}`} className="img img-fluid" alt=""/>
+                        </div>
                            <div>
-                              <h4>Banking Related service</h4>
+                              <h4>{obj.name}  </h4>
                            </div>
                         </div>
-                     </div></OwlCarousel>
+                     </div>
+                              );
+                            })}
+                
+                
+               </OwlCarousel>
                     
                   {/* <div className="owl-carousel owl-theme pratice-area-owl">
                      <div className="item">
@@ -617,85 +654,7 @@ const ExpListing = () => {
             </div>
          </div>
       </section>
-      <footer className="footer-wrp">
-         <div className="footer-print">
-            <img src="./assets/img/footer-print.png" className="img img-fluid" alt=""/>
-         </div>
-         <div className="container">
-            <div className="row">
-               <div className="col-lg col-sm col-6">
-                  <div className="footer-link-list">
-                     <h3>Website</h3>
-                     <ul>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                     </ul>
-                  </div>
-               </div>
-               <div className="col-lg col-sm col-6">
-                  <div className="footer-link-list">
-                     <h3>Website</h3>
-                     <ul>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                     </ul>
-                  </div>
-               </div>
-               <div className="col-lg col-sm col-6">
-                  <div className="footer-link-list">
-                     <h3>Website</h3>
-                     <ul>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                     </ul>
-                  </div>
-               </div>
-               <div className="col-lg col-sm col-6">
-                  <div className="footer-link-list">
-                     <h3>Website</h3>
-                     <ul>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                     </ul>
-                  </div>
-               </div>
-               <div className="col-lg col-sm col-6">
-                  <div className="footer-link-list">
-                     <h3>Website</h3>
-                     <ul>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                     </ul>
-                  </div>
-               </div>
-            </div>
-            <div className="footer-bottom">
-               <div className="row">
-                  <div className="col-lg-12">
-                     <div className="text-center">
-                        <p>Terms of service and Privacy Policy <Link to="javascript:;">@Borhan</Link></p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </footer>
+      <Footer/>
 
    </>
   )

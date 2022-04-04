@@ -1,10 +1,19 @@
-import {React,useState} from 'react'
+import {React,useState,useEffect} from 'react'
 import { Modal, ModalBody, ModalFooter, } from "reactstrap";
-import {Link} from 'react-router-dom'
+import {Link,useNavigate} from 'react-router-dom'
 import Sidebar from './Sidebaruser'
 
 const AppointmentDetails = () => {
    const [reschedulemodal,setreschedulemodal]=useState(false);
+   const history=useNavigate();
+   useEffect(() => {
+      if(localStorage.getItem('token'))
+      {
+      }
+      else{
+       history('/')
+      }
+   }, [])
   return (
      
     <>
@@ -642,7 +651,7 @@ const AppointmentDetails = () => {
                                              <td>
                                                 <div className="table-btn-group">
                                                        <button className="btn" type="button">Cancel</button>
-                                                   <button type="button" className="btn" type="button" value="Reschedule" onClick={()=>{setreschedulemodal(true)}}>Reschedule
+                                                   <button type="button" className="btn"  value="Reschedule" onClick={()=>{setreschedulemodal(true)}}>Reschedule
                                                    {reschedulemodal?<Modal isOpen={reschedulemodal}
                                                    toggle={()=>{setreschedulemodal(false)}}
                                                          className="authentication-modal modal-dialog modal-dialog-centered modal-xl"

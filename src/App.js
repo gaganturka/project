@@ -11,6 +11,10 @@ import Terms from './components/Frontend/Terms';
 import Privacy from './components/Frontend/Privacy';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from './components/Frontend/Header';
+import Membership from './components/Frontend/Membership';
+import ContactUs from './components/Frontend/ContactUs';
+import PremiumExpert from './components/Frontend/PremiumExpert';
+import ManageMembership from './components/Frontend/ManageMembership';
 function App() {
   return (
     <>
@@ -33,6 +37,10 @@ function App() {
               <Route  path="/wallet" key="wallet" element={<Wallet/>}/>
               <Route  path="/userdashboard" key="userdashboard" element={<UserDashBoard/>}/>
               <Route  path="/favexperts" key="favexperts" element={<FavExp/>}/>
+               <Route  path="/membership" key="membership" element={<Membership/>}/>
+               <Route  path="/contactus" key="contactus" element={<ContactUs/>}/>
+               <Route  path="/premiumexpert" key="premiumexpert" element={<PremiumExpert/>}/>
+               <Route  path="/managemembership" key="managemembership" element={<ManageMembership/>}/>
 
               </Routes>
           </Router>

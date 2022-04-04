@@ -1,6 +1,7 @@
 import React from 'react'
 
 import {Link} from 'react-router-dom'
+import Footer from './Footer'
 const Privacy = () => {
   return (
       <>
@@ -91,85 +92,7 @@ const Privacy = () => {
             </div>
          </div>
       </section>
-      <footer className="footer-wrp">
-         <div className="footer-print">
-            <img src="./assets/img/footer-print.png" className="img img-fluid" alt=""/>
-         </div>
-         <div className="container">
-            <div className="row">
-               <div className="col-lg col-sm col-6">
-                  <div className="footer-link-list">
-                     <h3>Website</h3>
-                     <ul>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                     </ul>
-                  </div>
-               </div>
-               <div className="col-lg col-sm col-6">
-                  <div className="footer-link-list">
-                     <h3>Website</h3>
-                     <ul>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                     </ul>
-                  </div>
-               </div>
-               <div className="col-lg col-sm col-6">
-                  <div className="footer-link-list">
-                     <h3>Website</h3>
-                     <ul>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                     </ul>
-                  </div>
-               </div>
-               <div className="col-lg col-sm col-6">
-                  <div className="footer-link-list">
-                     <h3>Website</h3>
-                     <ul>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                     </ul>
-                  </div>
-               </div>
-               <div className="col-lg col-sm col-6">
-                  <div className="footer-link-list">
-                     <h3>Website</h3>
-                     <ul>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                        <li><Link to="javascript:;">Link</Link></li>
-                     </ul>
-                  </div>
-               </div>
-            </div>
-            <div className="footer-bottom">
-               <div className="row">
-                  <div className="col-lg-12">
-                     <div className="text-center">
-                        <p>Terms of service and Privacy Policy <Link to="javascript:;">@Borhan</Link></p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </footer>
+      <Footer/>
      
       </>
   )

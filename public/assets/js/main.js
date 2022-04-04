@@ -105,7 +105,7 @@ $('.client-feature-owl').owlCarousel({
 });
 
 //practice Area owl-careousal js start
-document.getElementByClassName("owl-nav").disabled=false
+
 $('.pratice-area-owl').owlCarousel({
 	loop: false,
 	margin: 30,
