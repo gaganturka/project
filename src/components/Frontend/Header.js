@@ -2,8 +2,8 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Modal, ModalBody } from "reactstrap";
-import superagent from "superagent";
-
+import loginAction from "../../actions/login.action";
+import categoriesAction from "../../actions/categories.action";
 import axios from "axios";
 const Header = () => {
   let location = useLocation();
@@ -63,35 +63,27 @@ const Header = () => {
     setmodalstateno(1);
   };
   const fetchAllCategories = async () => {
-    const response = await fetch(
-      `http://localhost:5000/admin/getCategoriesData`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
+
+    categoriesAction.fetchAllCategories((err,res)=>{
+      if(err){
+        console.log(err,"helllooo")
+      }else{
+        setGetCategories(res.data);
+        console.log(res.data,"ayush daata ");
       }
-    );
-    const jsonnn = await response.json();
-    console.log("satyamtomar", jsonnn);
-    setGetCategories(jsonnn.data);
-    console.log("sdflkjsdfkjlda", getCategories);
+    });
+    
   };
   const fetchAllPracticeArea = async () => {
-    const response = await fetch(
-      `http://localhost:5000/admin/getPracticeAreaData`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
+    categoriesAction.fetchAllPracticeArea((err,res)=>{
+      if(err){
+
+      }else{
+        console.log(res.data,"ayush daata ");
+        setGetPracticeArea(res.data);
       }
-    );
-    const jsonnn = await response.json();
-    console.log(jsonnn);
-    setGetPracticeArea(jsonnn.data);
+    });
+   
   };
   useEffect(() => {
     fetchAllCategories();
@@ -99,8 +91,6 @@ const Header = () => {
   }, []);
 
   const onSubmitCreateUser = async (e) => {
-    console.log("this is method ");
-
     // e.preventDefault();
     const { firstName, lastName, email, mobileNo, profilePic, otp } =
       usercredential;
@@ -151,7 +141,6 @@ const Header = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: JSON.stringify({
         firstName,
@@ -167,16 +156,6 @@ const Header = () => {
       localStorage.setItem("token", json.data);
       history("/userdashboard");
     }
-    console.log(json);
-    // if (json.success) {
-    //   //save the auth token and redirect it
-    //   localStorage.setItem("token", json.authtoken);
-    //   history("/");
-    //   props.showAlert("Account successfully created", "success");
-    // } else {
-    // props.showAlert("Invalid details", "danger");
-    // }
-    // };
   };
   const onSubmitCreateExpert = async () => {
     const {
@@ -216,60 +195,48 @@ const Header = () => {
     //      //   this.setState({  });
     //    }
     //  })
-    const response = await fetch(
-      "http://localhost:5000/admin/createexpertuser",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          mobileNo,
-          profilePic: getProfilePic,
-          document: getDocument,
-          category: selectedCategory,
-          practiceArea: selectedPracticeArea,
-          bio,
-          audioFilePath: getAudioFilePath,
-          videoFilePath: getVideoFilePath,
-          accountType: accountType,
-          otp,
-        }),
+    let dataToSend={
+      firstName,
+      lastName,
+      email,
+      mobileNo,
+      profilePic: getProfilePic,
+      document: getDocument,
+      category: selectedCategory,
+      practiceArea: selectedPracticeArea,
+      bio,
+      audioFilePath: getAudioFilePath,
+      videoFilePath: getVideoFilePath,
+      accountType: accountType,
+      otp,
+    };
+
+    let response ;
+    loginAction.CreateExpert(dataToSend,(err,res)=>{
+      if(err){
+        console.log(err,"here is error");
+      }else{
+        response=res;
       }
-    );
-    const json = await response.json();
-    if (json.statusCode === 200) {
-      localStorage.setItem("token", json.data);
+    })
+    if (response.statusCode === 200) {
+      localStorage.setItem("token", response.data);
       history("/userdashboard");
     }
-    console.log(json);
-    // if (json.success) {
-    //save the auth token and redirect it
-    //   localStorage.setItem("token", json.authtoken);
-    //   history("/");
-    //   props.showAlert("Account successfully created", "success");
-    // } else {
-    //   props.showAlert("Invalid details", "danger");
-    // }
-    // };
   };
   const onSubmitLogin = async () => {
-    const response = await fetch("http://localhost:5000/admin/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: JSON.stringify({
-        mobileNo: logincredential.mobileNo,
-        otp: logincredential.otp,
-      }),
-    });
-    const json = await response.json();
+    let dataToSend={
+      mobileNo: logincredential.mobileNo,
+      otp: logincredential.otp,
+    };
+    let json; 
+    loginAction.onLogin(dataToSend,(err,res)=>{
+      if(err){
+      console.log(err);
+      }else{
+        json=res;
+      }
+    })
 
     if (json.statusCode === 200) {
       localStorage.setItem("token", json.data);
@@ -329,7 +296,7 @@ const Header = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
+      
       },
       body: JSON.stringify({
         mobileNo: expertcredential.mobileNo,
@@ -342,7 +309,6 @@ const Header = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: JSON.stringify({
         mobileNo: usercredential.mobileNo,
@@ -357,7 +323,7 @@ const Header = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // 'Content-Type': 'application/x-www-form-urlencoded',
+        
         },
         body: JSON.stringify({
           mobileNo: logincredential.mobileNo,
