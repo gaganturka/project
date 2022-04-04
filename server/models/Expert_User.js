@@ -4,7 +4,8 @@ const APP_CONSTANTS = require("../appConstants");
 
 const ExpertUserSchema = new Schema({
   isSubscribed: {
-    type: boolean,
+    type: Boolean,
+    default:false,
   },
   category: {
     type: Schema.Types.ObjectId,
@@ -25,7 +26,7 @@ const ExpertUserSchema = new Schema({
   videoFilePath: {
     type: String,
   },
-  iApprovedByAdmin: {
+  isApprovedByAdmin: {
     type: Boolean,
     required: true,
     default: false,
@@ -37,20 +38,23 @@ const ExpertUserSchema = new Schema({
       APP_CONSTANTS.activityStatus.busy,
       APP_CONSTANTS.activityStatus.unavailable,
     ],
+    default:APP_CONSTANTS.activityStatus.active,
   },
-  documents: [
+  document: [
     {
-      filename: String,
-      filetype: String,
+      fileName: String,
+      fileType: String,
       link: String,
       mimeType: String,
     },
   ],
   bankName: {
     type: String,
+    default:"",
   },
   bankAccountNo: {
     type: String,
+    default:"",
   },
   userId: {
     type: Schema.Types.ObjectId,
@@ -70,12 +74,15 @@ const ExpertUserSchema = new Schema({
   },
   experience: {
     type: Number,
+    default:0,
   },
   noOfHoursSessionDone: {
     type: Number,
+    default:0,
   },
   noOfViews: {
     type: Number,
+    default:0,
   },
   availableForVideo: {
     type: Boolean,
@@ -91,4 +98,4 @@ const ExpertUserSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("expertborhanuser", ExpertUserSchema);
+module.exports = mongoose.model("expert", ExpertUserSchema);

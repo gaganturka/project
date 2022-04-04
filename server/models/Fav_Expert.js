@@ -2,28 +2,22 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const FavExpertSchema = new Schema({
-
-  borhanUserId:{
-      type:Schema.Types.ObjectId,
-      ref:"borhanuser",
-  }
-  ,
-  userId:{
-      type:Schema.Types.ObjectId,
-      ref:"user",
+  borhanUserId: {
+    type: Schema.Types.ObjectId,
+    ref: "borhanuser",
   },
-  expertUserId:{
-      type:Schema.Types.ObjectId,
-      ref:"expertborhanuser",
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
   },
-  expertId:{
-      type:Schema.Types.ObjectId,
-      ref:"user",
-  }
-
-
-    
+  expertUserId: {
+    type: Schema.Types.ObjectId,
+    ref: "expertborhanuser",
+  },
+  expertId: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
+  },
 });
-
 
 module.exports = mongoose.model("favexpert", FavExpertSchema);

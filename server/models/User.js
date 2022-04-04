@@ -27,6 +27,10 @@ const UserSchema = new Schema({
   isEmailVerified: {
     type: Boolean,
   },
+  otp: {
+    type: String,
+  },
+  password: { type: String, default: "" },
   role: {
     type: String,
     enum: [

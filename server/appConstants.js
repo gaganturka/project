@@ -2,8 +2,8 @@
 
 const role={
 
-    admin:"adminborhanuser",
-    expert:"expertborhanuser",
+    admin:"admin",
+    expert:"expert",
     borhanuser:"borhanuser",
 
 }

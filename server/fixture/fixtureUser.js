@@ -14,11 +14,12 @@ module.exports={
                 const newUser = await User.create({
                     firstName:"Monu",
                     lastName:"Saini",
-                    email:"monu@seraphic.io",
+                    email:"monu@gmail.com",
                     mobileNo:"1234567890",
                     profilePic:"1647416417333.png",
                     isEmailVerified:true,
-                    role:"adminborhanuser",
+                    role:"admin",
+                    password:"satyamtomar@123",
                     userData:{
                         model:APP_CONSTANTS.role.admin,
                         data: adminid._id
