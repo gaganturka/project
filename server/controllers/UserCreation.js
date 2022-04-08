@@ -22,7 +22,11 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let refId = (Math.floor(100000 + Math.random() * 900000)) + "";
-       
+       const otpexists=await otpModel.findOne({mobileNo:req.body.mobileNo})
+       if(otpexists)
+       {
+        throw Boom.badRequest("User already exists please try login in")
+       }
         await otpModel.create({otp:refId,mobileNo:req.body.mobileNo})
         console.log("generated otp is   ", refId);
         universalFunctions.sendSuccess(
@@ -76,8 +80,8 @@ module.exports = {
           tlds: { allow: ["com", "net"] },
         }),
         mobileNo: Joi.string().min(10).max(10).required(),
-        profilePic:Joi.string(),
-        otp:Joi.string()
+        profilePic:Joi.string().allow(""),
+        otp:Joi.string(),
         
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
@@ -118,7 +122,7 @@ module.exports = {
         }
       }
       let otpmodel= await otpModel.findOne({mobileNo:req.body.mobileNo})
-      console.log(otpmodel.otp,"adsfakweni   ",req.body.otp);
+      // console.log(otpmodel?.otp,"adsfakweni   ",req.body.otp);
       console.log("phond numbder   ",req.body.mobileNo);
       if((req.body.otp!==otpmodel.otp)){
         throw Boom.badRequest(responseMessages.INVALID_OTP);
@@ -188,7 +192,7 @@ module.exports = {
         }),
         bankName: Joi.string(),
         accountType: Joi.string(),
-        otp:Joi.string()
+        otp:Joi.string(),
 
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
@@ -311,9 +315,6 @@ module.exports = {
         otp:Joi.string()
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      // const result=await schema.validateAsync(req.body);
-      // console.log(req.body,"hello",req.file);
-      // let success = false;
 
       // checks whether the mobileno has already been created
       
@@ -374,10 +375,8 @@ module.exports = {
 
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      // const result=await schema.validateAsync(req.body);
       // console.log(req.body,"hello",req.file);
-      // let success = false;
-
+      
       // checks whether the mobileno has already been created
 
       let user = await User.findOne({ email: req.body.email });
@@ -439,9 +438,6 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-      // const result=await schema.validateAsync(req.body);
-      // console.log(req.body,"hello",req.file);
-      // let success = false;
 
       // checks whether the mobileno has already been created
 

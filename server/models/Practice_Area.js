@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const CategoriesSchema = new Schema({
+const PracticeAreaSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -15,6 +15,13 @@ const CategoriesSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "categories",
   },
+  createdAt:{
+    type:Date,
+    default: new Date(),
+  },
+  createdBy:{
+    type:String,
+  }
 });
 
-module.exports = mongoose.model("practicearea", CategoriesSchema);
+module.exports = mongoose.model("practicearea", PracticeAreaSchema);
