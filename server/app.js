@@ -1,7 +1,7 @@
 const connectToMongo = require("./db");
 const express = require("express");
 var cors = require('cors');
-const { AUTH_ROUTES, AdminRoutes,ShowUser } = require("./routes");
+const { AUTH_ROUTES, AdminRoutes } = require("./routes");
 
 // require("./")
 const router = express.Router();
@@ -18,7 +18,6 @@ app.use(express.json());
 
 app.use("/admin", AUTH_ROUTES);
 app.use("/admin", AdminRoutes);
-app.use("/admin", ShowUser);
 
 app.get("/", (req, res) => {
   res.send("Hello Satyam");

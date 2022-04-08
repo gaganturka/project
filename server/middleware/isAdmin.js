@@ -35,7 +35,7 @@ module.exports=
             next();
         }
         else{
-        throw Boom.badRequest('invalid credentials')
+        throw Boom.badRequest('invalid credentials of admin')
         }
            
     }
