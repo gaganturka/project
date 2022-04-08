@@ -4,7 +4,7 @@ import responseMessages from "../resources/response.json";
 
 const Boom =require( "boom");
 import universalFunctions from '../utils/universalFunctions'
-import Config from "config";
+// import Config from "config";
 
 let upload = multer({
     storage: multer.diskStorage({

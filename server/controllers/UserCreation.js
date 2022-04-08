@@ -21,9 +21,25 @@ module.exports = {
 
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
+
       let refId = (Math.floor(100000 + Math.random() * 900000)) + "";
        
+      let user =await otpModel.findOne({mobileNo:req.body.mobileNo});
+      console.log(user);
+      
+      if(user){
+        user.mobileNo=refId;
+        await user.save();
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "otp is generated",
+          },
+          res
+        );
+      }
         await otpModel.create({otp:refId,mobileNo:req.body.mobileNo})
+
         console.log("generated otp is   ", refId);
         universalFunctions.sendSuccess(
           {
@@ -250,6 +266,7 @@ module.exports = {
       console.log('######################################################');
       console.log(req.body.document,"adklgjnaeionianeiondiarrrrrrrrrr");
             const otpmodel=await otpModel.findOne({ mobileNo: req.body.mobileNo});
+            console.log(otpmodel,"hbhbhhbhbhbhbhbbbbbbbbbbbbbbbbbbbbbbbb")
           if(otpmodel.otp!==req.body.otp)
           {
             throw Boom.badRequest(responseMessages.INVALID_OTP);
