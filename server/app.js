@@ -1,6 +1,6 @@
 const connectToMongo = require("./db");
 const express = require("express");
-var cors = require('cors');
+var cors = require("cors");
 const { AUTH_ROUTES, AdminRoutes } = require("./routes");
 
 // require("./")
@@ -10,7 +10,7 @@ connectToMongo();
 //  router.use(express.static(__dirname, './public/'));
 const app = express();
 const port = process.env.PORT || 5000;
- app.use("/public", express.static("public"));
+app.use("/public", express.static("public"));
 app.use(cors());
 
 app.use(express.json());
@@ -24,8 +24,8 @@ app.get("/", (req, res) => {
 });
 
 //fixture user
- const {fixture}= require("./fixture/fixtureUser");
-  fixture()
+const { fixture } = require("./fixture/fixtureUser");
+fixture();
 app.listen(port, () => {
   console.log(`Bohanbackend listening at http://localhost:${port}`);
 });

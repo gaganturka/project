@@ -5,7 +5,7 @@ const APP_CONSTANTS = require("../appConstants");
 const ExpertUserSchema = new Schema({
   isSubscribed: {
     type: Boolean,
-    default:false,
+    default: false,
   },
   category: {
     type: Schema.Types.ObjectId,
@@ -38,7 +38,7 @@ const ExpertUserSchema = new Schema({
       APP_CONSTANTS.activityStatus.busy,
       APP_CONSTANTS.activityStatus.unavailable,
     ],
-    default:APP_CONSTANTS.activityStatus.active,
+    default: APP_CONSTANTS.activityStatus.active,
   },
   document: [
     {
@@ -50,11 +50,11 @@ const ExpertUserSchema = new Schema({
   ],
   bankName: {
     type: String,
-    default:"",
+    default: "",
   },
   bankAccountNo: {
     type: String,
-    default:"",
+    default: "",
   },
   userId: {
     type: Schema.Types.ObjectId,
@@ -70,19 +70,19 @@ const ExpertUserSchema = new Schema({
   rating: {
     noOfRating: Number,
     ratingCount: Number,
-    avgRating:Number,
+    avgRating: Number,
   },
   experience: {
     type: Number,
-    default:0,
+    default: 0,
   },
   noOfHoursSessionDone: {
     type: Number,
-    default:0,
+    default: 0,
   },
   noOfViews: {
     type: Number,
-    default:0,
+    default: 0,
   },
   availableForVideo: {
     type: Boolean,
