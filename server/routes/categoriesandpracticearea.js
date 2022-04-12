@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const isAdmin = require("../middleware/isAdmin");
 const categorieController = require("../controllers/CategoriesAndPracticeArea");
-const AdminController = require("../controllers/AdminController");
 
 router
   .route("/addCategories")
@@ -32,47 +31,11 @@ router
 router
   .route("/getPracticeAreaDataPopulated")
   .get(categorieController.getPracticeAreaDataPopulated);
-
-router
-  .route("/getExpertApprovedByAdmin/:_id")
-  .get(isAdmin.isAdmin, AdminController.getExpertApprovedByAdmin);
-router
-  .route("/getExpertRejectedByAdmin/:_id")
-  .get(isAdmin.isAdmin, AdminController.getExpertRejectedByAdmin);
-router.route("/getExperts").post(isAdmin.isAdmin, AdminController.showExperts);
-router
-  .route("/getExpertsAccountTypeExpert")
-  .post(isAdmin.isAdmin, AdminController.showExpertsAccountTypeExpert);
-router
-  .route("/getExpertsAccountTypeFreelancer")
-  .post(isAdmin.isAdmin, AdminController.showExpertsAccountTypeFreelancer);
-
-router
-  .route("/getExpertsRequests")
-  .post(isAdmin.isAdmin, AdminController.showExpertsRequests);
-router
-  .route("/getExpertDetails/:id")
-  .get(isAdmin.isAdmin, AdminController.showExpertDetails);
-router
-  .route("/editExpertByAdmin/:id")
-  .put(isAdmin.isAdmin, AdminController.editExpertByAdmin);
-router
-  .route("/deleteExpertByAdmin/:_id")
-  .delete(isAdmin.isAdmin, AdminController.deleteExpertByAdmin);
 router
   .route("/getPracticeAreaDetails/:id")
   .get(isAdmin.isAdmin, categorieController.getPracticeAreaDetails);
 router
   .route("/getCategoryDetails/:id")
   .get(isAdmin.isAdmin, categorieController.getCategoryDetails);
-router
-  .route("/getBorhanUsers")
-  .post(isAdmin.isAdmin, AdminController.showBorhanUsers);
-router
-  .route("/deleteBorhanUserByAdmin/:_id")
-  .delete(isAdmin.isAdmin, AdminController.deleteBorhanUserByAdmin);
-router
-  .route("/getUserDetails")
-  .post(isAdmin.isAdmin, AdminController.getUserDetails);
 
 module.exports = router;

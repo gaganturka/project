@@ -1,7 +1,13 @@
 const connectToMongo = require("./db");
 const express = require("express");
 var cors = require("cors");
-const { AUTH_ROUTES, AdminRoutes } = require("./routes");
+const {
+  AUTH_ROUTES,
+  CategoryRoutes,
+  HomeWebsiteRoutes,
+  ExpertAdminRoutes,
+  BorhanUserAdminRoutes,
+} = require("./routes");
 
 // require("./")
 const router = express.Router();
@@ -17,8 +23,10 @@ app.use(express.json());
 //routes available
 
 app.use("/admin", AUTH_ROUTES);
-app.use("/admin", AdminRoutes);
-
+app.use("/admin", CategoryRoutes);
+app.use("/website",HomeWebsiteRoutes);
+app.use("/admin",ExpertAdminRoutes);
+app.use("/admin",BorhanUserAdminRoutes)
 app.get("/", (req, res) => {
   res.send("Hello Satyam");
 });

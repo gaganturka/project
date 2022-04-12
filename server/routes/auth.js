@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const userCreation = require("../controllers/UserCreation.js");
+const userCreation = require("../controllers/Auth.js");
 const isAdmin = require("../middleware/isAdmin");
 const Upload = require("../controllers/Upload");
 router.route("/createborhanuser").post(userCreation.createBorhanUser);
