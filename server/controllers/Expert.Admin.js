@@ -4,10 +4,10 @@ const expertUser = require("../models/Expert_User");
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const jwtsecret = "satyamtomar";
 const Joi = require("@hapi/joi");
 const APP_CONSTANTS = require("../appConstants");
 import responseMessages from "../resources/response.json";
+const { Config } = require("../config");
 
 const Boom = require("boom");
 import universalFunctions from "../utils/universalFunctions";
@@ -60,31 +60,92 @@ module.exports = {
       let filter = {
         isApprovedByAdmin: true,
       };
-      console.log("searchhhhi", req.body.search, "search mai kya hai");
+      // console.log("searchhhhi", req.body.search, "search mai kya hai");
       if (req.body.search) {
         filter["$or"] = [
-          {"userId.firstName": { $regex: req.body.search, $options: "i" } },
-          { 
-            "userId.email": { $regex: req.body.search, $options: "i" } },
+          { "userId.firstName": { $regex: req.body.search, $options: "i" } },
+          {
+            "userId.email": { $regex: req.body.search, $options: "i" },
+          },
         ];
       }
-      const expertuser = await expertUser
-        .find(filter)
+      //   const expert=await expertUser.aggregate([
+
+      //   //   {
+      //   //   $project: {
+      //   //     userId: 1,
+      //   //   },
+      //   // },
+      //   {
+      //     $match:{
+      //       isApprovedByAdmin: true,
+      //     },
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: "users",
+      //       localField: "userId",
+      //       foreignField: "_id",
+
+      //       as:"userId",
+
+      //     },
+
+      //   },
+      //   {
+      //     $unwind:"$userId"
+      //   },
+
+      //  { $filter:{
+      //     input:"$userId",
+      //     as:"userId",
+      //     cond:{
+      //        firstName: { $regex: req.query.text, $options: "i" } ,
+      //        email: { $regex: req.query.text, $options: "i" } ,
+
+      //     }
+
+      //   }
+      // },
+      //   {
+      //     $lookup: {
+      //       from: "categories",
+      //       localField: "category",
+      //       foreignField: "_id",
+      //       as:"category",
+      //     },
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: "practiceareas",
+      //       localField: "practiceArea",
+      //       foreignField: "_id",
+      //       as:"practiceArea",
+      //     },
+
+      //   },
+      //   // { $sort: { dayOfMonth: 1 } },
+      // ])
+
+      //  console.log(expert)
+
+      const expert = await expertUser
+        .find({ isApprovedByAdmin: true })
         .populate("userId")
         .populate("practiceArea")
         .populate("category")
         .skip(parseInt((page - 1) * limit))
         .limit(parseInt(limit));
-      if (!expertuser) {
+      if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
-      // console.log("expertrequest",expertuser,"expertrequests")
+      console.log("expertrequest", expert, "expertrequests");
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "All experts requests are",
           data: {
-            list: expertuser,
+            list: expert,
             count: await expertUser.find().countDocuments(),
           },
         },
@@ -350,50 +411,5 @@ module.exports = {
       res
     );
   },
-  showBorhanUsers: async (req, res) => {
-    try {
-      const schema = Joi.object({
-        limit: Joi.number(),
-        page: Joi.number(),
-        search: Joi.string().allow(""),
-      });
-      await universalFunctions.validateRequestPayload(req.body, res, schema);
-
-      let page = req.body.page;
-      let limit = req.body.limit;
-      // let filter = {
-      //   isApprovedByAdmin: true,
-      // };
-      // console.log("searchhhhi", req.body.search, "search mai kya hai");
-      // if (req.body.search) {
-      //   filter["$or"] = [
-      //     {"userId.firstName": { $regex: req.body.search, $options: "i" } },
-      //     { 
-      //       "userId.email": { $regex: req.body.search, $options: "i" } },
-      //   ];
-      // }
-      const user = await User
-        .find({role:APP_CONSTANTS.role.borhanuser})
-        .populate("userData.data")
-        .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
-      if (user===null) {
-        throw Boom.badRequest("cannot find any user");
-      }
-      console.log("userrrr",user,"useerrrrr")
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "All users are",
-          data: {
-            list: user,
-            count: await User.find({role:APP_CONSTANTS.role.borhanuser}).countDocuments(),
-          },
-        },
-        res
-      );
-    } catch (error) {
-      universalFunctions.sendError(error, res);
-    }
-  },
+  
 };

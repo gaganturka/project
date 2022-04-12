@@ -21,6 +21,7 @@ const PracticeAreaSchema = new Schema({
   },
   createdBy:{
     type:String,
+    
   }
 });
 

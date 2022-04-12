@@ -11,14 +11,13 @@ const CategoriesSchema = new Schema({
     required: true,
   },
   url: { original: { type: String }, thumb: { type: String } },
-  createdAt:{
-    type:Date,
+  createdAt: {
+    type: Date,
     default: new Date(),
   },
-  createdBy:{
-    type:String,
-    
-  }
+  createdBy: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("categories", CategoriesSchema);

@@ -13,7 +13,10 @@ const AppointmentSchema = new Schema({
   },
   appointmentType: {
     type: String,
-    enum: [APP_CONSTANTS.appointmentType.audio,APP_CONSTANTS.appointmentType.video],
+    enum: [
+      APP_CONSTANTS.appointmentType.audio,
+      APP_CONSTANTS.appointmentType.video,
+    ],
   },
   duration: {
     type: Number,
@@ -24,8 +27,8 @@ const AppointmentSchema = new Schema({
   appointmentTime: {
     type: String,
   },
-  appointDateandTime:{
-      type:Date
+  appointDateandTime: {
+    type: Date,
   },
 
   status: {
