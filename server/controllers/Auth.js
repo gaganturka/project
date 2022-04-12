@@ -71,7 +71,7 @@ module.exports = {
         mobileNo: Joi.string().min(10).max(10).required(),
         profilePic: Joi.string().allow(""),
         otp: Joi.string()
-         .allow(""),
+        //  .allow(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       // const result=await schema.validateAsync(req.body);
@@ -112,9 +112,9 @@ module.exports = {
       let otpmodel = await otpModel.findOne({ mobileNo: req.body.mobileNo });
       // console.log(otpmodel?.otp,"adsfakweni   ",req.body.otp);
       console.log("phone numder   ", req.body.mobileNo);
-      // if (req.body.otp !== otpmodel.otp) {
-      //   throw Boom.badRequest(responseMessages.INVALID_OTP);
-      // }
+      if (req.body.otp !== otpmodel.otp) {
+        throw Boom.badRequest(responseMessages.INVALID_OTP);
+      }
       let borhanuser = await borhanUser.create({
         isSubscribed: false,
         balance: 0,
