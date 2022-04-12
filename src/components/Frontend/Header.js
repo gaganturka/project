@@ -1321,18 +1321,22 @@ const Header = () => {
                             <div className="auth-modal-content">
                               <div className="w-100">
                                 <div className="auth-profile-pic-wrp">
+                                  <div className="choose-profile-pic">
                                   <img
                                     src="./assets/img/profile-picture-icon.png"
-                                    className="img img-fluid"
+                                    onClick="hide-file()"
+                                    className="img img-fluid profile-picture"
                                     alt=""
                                   />
                                   <input
                                     name="profilePic"
+                                    className="hide-file"
                                     type="file"
                                     onChange={(e) => {
                                       uploadFilesUsingMulter(e, 1);
                                     }}
                                   />
+                                  </div>
                                   <h6>Profile Picture</h6>
                                 </div>
                                 <div className="auth-input-wrp">
@@ -1519,7 +1523,7 @@ const Header = () => {
                               <div className="w-100">
                                 <div className="auth-input-wrp">
                                   <div className="row">
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-6 mt-3">
                                       <label>Category</label>
                                       <select
                                         class="form-control"
@@ -1543,7 +1547,7 @@ const Header = () => {
                                           })}
                                       </select>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-6 mt-3">
                                       <label>Pratice Area</label>
                                       <select
                                         class="form-control"
@@ -1570,7 +1574,7 @@ const Header = () => {
                                           })}
                                       </select>
                                     </div>
-                                    <div className="col-lg-12">
+                                    <div className="col-lg-12 mt-3">
                                       <label for="">Bio</label>
                                       <input
                                         type="text"
@@ -1586,38 +1590,43 @@ const Header = () => {
                                         Optional )
                                       </label>
                                       <div className="record-buttons">
-                                        <button className="btn" type="button">
+                                        <div className="btn-audio">
+                                         <button className="btn" type="button">
                                           <img
                                             src="./assets/img/audio-record-icon.png"
                                             className="img img-fluid"
                                             alt=""
                                           />
-                                          <input
+                                      
+                                          Audio record
+                                        </button>
+                                        <input
                                             type="file"
                                             name="audio"
                                             onChange={(e) =>
                                               uploadFilesUsingMulter(e, 2)
                                             }
-                                            className="form-input-file"
-                                          />{" "}
-                                          Audio record
-                                        </button>
-                                        <button className="btn" type="button">
+                                            className="form-input-file audio-file"
+                                          />   {" "}
+                                       </div>
+                                       <div className="btn-video">
+                                       <button className="btn" type="button">
                                           <img
                                             src="./assets/img/video-record-icon.png"
                                             className="img img-fluid"
                                             alt=""
                                           />
-                                          <input
+                                        Video record
+                                        </button>
+                                        <input
                                             type="file"
                                             name="video"
                                             onChange={(e) =>
                                               uploadFilesUsingMulter(e, 3)
                                             }
-                                            className="form-input-file"
+                                            className="form-input-file video-file"
                                           />{" "}
-                                          Video record
-                                        </button>
+                                         </div> 
                                       </div>
                                     </div>
                                     <div className="col-lg-12 pt-2">
