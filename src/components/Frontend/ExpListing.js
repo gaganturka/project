@@ -2,6 +2,7 @@ import {React,useState,useEffect} from 'react'
 import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
+import config from '../../config/configg';
 
 import {Link} from 'react-router-dom'
 import Footer from './Footer';
@@ -11,7 +12,7 @@ const ExpListing = () => {
 
    const fetchAllCategories = async () => {
       const response = await fetch(
-        `http://localhost:5000/admin/getCategoriesData`,
+        `${config.BACKEND_URL}/admin/getCategoriesData`,
         {
           method: "GET",
           headers: {
@@ -147,7 +148,7 @@ const ExpListing = () => {
                                  <div className="item" key={index}>
                         <div className="pratice-area-box">
                            <div>
-                           <img src={`http://localhost:5000/public/images/${obj.url.original}`} className="img img-fluid" alt=""/>
+                           <img src={`${obj.url.original}`} className="img img-fluid" alt=""/>
                         </div>
                            <div>
                               <h4>{obj.name}  </h4>

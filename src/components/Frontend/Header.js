@@ -4,7 +4,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Modal, ModalBody } from "reactstrap";
 import loginAction from "../../actions/login.action";
 import categoriesAction from "../../actions/categories.action";
-import axios from "axios";
+import config from '../../config/configg';
+import axios from 'axios';
 const Header = () => {
   let location = useLocation();
   const history = useNavigate();
@@ -69,7 +70,7 @@ const Header = () => {
         console.log(err,"helllooo")
       }else{
         setGetCategories(res.data);
-        console.log(res.data,"ayush daata ");
+        console.log(res.data," daata ");
       }
     });
     
@@ -79,7 +80,7 @@ const Header = () => {
       if(err){
 
       }else{
-        console.log(res.data,"ayush daata ");
+        console.log(res.data," daata ");
         setGetPracticeArea(res.data);
       }
     });
@@ -90,7 +91,7 @@ const Header = () => {
     fetchAllPracticeArea();
   }, []);
 
-  const onSubmitCreateUser = async (e) => {
+  const onSubmitCreateBorhanUser = async (e) => {
     // e.preventDefault();
     const { firstName, lastName, email, mobileNo, profilePic, otp } =
       usercredential;
@@ -137,7 +138,7 @@ const Header = () => {
     //      //   this.setState({  });
     //    }
     //  })
-    const response = await fetch("http://localhost:5000/admin/createuser", {
+    const response = await fetch(`${config.BACKEND_URL}/admin/createborhanuser`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -173,28 +174,6 @@ const Header = () => {
       otp,
     } = expertcredential;
     console.log(expertcredential);
-    //   superagent
-    //  .post("http://localhost:5000/admin/createexpertuser")
-    //  .set("Authorization", "...")
-    //  .accept("application/json")
-    //  .field("firstName", firstName)
-    //  .field("lastName", lastName)
-    //  .field("mobileNo",mobileNo)
-    //  .field("email",email)
-    //  .field("document",document)
-    //  .field("profilePic",profilePic).field("category",selectedCategory)
-    //  .field("practiceArea",selectedPracticeArea).field("bio",bio)
-    //  .field("audioFilePath",audioFilePath).field("videoFilePath",videoFilePath)
-    //  .field("accountType",accountType)
-    // // .attach("file", files[0])
-    //  .then((result) => {
-    //    //  console.log(“result”, result.statusCode);
-    //    if (result.statusCode === 200) {
-
-    //     //  window.location.reload();
-    //      //   this.setState({  });
-    //    }
-    //  })
     let dataToSend={
       firstName,
       lastName,
@@ -212,17 +191,19 @@ const Header = () => {
     };
 
     let response ;
-    loginAction.CreateExpert(dataToSend,(err,res)=>{
+    await loginAction.CreateExpert(dataToSend,(err,res)=>{
       if(err){
         console.log(err,"here is error");
       }else{
         response=res;
+        console.log(response,'here is res ')
+        if (response.statusCode === 200) {
+          localStorage.setItem("token", response.data);
+          history("/userdashboard");
+        }
       }
     })
-    if (response.statusCode === 200) {
-      localStorage.setItem("token", response.data);
-      history("/userdashboard");
-    }
+   
   };
   const onSubmitLogin = async () => {
     let dataToSend={
@@ -235,13 +216,14 @@ const Header = () => {
       console.log(err);
       }else{
         json=res;
-      }
-    })
-
+        
     if (json.statusCode === 200) {
       localStorage.setItem("token", json.data);
       history("/userdashboard");
     }
+      }
+    })
+
   };
 
   const uploadFilesUsingMulter = async (e, i) => {
@@ -250,7 +232,7 @@ const Header = () => {
     formData.append("files", e.target.files[0]);
     const axiosRes = await axios({
       method: "post",
-      url: `http://localhost:5000/admin/uploadfile`,
+      url: `${config.BACKEND_URL}/admin/uploadfile`,
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -292,7 +274,7 @@ const Header = () => {
     // setTimeout(() =>{resetModal();},1000)
   };
   const generateOtpExpert = async () => {
-    const response = await fetch("http://localhost:5000/admin/generateotp", {
+    const response = await fetch(`${config.BACKEND_URL}/admin/generateotp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -305,7 +287,7 @@ const Header = () => {
     const json = await response.json();
   };
   const generateOtpUser = async () => {
-    const response = await fetch("http://localhost:5000/admin/generateotp", {
+    const response = await fetch(`${config.BACKEND_URL}/admin/generateotp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -318,7 +300,7 @@ const Header = () => {
   };
   const otpFinder = async () => {
     const response = await fetch(
-      "http://localhost:5000/admin/otpsendertofrontend",
+      `${config.BACKEND_URL}/admin/otpsendertofrontend`,
       {
         method: "POST",
         headers: {
@@ -341,6 +323,18 @@ const Header = () => {
     else{
       
     setProfileViewerModal(true);
+    }
+    
+  }
+  const bookAnAppoitmentHeaderViewer=()=>{
+    if(localStorage.getItem('token')!==null)
+    {
+      history("/expertlisting");
+      setopenmodal(false);
+    }
+    else{
+      
+    setopenmodal(true);
     }
     
   }
@@ -625,7 +619,7 @@ const Header = () => {
                       className="btn auth-main-btn"
                       type="submit"
                       onClick={() => {
-                        setopenmodal(false);
+                        setProfileViewerModal(false);
                         setmodalstateno(1);
                         onSubmitLogin();
                       }}
@@ -1057,9 +1051,9 @@ const Header = () => {
                       className="btn auth-main-btn"
                       type="submit"
                       onClick={() => {
-                        setopenmodal(false);
+                        setProfileViewerModal(false);
                         setmodalstateno(1);
-                        onSubmitCreateUser();
+                        onSubmitCreateBorhanUser();
                       }}
                     >
                       Verify
@@ -1130,7 +1124,7 @@ const Header = () => {
                     value="Book an appointment"
                     className="nav-link login-nav-btn"
                     onClick={() => {
-                      setopenmodal(true);
+                      bookAnAppoitmentHeaderViewer();
                     }}
                   />
                   <Modal
@@ -1404,19 +1398,22 @@ const Header = () => {
                             <div className="auth-modal-content">
                               <div className="w-100">
                                 <div className="auth-profile-pic-wrp">
+                                <div className="profile-pic-chooose">
                                   <img
-                                    src="./assets/img/profile-picture-icon.png"
+                                    src={`${getProfilePic==""? "./assets/img/profile-picture-icon.png": getProfilePic}S`}
                                     className="img img-fluid"
                                     alt=""
                                   />
                                   <h6>Profile Picture</h6>
                                   <input
                                     name="profilePic"
+                                    className="hide-input"
                                     type="file"
                                     onChange={(e) => {
                                       uploadFilesUsingMulter(e, 1);
                                     }}
                                   />
+                                  </div>
                                 </div>
                                 <div className="auth-input-wrp">
                                   <div className="row">
@@ -1693,7 +1690,7 @@ const Header = () => {
                                     onClick={() => {
                                       setopenmodal(false);
                                       setmodalstateno(1);
-                                      onSubmitCreateUser();
+                                      onSubmitCreateBorhanUser();
                                     }}
                                   >
                                     Verify

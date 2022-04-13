@@ -4,14 +4,14 @@ import {Link } from 'react-router-dom'
 import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
-
+import config from  '../../config/configg';
 const PremiumExpert = () => {
     const [getCategories,setGetCategories]=useState([]);
    const [dummy,setDummy]=useState(false);
 
    const fetchAllCategories = async () => {
       const response = await fetch(
-        `http://localhost:5000/admin/getCategoriesData`,
+        `${config.BACKEND_URL}/admin/getCategoriesData`,
         {
           method: "GET",
           headers: {
@@ -21,10 +21,10 @@ const PremiumExpert = () => {
         }
       );
       const jsonnn = await response.json();
-      console.log("satyamtomar", jsonnn);
+      // console.log("satyamtomar", jsonnn);
     setGetCategories(jsonnn.data);
     setDummy(true)
-      console.log("llllllllllll", getCategories);
+      // console.log("llllllllllll", getCategories);
     };
     useEffect(() => {
       fetchAllCategories();
@@ -88,7 +88,7 @@ getCategories.length &&
               <div className="item" key={index}>
      <div className="pratice-area-box">
         <div>
-           <img src={`http://localhost:5000/public/images/${obj.url.original}`} className="img img-fluid" alt=""/>
+           <img src={`${obj.url.original}`} className="img img-fluid" alt=""/>
         </div>
         <div>
            <h4>{obj.name}  </h4>

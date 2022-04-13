@@ -17,7 +17,7 @@ let removeSession = () => {
 }
 
 const getToken = () => {
-    let token = cookie.get('token', { path: '/' });
+    let token = localStorage.getItem('token');
     console.log(token);
     return token
 }

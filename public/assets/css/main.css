@@ -2871,3 +2871,14 @@ footer {
 	.navbar-nav li a:hover{
 		cursor:pointer;
 	}
+	.profile-pic-choose
+	{
+		position: relative;
+	}
+.hide-input
+{
+	position: absolute;
+    top: 55px;
+    right: 100px;
+	opacity: 0;
+}

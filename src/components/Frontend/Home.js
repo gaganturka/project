@@ -2,11 +2,36 @@ import {React,useState,useRef,useEffect} from 'react'
 import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
-
+import homeAction from '../../actions/home.action'
 import {Link} from 'react-router-dom'
 import Footer from './Footer';
+import StarRatings from 'react-star-ratings';
+
 const Home = () => {
+   const [dummy,setDummy]=useState(0);
+   const [expertsOnline,setExpertsOnline]=useState([]);
+   const fetchAllExpertsOnline = async () => {
+   
+      homeAction.fetchAllExpertsOnline((err,res)=>{
+        if(err){
+          console.log(err," fetchAllExpertsOnline error")
+        }else{
+          setExpertsOnline(res.data);
+          
+      setDummy(0);
+          console.log(res.data," online experts ");
+        }
+      });
+      
+    };
   
+   useEffect(() => {
+      fetchAllExpertsOnline()
+      setDummy(1);
+      
+      
+    }, [])
+    
    // const [expertcarousel,setexpertcarousel]=useState(null);
   return (
       <>
@@ -172,7 +197,7 @@ const Home = () => {
              
              <OwlCarousel
                   className="health-owl"
-                  items={10}
+                  items={20}
                   nav={true}
                   loop={true}
                         margin={10}
@@ -200,7 +225,7 @@ const Home = () => {
                     },
                   }}
                 >
-                <div className="item">
+                {/* <div className="item">
                       <div className="expert-box-wrp">
                          <div className="position-relative">
                             <img src="./assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
@@ -220,7 +245,42 @@ const Home = () => {
                             <button className="btn">Connect Now</button>
                          </div>
                       </div>
+                   </div> */}
+                 {expertsOnline.length && expertsOnline.map((obj,index) => {
+                    return(
+                     <div className="item" key={index}>
+                      <div className="expert-box-wrp">
+                         <div className="position-relative">
+                            <img src="./assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
+                            <span className="active-dot"></span>
+                         </div>
+                         <div className="p-3">
+                            <div className="star-rating">
+                               {/* <span className="fa fa-star checked"></span>
+                               <span className="fa fa-star checked"></span>
+                               <span className="fa fa-star checked"></span>
+                               <span className="fa fa-star"></span>
+                               <span className="fa fa-star"></span> */}
+                               <StarRatings
+          rating={ obj?.rating?.avgRating}
+          starRatedColor={"yellow"}
+          numberOfStars={ 5 }
+          starDimension="20px"
+        starSpacing="2px"
+        />
+                               {"     "}
+                               {obj?.rating?.avgRating}
+                            </div>
+                            <h5>{obj?.userId?.firstName} {obj?.userId?.lastName}</h5>
+                            <h6>{obj?.practiceArea[0]?.name}</h6>
+                            <p>{obj?.experience} years experience</p>
+                            <button className="btn">Connect Now</button>
+                         </div>
+                      </div>
                    </div>
+                    )
+                 })
+                   }
                 </OwlCarousel>
                 
              </div>
