@@ -35,7 +35,7 @@ const UserDashBoard = () => {
 
   };
   const onSubmitEditExpert = async (e) => {
-     e.preventDefault();   
+   //   e.preventDefault();   
    let dataToSend={
       firstName: userDetails.firstName,
          lastName: userDetails.lastName,
@@ -94,19 +94,21 @@ const UserDashBoard = () => {
                   <div className="user-personal-details">
                      <div className="update-pp-wrp">
                         <div className="upt-pp-img">
+                        <div className="update-profile"></div>
                            <img src={`${getProfilePic===""?"./assets/img/mathew-wade.png":getProfilePic}`} className="img img-fluid" alt=""/>
                         </div>
                         <div className="update-pp-content">
-                           <div>
+                           
                            <input
                       name="profilePic"
                       type="file"
+                      className="profile-pic-input"
                       onChange={(e) => {
                         uploadFilesUsingMulter(e, 1);
                       }}
                     />
                               <p>Update Profile Picture </p>
-                           </div>
+                           
                            <div className="upt-edit-icon">
                               <Link to="javascript:;"><img src="./assets/img/edit-white-icon.png" className="img img-fluid" alt=""/></Link>
                            </div>

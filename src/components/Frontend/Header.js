@@ -9,6 +9,8 @@ import axios from 'axios';
 const Header = () => {
   let location = useLocation();
   const history = useNavigate();
+  const [videoName,setVideoName]=useState("");
+  const [audioName,setAudioName]=useState("");
   const [accountType, setaccountType] = useState("expert");
   const [files, setFile] = useState("");
   const [getPracticeArea, setGetPracticeArea] = useState([]);
@@ -243,8 +245,10 @@ const Header = () => {
       setGetProfilePic(axiosRes.data.data[0].path);
     } else if (i === 2) {
       setGetAudioFilePath(axiosRes.data.data[0].path);
+      setAudioName(e.target.files[0].name)
     } else if (i === 3) {
       setGetVideoFilePath(axiosRes.data.data[0].path);
+      setVideoName(e.target.files[0].name)
     } else if (i === 4) {
       setGetDocument([
         {
@@ -497,6 +501,7 @@ const Header = () => {
       isOpen={profileViewerModal}
       toggle={() => {
        setProfileViewerModal(false);
+       setmodalstateno(1);
       }}
       className="authentication-modal modal-dialog modal-dialog-centered modal-xl"
     >
@@ -681,19 +686,23 @@ const Header = () => {
               <div className="auth-modal-content">
                 <div className="w-100">
                   <div className="auth-profile-pic-wrp">
-                    <img
-                      src="./assets/img/profile-picture-icon.png"
-                      className="img img-fluid"
-                      alt=""
-                    />
-                    <input
-                      name="profilePic"
-                      type="file"
-                      onChange={(e) => {
-                        uploadFilesUsingMulter(e, 1);
-                      }}
-                    />
-                    <h6>Profile Picture</h6>
+                  <div className="profile-pic-chooose">
+                                
+                                  <img
+                                    src={`${getProfilePic==""? "./assets/img/profile-picture-icon.png": getProfilePic}`}
+                                    className="img img-fluid"
+                                    alt=""
+                                  />
+                                  <h6>Profile Picture</h6>
+                                  <input
+                                    name="profilePic"
+                                    className="hide-input"
+                                    type="file"
+                                    onChange={(e) => {
+                                      uploadFilesUsingMulter(e, 1);
+                                    }}
+                                  />
+                                  </div>
                   </div>
                   <div className="auth-input-wrp">
                     <div className="row">
@@ -764,19 +773,23 @@ const Header = () => {
               <div className="auth-modal-content">
                 <div className="w-100">
                   <div className="auth-profile-pic-wrp">
-                    <img
-                      src="./assets/img/profile-picture-icon.png"
-                      className="img img-fluid"
-                      alt=""
-                    />
-                    <h6>Profile Picture</h6>
-                    <input
-                      name="profilePic"
-                      type="file"
-                      onChange={(e) => {
-                        uploadFilesUsingMulter(e, 1);
-                      }}
-                    />
+                  <div className="profile-pic-chooose">
+                                
+                                <img
+                                  src={`${getProfilePic==""? "./assets/img/profile-picture-icon.png": getProfilePic}`}
+                                  className="img img-fluid"
+                                  alt=""
+                                />
+                                <h6>Profile Picture</h6>
+                                <input
+                                  name="profilePic"
+                                  className="hide-input"
+                                  type="file"
+                                  onChange={(e) => {
+                                    uploadFilesUsingMulter(e, 1);
+                                  }}
+                                />
+                                </div>
                   </div>
                   <div className="auth-input-wrp">
                     <div className="row">
@@ -941,45 +954,59 @@ const Header = () => {
                         />
                       </div>
                       <div className="col-lg-12 pt-2">
-                        <label for="">
-                          You can Record Audio and Video Bio (
-                          Optional )
-                        </label>
-                        <div className="record-buttons">
-                          <button className="btn" type="button">
-                            <img
-                              src="./assets/img/audio-record-icon.png"
-                              className="img img-fluid"
-                              alt=""
-                            />
-                            <input
-                              type="file"
-                              name="audio"
-                              onChange={(e) =>
-                                uploadFilesUsingMulter(e, 2)
-                              }
-                              className="form-input-file"
-                            />{" "}
-                            Audio record
-                          </button>
-                          <button className="btn" type="button">
-                            <img
-                              src="./assets/img/video-record-icon.png"
-                              className="img img-fluid"
-                              alt=""
-                            />
-                            <input
-                              type="file"
-                              name="video"
-                              onChange={(e) =>
-                                uploadFilesUsingMulter(e, 3)
-                              }
-                              className="form-input-file"
-                            />{" "}
-                            Video record
-                          </button>
-                        </div>
-                      </div>
+                                      <label for="">
+                                        You can Record Audio and Video Bio (
+                                        Optional )
+                                      </label>
+                                      <div className="record-buttons">
+                                        <div className="btn-audio">
+                                         <button className="btn" type="button">
+                                          <img
+                                            src="./assets/img/audio-record-icon.png"
+                                            className="img img-fluid"
+                                            alt=""
+                                          />
+                                      
+                                          Audio record
+                                        </button>
+                                        <input
+                                            type="file"
+                                            name="audio"
+                                            onChange={(e) =>
+                                              uploadFilesUsingMulter(e, 2)
+                                            }
+                                            className="form-input-file audio-file"
+                                          />   {" "}
+                                          
+                                       <div className=" display-value">
+                                       {audioName}
+                                       </div>
+                                       </div>
+                                       <div className="btn-video">
+                                       <button className="btn" type="button">
+                                          <img
+                                            src="./assets/img/video-record-icon.png"
+                                            className="img img-fluid"
+                                            alt=""
+                                          />
+                                        Video record
+                                        </button>
+                                        {console.log(videoName,"videeeeeeeeoooooo   ",audioName )}
+                                        <input
+                                            type="file"
+                                            name="video"
+                                            onChange={(e) =>
+                                              uploadFilesUsingMulter(e, 3)
+                                            }
+                                            className="form-input-file video-file"
+                                          />{" "}
+                                         
+                                         <div className=" display-value">
+                                       {videoName}
+                                       </div></div> 
+                                      </div>
+                                      
+                                    </div>
                       <div className="col-lg-12 pt-2">
                         <label for="">Upload Documents</label>
                         <div className="upload-doc-field">
@@ -1315,23 +1342,23 @@ const Header = () => {
                             <div className="auth-modal-content">
                               <div className="w-100">
                                 <div className="auth-profile-pic-wrp">
-                                  <div className="choose-profile-pic">
+                                <div className="profile-pic-chooose">
+                                
                                   <img
-                                    src="./assets/img/profile-picture-icon.png"
-                                    onClick="hide-file()"
-                                    className="img img-fluid profile-picture"
+                                    src={`${getProfilePic==""? "./assets/img/profile-picture-icon.png": getProfilePic}`}
+                                    className="img img-fluid"
                                     alt=""
                                   />
+                                  <h6>Profile Picture</h6>
                                   <input
                                     name="profilePic"
-                                    className="hide-file"
+                                    className="hide-input"
                                     type="file"
                                     onChange={(e) => {
                                       uploadFilesUsingMulter(e, 1);
                                     }}
                                   />
                                   </div>
-                                  <h6>Profile Picture</h6>
                                 </div>
                                 <div className="auth-input-wrp">
                                   <div className="row">
@@ -1403,8 +1430,9 @@ const Header = () => {
                               <div className="w-100">
                                 <div className="auth-profile-pic-wrp">
                                 <div className="profile-pic-chooose">
+                                
                                   <img
-                                    src={`${getProfilePic==""? "./assets/img/profile-picture-icon.png": getProfilePic}S`}
+                                    src={`${getProfilePic==""? "./assets/img/profile-picture-icon.png": getProfilePic}`}
                                     className="img img-fluid"
                                     alt=""
                                   />
@@ -1520,7 +1548,7 @@ const Header = () => {
                               <div className="w-100">
                                 <div className="auth-input-wrp">
                                   <div className="row">
-                                    <div class="col-lg-6 mt-3">
+                                    <div class="col-lg-6">
                                       <label>Category</label>
                                       <select
                                         class="form-control"
@@ -1544,7 +1572,7 @@ const Header = () => {
                                           })}
                                       </select>
                                     </div>
-                                    <div class="col-lg-6 mt-3">
+                                    <div class="col-lg-6">
                                       <label>Pratice Area</label>
                                       <select
                                         class="form-control"
@@ -1571,7 +1599,7 @@ const Header = () => {
                                           })}
                                       </select>
                                     </div>
-                                    <div className="col-lg-12 mt-3">
+                                    <div className="col-lg-12">
                                       <label for="">Bio</label>
                                       <input
                                         type="text"
@@ -1605,6 +1633,9 @@ const Header = () => {
                                             }
                                             className="form-input-file audio-file"
                                           />   {" "}
+                                          <div className=" display-value">
+                                       {audioName}
+                                       </div>
                                        </div>
                                        <div className="btn-video">
                                        <button className="btn" type="button">
@@ -1623,6 +1654,9 @@ const Header = () => {
                                             }
                                             className="form-input-file video-file"
                                           />{" "}
+                                          <div className=" display-value">
+                                       {videoName}
+                                       </div>
                                          </div> 
                                       </div>
                                     </div>
