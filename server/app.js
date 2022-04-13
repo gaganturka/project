@@ -4,7 +4,7 @@ var cors = require("cors");
 const {
   AUTH_ROUTES,
   CategoryRoutes,
-  HomeWebsiteRoutes,
+  WebsiteRoutes,
   ExpertAdminRoutes,
   BorhanUserAdminRoutes,
   expertPanel
@@ -25,7 +25,7 @@ app.use(express.json());
 
 app.use("/admin", AUTH_ROUTES);
 app.use("/admin", CategoryRoutes);
-app.use("/website",HomeWebsiteRoutes);
+app.use("/website",WebsiteRoutes);
 app.use("/admin",ExpertAdminRoutes);
 app.use("/admin",BorhanUserAdminRoutes)
 app.use("/expert",expertPanel)
