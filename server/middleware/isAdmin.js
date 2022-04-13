@@ -1,10 +1,9 @@
 const jwt = require("jsonwebtoken");
-const jwtsecret = "seraphic";
 const User = require("../models/User");
 const APP_CONSTANTS = require("../appConstants");
 import universalFunctions from "../utils/universalFunctions";
 const Boom = require("boom");
-
+const { Config } = require("../config");
 module.exports = {
   isAdmin: async (req, res, next) => {
     try {
@@ -14,7 +13,7 @@ module.exports = {
           .status(403)
           .send({ error: "Please authenticate using valid token" });
       }
-      const data = jwt.verify(token, jwtsecret);
+      const data = jwt.verify(token, Config.jwtsecret);
       console.log(data, "jwttokenbyadmin");
       if (!data) {
         throw Boom.badRequest(responseMessages.INVALID_TOKEN);
