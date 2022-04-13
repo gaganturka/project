@@ -1136,7 +1136,7 @@ footer {
 
 .auth-modal-content {
 	text-align: center;
-	padding: 50px 50px;
+	padding: 25px 50px;
 	padding-bottom: 25px;
 	height: 100%;
 	display: flex;
@@ -1317,7 +1317,7 @@ footer {
 }
 
 .record-buttons button {
-	width: 48%;
+	width: 100%;
 	height: 45px;
 	display: flex;
 	align-items: center;
@@ -2881,4 +2881,28 @@ footer {
     top: 55px;
     right: 100px;
 	opacity: 0;
+}
+.btn-audio
+{
+	position: relative;
+	width: 47.5%;
+}
+.audio-file
+{
+	position: absolute;
+	top:0;
+	opacity: 0;
+	width: 100%;
+}
+.btn-video
+{
+	position: relative;
+	width: 47.5%;
+}
+.video-file
+{
+	position: absolute;
+	top: 0;
+	opacity: 0;
+	width: 100%;
 }

@@ -107,9 +107,9 @@
 		bottom: 0;
 	}
 
-	.nav-link.login-nav-btn {
+	/*.nav-link.login-nav-btn {
 		display: none;
-	}
+	}*/
 
 	.navigation .navbar-collapse {
 		top: 85px !important;
@@ -369,6 +369,7 @@
 		display: flex;
 		justify-content: center;
 	}
+
 
 }
 
