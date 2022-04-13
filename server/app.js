@@ -7,6 +7,7 @@ const {
   HomeWebsiteRoutes,
   ExpertAdminRoutes,
   BorhanUserAdminRoutes,
+  expertPanel
 } = require("./routes");
 
 // require("./")
@@ -27,6 +28,7 @@ app.use("/admin", CategoryRoutes);
 app.use("/website",HomeWebsiteRoutes);
 app.use("/admin",ExpertAdminRoutes);
 app.use("/admin",BorhanUserAdminRoutes)
+app.use("/expert",expertPanel)
 app.get("/", (req, res) => {
   res.send("Hello Satyam");
 });
