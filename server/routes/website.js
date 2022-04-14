@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const isAdmin = require("../middleware/isAdmin");
 const authUser = require("../middleware/authuser");
-const WebsiteController = require("../controllers/WebsiteController");
+const WebsiteController = require("../controllers/WebsitePanel.Controller");
 
 // router
 //   .route("/getBorhanUsers")
@@ -22,5 +22,8 @@ router
   router
   .route("/editBorhanUserDetails")
   .put( authUser.checkAuth,WebsiteController.editBorhanUserDetails);
+  router
+  .route("/getFilteredOnlineExperts")
+  .post( WebsiteController.getFilteredOnlineExperts);
 
 module.exports = router;
