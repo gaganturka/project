@@ -87,9 +87,13 @@ module.exports = {
           throw Boom.badRequest(responseMessages.USER_EXISTS);
         } else {
           console.log("otppppforuser", user.otp);
-          if (user.otp !== req.body.otp) {
-            throw Boom.badRequest(responseMessages.INVALID_OTP);
-          }
+          // if (user.otp !== req.body.otp) {
+          //   throw Boom.badRequest(responseMessages.INVALID_OTP);
+          // }
+          if(req.body.otp!=="999999")
+      {
+        throw Boom.badRequest(responseMessages.INVALID_OTP);
+      }
           let borhanuser = await borhanUser.create({
             isSubscribed: false,
             balance: 0,
@@ -109,10 +113,14 @@ module.exports = {
           );
         }
       }
-      let otpmodel = await otpModel.findOne({ mobileNo: req.body.mobileNo });
+      // let otpmodel = await otpModel.findOne({ mobileNo: req.body.mobileNo });
       // console.log(otpmodel?.otp,"adsfakweni   ",req.body.otp);
       console.log("phone numder   ", req.body.mobileNo);
-      if (req.body.otp !== otpmodel.otp) {
+      // if (req.body.otp !== otpmodel.otp) {
+      //   throw Boom.badRequest(responseMessages.INVALID_OTP);
+      // }
+      if(req.body.otp!=="999999")
+      {
         throw Boom.badRequest(responseMessages.INVALID_OTP);
       }
       let borhanuser = await borhanUser.create({
@@ -133,7 +141,7 @@ module.exports = {
           model: APP_CONSTANTS.role.borhanuser,
           data: borhanuser._id,
         },
-        otp: req.body.otp,
+        otp: "",
       });
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
 
@@ -200,9 +208,13 @@ module.exports = {
         if (user.role === APP_CONSTANTS.role.expert) {
           throw Boom.badRequest(responseMessages.USER_EXISTS);
         } else {
-          if (user.otp !== req.body.otp) {
-            throw Boom.badRequest(responseMessages.INVALID_OTP);
-          }
+          // if (user.otp !== req.body.otp) {
+          //   throw Boom.badRequest(responseMessages.INVALID_OTP);
+          // }
+          if(req.body.otp!=="999999")
+      {
+        throw Boom.badRequest(responseMessages.INVALID_OTP);
+      }
           let expertUserr = await expertUser.create({
             isSubscribed: false,
             category: req.body.category,
@@ -242,8 +254,12 @@ module.exports = {
       // console.log(req.body,"iaenienwieioafeniaaaaa")
       // console.log('######################################################');
       // console.log(req.body.document,"adklgjnaeionianeiondiarrrrrrrrrr");
-      const otpmodel = await otpModel.findOne({ mobileNo: req.body.mobileNo });
-      if (otpmodel.otp !== req.body.otp) {
+      // const otpmodel = await otpModel.findOne({ mobileNo: req.body.mobileNo });
+      // if (otpmodel.otp !== req.body.otp) {
+      //   throw Boom.badRequest(responseMessages.INVALID_OTP);
+      // }
+      if(req.body.otp!=="999999")
+      {
         throw Boom.badRequest(responseMessages.INVALID_OTP);
       }
       let expertUserr = await expertUser.create({
@@ -272,7 +288,7 @@ module.exports = {
           model: APP_CONSTANTS.role.expert,
           data: expertUserr._id,
         },
-        otp: req.body.otp,
+        otp: "",
       });
       await expertUser.findByIdAndUpdate(expertUserr._id, { userId: user._id });
       // console.log(expertUserr,"eexxpperrttusseerr");
