@@ -251,7 +251,7 @@ const Home = () => {
                      <div className="item" key={index}>
                       <div className="expert-box-wrp">
                          <div className="position-relative">
-                            <img src="./assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
+                            <img src={`${obj?.userId?.profilePic ===""?"./assets/img/expert-thumb.png":obj?.userId?.profilePic}`} className="img img-fluid" alt=""/>
                             <span className="active-dot"></span>
                          </div>
                          <div className="p-3">

@@ -36,24 +36,24 @@ const Header = () => {
     otp: "",
   });
   const [expertcredential, setexpertcredential] = useState({
-    category: "623ac633ea73cd5cb8dc2f8e",
-    practiceArea: "623ac8318be1c0470cd82b7c",
+    category: "",
+    practiceArea: "",
     bio: "",
-    audioFilePath: "dfsa",
-    videoFilePath: "dfsafdsa",
+    audioFilePath: "",
+    videoFilePath: "",
     document: [
       {
-        fileName: "dsfadfs",
-        fileType: "dsfasd",
-        link: "sdfadfs",
-        mimeType: "afdsdfsa",
+        fileName: "",
+        fileType: "",
+        link: "",
+        mimeType: "",
       },
     ],
     firstName: "",
     email: "",
     mobileNo: "",
     lastName: "",
-    profilePic: "dsfadfsdfs",
+    profilePic: "",
     otp: "",
   });
   const [openmodal, setopenmodal] = useState(false);
@@ -97,49 +97,7 @@ const Header = () => {
     // e.preventDefault();
     const { firstName, lastName, email, mobileNo, profilePic, otp } =
       usercredential;
-    //  const profilepic=new FormData();
-    // formdata.append("firstName",firstName);
-    // formdata.append("lastName",lastName);
-    // formdata.append("email",email);
-    // formdata.append("mobileNo",mobileNo);
-    //  console.log("tis is file",files);
-    //   profilepic.append("file",files[0].name);
-
-    // try {
-    //   // TODO upload doc
-    //   let fileURL = ""
-    //   if(files[0]) {
-    //     // call api to u[pload docment]
-    //     let result = await apicall();
-    //     if(result && result[0]) {
-    //       fileURL = result[0].path
-    //     }
-    //   }
-
-    //   if(audio[0])
-    // } catcah(error) {
-
-    // }
-    // let dataToSend = {
-    //   fileURL: fileURL
-    // }
-    //  superagent
-    //  .post("http://localhost:5000/admin/createuser")
-    //  .set("Authorization", "...")
-    //  .accept("application/json")
-    //  .field("firstName", firstName)
-    //  .field("lastName", lastName)
-    //  .field("mobileNo",mobileNo)
-    //  .field("email",email)
-    // .attach("file", files[0])
-    //  .then((result) => {
-    //    //  console.log(“result”, result.statusCode);
-    //    if (result.statusCode === 200) {
-
-    //     //  window.location.reload();
-    //      //   this.setState({  });
-    //    }
-    //  })
+  
     const response = await fetch(`${config.BACKEND_URL}/admin/createborhanuser`, {
       method: "POST",
       headers: {
@@ -157,6 +115,9 @@ const Header = () => {
     const json = await response.json();
     if (json.statusCode === 200) {
       localStorage.setItem("token", json.data);
+      setopenmodal(false);
+      setmodalstateno(1);
+
       history("/userdashboard");
     }
   };
@@ -200,8 +161,11 @@ const Header = () => {
         response=res;
         console.log(response,'here is res ')
         if (response.statusCode === 200) {
-          localStorage.setItem("token", response.data);
-          history("/userdashboard");
+          // localStorage.setItem("token", response.data);
+          // history("/userdashboard");
+          setopenmodal(false);
+          setmodalstateno(1);
+    
         }
       }
     })
@@ -220,8 +184,12 @@ const Header = () => {
         json=res;
         
     if (json.statusCode === 200) {
+      setopenmodal(false);
+      setmodalstateno(1);
       localStorage.setItem("token", json.data);
       history("/userdashboard");
+      
+
     }
       }
     })
@@ -1280,8 +1248,7 @@ const Header = () => {
                                     className="btn auth-main-btn"
                                     type="submit"
                                     onClick={() => {
-                                      setopenmodal(false);
-                                      setmodalstateno(1);
+                                      
                                       onSubmitLogin();
                                     }}
                                   >
@@ -1731,8 +1698,7 @@ const Header = () => {
                                     className="btn auth-main-btn"
                                     type="submit"
                                     onClick={() => {
-                                      setopenmodal(false);
-                                      setmodalstateno(1);
+                                      
                                       onSubmitCreateBorhanUser();
                                     }}
                                   >
@@ -1776,8 +1742,7 @@ const Header = () => {
                                     className="btn auth-main-btn"
                                     type="submit"
                                     onClick={() => {
-                                      setopenmodal(false);
-                                      setmodalstateno(1);
+                                      
                                       onSubmitCreateExpert();
                                     }}
                                   >

@@ -9,7 +9,7 @@ import Footer from './Footer';
 const ExpListing = () => {
    const [getCategories,setGetCategories]=useState([]);
    const [dummy,setDummy]=useState(false);
-
+   const [expertList,setExpertList]=useState([]);
    const fetchAllCategories = async () => {
       const response = await fetch(
         `${config.BACKEND_URL}/admin/getCategoriesData`,
@@ -284,6 +284,7 @@ const ExpListing = () => {
                </div>
                <div className="exp-listing-wrp">
                   <div className="row">
+
                      <div className="col-lg-3">
                         <div className="exp-listing-box">
                            <div className="exp-listing-img">
@@ -325,7 +326,7 @@ const ExpListing = () => {
                            </div>
                         </div>
                      </div>
-                     <div className="col-lg-3">
+                     {/* <div className="col-lg-3">
                         <div className="exp-listing-box">
                            <div className="exp-listing-img">
                               <img src="./assets/img/exp-img-2.png" className="img img-fluid" alt=""/>
@@ -611,7 +612,7 @@ const ExpListing = () => {
                               <Link to="/expprofile"><button className="btn" type="button">Book Appointment</button></Link>
                            </div>
                         </div>
-                     </div>
+                     </div> */}
                   </div>
                </div>
                <div className="common-pagination">
