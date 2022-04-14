@@ -45,7 +45,7 @@ module.exports = {
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       // let refId = Math.floor(100000 + Math.random() * 900000);
       let otpmodel = await otpModel.findOne({ mobileNo: req.body.mobileNo });
-      console.log("your otp is ", otpmodel.otp);
+      console.log("your otp is ", otpmodel);
 
       universalFunctions.sendSuccess(
         {

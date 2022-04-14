@@ -1,6 +1,5 @@
 const { Config } = require("../config");
 const Jwt = require("jsonwebtoken");
-import jwt_decode from "jwt-decode"
 import universalFunctions from "../utils/universalFunctions";
 const Boom = require("boom");
 const User=require("../models/User")
