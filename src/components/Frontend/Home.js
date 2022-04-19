@@ -8,6 +8,7 @@ import Footer from './Footer';
 import StarRatings from 'react-star-ratings';
 import categoriesAction from '../../actions/categories.action';
 import FetchCategoriesList from './FetchCategoriesList';
+import useComponentVisible from './useComponentVisible'
 const Home = () => {
    const [dummy,setDummy]=useState(0);
    const [expertsOnline,setExpertsOnline]=useState([]);
@@ -17,6 +18,7 @@ const Home = () => {
    const [searchedTermPractice,setSearchedTermPractice]=useState('');
    const [selectedCategory, setSelectedCategory]=useState("");
    const [selectedPracticeArea, setSelectedPracticeArea]=useState("");
+   const { ref, isComponentVisible } = useComponentVisible(false);
    // const [getCategories,setGetCategories]=useState([]);
    const fetchAllExpertsOnline = async () => {
    
@@ -94,9 +96,9 @@ const Home = () => {
                             <FetchCategoriesList selectedCategory={selectedCategory} getCategories={getCategories} setGetCategories={setGetCategories} />
                          </li>
                          <li>
-                            <div className="">
-                               <input type="text" className="form-control" placeholder="Search Practice Area" value={searchedTermPractice} onChange={(e)=> setSearchedTermPractice(e.target.value)} />
-                             <div className="search-practice-area">
+                            <div className="" ref={ref}>
+                               <input type="text" className="form-control" placeholder="Search Practice Area" value={searchedTermPractice} onChange={(e)=> {setSearchedTermPractice(e.target.value); }} />
+                            {isComponentVisible && <div className="search-practice-area">
                               <ul className="blocklist">
                                {
                                  filteredPracticeArea && filteredPracticeArea.map((obj,index)=>{
@@ -113,7 +115,7 @@ const Home = () => {
                                  })
                                }
                                </ul>
-                               </div>
+                               </div>}
                                <button className="btn"><img src="./assets/img/search-icon.png" className="img img-fluid"
                                   alt=""/></button>
                             </div>
