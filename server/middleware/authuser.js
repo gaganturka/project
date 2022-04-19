@@ -1,6 +1,7 @@
 const { Config } = require("../config");
 const Jwt = require("jsonwebtoken");
 import universalFunctions from "../utils/universalFunctions";
+import responseMessages from "../resources/response.json";
 const Boom = require("boom");
 const User=require("../models/User")
 const checkAuth =  async(req, res, next) => {
@@ -17,7 +18,7 @@ const checkAuth =  async(req, res, next) => {
               // let user = await borhanUser.findOne({ firebaseUserId: decoded.user_id });
               let user = await User.findOne({ _id: decoded.user_id });
               if (!user) {
-                throw Boom.unauthorized(responseMessage.USER_NOT_FOUND);
+                throw Boom.unauthorized(responseMessages.USER_NOT_FOUND);
               }
               console.log(user,"hererererlnkjsnvknsfdvjs")
  
@@ -44,7 +45,7 @@ const checkAuth =  async(req, res, next) => {
          
       } else {
         return universalFunctions.sendError(
-          Boom.forbidden(responseMessage.TOKEN_NOT_PROVIDED),
+          Boom.forbidden(responseMessages.TOKEN_NOT_PROVIDED),
           res
         );
       }

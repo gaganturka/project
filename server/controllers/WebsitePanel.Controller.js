@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const borhanUser = require("../models/Borhan_User");
 const expertUser = require("../models/Expert_User");
+const practiceArea=require("../models/Practice_Area");
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -151,7 +152,9 @@ module.exports = {
           const schema = Joi.object({
             limit: Joi.number(),
             page: Joi.number(),
-            search: Joi.string().allow(""),
+           category:Joi.string(), 
+           practiceArea:Joi.string(),
+           sortBy:Joi.string(),
           });
           await universalFunctions.validateRequestPayload(req.body, res, schema);
     
@@ -170,22 +173,80 @@ module.exports = {
         //     ];
         //   }
     
-          const expert = await expertUser
-            .find({ isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active })
-            .populate("userId")
-            .populate("practiceArea")
-            .populate("category")
-            .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
+        //   const expert = await expertUser
+        //     .find({ isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active })
+        //     .populate("userId")
+        //     .populate("practiceArea")
+        //     .populate("category")
+        //     .skip(parseInt((req.body.page - 1) * req.body.limit))
+        // .limit(parseInt(req.body.limit));
+         let aggregationQuery;
+         let expert;
+         if(req.body.sortBy=="1")
+        {if ( req.body.category !== "0" &&req.body.practiceArea === "0") {
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+               expert = await expertUser.find({category: req.body.category,isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active}).populate('practiceArea').populate('category').populate('userId').sort({"rating.avgRating":-1})
+                       
+        }
+        else  if ( req.body.category === "0" &&req.body.practiceArea !== "0") {
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+               expert = await expertUser.find({practiceArea: req.body.practiceArea,isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active}).populate('practiceArea').populate('category').populate('userId').sort({"rating.avgRating":-1});
+
+        }
+        else  if ( req.body.category !== "0" &&req.body.practiceArea !== "0") {
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+               expert = await expertUser.find({practiceArea: req.body.practiceArea, category:req.body.category,isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active}).populate('practiceArea').populate('category').populate('userId').sort({"rating.avgRating":-1});
+
+        }
+        else
+        {
+          expert = await expertUser.find({isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active}).populate('practiceArea').populate('category').populate('userId').sort({"rating.avgRating":-1})
+
+        }
+      
+      }
+
+      else if(req.body.sortBy=="2")
+        {if ( req.body.category !== "0" &&req.body.practiceArea === "0") {
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+               expert = await expertUser.find({category: req.body.category,isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active}).populate('category').populate('practiceArea').populate('userId').sort({"noOfHoursOfSessionsDone":-1})
+                       
+        }
+        else  if ( req.body.category === "0" &&req.body.practiceArea !== "0") {
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+               expert = await expertUser.find({practiceArea: req.body.practiceArea,isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active}).populate('category').populate('practiceArea').populate('userId').sort({"noOfHoursOfSessionsDone":-1})
+
+        }
+        else  if ( req.body.category !== "0" &&req.body.practiceArea !== "0") {
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+               expert = await expertUser.find({practiceArea: req.body.practiceArea, category:req.body.category,isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active}).populate('category').populate('practiceArea').populate('userId').sort({"noOfHoursOfSessionsDone":-1});
+
+        }
+        else
+        {
+          expert = await expertUser.find({isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active}).populate('category').populate('practiceArea').populate('userId').sort({"noOfHoursOfSessionsDone":-1})
+
+        }}
+
+
+
+
           if (!expert) {
             throw Boom.badRequest("cannot find any expert");
           }
-          console.log("expert online", expert, "expert online");
+          console.log("expert online filtered are", expert, "expert online filtered");
           universalFunctions.sendSuccess(
             {
               statusCode: 200,
-              message: "All experts online are",
-              data: expert
+              message: "All experts online and filtered are",
+              data: {list:expert,
+                count: await expertUser.find({status:APP_CONSTANTS.activityStatus.active}).countDocuments(),}
             },
             res
           );
@@ -193,4 +254,36 @@ module.exports = {
           universalFunctions.sendError(error, res);
         }
       },
+      getPracticeAreaDataSearched : async (req, res) => {
+        try {
+          const schema = Joi.object({
+           searchedTerm:Joi.string(),
+          });
+          await universalFunctions.validateRequestPayload(req.body, res, schema);
+          let filter={
+            isDeleted:false,
+          }
+          if (req.body.searchedTerm) {
+            filter['$or'] = [{ name: { $regex: req.body.searchedTerm, $options: 'i' } }];
+          }
+          let practiceAreaData = await practiceArea.find(filter);
+          if (!practiceAreaData) {
+            throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
+          }
+          return universalFunctions.sendSuccess(
+            {
+              statusCode: 200,
+              message: "fetched practice areas are",
+              data: practiceAreaData,
+            },
+            res
+          );
+        } catch (err) {
+          return universalFunctions.sendError(err, res);
+        }
+      },
+      
+      
 };
+
+

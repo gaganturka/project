@@ -25,5 +25,9 @@ router
   router
   .route("/getFilteredOnlineExperts")
   .post( WebsiteController.getFilteredOnlineExperts);
+  router
+  .route("/getPracticeAreaDataSearched")
+  .post( WebsiteController.getPracticeAreaDataSearched);
 
-module.exports = router;
+  
+  module.exports = router;

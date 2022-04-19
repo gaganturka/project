@@ -96,6 +96,14 @@ const ExpertUserSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  noOfHoursOfSessionsDone:{
+    type:Number,
+    default:0,
+  },
+  noOfSessionsDone:{
+    type:Number,
+    default:0,
+  }
 });
 
 module.exports = mongoose.model("expert", ExpertUserSchema);
