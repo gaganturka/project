@@ -6,10 +6,17 @@ import homeAction from '../../actions/home.action'
 import {Link} from 'react-router-dom'
 import Footer from './Footer';
 import StarRatings from 'react-star-ratings';
-
+import categoriesAction from '../../actions/categories.action';
+import FetchCategoriesList from './FetchCategoriesList';
 const Home = () => {
    const [dummy,setDummy]=useState(0);
    const [expertsOnline,setExpertsOnline]=useState([]);
+   const [getCategories,setGetCategories]=useState([]);
+   const [getPracticeArea,setGetPracticeArea]=useState([]);
+   const [filteredPracticeArea,setFilteredPracticeArea]=useState([]);
+   const [searchedTermPractice,setSearchedTermPractice]=useState('');
+   const [selectedCategory, setSelectedCategory]=useState("");
+   // const [getCategories,setGetCategories]=useState([]);
    const fetchAllExpertsOnline = async () => {
    
       homeAction.fetchAllExpertsOnline((err,res)=>{
@@ -18,19 +25,47 @@ const Home = () => {
         }else{
           setExpertsOnline(res.data);
           
-      setDummy(0);
+      setDummy(0); 
           console.log(res.data," online experts ");
         }
       });
       
     };
+    const fetchAllCategories = async () => {
+
+      categoriesAction.fetchAllCategories((err,res)=>{
+        if(err){
+          console.log(err,"helllooo")
+        }else{
+          setGetCategories(res.data);
+          console.log(res.data," daata ");
+        }
+      });
+      
+    };
+    const fetchSearchedPracticeArea = async () => {
+       const dataToSend={
+         searchedTerm:searchedTermPractice,
+       }
+       homeAction.fetchSearchedPracticeArea(dataToSend,(err,res)=>{
+        if(err){
+  
+        }else{
+          console.log(res.data," daata ");
+          setFilteredPracticeArea(res.data);
+        }
+      });
+     
+    };
+  
   
    useEffect(() => {
       fetchAllExpertsOnline()
       setDummy(1);
+      fetchAllCategories();
+      fetchSearchedPracticeArea();
       
-      
-    }, [])
+    }, [searchedTermPractice])
     
    // const [expertcarousel,setexpertcarousel]=useState(null);
   return (
@@ -49,16 +84,33 @@ const Home = () => {
                    <div className="">
                       <ul>
                          <li>
-                            <select className="form-select" aria-label="Default select example">
+                            {/* <select className="form-select" aria-label="Default select example">
                                <option selected>Select Category</option>
                                <option value="1">One</option>
                                <option value="2">Two</option>
                                <option value="3">Three</option>
-                            </select>
+                            </select> */}
+                            <FetchCategoriesList selectedCategory={selectedCategory} getCategories={getCategories} setGetCategories={setGetCategories} />
                          </li>
                          <li>
                             <div className="">
-                               <input type="text" className="form-control" placeholder="Search Practice Area"/>
+                               <input type="text" className="form-control" placeholder="Search Practice Area" value={searchedTermPractice} onChange={(e)=> setSearchedTermPractice(e.target.value)} />
+                              <ul>
+                               {
+                                 filteredPracticeArea && filteredPracticeArea.map((obj,index)=>{
+
+
+                                   return(
+                                      <>
+                                         
+                                            <li>{obj.name}</li>
+                                         
+                                      </>
+                                   )
+
+                                 })
+                               }
+                               </ul>
                                <button className="btn"><img src="./assets/img/search-icon.png" className="img img-fluid"
                                   alt=""/></button>
                             </div>

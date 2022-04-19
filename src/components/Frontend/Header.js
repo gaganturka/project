@@ -310,6 +310,10 @@ const Header = () => {
     }
     
   }
+
+//  const  validationFunction=()=>{
+//    if(expertcredential.firstName  "^[a-zA-Z0-9_]*$")
+//  }
   return (
     <>
       <div className="navigation ">
@@ -710,7 +714,7 @@ const Header = () => {
                           type="string"
                           className="form-control"
                           name="mobileNo"
-                          onChange={onChangeUser}
+                          onChange={()=>{onChangeUser();}}
                           placeholder=""
                         />
                       </div>

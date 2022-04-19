@@ -4,6 +4,7 @@ import {Link,useNavigate} from 'react-router-dom'
 import Sidebar from './Sidebaruser';
 const FavExp =()=>{
    const history=useNavigate();
+   
    useEffect(() => {
       if(localStorage.getItem('token'))
       {
@@ -12,6 +13,7 @@ const FavExp =()=>{
        history('/')
       }
    }, [])
+
     return(
         <>
               <section className="admin-wrapper">

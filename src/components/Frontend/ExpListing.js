@@ -3,13 +3,28 @@ import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import config from '../../config/configg';
-
+import expListingAction from '../../actions/expertlisting.action'
 import {Link} from 'react-router-dom'
+import ReactPaginate from 'react-paginate'
+import StarRatings from 'react-star-ratings'
+
 import Footer from './Footer';
+import categoriesAction from "../../actions/categories.action";
+import FetchCategoriesList from './FetchCategoriesList';
+import FectchPracticeAreaList from './FetchPracticeAreaList';
+
 const ExpListing = () => {
+   const [selectedExpertSorting,setSelectedExpertSorting]=useState("1");
+   const [selectedPracticeArea, setSelectedPracticeArea] = useState("0");
+   const [selectedCategory, setSelectedCategory] = useState("0");
    const [getCategories,setGetCategories]=useState([]);
+   const [getPracticeArea,setGetPracticeArea]=useState([]);
    const [dummy,setDummy]=useState(false);
    const [expertList,setExpertList]=useState([]);
+   const [currentPage,setCurrentPage]=useState(1);
+   const [pages,setPages]=useState(10);
+   const [sizePerPage,setSizePerPage]=useState(8);
+   const [countExperts,setCountExperts]=useState(0);
    const fetchAllCategories = async () => {
       const response = await fetch(
         `${config.BACKEND_URL}/admin/getCategoriesData`,
@@ -27,10 +42,61 @@ const ExpListing = () => {
     setDummy(true)
       console.log("llllllllllll", getCategories);
     };
+
+
+
     useEffect(() => {
       fetchAllCategories();
-    }, [])
-    
+      fetchAllPracticeArea();
+      fetchAllOnlineFilteredExperts();
+    }, [selectedCategory,selectedPracticeArea,selectedExpertSorting])
+   
+
+    const fetchAllPracticeArea = async () => {
+      categoriesAction.fetchAllPracticeArea((err,res)=>{
+        if(err){
+  
+        }else{
+          console.log(res.data," daata ");
+          setGetPracticeArea(res.data);
+        }
+      });
+     
+    };
+   
+    const fetchAllOnlineFilteredExperts = async () => {
+   let dataToSend={
+      limit:sizePerPage,
+      page:currentPage,
+      category:selectedCategory,
+      practiceArea:selectedPracticeArea,
+      sortBy:selectedExpertSorting,
+   }
+      expListingAction.fetchAllOnlineFilteredExperts(dataToSend,(err,res)=>{
+        if(err){
+          console.log(err," fetchAllFilteredExpertsOnline error")
+        }else{
+          setExpertList(res.data.list);
+          setCountExperts(res.data.count)
+          setPages(
+            parseInt(res.data.count % sizePerPage) == 0
+              ? parseInt(res.data.count / sizePerPage)
+              : parseInt(res.data.count / sizePerPage + 1)
+          );
+      setDummy(0);
+          console.log(res.data," online experts filtered");
+        }
+      });
+      
+    };
+    const handlePageClick = (data) => {
+      let current = data.selected + 1;
+      console.log(current, "currentpage");
+      setCurrentPage(current);
+      // if (filterType == 0) fetchAllExperts(current, searchedTerm);
+      // else if (filterType == 1) onClickShowExperts(current, searchedTerm);
+      // else if (filterType == 2) onClickShowFreelancers(current, searchedTerm);
+    };
   return (
    <>
         
@@ -161,68 +227,7 @@ const ExpListing = () => {
                 
                </OwlCarousel>
                     
-                  {/* <div className="owl-carousel owl-theme pratice-area-owl">
-                     <div className="item">
-                        <div className="pratice-area-box">
-                           <div>
-                              <img src="./assets/img/pratice-area-thumb.png" className="img img-fluid" alt=""/>
-                           </div>
-                           <div>
-                              <h4>Banking Related service</h4>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="item">
-                        <div className="pratice-area-box">
-                           <div>
-                              <img src="./assets/img/pratice-area-thumb.png" className="img img-fluid" alt=""/>
-                           </div>
-                           <div>
-                              <h4>Banking Related service</h4>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="item">
-                        <div className="pratice-area-box">
-                           <div>
-                              <img src="./assets/img/pratice-area-thumb.png" className="img img-fluid" alt=""/>
-                           </div>
-                           <div>
-                              <h4>Banking Related service</h4>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="item">
-                        <div className="pratice-area-box">
-                           <div>
-                              <img src="./assets/img/pratice-area-thumb.png" className="img img-fluid" alt=""/>
-                           </div>
-                           <div>
-                              <h4>Banking Related service</h4>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="item">
-                        <div className="pratice-area-box">
-                           <div>
-                              <img src="./assets/img/pratice-area-thumb.png" className="img img-fluid" alt=""/>
-                           </div>
-                           <div>
-                              <h4>Banking Related service</h4>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="item">
-                        <div className="pratice-area-box">
-                           <div>
-                              <img src="./assets/img/pratice-area-thumb.png" className="img img-fluid" alt=""/>
-                           </div>
-                           <div>
-                              <h4>Banking Related service</h4>
-                           </div>
-                        </div>
-                     </div>
-                  </div> */}
+                  
                </div>
             </div>
          </div>
@@ -236,29 +241,31 @@ const ExpListing = () => {
                   </div>
                   <div className="col-lg-8">
                      <ul>
-                        <li>
+                        {/* <li>
                            <select className="form-select">
                               <option selected>Top Rated</option>
                               <option value="1">One</option>
                               <option value="2">Two</option>
                               <option value="3">Three</option>
                            </select>
+                        </li> */}
+                        <li>
+                           {/* <select className="form-select">
+                              <option selected value={0}>Filter Category</option>
+                              <option value="1">One</option>
+                              <option value="2">Two</option>
+                              <option value="3">Three</option>
+                           </select> */}
+                           <FetchCategoriesList selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} getCategories={getCategories} setGetCategories={setGetCategories} />
                         </li>
                         <li>
-                           <select className="form-select">
+                           {/* <select className="form-select">
                               <option selected>Filter Name</option>
                               <option value="1">One</option>
                               <option value="2">Two</option>
                               <option value="3">Three</option>
-                           </select>
-                        </li>
-                        <li>
-                           <select className="form-select">
-                              <option selected>Filter Name</option>
-                              <option value="1">One</option>
-                              <option value="2">Two</option>
-                              <option value="3">Three</option>
-                           </select>
+                           </select> */}
+                           <FectchPracticeAreaList getPracticeArea={getPracticeArea} setGetPracticeArea={setGetPracticeArea} setSelectedPracticeArea={setSelectedPracticeArea} selectedPracticeArea={selectedPracticeArea} />
                         </li>
                      </ul>
                   </div>
@@ -268,15 +275,14 @@ const ExpListing = () => {
                <div className="exp-listing-con-filter">
                   <div className="row">
                      <div className="col-lg-6">
-                        <p>Results - <b>127</b></p>
+                        <p>Results - <b>{countExperts}</b></p>
                      </div>
                      <div className="col-lg-6">
                         <div className="rec-filter-select">
                            <span>Sort by  </span>  
-                           <select className="form-select">
-                              <option selected>Recommendations</option>
-                              <option value="1">Recommendations</option>
-                              <option value="2">Recommendations</option>
+                           <select className="form-select" value={selectedExpertSorting} onChange={(e)=>{setSelectedExpertSorting(e.target.value);}}>
+                              <option value="1">Rating</option>
+                              <option value="2">Hours of Sessions Done</option>
                            </select>
                         </div>
                      </div>
@@ -284,11 +290,11 @@ const ExpListing = () => {
                </div>
                <div className="exp-listing-wrp">
                   <div className="row">
-
-                     <div className="col-lg-3">
+                      {expertList && expertList.map((obj,index)=>{
+                         return(<div className="col-lg-3">
                         <div className="exp-listing-box">
                            <div className="exp-listing-img">
-                              <img src="./assets/img/exp-img-1.png" className="img img-fluid" alt=""/>
+                              <img src={`${obj?.userId?.profilePic ===''?"./assets/img/exp-img-1.png":obj?.userId?.profilePic}`} className="img img-fluid" alt=""/>
                               <span className="star">
                                  <span className="star-icon fa fa-star"></span>
                                </span>
@@ -296,326 +302,51 @@ const ExpListing = () => {
                            <div className="exp-listing-content">
                               <div className="row">
                                  <div className="col-10">
-                                    <h1>Heather Nikolaus</h1>
+                                    <h1>{obj?.userId?.firstName} {obj?.userId?.lastName}</h1>
                                  </div>
                                  <div className="col-2">
                                     <div className="req-chat-icon"><img src="./assets/img/chat-btn-icon.png" alt=""/></div>
                                  </div>
                                 </div>
-                              <h4>Business & Finance Expert</h4>
-                              <h4>7+ Year Experience</h4>
+                              <h4>{obj?.practiceArea[0]?.name}</h4>
+                              <h4>{obj?.experience} Year Experience</h4>
                               <div className="star-rating-text">
                                  <h4>4.2</h4>
                                  <div className="star-rating">
+                                    {/* <span className="fa fa-star checked"></span>
                                     <span className="fa fa-star checked"></span>
                                     <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
+                                    <span className="fa fa-star checked"></span> */}
+                                    <StarRatings
+                                     rating={ obj?.rating?.avgRating}
+                                     starRatedColor={"yellow"}
+                                     numberOfStars={ 5 }
+                                     starDimension="20px"
+                                     starSpacing="2px"
+                           />
+                               {"     "}
+                               {obj?.rating?.avgRating}
                                  </div>
                               </div>
-                              <p>At vero eos et accusamus et iusto odio dignissimos ducimus</p>
+                              <p>{obj.bio}</p>
                               <ul>
                                  <li>
-                                    <h3><img src="./assets/img/clock-icon.png" className="img img-fluid" alt=""/> 230 h</h3>
+                                    <h3><img src="./assets/img/clock-icon.png" className="img img-fluid" alt=""/> {obj.noOfHoursOfSessionsDone} h</h3>
                                  </li>
                                  <li>
-                                    <h3><img src="./assets/img/eye-icon.png" className="img img-fluid" alt="" /> 1280</h3>
+                                    <h3><img src="./assets/img/eye-icon.png" className="img img-fluid" alt="" /> {obj.noOfSessionsDone}</h3>
                                  </li>
                               </ul>
                               <Link to="/expprofile"><button className="btn" type="button">Book Appointment</button></Link>
                            </div>
                         </div>
-                     </div>
-                     {/* <div className="col-lg-3">
-                        <div className="exp-listing-box">
-                           <div className="exp-listing-img">
-                              <img src="./assets/img/exp-img-2.png" className="img img-fluid" alt=""/>
-                              <span className="star">
-                                 <span className="star-icon fa fa-star"></span>
-                               </span>
-                           </div>
-                           <div className="exp-listing-content">
-                              <div className="row">
-                                 <div className="col-10">
-                                    <h1>Heather Nikolaus</h1>
-                                 </div>
-                                 <div className="col-2">
-                                    <div className="req-chat-icon"><img src="./assets/img/chat-btn-icon.png" alt="" /></div>
-                                 </div>
-                                </div>
-                              <h4>Business & Finance Expert</h4>
-                              <h4>7+ Year Experience</h4>
-                              <div className="star-rating-text">
-                                 <h4>4.2</h4>
-                                 <div className="star-rating">
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                 </div>
-                              </div>
-                              <p>At vero eos et accusamus et iusto odio dignissimos ducimus</p>
-                              <ul>
-                                 <li>
-                                    <h3><img src="./assets/img/clock-icon.png" className="img img-fluid" alt=""/> 230 h</h3>
-                                 </li>
-                                 <li>
-                                    <h3><img src="./img/eye-icon.png" className="img img-fluid" alt=""/> 1280</h3>
-                                 </li>
-                              </ul>
-                              <Link to="/expprofile"><button className="btn" type="button">Book Appointment</button></Link>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="col-lg-3">
-                        <div className="exp-listing-box">
-                           <div className="exp-listing-img">
-                              <img src="./assets/img/exp-img-3.png" className="img img-fluid" alt=""/>
-                              <span className="star">
-                                 <span className="star-icon fa fa-star"></span>
-                               </span>
-                           </div>
-                           <div className="exp-listing-content">
-                              <div className="row">
-                                 <div className="col-10">
-                                    <h1>Heather Nikolaus</h1>
-                                 </div>
-                                 <div className="col-2">
-                                    <div className="req-chat-icon"><img src="./assets/img/chat-btn-icon.png" alt=""/></div>
-                                 </div>
-                                </div>
-                              <h4>Business & Finance Expert</h4>
-                              <h4>7+ Year Experience</h4>
-                              <div className="star-rating-text">
-                                 <h4>4.2</h4>
-                                 <div className="star-rating">
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                 </div>
-                              </div>
-                              <p>At vero eos et accusamus et iusto odio dignissimos ducimus</p>
-                              <ul>
-                                 <li>
-                                    <h3><img src="./assets/img/clock-icon.png" className="img img-fluid" alt=""/> 230 h</h3>
-                                 </li>
-                                 <li>
-                                    <h3><img src="./assets/img/eye-icon.png" className="img img-fluid" alt=""/> 1280</h3>
-                                 </li>
-                              </ul>
-                              <Link to="/expprofile"><button className="btn" type="button">Book Appointment</button></Link>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="col-lg-3">
-                        <div className="exp-listing-box">
-                           <div className="exp-listing-img">
-                              <img src="./assets/img/exp-img-1.png" className="img img-fluid" alt=""/>
-                              <span className="star">
-                                 <span className="star-icon fa fa-star"></span>
-                               </span>
-                           </div>
-                           <div className="exp-listing-content">
-                              <div className="row">
-                                 <div className="col-10">
-                                    <h1>Heather Nikolaus</h1>
-                                 </div>
-                                 <div className="col-2">
-                                    <div className="req-chat-icon"><img src="./assets/img/chat-btn-icon.png" alt=""/></div>
-                                 </div>
-                                </div>
-                              <h4>Business & Finance Expert</h4>
-                              <h4>7+ Year Experience</h4>
-                              <div className="star-rating-text">
-                                 <h4>4.2</h4>
-                                 <div className="star-rating">
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                 </div>
-                              </div>
-                              <p>At vero eos et accusamus et iusto odio dignissimos ducimus</p>
-                              <ul>
-                                 <li>
-                                    <h3><img src="./assets/img/clock-icon.png" className="img img-fluid" alt=""/> 230 h</h3>
-                                 </li>
-                                 <li>
-                                    <h3><img src="./assets/img/eye-icon.png" className="img img-fluid" alt=""/> 1280</h3>
-                                 </li>
-                              </ul>
-                              <Link to="/expprofile"><button className="btn" type="button">Book Appointment</button></Link>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="col-lg-3">
-                        <div className="exp-listing-box">
-                           <div className="exp-listing-img">
-                              <img src="./assets/img/exp-img-2.png" className="img img-fluid" alt=""/>
-                              <span className="star">
-                                 <span className="star-icon fa fa-star"></span>
-                               </span>
-                           </div>
-                           <div className="exp-listing-content">
-                              <div className="row">
-                                 <div className="col-10">
-                                    <h1>Heather Nikolaus</h1>
-                                 </div>
-                                 <div className="col-2">
-                                    <div className="req-chat-icon"><img src="./img/chat-btn-icon.png" alt=""/></div>
-                                 </div>
-                                </div>
-                              <h4>Business & Finance Expert</h4>
-                              <h4>7+ Year Experience</h4>
-                              <div className="star-rating-text">
-                                 <h4>4.2</h4>
-                                 <div className="star-rating">
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                 </div>
-                              </div>
-                              <p>At vero eos et accusamus et iusto odio dignissimos ducimus</p>
-                              <ul>
-                                 <li>
-                                    <h3><img src="./assets/img/clock-icon.png" className="img img-fluid" alt=""/> 230 h</h3>
-                                 </li>
-                                 <li>
-                                    <h3><img src="./assets/img/eye-icon.png" className="img img-fluid" alt=""/> 1280</h3>
-                                 </li>
-                              </ul>
-                              <Link to="/expprofile"><button className="btn" type="button">Book Appointment</button></Link>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="col-lg-3">
-                        <div className="exp-listing-box">
-                           <div className="exp-listing-img">
-                              <img src="./assets/img/exp-img-3.png" className="img img-fluid" alt=""/>
-                              <span className="star">
-                                 <span className="star-icon fa fa-star"></span>
-                               </span>
-                           </div>
-                           <div className="exp-listing-content">
-                              <div className="row">
-                                 <div className="col-10">
-                                    <h1>Heather Nikolaus</h1>
-                                 </div>
-                                 <div className="col-2">
-                                    <div className="req-chat-icon"><img src="./assets/img/chat-btn-icon.png" alt=""/></div>
-                                 </div>
-                                </div>
-                              <h4>Business & Finance Expert</h4>
-                              <h4>7+ Year Experience</h4>
-                              <div className="star-rating-text">
-                                 <h4>4.2</h4>
-                                 <div className="star-rating">
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span> 
-                                 </div>
-                              </div>
-                              <p>At vero eos et accusamus et iusto odio dignissimos ducimus</p>
-                              <ul>
-                                 <li>
-                                    <h3><img src="./assets/img/clock-icon.png" className="img img-fluid" alt=""/>230 h</h3>
-                                 </li>
-                                 <li>
-                                    <h3><img src="./assets/img/eye-icon.png" className="img img-fluid" alt=""/>1280</h3>
-                                 </li>
-                              </ul>
-                              <Link to="/expprofile"><button className="btn" type="button">Book Appointment</button></Link>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="col-lg-3">
-                        <div className="exp-listing-box">
-                           <div className="exp-listing-img">
-                              <img src="./assets/img/exp-img-1.png" className="img img-fluid" alt=""/>
-                              <span className="star">
-                                 <span className="star-icon fa fa-star"></span>
-                               </span>
-                           </div>
-                           <div className="exp-listing-content">
-                              <div className="row">
-                                 <div className="col-10">
-                                    <h1>Heather Nikolaus</h1>
-                                 </div>
-                                 <div className="col-2">
-                                    <div className="req-chat-icon"><img src="./assets/img/chat-btn-icon.png" alt=""/></div>
-                                 </div>
-                                </div>
-                              <h4>Business & Finance Expert</h4>
-                              <h4>7+ Year Experience</h4>
-                              <div className="star-rating-text">
-                                 <h4>4.2</h4>
-                                 <div className="star-rating">
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                 </div>
-                              </div>
-                              <p>At vero eos et accusamus et iusto odio dignissimos ducimus</p>
-                              <ul>
-                                 <li>
-                                    <h3><img src="./assets/img/clock-icon.png" className="img img-fluid" alt=""/> 230 h</h3>
-                                 </li>
-                                 <li>
-                                    <h3><img src="./assets/img/eye-icon.png" className="img img-fluid" alt=""/> 1280</h3>
-                                 </li>
-                              </ul>
-                              <Link to="/expprofile"><button className="btn" type="button">Book Appointment</button></Link>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="col-lg-3">
-                        <div className="exp-listing-box">
-                           <div className="exp-listing-img">
-                              <img src="./assets/img/exp-img-2.png" className="img img-fluid" alt=""/>
-                              <span className="star">
-                                 <span className="star-icon fa fa-star"></span>
-                               </span>
-                           </div>
-                           <div className="exp-listing-content">
-                              <div className="row">
-                                 <div className="col-10">
-                                    <h1>Heather Nikolaus</h1>
-                                 </div>
-                                 <div className="col-2">
-                                    <div className="req-chat-icon"><img src="./assets/img/chat-btn-icon.png" alt=""/></div>
-                                 </div>
-                                </div>
-                              <h4>Business & Finance Expert</h4>
-                              <h4>7+ Year Experience</h4>
-                              <div className="star-rating-text">
-                                 <h4>4.2</h4>
-                                 <div className="star-rating">
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                    <span className="fa fa-star checked"></span>
-                                 </div>
-                              </div>
-                              <p>At vero eos et accusamus et iusto odio dignissimos ducimus</p>
-                              <ul>
-                                 <li>
-                                    <h3><img src="./assets/img/clock-icon.png" className="img img-fluid" alt=""/>230 h</h3>
-                                 </li>
-                                 <li>
-                                    <h3><img src="./assets/img/eye-icon.png" className="img img-fluid" alt=""/>1280</h3>
-                                 </li>
-                              </ul>
-                              <Link to="/expprofile"><button className="btn" type="button">Book Appointment</button></Link>
-                           </div>
-                        </div>
-                     </div> */}
+                     </div>)
+                      })
+                     }
+                     
                   </div>
                </div>
-               <div className="common-pagination">
+               {/* <div className="common-pagination">
                   <div>
                      <ul>
                         <li><Link to="javascript:;"><i className="fa fa-angle-left"></i></Link></li>
@@ -627,7 +358,29 @@ const ExpListing = () => {
                         <li><Link to="javascript:;"><i className="fa fa-angle-right"></i></Link></li>
                      </ul>
                   </div>
-               </div>
+               </div> */}
+               <ReactPaginate
+                          previousLabel={"previous"}
+                          nextLabel={"next"}
+                          breakLabel={"..."}
+                          pageCount={pages}
+                          marginPagesDisplayed={1}
+                          pageRangeDisplayed={3}
+                          onPageChange={handlePageClick}
+                          containerClassName={
+                            "pagination justify-content-center"
+                          }
+                          forcePage={currentPage - 1}
+                          pageClassName={"page-item"}
+                          pageLinkClassName={"page-link"}
+                          previousClassName={"page-item"}
+                          previousLinkClassName={"page-link"}
+                          nextClassName={"page-item"}
+                          nextLinkClassName={"page-link"}
+                          breakClassName={"page-item"}
+                          breakLinkClassName={"page-link"}
+                          activeClassName={"active"}
+                        />
             </div>
          </div>
       </section>

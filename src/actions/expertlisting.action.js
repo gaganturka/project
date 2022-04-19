@@ -3,9 +3,10 @@ import config from '../config/configg';
 import { ServerError } from '../utils/helpers';
 const BACKEND_URL = config.BACKEND_URL;
 
-function fetchAllExpertsOnlineAndFiltering( cb) {
+function fetchAllOnlineFilteredExperts( payload,cb) {
     Agent
       .fire('post', `${BACKEND_URL}/website/getFilteredOnlineExperts`)
+      .send(payload)
       .end((err, res) => {
         var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
         if (typeof cb === 'function') return cb(error, res && res.body);
@@ -34,7 +35,6 @@ function fetchAllExpertsOnlineAndFiltering( cb) {
 
 
 export default {
-    fetchAllExpertsOnline,
-    getBorhanUserDetails,
-    editBorhanUserDetails
+    fetchAllOnlineFilteredExperts,
+    
   }
