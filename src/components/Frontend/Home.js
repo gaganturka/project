@@ -16,6 +16,7 @@ const Home = () => {
    const [filteredPracticeArea,setFilteredPracticeArea]=useState([]);
    const [searchedTermPractice,setSearchedTermPractice]=useState('');
    const [selectedCategory, setSelectedCategory]=useState("");
+   const [selectedPracticeArea, setSelectedPracticeArea]=useState("");
    // const [getCategories,setGetCategories]=useState([]);
    const fetchAllExpertsOnline = async () => {
    
@@ -95,22 +96,24 @@ const Home = () => {
                          <li>
                             <div className="">
                                <input type="text" className="form-control" placeholder="Search Practice Area" value={searchedTermPractice} onChange={(e)=> setSearchedTermPractice(e.target.value)} />
-                              <ul>
+                             <div className="search-practice-area">
+                              <ul className="blocklist">
                                {
                                  filteredPracticeArea && filteredPracticeArea.map((obj,index)=>{
 
 
                                    return(
-                                      <>
+                                      
                                          
-                                            <li>{obj.name}</li>
+                                            <li onClick={(e)=>{setSelectedPracticeArea(e.target.value)}}>{obj.name}</li>
                                          
-                                      </>
+                                      
                                    )
 
                                  })
                                }
                                </ul>
+                               </div>
                                <button className="btn"><img src="./assets/img/search-icon.png" className="img img-fluid"
                                   alt=""/></button>
                             </div>
