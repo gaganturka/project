@@ -17,6 +17,12 @@ const UserSchema = new Schema({
     required: true,
     unique: true,
   },
+  googleId: {
+    type: String,
+  },
+  facebookId: {
+    type: String,
+  },
   mobileNo: {
     type: String,
     required: true,

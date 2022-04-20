@@ -164,6 +164,73 @@ module.exports = {
       universalFunctions.sendError(error, res);
     }
   },
+  googleLoginSignup: async (req, res) => {
+    try {
+       console.log(req.body)
+      let data=req.body;
+
+    let isexit= await User.findOne({googleId:data.googleId});
+    console.log(isexit,"dhcbshjcbjsbcdbsdjcbj")
+    console.log(data.email,isexit,"jdvnjsndv")
+    if(!isexit){
+      let borhanuser = await borhanUser.create({
+        isSubscribed: false,
+        balance: 0,
+      });
+
+      let createData={
+        email:data.email,
+        firstName:data.givenName,
+        googleId:data.googleId,
+        lastName:data.familyName,
+        profilePic:data.imageUrl,
+        mobileNo:"9999999999",
+        isEmailVerified:true,
+        role:APP_CONSTANTS.role.borhanuser,
+        userData:{
+          model: APP_CONSTANTS.role.borhanuser,
+          data: borhanuser._id,
+         }
+      }
+
+
+      let newUser=await await User.create(createData);
+      console.log(newUser,"jhsvdcsdc");
+      await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: newUser._id });
+    
+      const token = jwt.sign(
+        { user_id: newUser._id, email: data.email, mobileNo: "" },
+        Config.jwtsecret
+      );
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "User created",
+          data: {token},
+        },
+        res
+      );
+    }else{
+      
+      const token = jwt.sign(
+        { user_id: isexit._id, email: isexit.email, mobileNo:isexit.mobileNo },
+        Config.jwtsecret
+      );
+      console.log(isexit,"heree is user")
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "login user ",
+          data: {token,isexit},
+        },
+        res
+      );
+    } 
+  }catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  }
+  ,
   createExpertUser: async (req, res) => {
     try {
       //  console.log('thid odi bpody - ', req.file, req.files)
