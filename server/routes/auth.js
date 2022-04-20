@@ -4,6 +4,8 @@ const userCreation = require("../controllers/Auth.js");
 const isAdmin = require("../middleware/isAdmin");
 const Upload = require("../controllers/Upload");
 router.route("/createborhanuser").post(userCreation.createBorhanUser);
+router.route("/googleLoginSignup").post(userCreation.googleLoginSignup);
+
 router.route("/uploadfile").post(Upload.Upload);
 router.route("/createexpertuser").post(userCreation.createExpertUser);
 router
