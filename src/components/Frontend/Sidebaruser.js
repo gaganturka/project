@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import {Link,useLocation} from 'react-router-dom'
 import homeAction from '../../actions/home.action'
+import { GoogleLogout } from "react-google-login";
+
 
 const Sidebar = () => {
+   const CLIENT_ID ="192073990165-k8uk1edbbhb0lm03lqb7ikvf3ibqotr5.apps.googleusercontent.com";
+
    const location=useLocation();
    const [userDetails,setUserDetails]=useState([]);
    const getBorhanUserDetails = async () => {
@@ -22,6 +26,12 @@ const Sidebar = () => {
    useEffect(() => {
       getBorhanUserDetails();
   }, [])
+  const logout = (response) => {
+     localStorage.removeItem("token")
+   console.log(response);
+   window.location.reload();
+
+ };
   
   return (
      
@@ -46,8 +56,13 @@ const Sidebar = () => {
                      alt="" /> Saved cards</Link></li>
                      <li className={`${location.pathname==='/managemembership'?'active':''}`}><Link to="/managemembership" className=""><img src="./assets/img/vuesax-linear-chart-white.png" className="img img-fluid"
                         alt="" /> Manage Membership</Link></li>
-                  <li className=""><Link to="/" className="" onClick={()=>{localStorage.removeItem('token')}}><img src="./assets/img/logout-icon.png" className="img img-fluid"
-                     alt="" /> Logout</Link></li>
+                  <li className=""><GoogleLogout
+                           clientId={CLIENT_ID}
+                           buttonText="Logout"
+                           onLogoutSuccess={logout}
+                           className="nav-link login-nav-btn blackok"
+                         >
+                         </GoogleLogout></li>
                </ul>
             </div>
          </div>

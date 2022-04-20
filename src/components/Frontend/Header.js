@@ -6,8 +6,16 @@ import loginAction from "../../actions/login.action";
 import categoriesAction from "../../actions/categories.action";
 import config from '../../config/configg';
 import axios from 'axios';
+import Cookies from 'universal-cookie';
+import Agent from "../../actions/superAgent";
+import { GoogleLogin, GoogleLogout } from "react-google-login";
+import FacebookLogin from 'react-facebook-login';
 const Header = () => {
   let location = useLocation();
+  // let CLIENT_ID=""
+  const CLIENT_ID ="192073990165-k8uk1edbbhb0lm03lqb7ikvf3ibqotr5.apps.googleusercontent.com";
+const GOOGLE_CLIENT_SECRET = "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";
+
   const history = useNavigate();
   const [videoName,setVideoName]=useState("");
   const [audioName,setAudioName]=useState("");
@@ -17,6 +25,10 @@ const Header = () => {
   const [getCategories, setGetCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [selectedPracticeArea, setSelectedPracticeArea] = useState(0);
+  const [flagUser,setflagUser]=useState(false)
+  const [fflagUser,setfflagUser]=useState(false)
+
+
   const [logincredential, setlogincredential] = useState({
     mobileNo: "",
     otp: "",
@@ -65,6 +77,82 @@ const Header = () => {
     setopenmodal(false);
     setmodalstateno(1);
   };
+  const loginG = () => {
+    // let timer: NodeJS.Timeout | null = null;
+    const googleLoginURL = "http://localhost:5000/auth/google";
+    const newWindow = window.open(
+      googleLoginURL,
+      "_self",
+      
+    );
+
+ };
+ const  responseFacebook= (response)=> {
+  console.log(response);
+}
+ const responseGoogleSuccess =async (response) => {
+  console.log(response);
+  let userInfo = {
+    name: response.profileObj.name,
+    emailId: response.profileObj.email,
+  };
+  let data=response.profileObj;
+  console.log(data,"ksdhcbsdbc")
+  loginAction.googleLoginSignup(data,(err,res)=>{
+    if(err){
+      alert("err")
+    }else{
+      alert("login success")
+      window.location.reload();
+      localStorage.setItem("token", res.data.token);  
+      }
+  })
+
+
+};
+
+// Error Handler
+const responseGoogleError = (response) => {
+  console.log(response);
+};
+
+// Logout Session and Update State
+const logout = (response) => {
+  console.log(response);
+  let userInfo = {
+    name: "",
+    emailId: "",
+  };
+  // this.setState({ userInfo, isLoggedIn: false });
+};
+ useEffect(() => {
+  if (localStorage.getItem("token")||Agent.getLoginType()) {
+    console.log(Agent.getLoginType())
+    setflagUser(true);
+  } 
+ const getUser = () => {
+  fetch("http://localhost:5000/auth/login/success", {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Credentials": true,
+    },
+  })
+    .then((response) => {
+      if (response.status === 200) return response.json();
+      throw new Error("authentication has been failed!");
+    })
+    .then((resObject) => {
+      console.log(resObject.user)
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+getUser();
+}, []);
   const fetchAllCategories = async () => {
 
     categoriesAction.fetchAllCategories((err,res)=>{
@@ -97,7 +185,10 @@ const Header = () => {
     // e.preventDefault();
     const { firstName, lastName, email, mobileNo, profilePic, otp } =
       usercredential;
-  
+      if(!firstName&&!lastName&&!email&&!mobileNo&&!otp){
+        alert("fill ")
+        return
+      }
     const response = await fetch(`${config.BACKEND_URL}/admin/createborhanuser`, {
       method: "POST",
       headers: {
@@ -136,7 +227,12 @@ const Header = () => {
       profilePic,
       otp,
     } = expertcredential;
-    console.log(expertcredential);
+    
+    
+    if(!firstName&&!lastName&&!email&&!mobileNo&&!otp&&!profilePic){
+      alert("fill ")
+      return
+    }
     let dataToSend={
       firstName,
       lastName,
@@ -176,6 +272,11 @@ const Header = () => {
       mobileNo: logincredential.mobileNo,
       otp: logincredential.otp,
     };
+    if(!logincredential.mobileNo&&!logincredential.otp){
+      alert("fill ")
+      return
+    }
+    
     let json; 
     loginAction.onLogin(dataToSend,(err,res)=>{
       if(err){
@@ -246,6 +347,9 @@ const Header = () => {
     // setTimeout(() =>{resetModal();},1000)
   };
   const generateOtpExpert = async () => {
+    if(!expertcredential.mobileNo){
+      alert("fill");
+    }
     const response = await fetch(`${config.BACKEND_URL}/admin/generateotp`, {
       method: "POST",
       headers: {
@@ -287,7 +391,7 @@ const Header = () => {
     const json = await response.json();
   };
   const profileViewer=()=>{
-    if(localStorage.getItem('token')!==null)
+    if(flagUser)
     {
       history("/userdashboard");
       setProfileViewerModal(false);
@@ -387,79 +491,22 @@ const Header = () => {
                       class="brohan-app-icon"
                     />{" "}
                     Borhan App
-                    <Modal
-                      isOpen={borhanApp}
-                      toggle={() => {
-                          setBorhanApp(false);
-                      }}
-                      className="authentication-modal getapp modal-dialog modal-dialog-centered modal-xl"
-                    >
-                      <div class="auth-modal-wrp">
-                        <div class="row">
-                          <div class="col-xl-6 col-lg-12 col-md-12 p-5 text-center-md">
-                            <div class="logo-img text-center">
-                              <img
-                                src="./assets/img/favicon.png"
-                                class="img-fluid text-center"
-                              />
-                            </div>
-                            <h4 class="mt-5 download-app-tagline pb-3">
-                              Download Borhan App
-                            </h4>
-                            <h6 class="pt-2"> Easy, Smart, Useful</h6>
-                            <p class="mt-t">
-                              <small class="text-muted">
-                                Connect to experts at your fingertips
-                              </small>
-                            </p>
-                            <div class="row get-app-links ">
-                              <div class="col-lg-6 mt-3">
-                                <a href="">
-                                  <img
-                                    src="./assets/img/google-play-store-btn.png"
-                                    class="img-fluid"
-                                  />
-                                </a>
-                              </div>
-                              <div class="col-lg-6 mt-3">
-                                <a href="">
-                                  <img
-                                    src="./assets/img/app-store-btn.png"
-                                    class="img-fluid"
-                                  />
-                                </a>
-                              </div>
-                            </div>
-                            <p class="mt-3 small-text">
-                              Enter your valid Mobile number to get download
-                              link via SMS.
-                            </p>
-                            <div class="input-group mt-3 mb-2">
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="phone-number"
-                                placeholder="Type your 10 digit mobile number"
-                              />
-                              <button
-                                type="button"
-                                class="btn bg-dark text-white send-number"
-                              >
-                                Send
-                              </button>
-                            </div>
-                          </div>
-                          <div class="col-xl-6   p-0 get-app-banner">
-                            <div id="container text-center">
-                              <img src="./assets/img/get-app-banner.png" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </Modal>
+                    
                   </a>
                 </li>
-                <li className="nav-item">
+             {!flagUser? <li className="nav-item">
+                  <a
+                    className={`nav-link ${
+                      location.pathname === "/userdashboard" ? "active" : ""
+                    }`}
+                    // to="/userdashboard"
+                    onClick={profileViewer}
+                  >
+                   Login
+                    
+             
+                    
+                  </a></li>: <li className="nav-item">
                   <a
                     className={`nav-link ${
                       location.pathname === "/userdashboard" ? "active" : ""
@@ -468,8 +515,26 @@ const Header = () => {
                     onClick={profileViewer}
                   >
                     Profile
-                    
-                      <Modal
+ 
+                  </a>
+                </li>}
+                <li className="nav-item">
+                  <input
+                    type="button"
+                    value="Book an appointment"
+                    className="nav-link login-nav-btn"
+                    onClick={() => {
+                      bookAnAppoitmentHeaderViewer();
+                    }}
+                  />
+                  
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <Modal
       isOpen={profileViewerModal}
       toggle={() => {
        setProfileViewerModal(false);
@@ -508,6 +573,12 @@ const Header = () => {
                       onChange={onChangeLogin}
                       className="form-control"
                       placeholder=""
+                      maxlength="10"
+                onKeyPress={(event) => {
+                  if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
                     />
                     <button
                       role="button"
@@ -527,26 +598,37 @@ const Header = () => {
                   <p>Or Sign in with</p>
                   <ul>
                     <li className="pe-2">
-                      <button className="btn">
-                        {" "}
-                        <img
-                          src="./assets/img/login-with-google.png"
-                          className="img img-fluid"
-                          alt=""
-                        />
-                        Log in with Gmail
-                      </button>
+                    <GoogleLogin
+              clientId={CLIENT_ID}
+              buttonText="Sign In with Google"
+              onSuccess={responseGoogleSuccess}
+              onFailure={responseGoogleError}
+              // isSignedIn={true}
+              cookiePolicy={"single_host_origin"}
+            />
                     </li>
                     <li className="ps-2">
-                      <button className="btn">
-                        {" "}
-                        <img
-                          src="./assets/img/login-with-facebook.png"
-                          className="img img-fluid"
-                          alt=""
-                        />
-                        Log in with Facebook
-                      </button>
+                    {fflagUser==true?
+                    <FacebookLogin
+                     appId="585451125985997"
+                     autoLoad={true}
+                     fields="name,email,picture"
+                     cssClass="btn"
+                     scope="public_profile,user_friends,user_actions.books"
+                     callback={responseFacebook}
+                    
+                    />:<button className="btn" onClick={e=>{
+                      e.preventDefault();
+                      setfflagUser(true)
+                    }}>
+                    {" "}
+                    <img
+                      src="./assets/img/login-with-facebook.png"
+                      className="img img-fluid"
+                      alt=""
+                    />
+                    Log in with Facebook
+                  </button>}
                     </li>
                   </ul>
                   <h5>
@@ -716,6 +798,12 @@ const Header = () => {
                           name="mobileNo"
                           onChange={()=>{onChangeUser();}}
                           placeholder=""
+                          maxlength="10"
+                          onKeyPress={(event) => {
+                            if (!/[0-9]/.test(event.key)) {
+                              event.preventDefault();
+                            }
+                          }}
                         />
                       </div>
                     </div>
@@ -723,6 +811,7 @@ const Header = () => {
                       type="submit"
                       className="btn auth-main-btn"
                       onClick={() => {
+                        
                         setmodalstateno(7);
                         generateOtpUser();
                       }}
@@ -803,6 +892,12 @@ const Header = () => {
                           onChange={onChangeExpert}
                           className="form-control"
                           placeholder=""
+                          maxlength="10"
+                          onKeyPress={(event) => {
+                            if (!/[0-9]/.test(event.key)) {
+                              event.preventDefault();
+                            }
+                          }}
                         />
                       </div>
                       <div className="col-lg-12">
@@ -1114,19 +1209,7 @@ const Header = () => {
         </div>
       </div>
     </Modal>
-                    
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <input
-                    type="button"
-                    value="Book an appointment"
-                    className="nav-link login-nav-btn"
-                    onClick={() => {
-                      bookAnAppoitmentHeaderViewer();
-                    }}
-                  />
-                  <Modal
+      <Modal
                     isOpen={openmodal}
                     toggle={() => {
                       toggle();
@@ -1159,11 +1242,18 @@ const Header = () => {
                                 <div className="auth-input-wrp">
                                   <label for="">Enter Mobile Number</label>
                                   <input
+                                    maxlength="10"
+                                    onKeyPress={(event) => {
+                                      if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault();
+                                      }
+                                    }}
                                     type="text"
                                     name="mobileNo"
                                     onChange={onChangeLogin}
                                     className="form-control"
                                     placeholder=""
+                                    
                                   />
                                   <button
                                     role="button"
@@ -1183,26 +1273,25 @@ const Header = () => {
                                 <p>Or Sign in with</p>
                                 <ul>
                                   <li className="pe-2">
-                                    <button className="btn">
-                                      {" "}
-                                      <img
-                                        src="./assets/img/login-with-google.png"
-                                        className="img img-fluid"
-                                        alt=""
-                                      />
-                                      Log in with Gmail
-                                    </button>
+                                  <GoogleLogin
+              clientId={CLIENT_ID}
+              buttonText="Sign In with Google"
+              onSuccess={responseGoogleSuccess}
+              onFailure={responseGoogleError}
+              isSignedIn={true}
+              cookiePolicy={"single_host_origin"}
+            />
                                   </li>
                                   <li className="ps-2">
-                                    <button className="btn">
-                                      {" "}
-                                      <img
-                                        src="./assets/img/login-with-facebook.png"
-                                        className="img img-fluid"
-                                        alt=""
-                                      />
-                                      Log in with Facebook
-                                    </button>
+                                  <FacebookLogin
+                     appId="585451125985997"
+                     autoLoad={true}
+                     fields="name,email,picture"
+                     cssClass="btn"
+                     scope="public_profile,user_friends,user_actions.books"
+                     callback={responseFacebook}
+                    
+                    />
                                   </li>
                                 </ul>
                                 <h5>
@@ -1371,6 +1460,12 @@ const Header = () => {
                                         name="mobileNo"
                                         onChange={onChangeUser}
                                         placeholder=""
+                                        maxlength="10"
+                                    onKeyPress={(event) => {
+                                      if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault();
+                                      }
+                                    }}
                                       />
                                     </div>
                                   </div>
@@ -1458,6 +1553,12 @@ const Header = () => {
                                         onChange={onChangeExpert}
                                         className="form-control"
                                         placeholder=""
+                                        maxlength="10"
+                                        onKeyPress={(event) => {
+                                          if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                          }
+                                        }}
                                       />
                                     </div>
                                     <div className="col-lg-12">
@@ -1764,12 +1865,82 @@ const Header = () => {
                       </div>
                     </div>
                   </Modal>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-      </div>
+      <Modal
+                      isOpen={borhanApp}
+                      toggle={() => {
+                          setBorhanApp(false);
+                      }}
+                      className="authentication-modal getapp modal-dialog modal-dialog-centered modal-xl"
+                    >
+                      <div class="auth-modal-wrp">
+                        <div class="row">
+                          <div class="col-xl-6 col-lg-12 col-md-12 p-5 text-center-md">
+                            <div class="logo-img text-center">
+                              <img
+                                src="./assets/img/favicon.png"
+                                class="img-fluid text-center"
+                              />
+                            </div>
+                            <h4 class="mt-5 download-app-tagline pb-3">
+                              Download Borhan App
+                            </h4>
+                            <h6 class="pt-2"> Easy, Smart, Useful</h6>
+                            <p class="mt-t">
+                              <small class="text-muted">
+                                Connect to experts at your fingertips
+                              </small>
+                            </p>
+                            <div class="row get-app-links ">
+                              <div class="col-lg-6 mt-3">
+                                <a href="">
+                                  <img
+                                    src="./assets/img/google-play-store-btn.png"
+                                    class="img-fluid"
+                                  />
+                                </a>
+                              </div>
+                              <div class="col-lg-6 mt-3">
+                                <a href="">
+                                  <img
+                                    src="./assets/img/app-store-btn.png"
+                                    class="img-fluid"
+                                  />
+                                </a>
+                              </div>
+                            </div>
+                            <p class="mt-3 small-text">
+                              Enter your valid Mobile number to get download
+                              link via SMS.
+                            </p>
+                            <div class="input-group mt-3 mb-2">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="phone-number"
+                                placeholder="Type your 10 digit mobile number"
+                                maxlength="10"
+                onKeyPress={(event) => {
+                  if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
+                              />
+                              <button
+                                type="button"
+                                class="btn bg-dark text-white send-number"
+                              >
+                                Send
+                              </button>
+                            </div>
+                          </div>
+                          <div class="col-xl-6   p-0 get-app-banner">
+                            <div id="container text-center">
+                              <img src="./assets/img/get-app-banner.png" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Modal>
     </>
   );
 };

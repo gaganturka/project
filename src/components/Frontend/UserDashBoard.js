@@ -4,15 +4,23 @@ import Sidebar from "./Sidebaruser";
 import homeAction from "../../actions/home.action";
 import config from "../../config/configg";
 import axios from "axios";
+import Cookies from 'universal-cookie';
+import Agent from "../../actions/superAgent";
 const UserDashBoard = () => {
   const [userDetails, setUserDetails] = useState([]);
   const [getProfilePic, setGetProfilePic] = useState("");
   const history = useNavigate();
+  
+
   useEffect(() => {
-    if (localStorage.getItem("token")) {
+    let k=Agent.getLoginType();
+    console.log(k,"mddcs,dc sdmc sdcsdcsdcsdcdcscs   s csd m")
+    if (localStorage.getItem("token")||k) {
       getBorhanUserDetails();
-    } else {
-      history("/");
+    } 
+    else {
+
+      // history("/");
     }
   }, []);
 

@@ -22,42 +22,42 @@ const Home = () => {
    // const [getCategories,setGetCategories]=useState([]);
    const fetchAllExpertsOnline = async () => {
    
-      homeAction.fetchAllExpertsOnline((err,res)=>{
-        if(err){
-          console.log(err," fetchAllExpertsOnline error")
-        }else{
-          setExpertsOnline(res.data);
+      // homeAction.fetchAllExpertsOnline((err,res)=>{
+      //   if(err){
+      //     console.log(err," fetchAllExpertsOnline error")
+      //   }else{
+      //     setExpertsOnline(res.data);
           
-      setDummy(0); 
-          console.log(res.data," online experts ");
-        }
-      });
+      // setDummy(0); 
+      //     console.log(res.data," online experts ");
+      //   }
+      // });
       
     };
     const fetchAllCategories = async () => {
 
-      categoriesAction.fetchAllCategories((err,res)=>{
-        if(err){
-          console.log(err,"helllooo")
-        }else{
-          setGetCategories(res.data);
-          console.log(res.data," daata ");
-        }
-      });
+      // categoriesAction.fetchAllCategories((err,res)=>{
+      //   if(err){
+      //     console.log(err,"helllooo")
+      //   }else{
+      //     setGetCategories(res.data);
+      //     console.log(res.data," daata ");
+      //   }
+      // });
       
     };
     const fetchSearchedPracticeArea = async () => {
        const dataToSend={
          searchedTerm:searchedTermPractice,
        }
-       homeAction.fetchSearchedPracticeArea(dataToSend,(err,res)=>{
-        if(err){
+      //  homeAction.fetchSearchedPracticeArea(dataToSend,(err,res)=>{
+      //   if(err){
   
-        }else{
-          console.log(res.data," daata ");
-          setFilteredPracticeArea(res.data);
-        }
-      });
+      //   }else{
+      //     console.log(res.data," daata ");
+      //     setFilteredPracticeArea(res.data);
+      //   }
+      // });
      
     };
   
