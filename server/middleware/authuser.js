@@ -9,7 +9,6 @@ const checkAuth =  async(req, res, next) => {
     console.log("token:",token);
       if (token) {
         const decoded =  Jwt.verify(token, Config.jwtsecret);
-        // let decoded = jwt_decode(token);
             console.log(Config.jwtsecret,"jwt");
         // Jwt.verify(token, Config.jwtsecret, async function (err,decoded) {
           try {
@@ -22,20 +21,10 @@ const checkAuth =  async(req, res, next) => {
               }
               console.log(user,"hererererlnkjsnvknsfdvjs")
  
-              //   user = user.toJSON();
-              // console.log("decoded" , user);
-            //   if (user.isDeleted) {
-            //     throw Boom.badRequest(responseMessage.USER_NOT_FOUND);
-            //   }
-            //   if (user.userSuspend) {
-            //     throw Boom.badRequest(responseMessage.userSuspend);
-            //   }
+              
                 let userInfo = {
                   id: user._id,
-                //   name: user.name,
-                //   email: user.email ? user.email : "",
-                //   isPhoneVerified:user.isPhoneVerified,
-                //   // phoneNumber: user.phoneNumber ? user.phoneNumber : "",
+            
                 };
                 req.user = userInfo;
                 next();
