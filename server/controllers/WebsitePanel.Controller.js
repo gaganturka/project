@@ -257,13 +257,13 @@ module.exports = {
       getPracticeAreaDataSearched : async (req, res) => {
         try {
           const schema = Joi.object({
-           searchedTerm:Joi.string(),
+           searchedTerm:Joi.string().allow(""),
           });
           await universalFunctions.validateRequestPayload(req.body, res, schema);
           let filter={
             isDeleted:false,
           }
-          if (req.body.searchedTerm) {
+          if (req.body.searchedTerm !== "") {
             filter['$or'] = [{ name: { $regex: req.body.searchedTerm, $options: 'i' } }];
           }
           let practiceAreaData = await practiceArea.find(filter);
@@ -287,3 +287,4 @@ module.exports = {
 };
 
 
+  
