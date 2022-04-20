@@ -1,30 +1,33 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {Link,useLocation} from 'react-router-dom'
 import homeAction from '../../actions/home.action'
 import { GoogleLogout } from "react-google-login";
+import { AuthContext } from '../../context/AuthContext';
 
 
 const Sidebar = () => {
+   const {loggedInBorhanUserInfo,setLoggedInBorhanUserInfo}=useContext(AuthContext);
    const CLIENT_ID ="192073990165-k8uk1edbbhb0lm03lqb7ikvf3ibqotr5.apps.googleusercontent.com";
 
    const location=useLocation();
-   const [userDetails,setUserDetails]=useState([]);
-   const getBorhanUserDetails = async () => {
-      // console.log(decodedToken,"hi its decoded");
-      homeAction.getBorhanUserDetails((err,res)=>{
-         if(err){
-           console.log(err,"helllooo")
-         }else{
-         //   setGetCategories(res.data);
-         //   console.log(res.data,"user details daata ");
-           setUserDetails(  res.data  );
-         //   setGetProfilePic(res.data.profilePic)
-         }
-       });
+   // const [loggedInBorhanUserInfo,setLoggedInBorhanUserInfo]=useState([]);
+//    const getBorhanUserDetails = async () => {
+//       // console.log(decodedToken,"hi its decoded");
+//       homeAction.getBorhanUserDetails((err,res)=>{
+//          if(err){
+//            console.log(err,"helllooo")
+//          }else{
+//          //   setGetCategories(res.data);
+//          //   console.log(res.data,"user details daata ");
+//            setLoggedInBorhanUserInfo(  res.data  );
+//          //   setGetProfilePic(res.data.profilePic)
+//          }
+//        });
 
-  };
+//   };
    useEffect(() => {
-      getBorhanUserDetails();
+      
+      // getBorhanUserDetails();
   }, [])
   const logout = (response) => {
      localStorage.removeItem("token")
@@ -42,8 +45,8 @@ const Sidebar = () => {
          <div className="sidebar-wrapper">
             <div className="flex-shrink-0">
                <div className="user-img-sidebar">
-                  <img src={`${userDetails.profilePic==="" ?"./assets/img/mathew-wade.png":userDetails.profilePic}`} className="img img-fluid" alt="" />
-                  <h3>{userDetails.firstName } {" "} {userDetails.lastName}</h3>
+                  <img src={`${loggedInBorhanUserInfo.profilePic==="" ?"./assets/img/mathew-wade.png":loggedInBorhanUserInfo.profilePic}`} className="img img-fluid" alt="" />
+                  <h3>{loggedInBorhanUserInfo.firstName } {" "} {loggedInBorhanUserInfo.lastName}</h3>
                </div>
                <ul className="list-unstyled ps-0">
                   <li className={`${location.pathname==='/userdashboard'?'active':''}`}><Link to="/userdashboard" className=""><img src="./assets/img/profile-icon.png"

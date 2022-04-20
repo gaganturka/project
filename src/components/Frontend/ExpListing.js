@@ -214,7 +214,7 @@ const ExpListing = () => {
                                  <div className="item" key={index}>
                         <div className="pratice-area-box">
                            <div>
-                           {/* <img src={`${obj.url.original}`} className="img img-fluid" alt=""/> */}
+                           <img src={`${obj.url.original}`} className="img img-fluid" alt=""/>
                         </div>
                            <div>
                               <h4>{obj.name}  </h4>

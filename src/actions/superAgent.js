@@ -18,7 +18,7 @@ let removeSession = () => {
 
 const getToken = () => {
     let token = localStorage.getItem('token');
-    console.log(token);
+    // console.log(token);
     return token
 }
 

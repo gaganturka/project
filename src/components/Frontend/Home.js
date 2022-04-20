@@ -22,42 +22,42 @@ const Home = () => {
    // const [getCategories,setGetCategories]=useState([]);
    const fetchAllExpertsOnline = async () => {
    
-      // homeAction.fetchAllExpertsOnline((err,res)=>{
-      //   if(err){
-      //     console.log(err," fetchAllExpertsOnline error")
-      //   }else{
-      //     setExpertsOnline(res.data);
+      homeAction.fetchAllExpertsOnline((err,res)=>{
+        if(err){
+          console.log(err," fetchAllExpertsOnline error")
+        }else{
+          setExpertsOnline(res.data);
           
-      // setDummy(0); 
-      //     console.log(res.data," online experts ");
-      //   }
-      // });
+      setDummy(0); 
+          console.log(res.data," online experts ");
+        }
+      });
       
     };
     const fetchAllCategories = async () => {
 
-      // categoriesAction.fetchAllCategories((err,res)=>{
-      //   if(err){
-      //     console.log(err,"helllooo")
-      //   }else{
-      //     setGetCategories(res.data);
-      //     console.log(res.data," daata ");
-      //   }
-      // });
+      categoriesAction.fetchAllCategories((err,res)=>{
+        if(err){
+          console.log(err,"helllooo")
+        }else{
+          setGetCategories(res.data);
+          console.log(res.data," daata ");
+        }
+      });
       
     };
     const fetchSearchedPracticeArea = async () => {
        const dataToSend={
          searchedTerm:searchedTermPractice,
        }
-      //  homeAction.fetchSearchedPracticeArea(dataToSend,(err,res)=>{
-      //   if(err){
+       homeAction.fetchSearchedPracticeArea(dataToSend,(err,res)=>{
+        if(err){
   
-      //   }else{
-      //     console.log(res.data," daata ");
-      //     setFilteredPracticeArea(res.data);
-      //   }
-      // });
+        }else{
+          console.log(res.data," daata ");
+          setFilteredPracticeArea(res.data);
+        }
+      });
      
     };
   
@@ -91,6 +91,7 @@ const Home = () => {
                                <option selected>Select Category</option>
                                <option value="1">One</option>
                                <option value="2">Two</option>
+                           
                                <option value="3">Three</option>
                             </select> */}
                             <FetchCategoriesList selectedCategory={selectedCategory} getCategories={getCategories} setGetCategories={setGetCategories} />
@@ -303,7 +304,7 @@ const Home = () => {
                          </div>
                       </div>
                    </div> */}
-                 {expertsOnline.length && expertsOnline.map((obj,index) => {
+                 {expertsOnline && expertsOnline.map((obj,index) => {
                     return(
                      <div className="item" key={index}>
                       <div className="expert-box-wrp">
