@@ -26,6 +26,8 @@ const GOOGLE_CLIENT_SECRET = "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";
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [selectedPracticeArea, setSelectedPracticeArea] = useState(0);
   const [flagUser,setflagUser]=useState(false)
+  const [fflagUser,setfflagUser]=useState(false)
+
 
   const [logincredential, setlogincredential] = useState({
     mobileNo: "",
@@ -606,6 +608,7 @@ getUser();
             />
                     </li>
                     <li className="ps-2">
+                    {fflagUser==true?
                     <FacebookLogin
                      appId="585451125985997"
                      autoLoad={true}
@@ -614,7 +617,18 @@ getUser();
                      scope="public_profile,user_friends,user_actions.books"
                      callback={responseFacebook}
                     
+                    />:<button className="btn" onClick={e=>{
+                      e.preventDefault();
+                      setfflagUser(true)
+                    }}>
+                    {" "}
+                    <img
+                      src="./assets/img/login-with-facebook.png"
+                      className="img img-fluid"
+                      alt=""
                     />
+                    Log in with Facebook
+                  </button>}
                     </li>
                   </ul>
                   <h5>
