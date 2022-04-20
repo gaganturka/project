@@ -15,7 +15,9 @@ body {
 	letter-spacing: 0.2px;
 	font-family: 'Poppins', sans-serif;
 }
-
+.blackok{
+	background-color: #eff8f6 !important;
+}
 :hover {
 	transition: all .4s ease;
 	-webkit-transition: all .4s ease;

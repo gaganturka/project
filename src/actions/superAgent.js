@@ -23,7 +23,7 @@ const getToken = () => {
 }
 
 const getLoginType = () => {
-    let loginType = cookie.get('token', { path: '/' });
+    let loginType = cookie.get("sessionm");
     return loginType
 }
 
@@ -52,5 +52,6 @@ let Agent = {
     fire,
     getToken,
     removeSession,
+    getLoginType
 }
 export default Agent;
