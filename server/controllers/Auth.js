@@ -168,8 +168,14 @@ module.exports = {
     try {
        console.log(req.body)
       let data=req.body;
-
-    let isexit= await User.findOne({googleId:data.googleId});
+      let filter={
+        
+          $or: [
+           { googleId: data.googleId },    { email: data.email },
+          ],
+       
+      }
+    let isexit= await User.findOne(filter);
     console.log(isexit,"dhcbshjcbjsbcdbsdjcbj")
     console.log(data.email,isexit,"jdvnjsndv")
     if(!isexit){
