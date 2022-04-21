@@ -1,10 +1,34 @@
-import {React,useState} from 'react'
+import {React,useState,useEffect} from 'react'
 import {Modal,ModalBody} from 'reactstrap'
 import Footer from './Footer';
-
+import Calendar from 'react-calendar'
+import { useParams } from "react-router-dom"
+import 'react-calendar/dist/Calendar.css';
 const ExpProfile = () => {
+   const params = useParams();
    const [bookappointmentmodal,setbookappointmentmodal]=useState(false);
    const [scheduleappointmentmodal,setscheduleappointmentmodal]=useState(false);
+   
+  const [appointmentType, setAppointmentType] = useState("");
+  useEffect(() => {
+     let id = params.id;
+  });
+   const [typeCall,setTypeCall]=useState("");
+   const [categorie,setCategorie]=useState("");
+   const [Duration,setDuration]=useState("");
+   const [question,SetQuestion]=useState("")
+   const [timeSlot,SetTimeSlot]=useState("")
+   const [dateSlot,SetDateSlot]=useState("")  //moment().format('MMMM Do YYYY, h:mm:ss a');
+   const Datehandel=(e)=>{
+      // api hit 
+      fetchExpert()
+      SetDateSlot(e);
+   }
+
+
+   const fetchExpert=()=>{
+
+   }
   return (
     <>
       <section className="breadcrumb-section">
@@ -21,14 +45,14 @@ const ExpProfile = () => {
                      </ul>
                   </div>
                </div>
-               <div className="col-lg-5">
+               {/* <div className="col-lg-5">
                   <div className="breadcrumb-search">
                      <div className="position-relative">
                         <input type="text" className="form-control" placeholder="Search any....."/>
                         <button className="btn"><img src="./assets/img/search-icon.png" className="img img-fluid" alt=""/></button>
                      </div>
                   </div>
-               </div>
+               </div> */}
             </div>
          </div>
       </section>
@@ -78,10 +102,18 @@ const ExpProfile = () => {
                            </li>
                            <li>
                               <div className="exp-intro">
-                                 <div>
-                                    <img src="./assets/img/volume-icon.png" className="img img-fluid" alt=""/>
+                              <img src="./assets/img/volume-icon.png" className="img img-fluid" alt=""/>
                                  </div>
                                  <div>
+
+                              {/* <audio controls>
+              <source src="horse.ogg" type="audio/ogg" />
+                  <source src="horse.mp3" type="audio/mpeg"/>
+                     Your browser does not support the audio tag.
+</audio> */}
+                                 <div>
+
+            
                                     <p>Expert Intro</p>
                                  </div>
                               </div>
@@ -89,8 +121,28 @@ const ExpProfile = () => {
                         </ul>
                      </div>
                      <div className="exp-communicate-btn-row">
-                        <div><button className="btn" type="button"><img src="./assets/img/video-call-icon.png" className="img img-fluid" alt=""/> Video Call</button></div>
-                        <div><button className="btn" type="button"><img src="./assets/img/audio-call-icon.png" className="img img-fluid" alt=""/> Audio Call</button></div>
+                     
+                        <div><button className={`btn  ${
+                      typeCall == 1 ? "bg-success" : ""
+                    }`} type="button "  onClick={e=>{
+                     e.preventDefault();
+                     setTypeCall(1)
+                  }}>
+                       
+                       
+                       <img src="./assets/img/video-call-icon.png" className="img img-fluid" alt=""/>
+                        Video Call</button>
+                        </div>
+                    <div><button className={`btn  ${
+                      typeCall == 2 ? "bg-success" : ""
+                    }`} type="button" onClick={e=>{
+                     e.preventDefault();
+                     setTypeCall(2)
+                  }}>
+                       
+                       
+                       <img src="./assets/img/video-call-icon.png" className="img img-fluid" alt=""/> Audio Call</button></div>
+
                         {/* <!-- <div><button className="btn" type="button"><img src="./img/chat-icon.png" className="img img-fluid" alt=""> Chat</button></div> --> */}
                      </div>
                      <div className="continue-booking-btn">
@@ -121,21 +173,25 @@ const ExpProfile = () => {
                                           <div className="col-lg-4">
                                              <div className="form-group">
                                                 <label for="">Select Appointment type</label>
-                                                <select className="form-select" aria-label="example">
-                                                   <option selected>Video Call</option>
-                                                   <option value="1">Face to Face</option>
-                                                   <option value="2">Audio Call</option>
+                                                <select className="form-select" aria-label="example" onChange={e=>{
+                                                   setTypeCall(e.target.value)
+                                                }}>
+                                                   <option selected value="Video Call">Video Call</option>
+                                                   <option value="Face to Face">Face to Face</option>
+                                                   <option value="Audio Call">Audio Call</option>
                                                 </select>
                                              </div>
                                           </div>
                                           <div className="col-lg-4">
                                              <div className="form-group">
                                                 <label for="">Select call Duration time</label>
-                                                <select className="form-select" aria-label="example">
-                                                   <option selected>30 Mintues</option>
-                                                   <option value="1">40 Mintues</option>
-                                                   <option value="2">50 Mintues</option>
-                                                   <option value="3">60 Mintues</option>
+                                                <select className="form-select " aria-label="example" onChange={e=>{
+                                                   setDuration(e.target.value);
+                                                }}>
+                                                   <option selected value="30">30 Mintues</option>
+                                                   <option value="40">40 Mintues</option>
+                                                   <option value="50">50 Mintues</option>
+                                                   <option value="60">60 Mintues</option>
                                                 </select>
                                              </div>
                                           </div>
@@ -164,7 +220,9 @@ const ExpProfile = () => {
                                           </div> --> */}
                                           <div className="col-lg-12">
                                              <div className="form-group">
-                                                <input type="text" className="form-control" placeholder="Question to Ask ?"/>
+                                                <input type="text" className="form-control" onChange={(e)=>{
+                                                   SetQuestion(e.target.value);
+                                                }} placeholder="Question to Ask ?"/>
                                              </div>
                                           </div>
                                        </div>
@@ -198,7 +256,11 @@ const ExpProfile = () => {
                                        <div className="col-lg-6">
                                           <div className="book-app-box">
                                              <div className="schedule-calendar">
-                                                <img src="./assets/img/calendar.png" className="img img-fluid" alt=""/>
+                                                      <Calendar
+                                                      
+                                                      onChange={e=>{
+                                                         Datehandel(e);
+                                                                                                            }}/>
                                              </div>
                                           </div>
                                        </div>

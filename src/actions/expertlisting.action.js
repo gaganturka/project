@@ -12,6 +12,20 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
         if (typeof cb === 'function') return cb(error, res && res.body);
       });
   }
+  function getSingleExport(id, cb) {
+    Agent.fire("get", `${BACKEND_URL}/website/getSingleExpert?id=${id}`)
+      .end((err, res) => {
+        var error =
+          err || res.error
+            ? ServerError(res)
+            : res.body && res.body.error
+            ? ServerError(res)
+            : null;
+        if (typeof cb === "function") return cb(error, res && res.body);
+      });
+  }
+  
+
   function fetchAllOnlineFilteredPremiumExperts( payload,cb) {
     Agent
       .fire('post', `${BACKEND_URL}/website/getFilteredOnlinePremiumExperts`)
@@ -30,6 +44,15 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
       });
   }
   
+  function bookAnAppoitment( payload,cb) {
+    Agent
+      .fire('post', `${BACKEND_URL}/website/bookAnAppoitment`)
+      .send(payload)
+      .end((err, res) => {
+        var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
+        if (typeof cb === 'function') return cb(error, res && res.body);
+      });
+    }
 // function getBorhanUserDetails( cb) {
 //     Agent
 //       .fire('get', `${BACKEND_URL}/website/getBorhanUserDetails`)
@@ -52,6 +75,8 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
 
 export default {
     fetchAllOnlineFilteredExperts,
-    fetchAllOnlineFilteredPremiumExperts,
-    fetchAllOnlinePremiumExperts
+    bookAnAppoitment,
+    getSingleExport,
+   fetchAllOnlineFilteredPremiumExperts,
+    fetchAllOnlinePremiumExperts,
   }
