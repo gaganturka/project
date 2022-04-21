@@ -12,7 +12,23 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
         if (typeof cb === 'function') return cb(error, res && res.body);
       });
   }
-  
+  function fetchAllOnlineFilteredPremiumExperts( payload,cb) {
+    Agent
+      .fire('post', `${BACKEND_URL}/website/getFilteredOnlinePremiumExperts`)
+      .send(payload)
+      .end((err, res) => {
+        var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
+        if (typeof cb === 'function') return cb(error, res && res.body);
+      });
+  }
+  function fetchAllOnlinePremiumExperts( payload,cb) {
+    Agent
+      .fire('get', `${BACKEND_URL}/website/getOnlinePremiumExperts`)
+      .end((err, res) => {
+        var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
+        if (typeof cb === 'function') return cb(error, res && res.body);
+      });
+  }
   
 // function getBorhanUserDetails( cb) {
 //     Agent
@@ -36,5 +52,6 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
 
 export default {
     fetchAllOnlineFilteredExperts,
-    
+    fetchAllOnlineFilteredPremiumExperts,
+    fetchAllOnlinePremiumExperts
   }

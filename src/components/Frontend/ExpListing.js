@@ -11,7 +11,7 @@ import StarRatings from 'react-star-ratings'
 import Footer from './Footer';
 import categoriesAction from "../../actions/categories.action";
 import FetchCategoriesList from './FetchCategoriesList';
-import FectchPracticeAreaList from './FetchPracticeAreaList';
+import FetchPracticeAreaList from './FetchPracticeAreaList';
 import { CategoryAndPracticeContext } from '../../context/CategoryAndPracticeContext';
 
 const ExpListing = () => {
@@ -24,6 +24,7 @@ const ExpListing = () => {
    const [getPracticeArea,setGetPracticeArea]=useState([]);
    const [dummy,setDummy]=useState(false);
    const [expertList,setExpertList]=useState([]);
+   const [premiumExpertList,setPremiumExpertList]=useState([]);
    const [currentPage,setCurrentPage]=useState(1);
    const [pages,setPages]=useState(10);
    const [sizePerPage,setSizePerPage]=useState(8);
@@ -52,6 +53,7 @@ const ExpListing = () => {
       fetchAllCategories();
       fetchAllPracticeArea();
       fetchAllOnlineFilteredExperts();
+      fetchAllOnlinePremiumExperts();
     }, [selectedCategory,selectedPracticeArea,selectedExpertSorting])
    
 
@@ -92,6 +94,29 @@ const ExpListing = () => {
       });
       
     };
+
+   
+    const fetchAllOnlinePremiumExperts = async () => {
+      let dataToSend={
+         limit:sizePerPage,
+         page:currentPage,
+         category:selectedCategory,
+         practiceArea:selectedPracticeArea,
+         sortBy:selectedExpertSorting,
+      }
+         expListingAction.fetchAllOnlinePremiumExperts(dataToSend,(err,res)=>{
+           if(err){
+             console.log(err," fetchAllPremiumExpertsOnline error")
+           }else{
+             setPremiumExpertList(res.data.list);
+             
+           }
+         });
+         
+       };
+
+
+
     const handlePageClick = (data) => {
       let current = data.selected + 1;
       console.log(current, "currentpage");
@@ -162,19 +187,24 @@ const ExpListing = () => {
                     },
                   }}
                 >
-                   <div className="item">
+                  {premiumExpertList&&premiumExpertList.map((obj,index)=>{
+                     return(
+                        <div className="item">
                         <div className="expert-box-wrp blue-bg">
                            <div className="position-relative">
-                              <img src="./assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
+                              <img src={`${obj?.userId?.profilePic===""?"./assets/img/expert-thumb.png":obj?.userId?.profilePic}`} className="img img-fluid" alt=""/>
                              
                            </div>
                            <div className="p-3">
-                              <h5>Heather Nikolaus</h5>
-                              <h6>Business & Finance Expert</h6>
+                              <h5>{obj?.userId?.firstName}</h5>
+                              <h6>{obj?.practiceArea[0].name}</h6>
                               <Link to="/expprofile"><button className="btn">View Profile</button></Link>
                            </div>
                         </div>
                      </div>
+                     )
+                     })
+                  } 
                 </OwlCarousel>
                  
                </div>
@@ -268,7 +298,7 @@ const ExpListing = () => {
                               <option value="2">Two</option>
                               <option value="3">Three</option>
                            </select> */}
-                           <FectchPracticeAreaList getPracticeArea={getPracticeArea} setGetPracticeArea={setGetPracticeArea} setSelectedPracticeArea={setSelectedPracticeArea} selectedPracticeArea={selectedPracticeArea} />
+                           <FetchPracticeAreaList getPracticeArea={getPracticeArea} setGetPracticeArea={setGetPracticeArea} setSelectedPracticeArea={setSelectedPracticeArea} selectedPracticeArea={selectedPracticeArea} />
                         </li>
                      </ul>
                   </div>
