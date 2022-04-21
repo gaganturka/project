@@ -7,8 +7,9 @@ const FetchCategoriesList = ({selectedCategory,setSelectedCategory,getCategories
       onChange={(e) => {
         setSelectedCategory(e.target.value);
       }}
+      value={selectedCategory}
     >
-      <option selected value="0">
+      <option selected value="">
         Filter Categories
       </option>
       

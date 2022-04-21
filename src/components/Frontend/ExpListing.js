@@ -1,4 +1,4 @@
-import {React,useState,useEffect} from 'react'
+import {React,useState,useEffect, useContext} from 'react'
 import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
@@ -12,11 +12,14 @@ import Footer from './Footer';
 import categoriesAction from "../../actions/categories.action";
 import FetchCategoriesList from './FetchCategoriesList';
 import FectchPracticeAreaList from './FetchPracticeAreaList';
+import { CategoryAndPracticeContext } from '../../context/CategoryAndPracticeContext';
 
 const ExpListing = () => {
+   const {selectedCategories,setSelectedCategories,selectedPractice,setSelectedPractice}=useContext(CategoryAndPracticeContext);
+
    const [selectedExpertSorting,setSelectedExpertSorting]=useState("1");
-   const [selectedPracticeArea, setSelectedPracticeArea] = useState("0");
-   const [selectedCategory, setSelectedCategory] = useState("0");
+   const [selectedPracticeArea, setSelectedPracticeArea] = useState(selectedPractice);
+   const [selectedCategory, setSelectedCategory] = useState(selectedCategories);
    const [getCategories,setGetCategories]=useState([]);
    const [getPracticeArea,setGetPracticeArea]=useState([]);
    const [dummy,setDummy]=useState(false);
@@ -208,7 +211,7 @@ const ExpListing = () => {
                 {console.log(getCategories,"ashishsirissayinggodblessyouall")}
                 {
 
-                   getCategories.length &&
+                   getCategories.length>0 &&
                             getCategories.map((obj, index) => {
                               return (
                                  <div className="item" key={index}>
