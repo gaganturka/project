@@ -32,6 +32,9 @@ router
     router
     .route("/getFilteredOnlinePremiumExperts")
     .post( WebsiteController.getFilteredOnlinePremiumExperts);
+    router
+    .route("/getOnlinePremiumExperts")
+    .get( WebsiteController.getOnlinePremiumExperts);
     
   
   module.exports = router;
