@@ -51,6 +51,9 @@ const AppointmentSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  question: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("appointment", AppointmentSchema);

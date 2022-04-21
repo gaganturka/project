@@ -35,7 +35,9 @@ router
     router
       .route("/getOnlinePremiumExperts")
       .get(WebsiteController.getOnlinePremiumExperts);
-    router.route("/getSingleExpert").get(WebsiteController.getSingleExpert);
+router.route("/getSingleExpert").get(WebsiteController.getSingleExpert);
+router.route("/bookAppointment").post(WebsiteController.bookAppointment);
+    
     
   
   module.exports = router;
