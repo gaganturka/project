@@ -497,8 +497,28 @@ module.exports = {
         } catch (error) {
           universalFunctions.sendError(error, res);
         }
-      },
-      
+  },
+      getSingleExpert: async (req, res) => {
+    try {
+      let id = req.query.id;
+      const expertData = await expertUser
+        .findOne({ _id: id })
+        .populate({ path: "category practiceArea" });
+      if (!expertData) {
+        throw Boom.badRequest("Data Not Found");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "expert found",
+          data: expertData,
+        },
+        res
+      );
+    } catch (err) {
+      return universalFunctions.sendError(err, res);
+    }
+  },    
       
 };
 

@@ -16,48 +16,57 @@ import universalFunctions from "../utils/universalFunctions";
 
 module.exports = {
   sendOtpExpertUser: async (req, res) => {
-    const schema = Joi.object({
-      mobileNo: Joi.number().required(),
-    });
-    await universalFunctions.validateRequestPayload(req.body, res, schema);
-    let mobileNo = req.body.mobileNo;
-    let userLogin = await User.findOne({ mobileNo: mobileNo, role: "expert" });
-    if (!userLogin) {
-      universalFunctions.sendError(
+    try {
+      const schema = Joi.object({
+        mobileNo: Joi.string().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let mobileNo = req.body.mobileNo;
+      let userLogin = await User.findOne({
+        mobileNo: mobileNo,
+        role: APP_CONSTANTS.role.expert,
+      });
+      if (!userLogin) {
+        throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
+        // universalFunctions.sendError(
+        //   {
+        //     statusCode: 404,
+        //     message: responseMessages.USER_NOT_FOUND,
+        //   },
+        //   res
+        // );
+        // throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
+      }
+      let createOtp = Math.floor(100000 + Math.random() * 900000) + "";
+      let isExits = await otpModel.findOne({ mobileNo: mobileNo });
+      let otp;
+      if (isExits) {
+        otp = await otpModel.updateOne(
+          {
+            mobileNo: mobileNo,
+          },
+          { $set: { otp: createOtp } }
+        );
+      } else {
+        otp = await otpModel.create({
+          otp: createOtp,
+          mobileNo: mobileNo,
+        });
+      }
+      console.log("this is otp", createOtp);
+      universalFunctions.sendSuccess(
         {
-          statusCode: 404,
-          message: responseMessages.USER_NOT_FOUND,
+          statusCode: 200,
+          message: responseMessages.SUCCESS,
+          // data: otp,
         },
         res
       );
-      // throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
+    } catch (error) {
+      universalFunctions.sendError(error, res);
     }
-    let createOtp = Math.floor(100000 + Math.random() * 900000) + "";
-    let isExits = await otpModel.findOne({ mobileNo: mobileNo });
-    let otp;
-    if (isExits) {
-      otp = await otpModel.updateOne(
-        {
-          mobileNo: mobileNo,
-        },
-        { $set: { otp: createOtp } }
-      );
-    } else {
-      otp = await otpModel.create({
-        otp: createOtp,
-        mobileNo: mobileNo,
-      });
-    }
-    console.log("this is otp", createOtp);
-    universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: responseMessages.SUCCESS,
-        // data: otp,
-      },
-      res
-    );
   },
+
   exportLogin: async (req, res) => {
     const schema = Joi.object({
       mobileNo: Joi.number().required(),

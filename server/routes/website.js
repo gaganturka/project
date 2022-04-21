@@ -33,8 +33,9 @@ router
     .route("/getFilteredOnlinePremiumExperts")
     .post( WebsiteController.getFilteredOnlinePremiumExperts);
     router
-    .route("/getOnlinePremiumExperts")
-    .get( WebsiteController.getOnlinePremiumExperts);
+      .route("/getOnlinePremiumExperts")
+      .get(WebsiteController.getOnlinePremiumExperts);
+    router.route("/getSingleExpert").get(WebsiteController.getSingleExpert);
     
   
   module.exports = router;
