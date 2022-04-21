@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebaruser";
 import homeAction from "../../actions/home.action";
@@ -6,44 +6,49 @@ import config from "../../config/configg";
 import axios from "axios";
 import Cookies from 'universal-cookie';
 import Agent from "../../actions/superAgent";
+import { AuthContext } from "../../context/AuthContext";
 const UserDashBoard = () => {
-  const [userDetails, setUserDetails] = useState([]);
-  const [getProfilePic, setGetProfilePic] = useState("");
+  // const [loggedInBorhanUserInfo, setLoggedInBorhanUserInfo] = useState([]);
   const history = useNavigate();
+  const {isLoggedIn,setIsLoggedIn,loggedInBorhanUserInfo,setLoggedInBorhanUserInfo}=useContext(AuthContext)
+  const [dummy,setDummy]=useState(0);
+  const [getProfilePic, setGetProfilePic] = useState("");
   
-
   useEffect(() => {
-    let k=Agent.getLoginType();
-    console.log(k,"mddcs,dc sdmc sdcsdcsdcsdcdcscs   s csd m")
-    if (localStorage.getItem("token")||k) {
-      getBorhanUserDetails();
+    // let k=Agent.getLoginType();
+    // console.log(k,"mddcs,dc sdmc sdcsdcsdcsdcdcscs   s csd m")
+    // if (localStorage.getItem("token")||k) {
+      if(isLoggedIn===true){
+        setGetProfilePic(loggedInBorhanUserInfo.profilePic)
+      // // getBorhanUserDetails();
+      // setDummy(1);
     } 
     else {
 
-      // history("/");
+      history("/");
     }
-  }, []);
+  }, [loggedInBorhanUserInfo]);
 
-  const getBorhanUserDetails = async () => {
-    // console.log(decodedToken,"hi its decoded");
-    homeAction.getBorhanUserDetails((err, res) => {
-      if (err) {
-        console.log(err, "helllooo");
-      } else {
-        //   setGetCategories(res.data);
-        console.log(res.data, "user details daata ");
-        setUserDetails(res.data);
-        setGetProfilePic(res.data.profilePic);
-      }
-    });
-  };
+  // const getBorhanUserDetails = async () => {
+  //   // console.log(decodedToken,"hi its decoded");
+  //   homeAction.getBorhanUserDetails((err, res) => {
+  //     if (err) {
+  //       console.log(err, "helllooo");
+  //     } else {
+  //       //   setGetCategories(res.data);
+  //       console.log(res.data, "user details daata ");
+  //       setLoggedInBorhanUserInfo(res.data);
+  //       setGetProfilePic(res.data.profilePic);
+  //     }
+  //   });
+  // };
   const onSubmitEditExpert = async (e) => {
     //   e.preventDefault();
     let dataToSend = {
-      firstName: userDetails.firstName,
-      lastName: userDetails.lastName,
-      email: userDetails.email,
-      mobileNo: userDetails.mobileNo,
+      firstName: loggedInBorhanUserInfo.firstName,
+      lastName: loggedInBorhanUserInfo.lastName,
+      email: loggedInBorhanUserInfo.email,
+      mobileNo: loggedInBorhanUserInfo.mobileNo,
       profilePic: getProfilePic,
     };
     let json;
@@ -62,7 +67,7 @@ const UserDashBoard = () => {
   };
 
   const onChangeBorhanUser = (e) => {
-    setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
+    setLoggedInBorhanUserInfo({ ...loggedInBorhanUserInfo, [e.target.name]: e.target.value });
   };
   const uploadFilesUsingMulter = async (e, i) => {
     // console.log("iiiihiihiohiin", "aloha0", e.target.files[0]);
@@ -135,7 +140,7 @@ const UserDashBoard = () => {
                           <input
                             type="text"
                             name="firstName"
-                            value={userDetails?.firstName}
+                            value={loggedInBorhanUserInfo?.firstName}
                             onChange={(e) => {
                               onChangeBorhanUser(e);
                             }}
@@ -150,7 +155,7 @@ const UserDashBoard = () => {
                           <input
                             type="text"
                             name="lastName"
-                            value={userDetails?.lastName}
+                            value={loggedInBorhanUserInfo?.lastName}
                             onChange={(e) => {
                               onChangeBorhanUser(e);
                             }}
@@ -165,7 +170,7 @@ const UserDashBoard = () => {
                           <input
                             type="email"
                             className="form-control"
-                            value={userDetails?.email}
+                            value={loggedInBorhanUserInfo?.email}
                             name="email"
                             onChange={(e) => {
                               onChangeBorhanUser(e);
@@ -204,7 +209,7 @@ const UserDashBoard = () => {
                             <input
                               type="text"
                               name="mobileNo"
-                              value={userDetails?.mobileNo}
+                              value={loggedInBorhanUserInfo?.mobileNo}
                               onChange={(e) => {
                                 onChangeBorhanUser(e);
                               }}

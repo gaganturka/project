@@ -24,14 +24,23 @@ const PremiumExpert = () => {
       // console.log("satyamtomar", jsonnn);
     setGetCategories(jsonnn.data);
     setDummy(true)
+    
       // console.log("llllllllllll", getCategories);
     };
     useEffect(() => {
       fetchAllCategories();
+      setDummy(false)
+      setTimeout(()=>{
+        setDummy(false)
+      },500)
+      
     }, [])
    
   return (
       <>
+      {
+         
+      }
       <section class="breadcrumb-section p-5">
          <div class="container">
             <div class="row">
@@ -82,8 +91,9 @@ const PremiumExpert = () => {
                 >
                     {
 
-getCategories.length &&
+getCategories.length>0 &&
          getCategories.map((obj, index) => {
+            console.log("obj",obj)
            return (
               <div className="item" key={index}>
      <div className="pratice-area-box">
@@ -98,6 +108,7 @@ getCategories.length &&
            );
          })}
 
+ 
                      </OwlCarousel>
                   </div>
                </div>

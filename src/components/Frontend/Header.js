@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Modal, ModalBody } from "reactstrap";
@@ -10,8 +10,10 @@ import Cookies from 'universal-cookie';
 import Agent from "../../actions/superAgent";
 import { GoogleLogin, GoogleLogout } from "react-google-login";
 import FacebookLogin from 'react-facebook-login';
+import { AuthContext } from "../../context/AuthContext";
 const Header = () => {
   let location = useLocation();
+  const {isLoggedIn,setIsLoggedIn} = useContext(AuthContext);
   // let CLIENT_ID=""
   const CLIENT_ID ="192073990165-k8uk1edbbhb0lm03lqb7ikvf3ibqotr5.apps.googleusercontent.com";
 const GOOGLE_CLIENT_SECRET = "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";
@@ -125,6 +127,7 @@ const GOOGLE_CLIENT_SECRET = "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";
       alert("login success")
       window.location.reload();
       localStorage.setItem("token", res.data.token);  
+      setIsLoggedIn(true);
       }
   })
 
@@ -146,7 +149,8 @@ const logout = (response) => {
   // this.setState({ userInfo, isLoggedIn: false });
 };
  useEffect(() => {
-  if (localStorage.getItem("token")||Agent.getLoginType()) {
+  // if (localStorage.getItem("token")||Agent.getLoginType()) {
+    if(isLoggedIn===true){
     console.log(Agent.getLoginType())
     setflagUser(true);
   } 
@@ -172,7 +176,7 @@ const logout = (response) => {
     });
 };
 getUser();
-}, []);
+}, [isLoggedIn]);
   const fetchAllCategories = async () => {
 
     categoriesAction.fetchAllCategories((err,res)=>{
@@ -228,6 +232,7 @@ getUser();
       localStorage.setItem("token", json.data);
       setopenmodal(false);
       setmodalstateno(1);
+      setIsLoggedIn(true)
 
       history("/userdashboard");
     }
@@ -308,6 +313,7 @@ getUser();
       setopenmodal(false);
       setmodalstateno(1);
       localStorage.setItem("token", json.data);
+      setIsLoggedIn(true);
       history("/userdashboard");
       
 
@@ -423,7 +429,8 @@ getUser();
     
   }
   const bookAnAppoitmentHeaderViewer=()=>{
-    if(localStorage.getItem('token')!==null)
+    // if(localStorage.getItem('token')!==null)
+    if(isLoggedIn===true)
     {
       history("/expertlisting");
       setopenmodal(false);
