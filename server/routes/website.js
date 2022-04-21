@@ -28,6 +28,10 @@ router
   router
   .route("/getPracticeAreaDataSearched")
   .post( WebsiteController.getPracticeAreaDataSearched);
-
+  
+    router
+    .route("/getFilteredOnlinePremiumExperts")
+    .post( WebsiteController.getFilteredOnlinePremiumExperts);
+    
   
   module.exports = router;
