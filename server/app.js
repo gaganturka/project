@@ -14,6 +14,7 @@ const passportSetup = require("../server/config/passport");
 const passport = require("passport");
 const authRoute = require("./routes/google");
 // require("./")
+// var cors=require('cors')
 const router = express.Router();
 connectToMongo();
 
@@ -30,14 +31,14 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  })
-);
-
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000",
+//     methods: "GET,POST,PUT,DELETE",
+//     credentials: true,
+//   })
+// );
+app.use(cors())
 app.use(express.json());
 //routes available
 
