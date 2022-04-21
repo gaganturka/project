@@ -1,3 +1,4 @@
+const APP_CONSTANTS = require("../appConstants");
 const { Config } = require("../config");
 const Jwt = require("jsonwebtoken");
 import universalFunctions from "../utils/universalFunctions";
@@ -16,7 +17,7 @@ const checkAuth =  async(req, res, next) => {
             console.log("decoded inside borhan user",decoded);
               
               // let user = await borhanUser.findOne({ firebaseUserId: decoded.user_id });
-              let user = await User.findOne({ _id: decoded.user_id });
+              let user = await User.findOne({ _id: decoded.user_id,role: APP_CONSTANTS.role.borhanuser});
               if (!user) {
                 throw Boom.unauthorized(responseMessages.USER_NOT_FOUND);
               }
