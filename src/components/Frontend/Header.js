@@ -91,6 +91,26 @@ const GOOGLE_CLIENT_SECRET = "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";
  };
  const  responseFacebook= (response)=> {
   console.log(response);
+  let createData={
+    email:response.email,
+    firstName:response.name,
+    facebookId:response.userID,
+    lastName:"",
+    profilePic:response.picture.data.url?response.picture.data.url:"",
+    mobileNo:"",
+    isEmailVerified:true,   
+  }
+  console.log(createData,"ksdhcbsdbc")
+  loginAction.facebookLoginSignup(createData,(err,res)=>{
+    if(err){
+      alert("err")
+    }else{
+      alert("login success")
+      window.location.reload();
+      localStorage.setItem("token", res.data.token);  
+      }
+  })
+
 }
  const responseGoogleSuccess =async (response) => {
   console.log(response);
@@ -615,27 +635,30 @@ getUser();
             />
                     </li>
                     <li className="ps-2">
-                    {fflagUser==true?
+                   
                     <FacebookLogin
                      appId="585451125985997"
-                     autoLoad={true}
+                   
+                     cookie={false}
                      fields="name,email,picture"
                      cssClass="btn"
-                     scope="public_profile,user_friends,user_actions.books"
+                     scope="public_profile,email,user_friends"
+
                      callback={responseFacebook}
                     
-                    />:<button className="btn" onClick={e=>{
-                      e.preventDefault();
-                      setfflagUser(true)
-                    }}>
-                    {" "}
-                    <img
-                      src="./assets/img/login-with-facebook.png"
-                      className="img img-fluid"
-                      alt=""
                     />
-                    Log in with Facebook
-                  </button>}
+                      {/* <button className="btn" onClick={e=>
+                       e.preventDefault();
+                       setfflagUser(true)
+                     }}>
+                     {" "}
+                     <img
+                       src="./assets/img/login-with-facebook.png"
+                       className="img img-fluid"
+                       alt=""
+                     />
+                     Log in with Facebook
+                   </button> */}
                     </li>
                   </ul>
                   <h5>
@@ -1295,7 +1318,8 @@ getUser();
                      autoLoad={true}
                      fields="name,email,picture"
                      cssClass="btn"
-                     scope="public_profile,user_friends,user_actions.books"
+                     scope="public_profile,email,user_friends"
+
                      callback={responseFacebook}
                     
                     />
