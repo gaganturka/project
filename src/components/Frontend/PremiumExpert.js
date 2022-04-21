@@ -66,7 +66,7 @@ const PremiumExpert = () => {
             <div class="row">
                 <h3>Practice Area</h3>
                <div class="col-lg-12 mt-3">
-                  <div class="owl-carousel owl-theme pratice-area-owl">
+                  <div class="owl-carousel owl-theme pratice-area-owl d-block">
                   <OwlCarousel
                   className="health-owl pratice-area-owl"
                   items={10}
