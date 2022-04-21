@@ -23,9 +23,19 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+.react-calendar {
+  margin: auto;
+  background: #e4f7f3 !important;
+  border: none !important;
+ 
+}
 .App-link {
   color: #61dafb;
+}
+audio{
+  width: 30px !important;
+  height: 20px;
+  background-image: url("./logo.svg");
 }
 
 @keyframes App-logo-spin {
