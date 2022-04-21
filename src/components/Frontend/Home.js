@@ -1,14 +1,15 @@
-import {React,useState,useRef,useEffect} from 'react'
+import {React,useState,useRef,useEffect, useContext} from 'react'
 import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import homeAction from '../../actions/home.action'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import Footer from './Footer';
 import StarRatings from 'react-star-ratings';
 import categoriesAction from '../../actions/categories.action';
 import FetchCategoriesList from './FetchCategoriesList';
 import useComponentVisible from './useComponentVisible'
+import { CategoryAndPracticeContext } from '../../context/CategoryAndPracticeContext';
 const Home = () => {
    const [dummy,setDummy]=useState(0);
    const [expertsOnline,setExpertsOnline]=useState([]);
@@ -16,10 +17,30 @@ const Home = () => {
    const [getPracticeArea,setGetPracticeArea]=useState([]);
    const [filteredPracticeArea,setFilteredPracticeArea]=useState([]);
    const [searchedTermPractice,setSearchedTermPractice]=useState('');
-   const [selectedCategory, setSelectedCategory]=useState("");
-   const [selectedPracticeArea, setSelectedPracticeArea]=useState("");
+   // const [selectedCategories, setSelectedCategories]=useState("");
+
+   // const [selectedPractice, setSelectedPractice]=useState("");
    const { ref, isComponentVisible } = useComponentVisible(false);
+   const {selectedCategories,setSelectedCategories,selectedPractice,setSelectedPractice}=useContext(CategoryAndPracticeContext);
+const history=useNavigate();
    // const [getCategories,setGetCategories]=useState([]);
+   
+   const handleEnter=(event)=> {
+      console.log("event", event.which);
+      if (event) {
+        event.preventDefault();
+      }
+      
+      console.log(selectedCategories,"selected cat",selectedPractice,"selected prac")
+      if (event.which === 13 && searchedTermPractice.length > 1) {
+      //   this.handlesearch();
+            history('/expertlisting')
+      } 
+      // else {
+      // //   this.handleChange(event);
+      // }
+    }
+  
    const fetchAllExpertsOnline = async () => {
    
       homeAction.fetchAllExpertsOnline((err,res)=>{
@@ -94,11 +115,11 @@ const Home = () => {
                            
                                <option value="3">Three</option>
                             </select> */}
-                            <FetchCategoriesList selectedCategory={selectedCategory} getCategories={getCategories} setGetCategories={setGetCategories} />
+                            <FetchCategoriesList selectedCategory={selectedCategories} setSelectedCategory={setSelectedCategories} getCategories={getCategories} setGetCategories={setGetCategories} />
                          </li>
                          <li>
                             <div className="" ref={ref}>
-                               <input type="text" className="form-control" placeholder="Search Practice Area" value={searchedTermPractice} onChange={(e)=> {setSearchedTermPractice(e.target.value); }} />
+                               <input type="text" className="form-control" placeholder="Search Practice Area" value={searchedTermPractice} onChange={(e)=> {setSearchedTermPractice(e.target.value); }} onKeyUp={(event)=>{handleEnter(event)}} />
                             {isComponentVisible && <div className="search-practice-area">
                               <ul className="blocklist">
                                {
@@ -108,7 +129,7 @@ const Home = () => {
                                    return(
                                       
                                          
-                                            <li onClick={(e)=>{setSelectedPracticeArea(e.target.value)}}>{obj.name}</li>
+                                            <li onClick={(e)=>{setSelectedPractice(e.target.className);setSearchedTermPractice(e.target.id)}} id={`${obj.name}`} className={`${obj._id}`}>{obj.name}</li>
                                          
                                       
                                    )

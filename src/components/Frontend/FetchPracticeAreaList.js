@@ -9,13 +9,15 @@ const FectchPracticeAreaList = ({getPracticeArea,setGetPracticeArea,setSelectedP
                             setSelectedPracticeArea(
                               e.target.value
                             );
+
                           }}
+                          value={selectedPracticeArea}
                         >
                           {/* <option selected value="0">Select</option>
                           <option selected value="1">Category 1</option>
                           <option selected value="2">Category 2</option>
                           <option selected value="3">Category 3</option> */}
-                          <option selected value="0">
+                          <option selected value="">
                             Filter Practice Area
                           </option>
                           {getPracticeArea &&

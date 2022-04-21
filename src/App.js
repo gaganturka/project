@@ -18,6 +18,7 @@ import ManageMembership from './components/Frontend/ManageMembership';
 import {AuthContext} from './context/AuthContext'
 import { useContext, useEffect } from 'react';
 import homeAction from './actions/home.action';
+import CategoryAndPracticeContextProvider from './context/CategoryAndPracticeContext';
 function App() {
   
     {/* <AuthContextProvider> */}
@@ -42,6 +43,7 @@ function App() {
     
   return (
     <>
+    <CategoryAndPracticeContextProvider>
      <Router>
         <Header/>
         {  isLoggedIn=== false ?
@@ -94,7 +96,7 @@ function App() {
 
           </Router>
           {/* </AuthContextProvider> */}
-
+     </CategoryAndPracticeContextProvider>
     </>
   );
 }
