@@ -35,7 +35,7 @@ const history=useNavigate();
       console.log(selectedCategories,"selected cat",selectedPractice,"selected prac")
       if (event.which === 13 && searchedTermPractice.length > 0 && selectedPractice!=="") {
       //   this.handlesearch();
-            history('/expertlisting')
+            history(`/expertlisting?selectedPractice=${selectedPractice}&selectedCategory=${selectedCategories}`)
       } 
       // else {
       // //   this.handleChange(event);
@@ -100,8 +100,8 @@ const history=useNavigate();
       console.log(searchedTermPractice,"afjkaekaeiidfna   ",selectedPractice)
        if(searchedTermPractice.length>0 && selectedPractice!=="")
        {
-          history('/expertlisting');
-       }
+         history(`/expertlisting?selectedPractice=${selectedPractice}&selectedCategory=${selectedCategories}`)
+      }
     }
    // const [expertcarousel,setexpertcarousel]=useState(null);
   return (
