@@ -66,6 +66,7 @@ const ExpProfile = () => {
             </div>
          </div>
       </section>
+     { expert!={}?
       <section className="exp-profile-wrp">
          <div className="container">
             <div className="row">
@@ -314,7 +315,7 @@ const ExpProfile = () => {
                </div>
             </div>
          </div>
-      </section>
+      </section>:""}
       <section className="newsletter-wrp">
          <div className="container">
             <div className="row">
