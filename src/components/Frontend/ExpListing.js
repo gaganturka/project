@@ -370,7 +370,7 @@ const ExpListing = () => {
                                     <h3><img src="./assets/img/eye-icon.png" className="img img-fluid" alt="" /> {obj.noOfSessionsDone}</h3>
                                  </li>
                               </ul>
-                              <Link to="/expprofile"><button className="btn" type="button">Book Appointment</button></Link>
+                              <Link to={`/expprofile/${obj._id}`}><button className="btn" type="button">Book Appointment</button></Link>
                            </div>
                         </div>
                      </div>)

@@ -3,16 +3,26 @@ import {Modal,ModalBody} from 'reactstrap'
 import Footer from './Footer';
 import Calendar from 'react-calendar'
 import { useParams } from "react-router-dom"
+import expextAction from "../../actions/expertlisting.action";
 import 'react-calendar/dist/Calendar.css';
 const ExpProfile = () => {
    const params = useParams();
    const [bookappointmentmodal,setbookappointmentmodal]=useState(false);
    const [scheduleappointmentmodal,setscheduleappointmentmodal]=useState(false);
+   const [expert,setExpert]=useState({});
    
   const [appointmentType, setAppointmentType] = useState("");
   useEffect(() => {
      let id = params.id;
-  });
+     expextAction.getSingleExport(id,(err,res)=>{
+        if(err){
+
+        }else{
+           console.log(res)
+           setExpert(res.data);
+        }
+     })
+  },[]);
    const [typeCall,setTypeCall]=useState("");
    const [categorie,setCategorie]=useState("");
    const [Duration,setDuration]=useState("");
@@ -56,6 +66,7 @@ const ExpProfile = () => {
             </div>
          </div>
       </section>
+     { expert!={}?
       <section className="exp-profile-wrp">
          <div className="container">
             <div className="row">
@@ -69,20 +80,20 @@ const ExpProfile = () => {
                                     <img src="./assets/img/pratice-area-thumb.png" className="img img-fluid" alt=""/>
                                  </div>
                                  <div>
-                                    <h4>Heather Nikolaus</h4>
+                                    <h4>{expert.userId.firstName}{" "} {expert.userId.lastName} Nikolaus</h4>
                                     <p>( Business & Finance Expert )</p>
                                  </div>
                               </div>
                            </li>
                            <li>
                               <div>
-                                 <h4>7+</h4>
+                                 <h4>{expert.experience}+</h4>
                                  <p>Years of Experience</p>
                               </div>
                            </li>
                            <li>
                               <div>
-                                 <h4>4.3</h4>
+                                 <h4>{expert.rating.avgRating}</h4>
                                  <div className="star-rating-text">
                                     <div className="star-rating">
                                        <span className="fa fa-star checked"></span>
@@ -96,7 +107,7 @@ const ExpProfile = () => {
                            </li>
                            <li>
                               <div>
-                                 <h4>230 h</h4>
+                                 <h4>{expert.noOfSessionsDone} h</h4>
                                  <p>Session done</p>
                               </div>
                            </li>
@@ -304,7 +315,7 @@ const ExpProfile = () => {
                </div>
             </div>
          </div>
-      </section>
+      </section>:""}
       <section className="newsletter-wrp">
          <div className="container">
             <div className="row">
