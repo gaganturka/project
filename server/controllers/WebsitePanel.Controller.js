@@ -646,7 +646,7 @@ module.exports = {
       let id = req.query.id;
       const expertData = await expertUser
         .findOne({ _id: id })
-        .populate({ path: "category practiceArea" });
+        .populate({ path: "category practiceArea userId" });
       if (!expertData) {
         throw Boom.badRequest("Data Not Found");
       }
