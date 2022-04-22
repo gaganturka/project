@@ -11,6 +11,7 @@ import FetchCategoriesList from './FetchCategoriesList';
 import useComponentVisible from './useComponentVisible'
 import { CategoryAndPracticeContext } from '../../context/CategoryAndPracticeContext';
 const Home = () => {
+   
    const [dummy,setDummy]=useState(0);
    const [expertsOnline,setExpertsOnline]=useState([]);
    const [getCategories,setGetCategories]=useState([]);
@@ -32,7 +33,7 @@ const history=useNavigate();
       }
       
       console.log(selectedCategories,"selected cat",selectedPractice,"selected prac")
-      if (event.which === 13 && searchedTermPractice.length > 1) {
+      if (event.which === 13 && searchedTermPractice.length > 0 && selectedPractice!=="") {
       //   this.handlesearch();
             history('/expertlisting')
       } 
@@ -90,7 +91,18 @@ const history=useNavigate();
       fetchSearchedPracticeArea();
       
     }, [searchedTermPractice])
-    
+    const handleClick=(e)=>{
+       console.log(e,"console kya hai is button ka ")
+      if (e.type=="click") {
+         e.preventDefault();
+       }
+      //  history('/expertlisting')
+      console.log(searchedTermPractice,"afjkaekaeiidfna   ",selectedPractice)
+       if(searchedTermPractice.length>0 && selectedPractice!=="")
+       {
+          history('/expertlisting');
+       }
+    }
    // const [expertcarousel,setexpertcarousel]=useState(null);
   return (
       <>
@@ -138,7 +150,7 @@ const history=useNavigate();
                                }
                                </ul>
                                </div>}
-                               <button className="btn"><img src="./assets/img/search-icon.png" className="img img-fluid"
+                               <button className="btn" onClick={(e)=>{handleClick(e);}}><img src="./assets/img/search-icon.png" className="img img-fluid"
                                   alt=""/></button>
                             </div>
                          </li>
