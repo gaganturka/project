@@ -3,7 +3,7 @@ const router = express.Router();
 const isAdmin = require("../middleware/isAdmin");
 const authUser = require("../middleware/authuser");
 const WebsiteController = require("../controllers/WebsitePanel.Controller");
-
+const BorhanController = require("../controllers/BorhanUser.Admin");
 // router
 //   .route("/getBorhanUsers")
 //   .post(isAdmin.isAdmin, BorhanController.showBorhanUsers);
@@ -38,6 +38,8 @@ router
 router.route("/getSingleExpert").get(WebsiteController.getSingleExpert);
 router.route("/bookAppointment").post(WebsiteController.bookAppointment);
     
+  router.route("/getQuesAndAns").get(BorhanController.getQuesAndAns);
+
 router
       .route("/getTopExperts")
       .get(WebsiteController.getTopExperts);
@@ -47,6 +49,7 @@ router
       router
       .route("/createTestimony")
       .post(WebsiteController.createTestimony);
+
     
   
   module.exports = router;
