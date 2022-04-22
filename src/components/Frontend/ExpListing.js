@@ -13,13 +13,17 @@ import categoriesAction from "../../actions/categories.action";
 import FetchCategoriesList from './FetchCategoriesList';
 import FetchPracticeAreaList from './FetchPracticeAreaList';
 import { CategoryAndPracticeContext } from '../../context/CategoryAndPracticeContext';
+import {useLocation} from "react-router-dom";
 
 const ExpListing = () => {
-   const {selectedCategories,setSelectedCategories,selectedPractice,setSelectedPractice}=useContext(CategoryAndPracticeContext);
+   // const {selectedCategories,setSelectedCategories,selectedPractice,setSelectedPractice}=useContext(CategoryAndPracticeContext);
+   const search = useLocation().search;
+   const selectedPractice = new URLSearchParams(search).get('selectedPractice');
+   const selectedCategories = new URLSearchParams(search).get('selectedCategories');
 
    const [selectedExpertSorting,setSelectedExpertSorting]=useState("1");
-   const [selectedPracticeArea, setSelectedPracticeArea] = useState(selectedPractice);
-   const [selectedCategory, setSelectedCategory] = useState(selectedCategories);
+   const [selectedPracticeArea, setSelectedPracticeArea] = useState(selectedPractice===null?"":selectedPractice);
+   const [selectedCategory, setSelectedCategory] = useState(selectedCategories===null?"":selectedCategories);
    const [getCategories,setGetCategories]=useState([]);
    const [getPracticeArea,setGetPracticeArea]=useState([]);
    const [dummy,setDummy]=useState(false);
@@ -135,10 +139,12 @@ const ExpListing = () => {
                   <div className="breadcrumb-content">
                      <h1>Experts</h1>
                      <ul>
-                        <li><Link to="javascript:;">Home</Link> <span><i className="fa fa-angle-right"></i></span></li>
-                        <li><Link to="javascript:;">Categories</Link> <span><i className="fa fa-angle-right"></i></span></li>
-                        <li><Link to="javascript:;">Sub Category</Link> <span><i className="fa fa-angle-right"></i></span></li>
-                        <li className="active"><Link to="javascript:;">Expert Listing</Link></li>
+                        <li><Link to="/">Home</Link> <span><i className="fa fa-angle-right"></i></span></li>
+                        {console.log("kya hai bhai is category mai",selectedCategories)}
+                        {(selectedCategories===null || selectedCategories==="") ?"":<li><Link to="/">Categories</Link> <span><i className="fa fa-angle-right"></i></span></li>}
+                        {(selectedPractice===null || selectedPractice==="") ?"":<li><Link to="/">Sub Category</Link> <span><i className="fa fa-angle-right"></i></span></li>}
+                        
+                        <li className="active"><Link to="/expertlisting">Expert Listing</Link></li>
                      </ul>
                   </div>
                </div>

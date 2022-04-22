@@ -35,7 +35,7 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
         if (typeof cb === 'function') return cb(error, res && res.body);
       });
   }
-  function fetchAllOnlinePremiumExperts( payload,cb) {
+  function fetchAllOnlinePremiumExperts( cb) {
     Agent
       .fire('get', `${BACKEND_URL}/website/getOnlinePremiumExperts`)
       .end((err, res) => {
@@ -71,7 +71,14 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
 //       if (typeof cb === 'function') return cb(error, res && res.body);
 //     });
 //   }
-
+function fetchTopExperts( cb) {
+  Agent
+    .fire('get', `${BACKEND_URL}/website/getTopExperts`)
+    .end((err, res) => {
+      var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
+      if (typeof cb === 'function') return cb(error, res && res.body);
+    });
+}
 
 export default {
     fetchAllOnlineFilteredExperts,
@@ -79,4 +86,5 @@ export default {
     getSingleExport,
    fetchAllOnlineFilteredPremiumExperts,
     fetchAllOnlinePremiumExperts,
+    fetchTopExperts,
   }
