@@ -12,5 +12,21 @@ router
 router
   .route("/getUserDetails")
   .post(isAdmin.isAdmin, BorhanController.getUserDetails);
+  router
+  .route("/addQuesAndAns")
+  .post(BorhanController.addQuesAndAns);
+  router
+  .route("/editQuesAndAns")
+  .post(BorhanController.editQuesAndAns);
+  router
+  .route("/getQuesAndAns")
+  .get(BorhanController.getQuesAndAns);
+  router
+  .route("/deleteQuesAndAns")
+  .post(BorhanController.deleteQuesAndAns);
+  router
+  .route("/getQuesAndAnsById")
+  .post(BorhanController.getQuesAndAnsById);
+
 
 module.exports = router;

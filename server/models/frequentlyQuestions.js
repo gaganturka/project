@@ -7,7 +7,8 @@ const frequentlyQuestionsSchema = new Schema({
     required: true,
   },
   answer: {
-    type: Date,
+    type: String,
+    required: true,
   },
 });
 
