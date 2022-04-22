@@ -38,6 +38,15 @@ router
 router.route("/getSingleExpert").get(WebsiteController.getSingleExpert);
 router.route("/bookAppointment").post(WebsiteController.bookAppointment);
     
+router
+      .route("/getTopExperts")
+      .get(WebsiteController.getTopExperts);
+      router
+      .route("/getTestimonies")
+      .get(WebsiteController.getTestimonies);
+      router
+      .route("/createTestimony")
+      .post(WebsiteController.createTestimony);
     
   
   module.exports = router;
