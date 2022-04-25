@@ -107,6 +107,7 @@ module.exports = {
     );
   },
   getExportUserDetail: async (req, res) => {
+    try{
     let { id } = req.query;
     console.log("this is id ", id);
     const expert = await User.findOne({
@@ -125,9 +126,15 @@ module.exports = {
       },
       res
     );
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error, res);
+    }
   },
 
   getExpertUser: async (req, res) => {
+    try{
     let id = req.user.id;
     const expert = await expertUser
       .findOne({ _id: id })
@@ -144,8 +151,15 @@ module.exports = {
       },
       res
     );
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error, res);
+    
+    }
   },
   updateExpertUser: async (req, res) => {
+    try{
     let {
       firstName,
       lastName,
@@ -186,6 +200,7 @@ module.exports = {
       {
         new: true,
       }
+      
     );
     universalFunctions.sendSuccess(
       {
@@ -195,8 +210,15 @@ module.exports = {
       },
       res
     );
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error, res);
+    
+    }
   },
   getExpertUserInfoUsingUserModel: async (req, res) => {
+    try{
     let id = req.user.id;
     const expert = await User
       .findOne({ _id: id })
@@ -213,7 +235,13 @@ module.exports = {
       },
       res
     );
-  },
+  
+}
+catch(error)
+{
+      universalFunctions.sendError(error, res);   
+}
+},
 };
 
 
