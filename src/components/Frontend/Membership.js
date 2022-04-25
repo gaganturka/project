@@ -1,8 +1,24 @@
-import React from 'react'
+import React, { useEffect,useState } from 'react'
 import Footer from './Footer'
+import expertlistingAction from '../../actions/expertlisting.action';
 
 const Membership = () => {
-  return (
+   const [question,SetQuestion]=useState([]);
+   useEffect(()=>{
+      fecth()
+      
+   },[])
+   const fecth=()=>{
+      expertlistingAction.getQuesAndAns((err,res)=>{
+         if(err){
+
+         }else{
+            console.log(res);
+            SetQuestion(res.data)
+         }
+      })
+   }
+   return (
       <>
                 <section class="membership-plan-wrp">
          <div class="container">
@@ -121,25 +137,16 @@ const Membership = () => {
                 <h3>Frequently Asked Questions</h3>
              </div>
           <div class="col-lg-12 mt-5">
-            <h4>How does the free trial work?</h4>
-            <p>Borhan offers a no-cost trial of our legal case management software. This is a risk-free trial to evaluate the benefits of Borhan case management software. No fees. No problems. You will NOT be charged if you cancel anytime within your free trial period.</p>
             
-            <h4>How does the free trial work?</h4>
-            <p>Borhan offers a no-cost trial of our legal case management software. This is a risk-free trial to evaluate the benefits of Borhan case management software. No fees. No problems. You will NOT be charged if you cancel anytime within your free trial period.</p>
-
-            <h4>How does the free trial work?</h4>
-            <p>Borhan offers a no-cost trial of our legal case management software. This is a risk-free trial to evaluate the benefits of Borhan case management software. No fees. No problems. You will NOT be charged if you cancel anytime within your free trial period.</p>
-
-            <h4>How does the free trial work?</h4>
-            <p>Borhan offers a no-cost trial of our legal case management software. This is a risk-free trial to evaluate the benefits of Borhan case management software. No fees. No problems. You will NOT be charged if you cancel anytime within your free trial period.</p>
-
-            <h4>How does the free trial work?</h4>
-            <p>Borhan offers a no-cost trial of our legal case management software. This is a risk-free trial to evaluate the benefits of Borhan case management software. No fees. No problems. You will NOT be charged if you cancel anytime within your free trial period.</p>
-
-            <h4>How does the free trial work?</h4>
-            <p>Borhan offers a no-cost trial of our legal case management software. This is a risk-free trial to evaluate the benefits of Borhan case management software. No fees. No problems. You will NOT be charged if you cancel anytime within your free trial period.</p>
-
-            
+            {question.length>0? question.map((e,index)=>{
+             return(
+             <>
+                <h4>{e.question}</h4>
+                <p>{e.answer}</p>
+                </>
+             )
+            }):''}
+   
           </div>   
         </div>
     </section>

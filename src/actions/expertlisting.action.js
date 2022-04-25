@@ -53,14 +53,14 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
         if (typeof cb === 'function') return cb(error, res && res.body);
       });
     }
-// function getBorhanUserDetails( cb) {
-//     Agent
-//       .fire('get', `${BACKEND_URL}/website/getBorhanUserDetails`)
-//       .end((err, res) => {
-//         var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
-//         if (typeof cb === 'function') return cb(error, res && res.body);
-//       });
-//   }
+function getQuesAndAns( cb) {
+    Agent
+      .fire('get', `${BACKEND_URL}/website/getQuesAndAns`)
+      .end((err, res) => {
+        var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
+        if (typeof cb === 'function') return cb(error, res && res.body);
+      });
+  }
 
 //   const editBorhanUserDetails=(payload,cb)=>{
 //     Agent
@@ -79,4 +79,5 @@ export default {
     getSingleExport,
    fetchAllOnlineFilteredPremiumExperts,
     fetchAllOnlinePremiumExperts,
+    getQuesAndAns
   }
