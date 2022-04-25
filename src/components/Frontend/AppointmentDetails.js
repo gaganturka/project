@@ -1,13 +1,15 @@
-import {React,useState,useEffect} from 'react'
+import {React,useState,useEffect,useContext} from 'react'
 import { Modal, ModalBody, ModalFooter, } from "reactstrap";
 import {Link,useNavigate} from 'react-router-dom'
 import Sidebar from './Sidebaruser'
-
+import {AuthContext} from '../../context/AuthContext';
 const AppointmentDetails = () => {
    const [reschedulemodal,setreschedulemodal]=useState(false);
+   const {isLoggedIn,setIsLoggedIn,loggedInBorhanUserInfo,setLoggedInBorhanUserInfo}=useContext(AuthContext);
+    
    const history=useNavigate();
    useEffect(() => {
-      if(localStorage.getItem('token'))
+      if(isLoggedIn===true)
       {
       }
       else{
