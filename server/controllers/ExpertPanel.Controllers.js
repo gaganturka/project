@@ -196,6 +196,24 @@ module.exports = {
       res
     );
   },
+  getExpertUserInfoUsingUserModel: async (req, res) => {
+    let id = req.user.id;
+    const expert = await User
+      .findOne({ _id: id })
+      .populate({ path: "userData.data" });
+    if (!expert) {
+      throw Boom.badRequest("invalid id or token");
+    }
+
+    universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "expert found",
+        data: expert,
+      },
+      res
+    );
+  },
 };
 
 
