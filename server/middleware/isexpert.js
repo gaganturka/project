@@ -13,7 +13,7 @@ const isExpert =  async(req, res, next) => {
             console.log(Config.jwtsecret,"jwt");
         // Jwt.verify(token, Config.jwtsecret, async function (err,decoded) {
           try {
-            console.log("decoded inside borhan user",decoded);
+            console.log("decoded inside isexpert",decoded);
               
               // let user = await borhanUser.findOne({ firebaseUserId: decoded.user_id });
               let user = await User.findOne({ _id: decoded.user_id,role: APP_CONSTANTS.role.expert});

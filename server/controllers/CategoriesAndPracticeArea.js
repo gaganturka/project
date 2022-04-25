@@ -1,7 +1,6 @@
 const Joi = require("@hapi/joi");
 const universalFunctions = require("../utils/universalFunctions");
 const jwt = require("jsonwebtoken");
-const jwtsecret = "seraphic";
 const APP_CONSTANTS = require("../appConstants");
 const User = require("../models/User");
 const { Config } = require("../config");
@@ -21,12 +20,12 @@ exports.addCategories = async (req, res) => {
     if (!token) {
       res.status(403).send({ error: "Please authenticate using valid token" });
     }
-    const data = jwt.verify(token, jwtsecret);
+    const data = jwt.verify(token, Config.jwtsecret);
     console.log(data, "jwttokenbyadmin");
     if (!data) {
       throw Boom.badRequest(responseMessages.INVALID_TOKEN);
     }
-    const user = await User.findOne({ email: data.email });
+    const user = await User.findOne({ _id: data.user_id });
     console.log(user, "userinisadmin");
     if (user === null) {
       throw Boom.badRequest("invalid credentials no such admin exists");
@@ -154,12 +153,12 @@ exports.createPracticeArea = async (req, res) => {
     if (!token) {
       res.status(403).send({ error: "Please authenticate using valid token" });
     }
-    const data = jwt.verify(token, jwtsecret);
+    const data = jwt.verify(token, Config.jwtsecret);
     console.log(data, "jwttokenbyadmin");
     if (!data) {
       throw Boom.badRequest(responseMessages.INVALID_TOKEN);
     }
-    const user = await User.findOne({ email: data.email });
+    const user = await User.findOne({ _id: data.user_id });
     console.log(user, "userinisadmin");
     if (user === null) {
       throw Boom.badRequest("invalid credentials no such admin exists");

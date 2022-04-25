@@ -6,6 +6,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
 import Mongoose from "mongoose";
+import jwtFunction from '../utils/jwtFunction';
+
 const APP_CONSTANTS = require("../appConstants");
 // const User = require("../models/User");
 import responseMessages from "../resources/response.json";
@@ -91,7 +93,8 @@ module.exports = {
     }
 
     let userData = await User.findOne({ mobileNo: mobileNo });
-    const token = jwt.sign({ user_id: userData._id }, Config.jwtsecret);
+    // const token = jwt.sign({ user_id: userData._id }, Config.jwtsecret);
+    const token=await jwtFunction.jwtGenerator(userData._id);
     let userDetails = {
       token: token,
       _id: userData._id,
