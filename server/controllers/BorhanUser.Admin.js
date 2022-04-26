@@ -140,6 +140,7 @@ module.exports = {
       let payload={
         question: req.body.question,
         answer: req.body.answer,
+        
       }
       let id=req.body.id;
       console.log(req.body)

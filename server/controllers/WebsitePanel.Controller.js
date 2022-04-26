@@ -644,6 +644,7 @@ module.exports = {
   getSingleExpert: async (req, res) => {
     try {
       let id = req.query.id;
+      console.log(id,"sdlndcsjnkjdsscdkjsdkjndskj")
       const expertData = await expertUser
         .findOne({ _id: id })
         .populate({ path: "category practiceArea userId" });
@@ -677,7 +678,15 @@ module.exports = {
         practiceArea: Joi.string().length(24).required(),
 
       });
-      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      // await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
+    let data= await appointment.find({
+        startAppointmentTime: {
+            $gte: start,
+            $lt: end
+        }
+    })
+    console.log(data,"heolll  kjnsdnkjccsjsdjkj")
       let createAppointment = await appointment.create(req.body);
 
         universalFunctions.sendSuccess(

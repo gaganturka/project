@@ -27,6 +27,12 @@ const AppointmentSchema = new Schema({
   appointmentTime: {
     type: String,
   },
+  startAppointmentTime: {
+    type: Date,
+  },
+  endAppointmentTime: {
+    type: Date,
+  },
   appointDateandTime: {
     type: Date,
   },

@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const borhanUser = require("../models/Borhan_User");
 const expertUser = require("../models/Expert_User");
+const appointmentModel=require("../models/Appointment");
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -192,6 +193,24 @@ module.exports = {
         statusCode: 200,
         message: "completely updateExpertUser expert",
         data: expert,
+      },
+      res
+    );
+  },
+  getApointment: async (req, res) => {
+    let id = req.user.id;
+    const Apointment = await appointmentModel
+      .find({ expertId: id })
+      .populate({ path: "userId expertId" });
+    if (!Apointment) {
+      throw Boom.badRequest("invalid id or token");
+    }
+
+    universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "expert found",
+        data: Apointment,
       },
       res
     );
