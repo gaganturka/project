@@ -1,10 +1,13 @@
-import {React,useEffect} from 'react'
+import {React,useEffect,useContext} from 'react'
 import Sidebar from './Sidebaruser'
 import { useNavigate } from 'react-router-dom';
+import {AuthContext } from '../../context/AuthContext'
 const Wallet = () => {
    const history=useNavigate();
+   const {isLoggedIn,setIsLoggedIn,loggedInBorhanUserInfo,setLoggedInBorhanUserInfo}=useContext(AuthContext)
+  
    useEffect(() => {
-      if(localStorage.getItem('token'))
+      if(isLoggedIn===true)
       {
       }
       else{

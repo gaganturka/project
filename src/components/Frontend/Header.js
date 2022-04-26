@@ -313,8 +313,10 @@ getUser();
       setopenmodal(false);
       setmodalstateno(1);
       localStorage.setItem("token", json.data);
+      
       setIsLoggedIn(true);
       history("/userdashboard");
+      // window.location.reload();
       
 
     }
@@ -358,6 +360,7 @@ getUser();
 
   const onChangeUser = (e) => {
     setusercredential({ ...usercredential, [e.target.name]: e.target.value });
+    console.log(e,'dcjhsdhjsdhbd');
   };
   const onChangeExpert = (e) => {
     setexpertcredential({
@@ -826,7 +829,9 @@ getUser();
                           type="string"
                           className="form-control"
                           name="mobileNo"
-                          onChange={()=>{onChangeUser();}}
+                          // value={usercredential.mobileNo}
+                          onChange={(e)=>{
+                            onChangeUser(e);}}
                           placeholder=""
                           maxlength="10"
                           onKeyPress={(event) => {
