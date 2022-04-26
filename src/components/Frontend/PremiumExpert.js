@@ -288,7 +288,7 @@ getPracticeArea.length>0 &&
                               <h4>{obj?.practiceArea[0]?.name}</h4>
                               <h4>{obj?.experience} Year Experience</h4>
                               <div className="star-rating-text">
-                                 <h4>4.2</h4>
+                                 <h4>{obj?.rating?.avgRating}</h4>
                                  <div className="star-rating">
                                     {/* <span className="fa fa-star checked"></span>
                                     <span className="fa fa-star checked"></span>

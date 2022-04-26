@@ -14,7 +14,8 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
   }
   function getSingleExport(id, cb) {
     Agent.fire("get", `${BACKEND_URL}/website/getSingleExpert?id=${id}`)
-      .end((err, res) => {
+    
+    .end((err, res) => {
         var error =
           err || res.error
             ? ServerError(res)
@@ -35,7 +36,7 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
         if (typeof cb === 'function') return cb(error, res && res.body);
       });
   }
-  function fetchAllOnlinePremiumExperts( payload,cb) {
+  function fetchAllOnlinePremiumExperts( cb) {
     Agent
       .fire('get', `${BACKEND_URL}/website/getOnlinePremiumExperts`)
       .end((err, res) => {
@@ -46,7 +47,7 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
   
   function bookAnAppoitment( payload,cb) {
     Agent
-      .fire('post', `${BACKEND_URL}/website/bookAnAppoitment`)
+      .fire('post', `${BACKEND_URL}/website/bookAppointment`)
       .send(payload)
       .end((err, res) => {
         var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
@@ -71,7 +72,14 @@ function getQuesAndAns( cb) {
 //       if (typeof cb === 'function') return cb(error, res && res.body);
 //     });
 //   }
-
+function fetchTopExperts( cb) {
+  Agent
+    .fire('get', `${BACKEND_URL}/website/getTopExperts`)
+    .end((err, res) => {
+      var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
+      if (typeof cb === 'function') return cb(error, res && res.body);
+    });
+}
 
 export default {
     fetchAllOnlineFilteredExperts,
@@ -79,5 +87,6 @@ export default {
     getSingleExport,
    fetchAllOnlineFilteredPremiumExperts,
     fetchAllOnlinePremiumExperts,
-    getQuesAndAns
+    getQuesAndAns,
+    fetchTopExperts,
   }
