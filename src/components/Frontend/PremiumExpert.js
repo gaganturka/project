@@ -11,6 +11,7 @@ import FetchPracticeAreaList from './FetchPracticeAreaList';
 import ReactPaginate from 'react-paginate'
 import StarRatings from 'react-star-ratings';
 import categoriesAction from '../../actions/categories.action';
+import NewsletterSubscribed from './NewsletterSubscribed';
 const PremiumExpert = () => {
     const [getCategories,setGetCategories]=useState([]);
    const [dummy,setDummy]=useState(false);
@@ -363,31 +364,7 @@ getPracticeArea.length>0 &&
             </div>
          </div>
       </section>
-     
-      <section class="newsletter-wrp">
-         <div class="container">
-            <div class="row">
-               <div class="col-lg-6">
-                  <div class="newsletter-feild-box">
-                     <form>
-                        <div class="position-relative">
-                           <input type="email" class="form-control" placeholder="Enter your email address....."/>
-                           <button class="btn" type="submit">Submit</button>
-                        </div>
-                     </form>
-                  </div>
-               </div>
-               <div class="col-lg-6">
-                  <div class="newsletter-content">
-                     <div className="">
-                        <h1>Newsletter</h1>
-                        <p>Be the first to know about exciting new offers and special events and much more.</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </section>
+     <NewsletterSubscribed/>
       <Footer/>
       </>
   )

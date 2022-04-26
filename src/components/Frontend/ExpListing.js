@@ -14,6 +14,7 @@ import FetchCategoriesList from './FetchCategoriesList';
 import FetchPracticeAreaList from './FetchPracticeAreaList';
 import { CategoryAndPracticeContext } from '../../context/CategoryAndPracticeContext';
 import {useLocation} from "react-router-dom";
+import NewsletterSubscribed from './NewsletterSubscribed';
 
 const ExpListing = () => {
    // const {selectedCategories,setSelectedCategories,selectedPractice,setSelectedPractice}=useContext(CategoryAndPracticeContext);
@@ -424,7 +425,7 @@ const ExpListing = () => {
          </div>
       </section>
      
-      <section className="newsletter-wrp">
+      {/* <section className="newsletter-wrp">
          <div className="container">
             <div className="row">
                <div className="col-lg-6">
@@ -447,7 +448,8 @@ const ExpListing = () => {
                </div>
             </div>
          </div>
-      </section>
+      </section> */}
+      <NewsletterSubscribed/>
       <Footer/>
 
    </>

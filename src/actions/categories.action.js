@@ -20,10 +20,19 @@ function fetchAllPracticeArea(cb) {
         if (typeof cb === 'function') return cb(error, res && res.body);
       });
   }
+  function fetchAllPracticeAreaInGroups(cb) {
+    Agent
+      .fire('get', `${BACKEND_URL}/admin/getPracticeAreaDataInGroups`)
+      .end((err, res) => {
+        var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
+        if (typeof cb === 'function') return cb(error, res && res.body);
+      });
+  }
 
   
 export default {
     fetchAllCategories,
     fetchAllPracticeArea,
+    fetchAllPracticeAreaInGroups,
     
   }
