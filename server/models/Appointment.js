@@ -1,3 +1,4 @@
+const { date } = require("@hapi/joi");
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const APP_CONSTANTS = require("../appConstants");
@@ -9,7 +10,7 @@ const AppointmentSchema = new Schema({
   },
   expertId: {
     type: Schema.Types.ObjectId,
-    ref: "expertborhanuser",
+    ref: "expert",
   },
   appointmentType: {
     type: String,
@@ -22,7 +23,7 @@ const AppointmentSchema = new Schema({
     type: Number,
   },
   appointmentDate: {
-    type: String,
+    type: Date,
   },
   appointmentTime: {
     type: String,

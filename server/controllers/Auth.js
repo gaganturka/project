@@ -8,7 +8,7 @@ const { Config } = require("../config");
 const Joi = require("@hapi/joi");
 const APP_CONSTANTS = require("../appConstants");
 import responseMessages from "../resources/response.json";
-
+import jwtFunction from '../utils/jwtFunction';
 const Boom = require("boom");
 import universalFunctions from "../utils/universalFunctions";
 
@@ -90,19 +90,19 @@ module.exports = {
           // if (user.otp !== req.body.otp) {
           //   throw Boom.badRequest(responseMessages.INVALID_OTP);
           // }
-          if(req.body.otp!=="999999")
-      {
-        throw Boom.badRequest(responseMessages.INVALID_OTP);
-      }
+          if (req.body.otp !== "999999") {
+            throw Boom.badRequest(responseMessages.INVALID_OTP);
+          }
           let borhanuser = await borhanUser.create({
             isSubscribed: false,
             balance: 0,
             userId: user._id,
           });
-          const token = jwt.sign(
-            { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-            Config.jwtsecret
-          );
+          // const token = jwt.sign(
+          //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
+          //   Config.jwtsecret
+          // );
+          const token=await jwtFunction.jwtGenerator(user._id);
           universalFunctions.sendSuccess(
             {
               statusCode: 200,
@@ -119,8 +119,7 @@ module.exports = {
       // if (req.body.otp !== otpmodel.otp) {
       //   throw Boom.badRequest(responseMessages.INVALID_OTP);
       // }
-      if(req.body.otp!=="999999")
-      {
+      if (req.body.otp !== "999999") {
         throw Boom.badRequest(responseMessages.INVALID_OTP);
       }
       let borhanuser = await borhanUser.create({
@@ -148,10 +147,12 @@ module.exports = {
       console.log(user);
       console.log(res.json, "jwttoken");
 
-      const token = jwt.sign(
-        { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-        Config.jwtsecret
-      );
+      // const token = jwt.sign(
+      //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
+      //   Config.jwtsecret
+      // );
+      const token=await jwtFunction.jwtGenerator(user._id);
+          
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -164,79 +165,6 @@ module.exports = {
       universalFunctions.sendError(error, res);
     }
   },
-  googleLoginSignup: async (req, res) => {
-    try {
-       console.log(req.body)
-      let data=req.body;
-      let filter={
-        
-          $or: [
-           { googleId: data.googleId },    { email: data.email },
-          ],
-       
-      }
-    let isexit= await User.findOne(filter);
-    console.log(isexit,"dhcbshjcbjsbcdbsdjcbj")
-    console.log(data.email,isexit,"jdvnjsndv")
-    if(!isexit){
-      let borhanuser = await borhanUser.create({
-        isSubscribed: false,
-        balance: 0,
-      });
-
-      let createData={
-        email:data.email,
-        firstName:data.givenName,
-        googleId:data.googleId,
-        lastName:data.familyName,
-        profilePic:data.imageUrl,
-        mobileNo:"9999999999",
-        isEmailVerified:true,
-        role:APP_CONSTANTS.role.borhanuser,
-        userData:{
-          model: APP_CONSTANTS.role.borhanuser,
-          data: borhanuser._id,
-         }
-      }
-
-
-      let newUser=await await User.create(createData);
-      console.log(newUser,"jhsvdcsdc");
-      await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: newUser._id });
-    
-      const token = jwt.sign(
-        { user_id: newUser._id, email: data.email, mobileNo: "" },
-        Config.jwtsecret
-      );
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "User created",
-          data: {token},
-        },
-        res
-      );
-    }else{
-      
-      const token = jwt.sign(
-        { user_id: isexit._id, email: isexit.email, mobileNo:isexit.mobileNo },
-        Config.jwtsecret
-      );
-      console.log(isexit,"heree is user")
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "login user ",
-          data: {token,isexit},
-        },
-        res
-      );
-    } 
-  }catch (error) {
-      universalFunctions.sendError(error, res);
-    }
-  }
-  ,
   createExpertUser: async (req, res) => {
     try {
       //  console.log('thid odi bpody - ', req.file, req.files)
@@ -284,10 +212,9 @@ module.exports = {
           // if (user.otp !== req.body.otp) {
           //   throw Boom.badRequest(responseMessages.INVALID_OTP);
           // }
-          if(req.body.otp!=="999999")
-      {
-        throw Boom.badRequest(responseMessages.INVALID_OTP);
-      }
+          if (req.body.otp !== "999999") {
+            throw Boom.badRequest(responseMessages.INVALID_OTP);
+          }
           let expertUserr = await expertUser.create({
             isSubscribed: false,
             category: req.body.category,
@@ -309,11 +236,12 @@ module.exports = {
           await expertUser.findByIdAndUpdate(expertUserr._id, {
             userId: user._id,
           });
-          const token = jwt.sign(
-            { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-            Config.jwtsecret
-          );
-
+          // const token = jwt.sign(
+          //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
+          //   Config.jwtsecret
+          // );
+          const token=await jwtFunction.jwtGenerator(user._id);
+          
           universalFunctions.sendSuccess(
             {
               statusCode: 200,
@@ -331,8 +259,7 @@ module.exports = {
       // if (otpmodel.otp !== req.body.otp) {
       //   throw Boom.badRequest(responseMessages.INVALID_OTP);
       // }
-      if(req.body.otp!=="999999")
-      {
+      if (req.body.otp !== "999999") {
         throw Boom.badRequest(responseMessages.INVALID_OTP);
       }
       let expertUserr = await expertUser.create({
@@ -367,10 +294,12 @@ module.exports = {
       // console.log(expertUserr,"eexxpperrttusseerr");
       // console.log('Namaste - ',user);
       // console.log('######################################################');
-      const token = jwt.sign(
-        { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-        Config.jwtsecret
-      );
+      // const token = jwt.sign(
+      //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
+      //   Config.jwtSsecret
+      // );
+      const token=await jwtFunction.jwtGenerator(user._id);
+          
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -400,14 +329,16 @@ module.exports = {
         // if (user.otp !== req.body.otp) {
         //   throw Boom.badRequest(responseMessages.INVALID_OTP);
         // }
-        if(req.body.otp!=="999999")
-        {
+        if (req.body.otp !== "999999") {
           throw Boom.badRequest(responseMessages.INVALID_OTP);
         }
-        const token = jwt.sign(
-          { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-          Config.jwtsecret
-        );
+        // const token = jwt.sign(
+        //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
+        //   Config.jwtsecret
+        // );
+        const token=await jwtFunction.jwtGenerator(user._id);
+        console.log("token borhan usser",token)
+          
         if (user.role === APP_CONSTANTS.role.borhanuser) {
           universalFunctions.sendSuccess(
             {
@@ -450,11 +381,12 @@ module.exports = {
       // checks whether the mobileno has already been created
 
       let user = await User.findOne({ email: req.body.email });
-      const token = jwt.sign(
-        { user_id: user._id, email: req.body.email, mobileNo: user.mobileNo },
-        Config.jwtsecret
-      );
-
+      // const token = jwt.sign(
+      //   { user_id: user._id, email: req.body.email, mobileNo: user.mobileNo },
+      //   Config.jwtsecret
+      // );
+      const token=await jwtFunction.jwtGenerator(user._id);
+          
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
         if (
@@ -469,80 +401,13 @@ module.exports = {
             },
             res
           );
-        }
-        else{
+        } else {
           throw Boom.badRequest("invalid credentials");
         }
       } else {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
     } catch (error) {
-      universalFunctions.sendError(error, res);
-    }
-  },
-  
-  facebookLoginSignup: async (req, res) => {
-    try {
-       console.log(req.body)
-      let data=req.body;
-      let filter={
-        
-          $or: [
-           { facebookId: data.facebookId },    { email: data.email },{mobileNo:data.mobileNo},
-          ],
-       
-      }
-    let isexit= await User.findOne(filter);
-    console.log(isexit,"dhcbshjcbjsbcdbsdjcbj")
-    if(!isexit){
-      let borhanuser = await borhanUser.create({
-        isSubscribed: false,
-        balance: 0,
-      });
-
-      let createData={
-        ...data,
-        role:APP_CONSTANTS.role.borhanuser,
-        userData:{
-          model: APP_CONSTANTS.role.borhanuser,
-          data: borhanuser._id,
-         }
-      }
-
-console.log(createData,"hsdhjbsdchjcdshjbhjbschbjshbjschbj");
-      let newUser=await await User.create(createData);
-      console.log(newUser,"jhsvdcsdc");
-      await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: newUser._id });
-    
-      const token = jwt.sign(
-        { user_id: newUser._id},
-        Config.jwtsecret
-      );
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "User created",
-          data: {token},
-        },
-        res
-      );
-    }else{
-      
-      const token = jwt.sign(
-        { user_id: isexit._id},
-        Config.jwtsecret
-      );
-      console.log(isexit,"heree is user")
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "login user ",
-          data: {token,isexit},
-        },
-        res
-      );
-    } 
-  }catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
@@ -667,6 +532,152 @@ console.log(createData,"hsdhjbsdchjcdshjbhjbschbjshbjschbj");
         res
       );
     } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  googleLoginSignup: async (req, res) => {
+    try {
+       console.log(req.body)
+      let data=req.body;
+      let filter={
+        
+          $or: [
+           { googleId: data.googleId },    { email: data.email },
+          ],
+       
+      }
+    let isexit= await User.findOne(filter);
+    console.log(isexit,"dhcbshjcbjsbcdbsdjcbj")
+    console.log(data.email,isexit,"jdvnjsndv")
+    if(!isexit){
+      let borhanuser = await borhanUser.create({
+        isSubscribed: false,
+        balance: 0,
+      });
+
+      let createData={
+        email:data.email,
+        firstName:data.givenName,
+        googleId:data.googleId,
+        lastName:data.familyName,
+        profilePic:data.imageUrl,
+        mobileNo:"9999999999",
+        isEmailVerified:true,
+        role:APP_CONSTANTS.role.borhanuser,
+        userData:{
+          model: APP_CONSTANTS.role.borhanuser,
+          data: borhanuser._id,
+         }
+      }
+
+
+      let newUser=await await User.create(createData);
+      console.log(newUser,"jhsvdcsdc");
+      await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: newUser._id });
+    
+      // const token = jwt.sign(
+      //   { user_id: newUser._id, email: data.email, mobileNo: "" },
+      //   Config.jwtsecret
+      // );
+      const token=await jwtFunction.jwtGenerator(newUser._id);
+        
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "User created",
+          data: {token},
+        },
+        res
+      );
+    }else{
+      
+      // const token = jwt.sign(
+      //   { user_id: isexit._id, email: isexit.email, mobileNo:isexit.mobileNo },
+      //   Config.jwtsecret
+      // );
+      const token=await jwtFunction.jwtGenerator(isexit._id);
+        
+      console.log(isexit,"heree is user")
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "login user ",
+          data: {token,isexit},
+        },
+        res
+      );
+    } 
+  }catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  }
+  ,
+  facebookLoginSignup: async (req, res) => {
+    try {
+       console.log(req.body)
+      let data=req.body;
+      let filter={
+        
+          $or: [
+           { facebookId: data.facebookId },    { email: data.email },{mobileNo:data.mobileNo},
+          ],
+       
+      }
+    let isexit= await User.findOne(filter);
+    console.log(isexit,"dhcbshjcbjsbcdbsdjcbj")
+    if(!isexit){
+      let borhanuser = await borhanUser.create({
+        isSubscribed: false,
+        balance: 0,
+      });
+
+      let createData={
+        ...data,
+        role:APP_CONSTANTS.role.borhanuser,
+        userData:{
+          model: APP_CONSTANTS.role.borhanuser,
+          data: borhanuser._id,
+         }
+      }
+
+console.log(createData,"hsdhjbsdchjcdshjbhjbschbjshbjschbj");
+      let newUser=await await User.create(createData);
+      console.log(newUser,"jhsvdcsdc");
+      await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: newUser._id });
+    
+      // const token = jwt.sign(
+      //   { user_id: newUser._id},
+      //   Config.jwtsecret
+      // );
+      const token=await jwtFunction.jwtGenerator(newUser._id);
+        
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "User created",
+          data: {token},
+        },
+        res
+      );
+    }else{
+      
+      // const token = jwt.sign(
+      //   { user_id: isexit._id},
+      //   Config.jwtsecret
+      // );
+      const token=await jwtFunction.jwtGenerator(isexit._id);
+        
+      console.log(isexit,"heree is user")
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "login user ",
+          data: {token,isexit},
+        },
+        res
+      );
+    } 
+  }catch (error) {
       universalFunctions.sendError(error, res);
     }
   },

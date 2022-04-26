@@ -37,5 +37,8 @@ router
 router
   .route("/getCategoryDetails/:id")
   .get(isAdmin.isAdmin, categorieController.getCategoryDetails);
+  router
+  .route("/getPracticeAreaDataInGroups")
+  .get(categorieController.getPracticeAreaDataInGroups);
 
 module.exports = router;

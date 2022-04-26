@@ -1,34 +1,48 @@
-const jwt = require("jsonwebtoken");
-const expert = require("../models/Expert_User");
 const APP_CONSTANTS = require("../appConstants");
-import universalFunctions from "../utils/universalFunctions";
-const Boom = require("boom");
 const { Config } = require("../config");
-module.exports = {
-  isAdmin: async (req, res, next) => {
-    try {
-      const token = req.header("auth-token");
-      if (!token) {
-        res
-          .status(403)
-          .send({ error: "Please authenticate using valid token" });
-      }
-      const data = jwt.verify(token, Config.jwtsecret);
-      console.log(data, "jwttokenbyadmin");
-      if (!data) {
-        throw Boom.badRequest(responseMessages.INVALID_TOKEN);
-      }
-      const user = await expert.findOne({ mobileNo: data.mobileNo });
-      console.log(user, "userinisadmin");
-      if (user === null) {
-        throw Boom.badRequest("invalid credentials no such admin exists");
-      } else if (user.role === APP_CONSTANTS.role.admin) {
-        next();
+const Jwt = require("jsonwebtoken");
+import universalFunctions from "../utils/universalFunctions";
+import responseMessages from "../resources/response.json";
+const Boom = require("boom");
+const User=require("../models/User")
+const isExpert =  async(req, res, next) => {
+    const token = req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
+    console.log("token:",token);
+      if (token) {
+        const decoded =  Jwt.verify(token, Config.jwtsecret);
+            console.log(Config.jwtsecret,"jwt");
+        // Jwt.verify(token, Config.jwtsecret, async function (err,decoded) {
+          try {
+            console.log("decoded inside isexpert",decoded);
+              let exId=decoded.user_id;
+              // let user = await borhanUser.findOne({ firebaseUserId: decoded.user_id });
+              let user = await User.findOne({ _id: decoded.user_id,role: APP_CONSTANTS.role.expert});
+              if (!user) {
+                throw Boom.unauthorized(responseMessages.USER_NOT_FOUND);
+              }
+              console.log(user,"hererererlnkjsnvknsfdvjs")
+ 
+              
+                let userInfo = {
+                  id: decoded.user_id,
+                  expertId:user.userData.data
+            
+                };
+                req.user = userInfo;
+                next();
+          } catch (error) {
+            return universalFunctions.sendError(error, res);
+          }
+         
       } else {
-        throw Boom.badRequest("invalid credentials of admin");
+        return universalFunctions.sendError(
+          Boom.forbidden(responseMessages.TOKEN_NOT_PROVIDED),
+          res
+        );
       }
-    } catch (error) {
-      universalFunctions.sendError(error, res);
-    }
-  },
-};
+  };
+
+
+  module.exports={
+    isExpert
+  }

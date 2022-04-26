@@ -7,6 +7,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
 import Mongoose from "mongoose";
+import jwtFunction from '../utils/jwtFunction';
+
 const APP_CONSTANTS = require("../appConstants");
 // const User = require("../models/User");
 import responseMessages from "../resources/response.json";
@@ -92,7 +94,8 @@ module.exports = {
     }
 
     let userData = await User.findOne({ mobileNo: mobileNo });
-    const token = jwt.sign({ user_id: userData._id }, Config.jwtsecret);
+    // const token = jwt.sign({ user_id: userData._id }, Config.jwtsecret);
+    const token=await jwtFunction.jwtGenerator(userData._id);
     let userDetails = {
       token: token,
       _id: userData._id,
@@ -108,6 +111,7 @@ module.exports = {
     );
   },
   getExportUserDetail: async (req, res) => {
+    try{
     let { id } = req.query;
     console.log("this is id ", id);
     const expert = await User.findOne({
@@ -126,9 +130,15 @@ module.exports = {
       },
       res
     );
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error, res);
+    }
   },
 
   getExpertUser: async (req, res) => {
+    try{
     let id = req.user.id;
     const expert = await expertUser
       .findOne({ _id: id })
@@ -145,8 +155,15 @@ module.exports = {
       },
       res
     );
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error, res);
+    
+    }
   },
   updateExpertUser: async (req, res) => {
+    try{
     let {
       firstName,
       lastName,
@@ -187,6 +204,7 @@ module.exports = {
       {
         new: true,
       }
+      
     );
     universalFunctions.sendSuccess(
       {
@@ -196,13 +214,20 @@ module.exports = {
       },
       res
     );
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error, res);
+    
+    }
   },
-  getApointment: async (req, res) => {
+  getExpertUserInfoUsingUserModel: async (req, res) => {
+    try{
     let id = req.user.id;
-    const Apointment = await appointmentModel
-      .find({ expertId: id })
-      .populate({ path: "userId expertId" });
-    if (!Apointment) {
+    const expert = await User
+      .findOne({ _id: id })
+      .populate({ path: "userData.data" });
+    if (!expert) {
       throw Boom.badRequest("invalid id or token");
     }
 
@@ -210,11 +235,67 @@ module.exports = {
       {
         statusCode: 200,
         message: "expert found",
-        data: Apointment,
+        data: expert,
       },
       res
     );
-  },
+  
+}
+catch(error)
+{
+      universalFunctions.sendError(error, res);   
+}
+},
+getExpertAppointment: async (req, res) => {
+  try{
+  let id = req.user.expertId;
+  console.log(req.user.expertId)
+  const Appointment = await appointmentModel
+    .find({expertId:id})
+    .populate({ path: "userId" });
+  if (!Appointment) {
+    throw Boom.badRequest("invalid id or token");
+  }
+  universalFunctions.sendSuccess(
+    {
+      statusCode: 200,
+      message: "Appointment found",
+      data: Appointment,
+    },
+    res
+  );
+}
+catch(error)
+{
+    universalFunctions.sendError(error, res);   
+}
+},
+updateAppointment:async (req, res) => {
+  try{
+    let appointmentId=req.body.appointmentId,payload=req.body.payload;
+    const Appointment = await appointmentModel.findByIdAndUpdate(
+      { _id:appointmentId },
+      {
+        $set:payload,
+      }
+    );
+    if (!Appointment) {
+      throw Boom.badRequest("invalid id or token");
+    }
+    universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "Appointment found",
+        data: Appointment,
+      },
+      res
+    );
+  }
+  catch(error)
+  {
+      universalFunctions.sendError(error, res);   
+  }
+},
 };
 
 

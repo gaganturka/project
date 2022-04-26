@@ -18,7 +18,7 @@ module.exports = {
       if (!data) {
         throw Boom.badRequest(responseMessages.INVALID_TOKEN);
       }
-      const user = await User.findOne({ mobileNo: data.mobileNo });
+      const user = await User.findOne({_id: data.user_id });
       console.log(user, "userinisadmin");
       if (user === null) {
         throw Boom.badRequest("invalid credentials no such admin exists");

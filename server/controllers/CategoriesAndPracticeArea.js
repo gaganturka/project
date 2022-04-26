@@ -1,10 +1,10 @@
 const Joi = require("@hapi/joi");
 const universalFunctions = require("../utils/universalFunctions");
 const jwt = require("jsonwebtoken");
-const jwtsecret = "seraphic";
 const APP_CONSTANTS = require("../appConstants");
 const User = require("../models/User");
 const { Config } = require("../config");
+import _ from 'lodash'
 import models from "../models";
 import Boom from "boom";
 import responseMessages from "../resources/response.json";
@@ -21,12 +21,12 @@ exports.addCategories = async (req, res) => {
     if (!token) {
       res.status(403).send({ error: "Please authenticate using valid token" });
     }
-    const data = jwt.verify(token, jwtsecret);
+    const data = jwt.verify(token, Config.jwtsecret);
     console.log(data, "jwttokenbyadmin");
     if (!data) {
       throw Boom.badRequest(responseMessages.INVALID_TOKEN);
     }
-    const user = await User.findOne({ email: data.email });
+    const user = await User.findOne({ _id: data.user_id });
     console.log(user, "userinisadmin");
     if (user === null) {
       throw Boom.badRequest("invalid credentials no such admin exists");
@@ -154,12 +154,12 @@ exports.createPracticeArea = async (req, res) => {
     if (!token) {
       res.status(403).send({ error: "Please authenticate using valid token" });
     }
-    const data = jwt.verify(token, jwtsecret);
+    const data = jwt.verify(token, Config.jwtsecret);
     console.log(data, "jwttokenbyadmin");
     if (!data) {
       throw Boom.badRequest(responseMessages.INVALID_TOKEN);
     }
-    const user = await User.findOne({ email: data.email });
+    const user = await User.findOne({ _id: data.user_id });
     console.log(user, "userinisadmin");
     if (user === null) {
       throw Boom.badRequest("invalid credentials no such admin exists");
@@ -332,5 +332,25 @@ exports.getPracticeAreaDetails = async (req, res) => {
     );
   } catch (error) {
     universalFunctions.sendError(error, res);
+  }
+};
+
+exports.getPracticeAreaDataInGroups = async (req, res) => {
+  try {
+    let practiceAreaData = await models.practicearea.find();
+    if (!practiceAreaData) {
+      throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
+    }
+    
+    return universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "fetched practice areas are",
+        data: _.chunk(practiceAreaData, 2),
+      },
+      res
+    );
+  } catch (err) {
+    return universalFunctions.sendError(err, res);
   }
 };

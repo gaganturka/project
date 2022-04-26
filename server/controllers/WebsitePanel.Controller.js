@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const borhanUser = require("../models/Borhan_User");
+const Newsletter=require('../models/NewsletterSubscribed')
 const expertUser = require("../models/Expert_User");
 const practiceArea = require("../models/Practice_Area");
 const appointment =require("../models/Appointment")
@@ -10,7 +11,7 @@ const Joi = require("@hapi/joi");
 const APP_CONSTANTS = require("../appConstants");
 import responseMessages from "../resources/response.json";
 const { Config } = require("../config");
-
+const Testimony =require('../models/Testimony');
 const Boom = require("boom");
 import universalFunctions from "../utils/universalFunctions";
 
@@ -665,14 +666,18 @@ module.exports = {
   },
   bookAppointment: async (req, res) => {
     try {
+      let userId=req.user.id;
+      let payload=req.body;
       const schema = Joi.object({
         userId: Joi.string().length(24).required(),
         expertId: Joi.string().length(24).required(),
         appointmentType: Joi.string().allow(""),
         duration: Joi.string().allow(""),
-        appointmentDate: Joi.string().allow(""),
+        appointmentDate: Joi.date().required(),
+        endAppointmentTime: Joi.date().required(),
+        startAppointmentTime: Joi.date().required(),
         appointmentTime: Joi.string().allow(""),
-        appointDateandTime: Joi.string().allow(""),
+        appointDateandTime: Joi.date().required(),
         question:Joi.string().allow("").optional(""),
         status: Joi.string().allow(""),
         practiceArea: Joi.string().length(24).required(),
@@ -686,8 +691,9 @@ module.exports = {
             $lt: end
         }
     })
+    payload.userId=userId;
     console.log(data,"heolll  kjnsdnkjccsjsdjkj")
-      let createAppointment = await appointment.create(req.body);
+      let createAppointment = await appointment.create(payload);
 
         universalFunctions.sendSuccess(
           {
@@ -701,6 +707,152 @@ module.exports = {
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }
+  },
+  updateAppointment:async (req, res) => {
+
+  },
+  getTopExperts: async (req, res) => {
+    try {
+      let expert;
+      
+      expert = await expertUser
+        .find({
+          isApprovedByAdmin: true,
+          // isSubscribed: true,
+
+          // status: APP_CONSTANTS.activityStatus.active,
+        })
+        .populate("practiceArea")
+        .populate("category")
+        .populate("userId")
+        .sort({ "rating.avgRating": -1 });
+
+      if (!expert) {
+        throw Boom.badRequest("cannot find any expert");
+      }
+      console.log(
+        "expert top are",
+        expert,
+        "top expert "
+      );
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "All top experts ",
+          data: {
+            list: expert,
+            count: await expertUser
+              .find({ status: APP_CONSTANTS.activityStatus.active })
+              .countDocuments(),
+          },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  createTestimony:async(req,res)=>
+  {
+    try {
+      const schema = Joi.object({
+        // limit: Joi.number(),
+        // page: Joi.number(),
+        // category: Joi.string().allow(""),
+        // practiceArea: Joi.string().allow(""),
+        // sortBy: Joi.string(),
+        feedback: Joi.string(),
+        name: Joi.string(),
+        image: Joi.string().allow(""),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+         
+      let feedback=await Testimony.create({feedback:req.body.feedback,name:req.body.name,image:req.body.image});
+      if(!feedback)
+      {
+        throw Boom.badRequest("cannot create a testimony");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Created testimony",
+          data:feedback,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+
+
+    
+    
+
+
+  },
+  getTestimonies:async(req,res)=>
+  {
+    try {
+      // const schema = Joi.object({
+      //   // limit: Joi.number(),
+      //   // page: Joi.number(),
+      //   // category: Joi.string().allow(""),
+      //   // practiceArea: Joi.string().allow(""),
+      //   // sortBy: Joi.string(),
+      //   feedback: Joi.string(),
+      //   name: Joi.string(),
+      //   image: Joi.string().allow(""),
+      // });
+      // await universalFunctions.validateRequestPayload(req.body, res, schema);
+         
+      let feedback=await Testimony.find();
+      if(!feedback)
+      {
+        throw Boom.badRequest("cannot find any testimony");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "All testimonies are",
+          data:feedback,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+
+
+  },
+  subscribeNewsletter:async(req,res)=>
+  {
+    try {
+      const schema = Joi.object({
+        email:  Joi.string().email({
+          minDomainSegments: 2,
+          tlds: { allow: ["com", "net"] },
+        }),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let subscribed=await Newsletter.findOneAndUpdate( {email:req.body.email}, 
+      {$set:{email:req.body.email}},
+      {upsert:true})
+      if(!subscribed)
+      {
+        throw Boom.badRequest("cannot subscribe to newsletter");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "newsletter subscribed",
+          data:subscribed,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }  
   },
 };
 

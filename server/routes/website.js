@@ -36,10 +36,23 @@ router
       .route("/getOnlinePremiumExperts")
       .get(WebsiteController.getOnlinePremiumExperts);
 router.route("/getSingleExpert").get(WebsiteController.getSingleExpert);
-  router.route("/bookAppointment").post(WebsiteController.bookAppointment);
-
+router.route("/bookAppointment").post(authUser.checkAuth,WebsiteController.bookAppointment);
+    
   router.route("/getQuesAndAns").get(BorhanController.getQuesAndAns);
 
-    
+router
+      .route("/getTopExperts")
+      .get(WebsiteController.getTopExperts);
+      router
+      .route("/getTestimonies")
+      .get(WebsiteController.getTestimonies);
+      router
+      .route("/createTestimony")
+      .post(WebsiteController.createTestimony);
+
+      router
+      .route("/subscribeNewsletter")
+      .post(WebsiteController.subscribeNewsletter);
+ 
   
   module.exports = router;
