@@ -50,6 +50,9 @@ router
       .route("/createTestimony")
       .post(WebsiteController.createTestimony);
 
-    
+      router
+      .route("/subscribeNewsletter")
+      .post(WebsiteController.subscribeNewsletter);
+ 
   
   module.exports = router;

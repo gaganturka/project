@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const APP_CONSTANTS = require("../appConstants");
 const User = require("../models/User");
 const { Config } = require("../config");
+import _ from 'lodash'
 import models from "../models";
 import Boom from "boom";
 import responseMessages from "../resources/response.json";
@@ -331,5 +332,25 @@ exports.getPracticeAreaDetails = async (req, res) => {
     );
   } catch (error) {
     universalFunctions.sendError(error, res);
+  }
+};
+
+exports.getPracticeAreaDataInGroups = async (req, res) => {
+  try {
+    let practiceAreaData = await models.practicearea.find();
+    if (!practiceAreaData) {
+      throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
+    }
+    
+    return universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "fetched practice areas are",
+        data: _.chunk(practiceAreaData, 2),
+      },
+      res
+    );
+  } catch (err) {
+    return universalFunctions.sendError(err, res);
   }
 };

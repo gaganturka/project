@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const borhanUser = require("../models/Borhan_User");
+const Newsletter=require('../models/NewsletterSubscribed')
 const expertUser = require("../models/Expert_User");
 const practiceArea = require("../models/Practice_Area");
 const appointment =require("../models/Appointment")
@@ -806,6 +807,35 @@ module.exports = {
     }
 
 
+  },
+  subscribeNewsletter:async(req,res)=>
+  {
+    try {
+      const schema = Joi.object({
+        email:  Joi.string().email({
+          minDomainSegments: 2,
+          tlds: { allow: ["com", "net"] },
+        }),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let subscribed=await Newsletter.findOneAndUpdate( {email:req.body.email}, 
+      {$set:{email:req.body.email}},
+      {upsert:true})
+      if(!subscribed)
+      {
+        throw Boom.badRequest("cannot subscribe to newsletter");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "newsletter subscribed",
+          data:subscribed,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }  
   },
 };
 
