@@ -347,7 +347,35 @@ const handlemodal1=()=>{
                                        <div className="col-lg-6">
                                           <div className="book-app-box">
                                              <div className="select-time-slot">
+                                             <h1>Schedule an Appointment</h1>
                                                 <img src="./assets/img/time-slot.png" className="img img-fluid" alt=""/>
+                                                <div className='row '>
+                                                   <div className='col-lg-6 btn-appointment1 '>
+                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
+                                                   </div>
+                                                   <div className='col-lg-6 btn-appointment1'>
+                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
+                                                      </div>
+                                                      <div className='col-lg-6 btn-appointment1'>
+                                                   <button className="btn btn-white bg-white btn-appointment" disabled>1.PM</button>
+                                                      </div>
+                                                      <div className='col-lg-6 btn-appointment1'>
+                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
+                                                      </div>
+                                                      <div className='col-lg-6 btn-appointment1'>
+                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
+                                                      </div>
+                                                      <div className='col-lg-6 btn-appointment1'>
+                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
+                                                      </div>
+                                                      <div className='col-lg-6 btn-appointment1'>
+                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
+                                                      </div>
+                                                      <div className='col-lg-6 btn-appointment1'>
+                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
+                                                      </div>
+                                                </div>
+                                                
                                              </div>
                                           </div>
                                        </div>

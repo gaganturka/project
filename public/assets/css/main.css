@@ -2949,3 +2949,10 @@ ul.blocklist {
     OVERFLOW: HIDDEN;
     word-break: break-all;
 } */
+.btn-appointment
+{
+	padding:5px 61px;
+}
+.btn-appointment1{
+	margin-bottom:14px;
+}
