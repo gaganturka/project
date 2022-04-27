@@ -669,7 +669,7 @@ module.exports = {
       let userId=req.user.id;
       let payload=req.body;
       const schema = Joi.object({
-        userId: Joi.string().length(24).required(),
+        // userId: Joi.string().length(24).required(),
         expertId: Joi.string().length(24).required(),
         appointmentType: Joi.string().allow(""),
         duration: Joi.string().allow(""),
@@ -683,7 +683,7 @@ module.exports = {
         practiceArea: Joi.string().length(24).required(),
 
       });
-      // await universalFunctions.validateRequestPayload(req.body, res, schema);
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
       let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
     let data= await appointment.find({
         startAppointmentTime: {
@@ -700,6 +700,163 @@ module.exports = {
             statusCode: 200,
             message: "Success",
             data: createAppointment,
+          },
+          res
+        );
+
+    } catch (error) {
+      return universalFunctions.sendError(error, res);
+    }
+  },
+  getAppointments: async (req, res) => {
+    try {
+      let userId=req.user.id;
+      let filterType=req.body.filterType;
+      const schema = Joi.object({
+        filterType:Joi.string(),
+        limit: Joi.number(),
+        page: Joi.number(),
+        
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let data;
+      let count;
+      let expert;
+      
+      // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
+      if(filterType=="All")
+      {
+     data= await appointment.find({userId:userId}).populate('userId').populate({path:'expertId', populate:{path:"userId practiceArea"}})
+     .skip(parseInt((req.body.page - 1) * req.body.limit))
+ .limit(parseInt(req.body.limit));
+    //  expert=await expert.find({_id:data.expertId._id});
+    count= await appointment.find({userId:userId}).populate('userId').populate('expertId').populate('expertId.userId').countDocuments()
+      }
+      else if(filterType=="Upcoming")
+      {
+        data=await appointment.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.confirmed}).populate('userId').populate('expertId').populate('expertId.userId')
+        .skip(parseInt((req.body.page - 1) * req.body.limit))
+    .limit(parseInt(req.body.limit));
+      count =await appointment.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.confirmed}).countDocuments();
+      }
+      else if(filterType=='Reschedule')
+      {
+        data= await appointment.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.rescheduled}).populate('userId').populate('expertId').populate('expertId.userId')
+        .skip(parseInt((req.body.page - 1) * req.body.limit))
+    .limit(parseInt(req.body.limit));
+        //  expert=await expert.find({_id:data.expertId._id});
+        count= await appointment.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.rescheduled}).populate('userId').populate('expertId').populate('expertId.userId').countDocuments()
+        
+      }
+      else if(filterType=="Completed")
+      {
+        data=await appointment.find({userId:userId,
+        status:APP_CONSTANTS.appointmentStatus.completed,
+
+      }).populate('userId').populate('expertId').populate('expertId.userId')
+      .skip(parseInt((req.body.page - 1) * req.body.limit))
+  .limit(parseInt(req.body.limit));
+      count=await appointment.find({userId:userId,
+      status:APP_CONSTANTS.appointmentStatus.completed,
+
+    }).countDocuments();
+    }
+    else if(filterType=="Cancelled")
+      {
+        data=await appointment.find({userId:userId, status:APP_CONSTANTS.appointmentStatus.cancelled,
+        
+      }).populate('userId').populate('expertId').populate('expertId.userId')
+      .skip(parseInt((req.body.page - 1) * req.body.limit))
+  .limit(parseInt(req.body.limit));
+
+      count=await appointment.find({userId:userId,
+        status:APP_CONSTANTS.appointmentStatus.cancelled,
+      
+    }).countDocuments()
+      }
+    // payload.userId=userId;
+    // console.log(data,"heolll  kjnsdnkjccsjsdjkj")
+              universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "Success",
+            data: {list:data,count:count},
+          },
+          res
+        );
+
+    } catch (error) {
+      return universalFunctions.sendError(error, res);
+    }
+  },
+  cancelAppointment: async (req, res) => {
+    try {
+      let userId=req.user.id;
+      // const schema = Joi.object({
+      //   filterType:Joi.string(),
+      // });
+      // await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let data;
+      let expert;
+      console.log("iddd kya aai",req.params.id);
+      let deletedAppointment=await appointment.findByIdAndUpdate(req.params.id,{status:APP_CONSTANTS.appointmentStatus.cancelled})
+      // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
+      
+        // data=await appointment.find({userId:userId,startAppointmentTime: {
+        //   $lt: new Date()},
+        //   status:APP_CONSTANTS.appointmentStatus.confirmed,
+        
+        // }),
+    // payload.userId=userId;
+    // console.log(data,"heolll  kjnsdnkjccsjsdjkj")
+    if(!deletedAppointment)
+    {
+      throw Boom.badRequest("cannot find any appointment to delete");
+     
+    }
+              universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "Success",
+            data: data,
+          },
+          res
+        );
+
+    } catch (error) {
+      return universalFunctions.sendError(error, res);
+    }
+  },
+  rescheduleAppointment: async (req, res) => {
+    try {
+      let userId=req.user.id;
+      // const schema = Joi.object({
+      //   filterType:Joi.string(),
+      // });
+      // await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let data;
+      let expert;
+      // console.log("iddd kya aai",req.params.id);
+      let rescheduledAppointment=await appointment.findByIdAndUpdate(req.params.id,{status:APP_CONSTANTS.appointmentStatus.rescheduled})
+      // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
+      
+        // data=await appointment.find({userId:userId,startAppointmentTime: {
+        //   $lt: new Date()},
+        //   status:APP_CONSTANTS.appointmentStatus.confirmed,
+        
+        // }),
+    // payload.userId=userId;
+    // console.log(data,"heolll  kjnsdnkjccsjsdjkj")
+    if(!rescheduledAppointment)
+    {
+      throw Boom.badRequest("cannot find any appointment to delete");
+     
+    }
+              universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "Success",
+            data: data,
           },
           res
         );
