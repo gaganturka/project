@@ -22,6 +22,8 @@ const appointmentStatus = {
   cancelled: "cancelled",
   confirmed: "confirmed",
   pending: "pending",
+  rescheduled:"rescheduled",
+  completed:"completed",
 };
 
 const chatRoomStatus = {

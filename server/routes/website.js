@@ -53,7 +53,9 @@ router
       router
       .route("/subscribeNewsletter")
       .post(WebsiteController.subscribeNewsletter);
-      
-  
+
 router.route("/getAppointments").post(authUser.checkAuth,WebsiteController.getAppointments);
+router.route("/cancelAppointment/:id").delete(authUser.checkAuth,WebsiteController.cancelAppointment);
+router.route("/rescheduleAppointment/:id").put(authUser.checkAuth,WebsiteController.rescheduleAppointment);
+
   module.exports = router;

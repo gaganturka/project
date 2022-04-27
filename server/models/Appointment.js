@@ -44,6 +44,8 @@ const AppointmentSchema = new Schema({
       APP_CONSTANTS.appointmentStatus.cancelled,
       APP_CONSTANTS.appointmentStatus.confirmed,
       APP_CONSTANTS.appointmentStatus.pending,
+      APP_CONSTANTS.appointmentStatus.rescheduled,
+      APP_CONSTANTS.appointmentStatus.completed,
     ],
   },
   practiceArea: {
