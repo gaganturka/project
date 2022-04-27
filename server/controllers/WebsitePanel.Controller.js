@@ -669,7 +669,7 @@ module.exports = {
       let userId=req.user.id;
       let payload=req.body;
       const schema = Joi.object({
-        userId: Joi.string().length(24).required(),
+        // userId: Joi.string().length(24).required(),
         expertId: Joi.string().length(24).required(),
         appointmentType: Joi.string().allow(""),
         duration: Joi.string().allow(""),
@@ -683,7 +683,7 @@ module.exports = {
         practiceArea: Joi.string().length(24).required(),
 
       });
-      // await universalFunctions.validateRequestPayload(req.body, res, schema);
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
       let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
     let data= await appointment.find({
         startAppointmentTime: {
@@ -700,6 +700,62 @@ module.exports = {
             statusCode: 200,
             message: "Success",
             data: createAppointment,
+          },
+          res
+        );
+
+    } catch (error) {
+      return universalFunctions.sendError(error, res);
+    }
+  },
+  getAppointments: async (req, res) => {
+    try {
+      let userId=req.user.id;
+      let filterType=req.body.filterType;
+      const schema = Joi.object({
+        filterType:Joi.string(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let data;
+      // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
+      if(filterType=="All")
+      {
+     data= await appointment.find({userId:userId}).populate('userId').populate('expertId');
+      }
+      else if(filterType=="Upcoming")
+      {
+        data=await appointment.find({userId:userId,startAppointmentTime: {
+          $gte: new Date(),
+          
+      }})
+      }
+      else if(filterType=='Reschedule')
+      {
+
+      }
+      else if(filterType=="Completed")
+      {
+        data=await appointment.find({userId:userId,startAppointmentTime: {
+          $lt: new Date(),
+        },
+        status:APP_CONSTANTS.appointmentStatus.confirmed,
+
+      })
+    }
+    else if(filterType=="Cancelled")
+      {
+        data=await appointment.find({userId:userId,startAppointmentTime: {
+          $lt: new Date(),
+        }
+      })
+      }
+    // payload.userId=userId;
+    // console.log(data,"heolll  kjnsdnkjccsjsdjkj")
+              universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "Success",
+            data: data,
           },
           res
         );

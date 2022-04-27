@@ -53,6 +53,7 @@ router
       router
       .route("/subscribeNewsletter")
       .post(WebsiteController.subscribeNewsletter);
- 
+      
   
+router.route("/getAppointments").post(authUser.checkAuth,WebsiteController.getAppointments);
   module.exports = router;
