@@ -59,7 +59,7 @@ function App() {
               <Route  path="/errorpage" key="errorpage" element={<ErrorPage/>}/>
                
 
-              <Route  path="/expprofile/:id" key="expprofile" element={<ExpProfile/>}/>
+              <Route exact path="/expprofile/:id" key="expprofile" element={<ExpProfile/>}/>
               <Route  path="/favexperts" key="favexperts" element={<FavExp/>}/>
                <Route  path="/membership" key="membership" element={<Membership/>}/>
                <Route  path="/contactus" key="contactus" element={<ContactUs/>}/>
