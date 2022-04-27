@@ -11,5 +11,7 @@ router.route("/getExportUserDetail").get(isexpert.isExpert,ExpertController.getE
 router.route("/updateExpertUser").post( ExpertController.updateExpertUser);
 router.route("/getExpertUserInfo").get(isexpert.isExpert,ExpertController.getExpertUserInfoUsingUserModel);
 router.route("/getExpertAppointment").get(isexpert.isExpert,ExpertController.getExpertAppointment);
+router.route("/updateAppointment").post(isexpert.isExpert,ExpertController.updateAppointment);
+router.route("/setAvailableByExpert").post(isexpert.isExpert,ExpertController.setAvailableByExpert);
 
 module.exports = router;

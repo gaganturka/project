@@ -53,6 +53,7 @@ router
       router
       .route("/subscribeNewsletter")
       .post(WebsiteController.subscribeNewsletter);
+      router.route("/getAvailableTimeForUser").get( WebsiteController.getAvailableTimeForUser);
  
   
   module.exports = router;

@@ -14,7 +14,7 @@ const { Config } = require("../config");
 const Testimony =require('../models/Testimony');
 const Boom = require("boom");
 import universalFunctions from "../utils/universalFunctions";
-
+const expertTimeAvailable=require("../models/ExpertTimeSlot");
 module.exports = {
   showOnlineExperts: async (req, res) => {
     try {
@@ -854,6 +854,49 @@ module.exports = {
       universalFunctions.sendError(error, res);
     }  
   },
+  getAvailableTimeForUser:async (req,res)=>{
+    try{ 
+      let payload=req.body;
+      let {expertId,appointmentDate}=req.body.payload;
+      console.log(payload,"here is body ")
+      const expertTime = await expertTimeAvailable.find(payload);
+      if (!expertTime) {
+        throw Boom.badRequest("invalid id or token");
+      }
+      
+      // await helperFunction.asyncForEach(data,async ( e,index)=>{
+      universalFunctions.asyncForEach(expertTime,async (e,index)=>{
+        let start=e.startAppointmentTime,end= e.endAppointmentTime;
+
+        let data= await appointment.find({
+          expertId:expertId,
+          appointmentDate:appointmentDate,
+          startAppointmentTime: {
+              $gte: start,
+              $lt: end
+          }
+      })
+      if(data){
+        e.avialble=false;
+      }else{
+        e.avialble=true;
+      }
+      })
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "expertTime found",
+          data: expertTime,
+        },
+        res
+      );
+    
+    }catch(err){
+      console.log(error)
+      universalFunctions.sendError(error, res);  
+    }
+    },
 };
 
 
