@@ -36,7 +36,7 @@ const AppointmentDetails = () => {
              console.log(err," appointments error")
            }else
            {
-             console.log("successfully deleted",res.data)
+             console.log("successfully cancelled",res.data)
             }
        });
     }
