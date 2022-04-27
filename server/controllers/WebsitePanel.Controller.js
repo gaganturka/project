@@ -730,22 +730,22 @@ module.exports = {
      .skip(parseInt((req.body.page - 1) * req.body.limit))
  .limit(parseInt(req.body.limit));
     //  expert=await expert.find({_id:data.expertId._id});
-    count= await appointment.find({userId:userId}).populate('userId').populate('expertId').populate('expertId.userId').countDocuments()
+    count= await appointment.find({userId:userId}).populate('userId').populate({path:'expertId', populate:{path:"userId practiceArea"}}).countDocuments()
       }
       else if(filterType=="Upcoming")
       {
-        data=await appointment.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.confirmed}).populate('userId').populate('expertId').populate('expertId.userId')
+        data=await appointment.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.confirmed}).populate('userId').populate({path:'expertId', populate:{path:"userId practiceArea"}}).populate('expertId.userId')
         .skip(parseInt((req.body.page - 1) * req.body.limit))
     .limit(parseInt(req.body.limit));
       count =await appointment.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.confirmed}).countDocuments();
       }
       else if(filterType=='Reschedule')
       {
-        data= await appointment.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.rescheduled}).populate('userId').populate('expertId').populate('expertId.userId')
+        data= await appointment.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.rescheduled}).populate('userId').populate({path:'expertId', populate:{path:"userId practiceArea"}})
         .skip(parseInt((req.body.page - 1) * req.body.limit))
     .limit(parseInt(req.body.limit));
         //  expert=await expert.find({_id:data.expertId._id});
-        count= await appointment.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.rescheduled}).populate('userId').populate('expertId').populate('expertId.userId').countDocuments()
+        count= await appointment.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.rescheduled}).countDocuments()
         
       }
       else if(filterType=="Completed")
@@ -753,7 +753,7 @@ module.exports = {
         data=await appointment.find({userId:userId,
         status:APP_CONSTANTS.appointmentStatus.completed,
 
-      }).populate('userId').populate('expertId').populate('expertId.userId')
+      }).populate('userId').populate({path:'expertId', populate:{path:"userId practiceArea"}})
       .skip(parseInt((req.body.page - 1) * req.body.limit))
   .limit(parseInt(req.body.limit));
       count=await appointment.find({userId:userId,
@@ -765,7 +765,7 @@ module.exports = {
       {
         data=await appointment.find({userId:userId, status:APP_CONSTANTS.appointmentStatus.cancelled,
         
-      }).populate('userId').populate('expertId').populate('expertId.userId')
+      }).populate('userId').populate({path:'expertId', populate:{path:"userId practiceArea"}})
       .skip(parseInt((req.body.page - 1) * req.body.limit))
   .limit(parseInt(req.body.limit));
 
