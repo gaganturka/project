@@ -2,6 +2,7 @@ const User = require("../models/User");
 const borhanUser = require("../models/Borhan_User");
 const expertUser = require("../models/Expert_User");
 const appointmentModel=require("../models/Appointment");
+const expertTimeAvailable =require("../models/ExpertTimeSlot");
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -252,7 +253,7 @@ getExpertAppointment: async (req, res) => {
   console.log(req.user.expertId)
   const Appointment = await appointmentModel
     .find({expertId:id})
-    .populate({ path: "userId" });
+    .populate({ path: "userId" }).sort({"appointmentDate": -1});
   if (!Appointment) {
     throw Boom.badRequest("invalid id or token");
   }
@@ -272,12 +273,13 @@ catch(error)
 },
 updateAppointment:async (req, res) => {
   try{
-    let appointmentId=req.body.appointmentId,payload=req.body.payload;
+    let appointmentId=req.body.id
+    let payload=req.body.payload;
+    console.log(payload,"here is body ")
     const Appointment = await appointmentModel.findByIdAndUpdate(
       { _id:appointmentId },
-      {
-        $set:payload,
-      }
+     { $set:payload},
+    { new: true }
     );
     if (!Appointment) {
       throw Boom.badRequest("invalid id or token");
@@ -293,9 +295,129 @@ updateAppointment:async (req, res) => {
   }
   catch(error)
   {
+    console.log(error)
       universalFunctions.sendError(error, res);   
   }
 },
+setAvailableByExpert:async (req,res)=>{
+try{ 
+  // expertId:id,
+  // appointmentDate:appointmentDate,
+  // startAppointmentTime: {
+  //     $gte: start,
+  //     $lt: end
+  // }
+  let id = req.user.expertId;
+  let payload=req.body;
+  payload.expertId=id;
+  console.log(payload,"here is body ")
+  let start=payload.startAppointmentTime,end= payload.endAppointmentTime,appointmentDate=payload.appointmentDate;
+  let data= await expertTimeAvailable.find({
+$and: [
+  {
+    "expertId":id
+  },
+  {
+      "appointmentDate": new Date(appointmentDate)
+  }, {
+      $or: [
+          {
+            $and: [
+              {
+                  "startAppointmentTime": {
+                      $gt: new Date(start)
+                  }
+              }, {
+                  "startAppointmentTime": {
+                      $lte: new Date(end)
+                  }
+              }
+          ]
+          }, {
+            $and: [
+              {
+                  "endAppointmentTime": {
+                      $gt: new Date(start)
+                  }
+              }, {
+                  "endAppointmentTime": {
+                      $lte: new Date(end)
+                  }
+              }
+          ]
+          },{
+            $and: [
+              {
+                  "startAppointmentTime": {
+                      $lt: new Date(start)
+                  }
+              }, {
+                  "endAppointmentTime": {
+                      $gt: new Date(end)
+                  }
+              }
+          ]
+          }
+          ]
+  }
+
+  ]
+  }
+)
+console.log(data,"jhhjh")
+if(data.length>0){
+  universalFunctions.sendSuccess(
+    {
+      statusCode: 200,
+      message: "expert is busy at is time ",
+      data: data,
+    },
+    res
+  );
+}else{
+  const expertTime = await expertTimeAvailable.create(payload);
+  if (!expertTime) {
+    throw Boom.badRequest("invalid id or token");
+  }
+  universalFunctions.sendSuccess(
+    {
+      statusCode: 200,
+      message: "expertTime create",
+      data: expertTime,
+    },
+    res
+  );
+
+}
+
+}catch(error){
+  console.log(error)
+  universalFunctions.sendError(error, res);  
+}
+},
+getAvailableTimeForUser:async (req,res)=>{
+  try{ 
+    let payload=req.body;
+    console.log(payload,"here is body ")
+    const expertTime = await expertTimeAvailable.find(payload);
+    if (!expertTime) {
+      throw Boom.badRequest("invalid id or token");
+    }
+    universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "expertTime found",
+        data: expertTime,
+      },
+      res
+    );
+  
+  }catch(err){
+    console.log(error)
+    universalFunctions.sendError(error, res);  
+  }
+  },
+
 };
 
 
