@@ -5,6 +5,7 @@ import Calendar from 'react-calendar'
 import { useParams } from "react-router-dom"
 import expextAction from "../../actions/expertlisting.action";
 import 'react-calendar/dist/Calendar.css';
+import NewsletterSubscribed from './NewsletterSubscribed';
 import moment from "moment";
 const ExpProfile = () => {
    const params = useParams();

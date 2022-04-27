@@ -11,8 +11,10 @@ import expListingAction from '../../actions/expertlisting.action.js'
 import FetchCategoriesList from "./FetchCategoriesList";
 import useComponentVisible from "./useComponentVisible";
 import { CategoryAndPracticeContext } from "../../context/CategoryAndPracticeContext";
-
+import _ from 'lodash';
+import NewsletterSubscribed from "./NewsletterSubscribed";
 const Home = () => {
+  const [legalPracticeArea,setLegalPracticeArea]=useState([]);
   const [dummy, setDummy] = useState(0);
   const [expertsOnline, setExpertsOnline] = useState([]);
   const [getCategories, setGetCategories] = useState([]);
@@ -60,7 +62,18 @@ const Home = () => {
     // //   this.handleChange(event);
     // }
   };
+  const fetchAllPracticeAreaInGroups = async () => {
+    categoriesAction.fetchAllPracticeAreaInGroups((err,res)=>{
+      if(err){
 
+      }else{
+        console.log(res.data," daata ");
+        // const data=await _.chunk(res.data, 2);
+        setLegalPracticeArea(res.data);
+      }
+    });
+   
+  };
   const fetchAllExpertsOnline = async () => {
     homeAction.fetchAllExpertsOnline((err, res) => {
       if (err) {
@@ -105,6 +118,7 @@ const Home = () => {
     fetchSearchedPracticeArea();
     fetchTopExperts();
     fetchTestimonies();
+    fetchAllPracticeAreaInGroups();
   }, [searchedTermPractice]);
   const handleClick = (e) => {
     console.log(e, "console kya hai is button ka ");
@@ -168,6 +182,7 @@ const Home = () => {
 
   return (
     <>
+    {console.log(setLegalPracticeArea,"loogggoogogggg")}
       <section className="main-bn-wrapper">
         <div className="container">
           <div className="row">
@@ -271,7 +286,86 @@ const Home = () => {
           </div>
         </div>
       </section>
-      <section className="legal-area-wrp">
+      <section class="pratice-area-wrp">
+         <div class="container">
+            <div class="row">
+                <h3>Legal Practice Area</h3>
+               <div class="col-lg-12 mt-3">
+                  <div class="owl-carousel owl-theme pratice-area-owl d-block">
+                  <OwlCarousel
+                  className="health-owl pratice-area-owl"
+                  items={10}
+                  loop={true}
+                  rewind={true}
+                  // nav={true}
+                  margin={10}
+                  // rewind={true}
+                  responsive={{
+                    0: {
+                      items: 1,
+                      nav: true,
+                    },
+                    600: {
+                      items: 3,
+                      nav: true,
+                    },
+                    1000: {
+                      items: 5,
+                    },
+                  }}
+                >
+         {legalPracticeArea && legalPracticeArea.map((obj,index)=>{
+           return(
+            <div className="item"
+              //  key={index}
+               >
+     <div className="pratice-area-box">
+        <div className="col">
+        <div className="">
+        <div>
+           <img src=
+           {`${obj[0]?.url?.original}`}
+            className="img img-fluid" alt=""/>
+        </div>
+        
+        <div >
+        
+           <h4>
+           {/* {obj?.name}  */}
+           
+           {obj[0].name} </h4>
+        </div>
+     </div>
+     <div className="">
+        <div>
+           <img src=
+           {`${obj[1]?.url?.original}`}
+            className="img img-fluid" alt=""/>
+        </div>
+        
+        <div >
+        
+           <h4>
+           {obj[1]?.name} 
+           
+            </h4>
+        </div>
+     </div>
+     </div>
+     </div>
+  </div>
+           )
+         })         
+        }
+
+ 
+                     </OwlCarousel>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+      {/* <section className="legal-area-wrp">
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
@@ -409,7 +503,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       <section className="our-experts-wrp">
         <div className="container">
           <div className="row">
@@ -472,6 +566,7 @@ const Home = () => {
                          </div>
                       </div>
                    </div> */}
+                
                 {expertsOnline &&
                   expertsOnline.map((obj, index) => {
                     return (
@@ -919,39 +1014,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-      <section className="newsletter-wrp">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-6">
-              <div className="newsletter-feild-box">
-                <form>
-                  <div className="position-relative">
-                    <input
-                      type="email"
-                      className="form-control"
-                      placeholder="Enter your email address....."
-                    />
-                    <button className="btn" type="submit">
-                      Submit
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-            <div className="col-lg-6">
-              <div className="newsletter-content">
-                <div className="">
-                  <h1>Newsletter</h1>
-                  <p>
-                    Be the first to know about exciting new offers and special
-                    events and much more.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <NewsletterSubscribed/>
       <Footer />
     </>
   );

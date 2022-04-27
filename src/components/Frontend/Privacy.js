@@ -2,6 +2,7 @@ import React from 'react'
 
 import {Link} from 'react-router-dom'
 import Footer from './Footer'
+import NewsletterSubscribed from './NewsletterSubscribed'
 const Privacy = () => {
   return (
       <>
@@ -68,30 +69,7 @@ const Privacy = () => {
             </div>
          </div>
       </section>
-      <section className="newsletter-wrp">
-         <div className="container">
-            <div className="row">
-               <div className="col-lg-6">
-                  <div className="newsletter-feild-box">
-                     <form>
-                        <div className="position-relative">
-                           <input type="email" className="form-control" placeholder="Enter your email address....."/>
-                           <button className="btn" type="submit">Submit</button>
-                        </div>
-                     </form>
-                  </div>
-               </div>
-               <div className="col-lg-6">
-                  <div className="newsletter-content">
-                     <div className="">
-                        <h1>Newsletter</h1>
-                        <p>Be the first to know about exciting new offers and special events and much more.</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </section>
+      <NewsletterSubscribed/>
       <Footer/>
      
       </>
