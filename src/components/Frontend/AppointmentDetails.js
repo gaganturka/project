@@ -25,7 +25,7 @@ const AppointmentDetails = () => {
       else{
        history('/')
       }
-   }, [filterType,currentPage])
+   }, [filterType,currentPage,dummy])
    const CancelAppointment = async (obj) => {
       let dataToSend={
         id:obj._id
@@ -37,6 +37,12 @@ const AppointmentDetails = () => {
            }else
            {
              console.log("successfully cancelled",res.data)
+             if(dummy==1)
+             {
+                setDummy(0);
+             }
+             else
+             setDummy(1);
             }
        });
     }
@@ -51,6 +57,12 @@ const AppointmentDetails = () => {
            }else
            {
              console.log("successfully reschedule",res.data)
+             if(dummy==1)
+             {
+                setDummy(0);
+             }
+             else
+             setDummy(1);
             }
        });
     }
@@ -145,12 +157,12 @@ const AppointmentDetails = () => {
                                                 </div>
                                              </td>
                                              <td>
-                                                <h6>{moment(obj.appointmentDate).format("MMM Do YY")}</h6>
-                                                <h6>{obj.appointmentTime}</h6>
+                                                <h6>{moment(obj?.appointmentDate).format("MMM Do YY")}</h6>
+                                                <h6>{obj?.appointmentTime}</h6>
                                              </td>
                                              <td>
-                                                <h6>{obj.appointmentType}</h6>
-                                                <h6>{moment(obj.startAppointmentTime).format("MMM Do YY h:mm:ss a")}</h6>
+                                                <h6>{obj?.appointmentType}</h6>
+                                                <h6>{moment(obj?.startAppointmentTime).format("MMM Do YY h:mm:ss a")}</h6>
                                              </td>
                                              <td>
                                                 <div className="table-btn-group">
@@ -302,15 +314,15 @@ const AppointmentDetails = () => {
                                              </div>
                                              <div className="">
                                                 <p>Date</p>
-                                                <h3>September 10th</h3>
+                                                <h3>{moment(rescheduleModalDetails?.appointmentDate).format("MMM Do YY")}</h3>
                                              </div>
                                              <div className="">
                                                 <p>Time</p>
-                                                <h3>03:30 PM</h3>
+                                                <h3>{rescheduleModalDetails?.appointmentTime}</h3>
                                              </div>
                                              <div className="">
                                                 <p>Mode</p>
-                                                <h3>Video call</h3>
+                                                <h3>{rescheduleModalDetails?.appointmentType}</h3>
                                              </div>
                                           </div>
                                        </div>
@@ -320,7 +332,7 @@ const AppointmentDetails = () => {
                                           <div className="app-agenda-box">
                                              <Link to="javascript:;">Edit</Link>
                                              <h3>Appointment Agenda</h3>
-                                             <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum pas</p>
+                                             <p>{rescheduleModalDetails?.question}</p>
                                           </div>
                                        </div>
                                        <div className="col-lg-5">
