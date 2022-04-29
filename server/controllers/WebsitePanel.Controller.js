@@ -669,7 +669,7 @@ module.exports = {
       let userId=req.user.id;
       let payload=req.body;
       const schema = Joi.object({
-        // userId: Joi.string().length(24).required(),
+        timeSlotId: Joi.string().length(24).required(),
         expertId: Joi.string().length(24).required(),
         appointmentType: Joi.string().allow(""),
         duration: Joi.string().allow(""),
@@ -1013,29 +1013,30 @@ module.exports = {
   },
   getAvailableTimeForUser:async (req,res)=>{
     try{ 
-      let payload=req.body;
-      let {expertId,appointmentDate}=req.body.payload;
-      console.log(payload,"here is body ")
-      const expertTime = await expertTimeAvailable.find(payload);
+     
+      let {expertId,appointmentDate }=req.query;
+      const expertTime = await expertTimeAvailable.find({
+        $and: [
+          {
+            "expertId":expertId
+          },]});
+
+
       if (!expertTime) {
         throw Boom.badRequest("invalid id or token");
       }
-      
-      // await helperFunction.asyncForEach(data,async ( e,index)=>{
-      universalFunctions.asyncForEach(expertTime,async (e,index)=>{
-        let start=e.startAppointmentTime,end= e.endAppointmentTime;
-
+       let tempobj = JSON.parse(JSON.stringify(expertTime));
+      await universalFunctions.asyncForEach(tempobj,async ( e,index)=>{
         let data= await appointment.find({
           expertId:expertId,
           appointmentDate:appointmentDate,
-          startAppointmentTime: {
-              $gte: start,
-              $lt: end
-          }
+          timeSlotId:e._id?e._id:"",
       })
-      if(data){
+      if(data.length>0){
+        console.log("css sds",data)
         e.avialble=false;
       }else{
+        console.log("css")
         e.avialble=true;
       }
       })
@@ -1044,12 +1045,12 @@ module.exports = {
         {
           statusCode: 200,
           message: "expertTime found",
-          data: expertTime,
+          data: tempobj,
         },
         res
       );
     
-    }catch(err){
+    }catch(error){
       console.log(error)
       universalFunctions.sendError(error, res);  
     }

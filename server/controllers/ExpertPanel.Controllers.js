@@ -301,80 +301,75 @@ updateAppointment:async (req, res) => {
 },
 setAvailableByExpert:async (req,res)=>{
 try{ 
-  // expertId:id,
-  // appointmentDate:appointmentDate,
-  // startAppointmentTime: {
-  //     $gte: start,
-  //     $lt: end
-  // }
   let id = req.user.expertId;
   let payload=req.body;
   payload.expertId=id;
-  console.log(payload,"here is body ")
-  let start=payload.startAppointmentTime,end= payload.endAppointmentTime,appointmentDate=payload.appointmentDate;
-  let data= await expertTimeAvailable.find({
-$and: [
-  {
-    "expertId":id
-  },
-  {
-      "appointmentDate": new Date(appointmentDate)
-  }, {
-      $or: [
-          {
-            $and: [
-              {
-                  "startAppointmentTime": {
-                      $gt: new Date(start)
-                  }
-              }, {
-                  "startAppointmentTime": {
-                      $lte: new Date(end)
-                  }
-              }
-          ]
-          }, {
-            $and: [
-              {
-                  "endAppointmentTime": {
-                      $gt: new Date(start)
-                  }
-              }, {
-                  "endAppointmentTime": {
-                      $lte: new Date(end)
-                  }
-              }
-          ]
-          },{
-            $and: [
-              {
-                  "startAppointmentTime": {
-                      $lt: new Date(start)
-                  }
-              }, {
-                  "endAppointmentTime": {
-                      $gt: new Date(end)
-                  }
-              }
-          ]
-          }
-          ]
-  }
+  // console.log(payload,"here is body ")
+//   let start=payload.startAppointmentTime,end= payload.endAppointmentTime,appointmentDate=payload.appointmentDate;
+//   let data= await expertTimeAvailable.find({
+//     $and: [
+//   {
+//     "expertId":id
+//   },
+//   {
+//       "appointmentDate": new Date(appointmentDate)
+//   }, {
+//       $or: [
+//           {
+//             $and: [
+//               {
+//                   "startAppointmentTime": {
+//                       $gt: new Date(start)
+//                   }
+//               }, {
+//                   "startAppointmentTime": {
+//                       $lte: new Date(end)
+//                   }
+//               }
+//           ]
+//           }, {
+//             $and: [
+//               {
+//                   "endAppointmentTime": {
+//                       $gt: new Date(start)
+//                   }
+//               }, {
+//                   "endAppointmentTime": {
+//                       $lte: new Date(end)
+//                   }
+//               }
+//           ]
+//           },{
+//             $and: [
+//               {
+//                   "startAppointmentTime": {
+//                       $lt: new Date(start)
+//                   }
+//               }, {
+//                   "endAppointmentTime": {
+//                       $gt: new Date(end)
+//                   }
+//               }
+//           ]
+//           }
+//           ]
+//   }
 
-  ]
-  }
-)
-console.log(data,"jhhjh")
-if(data.length>0){
-  universalFunctions.sendSuccess(
-    {
-      statusCode: 200,
-      message: "expert is busy at is time ",
-      data: data,
-    },
-    res
-  );
-}else{
+//   ]
+//   }
+// )
+
+// console.log(data,"jhhjh")
+// if(data.length>0){
+//   universalFunctions.sendSuccess(
+//     {
+//       statusCode: 200,
+//       message: "expert is busy at is time ",
+//       data: data,
+//     },
+//     res
+//   );
+// }else{
   const expertTime = await expertTimeAvailable.create(payload);
   if (!expertTime) {
     throw Boom.badRequest("invalid id or token");
@@ -388,7 +383,7 @@ if(data.length>0){
     res
   );
 
-}
+// }
 
 }catch(error){
   console.log(error)
