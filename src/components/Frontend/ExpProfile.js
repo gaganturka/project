@@ -7,7 +7,9 @@ import expextAction from "../../actions/expertlisting.action";
 import 'react-calendar/dist/Calendar.css';
 import NewsletterSubscribed from './NewsletterSubscribed';
 import moment from "moment";
+import { isDisabled } from '@testing-library/user-event/dist/utils';
 const ExpProfile = () => {
+   // moment(currentTime).format("hh:mm"))
    const params = useParams();
    const [bookappointmentmodal,setbookappointmentmodal]=useState(false);
    const [scheduleappointmentmodal,setscheduleappointmentmodal]=useState(false);
@@ -19,9 +21,9 @@ const ExpProfile = () => {
    const [question,SetQuestion]=useState("")
    const [startAppointmentTime,SetStartAppointmentTime]=useState(null)
    const [appointmentTime,SetAppointmentTime]=useState("17:00:00")
-
+   const [timeList,setTimeList]=useState([]);
    const [endAppointmentTime,SetEndAppointmentTime]=useState(null)
-
+   const [timeSlotId,setTimeSlotId]=useState("");
    const [dateSlot,SetDateSlot]=useState(null) 
 
    
@@ -29,49 +31,60 @@ const ExpProfile = () => {
   useEffect(() => {
 
    fetchExpert();
+   let date=new Date();
+   date=moment(date).format('YYYY-MM-DD');
+   fetchTime(date)
   },[]);
-  useEffect(()=>{
-   onSelectTime()
-  },[dateSlot])
+  
  //moment().format('MMMM Do YYYY, h:mm:ss a');
+ const setinterval=(e)=>{
+
+     let start=  moment(e.startAppointmentTime).format('hh:mm');
+     let end=  moment(e.endAppointmentTime).format('hh:mm');
+     console.log(start+"-"+end);
+     return start+"-"+end
+ }
+ const fetchTime=(e)=>{
+   let id = params.id;
+   let payload={
+      expertId:id,
+      appointmentDate:e
+   }
+   expextAction.getAvailableTimeForUser(payload,(err,res)=>{
+      if(err){
+
+      }else{
+         console.log(res);
+         setTimeList(res.data);
+
+      }
+   })
+
+ }
    const Datehandel=(e)=>{
       // api hit 
+     
       e=moment(e).format('YYYY-MM-DD');
       console.log(e,"date to selected")
       SetDateSlot(e);
-  
-   //    console.log(e)
-   //    let localdate =e+' 17:00:00'; 
-   //    console.log(localdate,"here is ");
-   //    let dateValue = new Date(localdate);
-   //    console.log(dateValue,Duration,"jbscdnjcsdbjcsdbvvh")
-   //    var afterSomeMinutes = new Date( dateValue.getTime() + 10 * 60000);
-   //    console.log(afterSomeMinutes,"kjbjbjh")
-   //    // '2020-01-01 12:00:00'
+      fetchTime(e);
 
-   //     console.log(moment(localdate),'locaDate')
-   //    //Moment<2020-01-01T12:00:00+08:00>
-   //   console.log(moment.utc(moment(localdate)).format(),'locaDatesdccsd')
-
-   //   SetDateSlot(moment.utc(moment(localdate)).format());
-   // onSelectTime();
    }
-   const onSelectTime=()=>{
+   const onSelectTime=(start,end)=>{
       
       // e=moment(e).format('YYYY-MM-DD');
       // console.log(e,"date to selected")
       // console.log(e)
-      if(Duration)
-      {let localdate =dateSlot+' 17:00:00'; 
+      if(1)
+      {
+      let localdate =dateSlot+' '+start; 
       console.log(localdate,"here is ");
       console.log(moment(localdate),'locaDate')
       console.log(moment.utc(moment(localdate)).format(),'start time')
       SetStartAppointmentTime(moment.utc(moment(localdate)).format());
 
 
-      let dateValue = new Date(localdate);
-      console.log(dateValue,Duration,"jbscdnjcsdbjcsdbvvh")
-      var afterSomeMinutes = new Date( dateValue.getTime() + Duration * 60000);
+      let afterSomeMinutes =dateSlot+' '+end; 
       console.log(afterSomeMinutes,"here is ");
       console.log(moment(afterSomeMinutes),'locaDate')
       console.log(moment.utc(moment(afterSomeMinutes)).format(),'end time')
@@ -103,6 +116,7 @@ const ExpProfile = () => {
    let dataToSend={
       question:question,
       duration:Duration,
+      timeSlotId:timeSlotId,
       appointmentTime:appointmentTime,
       appointmentDate:dateSlot,
       practiceArea:"625fef06f962a2761cd19e74",
@@ -133,7 +147,7 @@ const handlemodal=(e)=>{
 
 const handlemodal1=()=>{
    
-   if(startAppointmentTime==null||appointmentTime==null||endAppointmentTime==null){
+   if(startAppointmentTime==null||dateSlot==null){
       alert("fill form first ")
       return 
    }
@@ -306,18 +320,14 @@ const handlemodal1=()=>{
          </div>
       </section>
       <Footer/>
-      <Modal
-                                                             className="authentication-modal modal-dialog modal-dialog-centered modal-xl"
-
-                                                              isOpen={
-                                                                 scheduleappointmentmodal
-                                                              }
-                                                              
-                                                              toggle={
-                                                               ()=>{setscheduleappointmentmodal(false);setbookappointmentmodal(false);}
-                                                              }
-                                                            >
-                                                            <div className="modal-content">
+      <Modal className="authentication-modal modal-dialog modal-dialog-centered modal-xl"
+         isOpen={
+           scheduleappointmentmodal
+            } 
+             toggle={()=>{
+                       setscheduleappointmentmodal(false);setbookappointmentmodal(false);}
+                      } >
+                       <div className="modal-content">
                <div className="modal-body">
                   <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={     ()=>{setscheduleappointmentmodal(false)} }></button>
                   <div className="auth-modal-wrp">
@@ -346,34 +356,31 @@ const handlemodal1=()=>{
                                        </div>
                                        <div className="col-lg-6">
                                           <div className="book-app-box">
+                                          <h1> Appointment Time</h1>
                                              <div className="select-time-slot">
-                                             <h1>Schedule an Appointment</h1>
+                                             
                                                 <img src="./assets/img/time-slot.png" className="img img-fluid" alt=""/>
                                                 <div className='row '>
-                                                   <div className='col-lg-6 btn-appointment1 '>
-                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
-                                                   </div>
-                                                   <div className='col-lg-6 btn-appointment1'>
-                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
-                                                      </div>
-                                                      <div className='col-lg-6 btn-appointment1'>
-                                                   <button className="btn btn-white bg-white btn-appointment" disabled>1.PM</button>
-                                                      </div>
-                                                      <div className='col-lg-6 btn-appointment1'>
-                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
-                                                      </div>
-                                                      <div className='col-lg-6 btn-appointment1'>
-                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
-                                                      </div>
-                                                      <div className='col-lg-6 btn-appointment1'>
-                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
-                                                      </div>
-                                                      <div className='col-lg-6 btn-appointment1'>
-                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
-                                                      </div>
-                                                      <div className='col-lg-6 btn-appointment1'>
-                                                   <button className="btn btn-white bg-white btn-appointment">1.PM</button>
-                                                      </div>
+                                                   {
+                                                      timeList.length>0?timeList.map((e,index)=>{
+                                                         return (
+                                                            <div className='col-lg-6 btn-appointment1 '>
+                                                        {e.avialble?<button className="btn btn-white bg-white btn-appointment"   onClick={(val)=>{
+                                                            val.preventDefault();
+                                                            onSelectTime(e.startAppointmentTime,e.endAppointmentTime)
+                                                            setTimeSlotId(e._id);
+                                                            alert(e._id,"selected time id")
+                                                         }}>
+                                                            {e.startAppointmentTime+"-"+e.endAppointmentTime}
+                                                            </button>:
+                                                            <button className="btn btn-white bg-white btn-appointment" disabled>
+                                                            {e.startAppointmentTime+"-"+e.endAppointmentTime}
+                                                            </button>
+                                                            }
+                                                         </div>)
+                                                      }):""
+                                                   }
+                                                   
                                                 </div>
                                                 
                                              </div>

@@ -2950,9 +2950,18 @@ ul.blocklist {
     word-break: break-all;
 } */
 .btn-appointment
-{
-	padding:5px 61px;
+{	
+    padding: 5px 47px;
+
 }
 .btn-appointment1{
 	margin-bottom:14px;
+}
+.react-calendar__tile--now:enabled:hover, .react-calendar__tile--now:enabled:focus {
+    color: white;
+    background: #0c0c02 !important;
+}
+.react-calendar__tile--now {
+	color: white;
+    background: #0c0c02 !important;
 }
