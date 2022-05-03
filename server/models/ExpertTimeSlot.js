@@ -19,30 +19,30 @@ const AppointmentSchema = new Schema({
 //   duration: {
 //     type: Number,
 //   },
-  appointmentDate: {
-    type: Date,
-  },
+//   appointmentDate: {
+//     type: Date,
+//   },
 //   appointmentTime: {
 //     type: String,
 //   },
   startAppointmentTime: {
-    type: Date,
+    type: String,
   },
   endAppointmentTime: {
-    type: Date,
+    type: String,
   },
 //   appointDateandTime: {
 //     type: Date,
 //   },
 
-  status: {
-    type: String,
-    enum: [
-      APP_CONSTANTS.appointmentStatus.confirmed,
-      APP_CONSTANTS.appointmentStatus.pending,
-    ],
-    default:APP_CONSTANTS.appointmentStatus.pending
-  },
+//   status: {
+//     type: String,
+//     enum: [
+//       APP_CONSTANTS.appointmentStatus.confirmed,
+//       APP_CONSTANTS.appointmentStatus.pending,
+//     ],
+//     default:APP_CONSTANTS.appointmentStatus.pending
+//   },
 //   practiceArea: {
 //     type: Schema.Types.ObjectId,
 //     ref: "practicearea",

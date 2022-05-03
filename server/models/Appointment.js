@@ -52,6 +52,10 @@ const AppointmentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "practicearea",
   },
+  timeSlotId: {
+    type: Schema.Types.ObjectId,
+    ref: "expertTimeAvailable",
+  },
   isRescheduled: {
     type: Boolean,
     default: false,
