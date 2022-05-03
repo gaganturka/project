@@ -150,7 +150,7 @@ const AppointmentDetails = () => {
                                                    <div> 
                                                       <img src="./assets/img/megan-smith.png" className="" alt="" />
                                                    </div>
-                                                   <div>
+                                                                <div>
                                                       <h5>{obj?.expertId?.userId?.firstName}</h5>
                                                       <p>{obj?.expertId?.practiceArea[0]?.name}</p>
                                                    </div>
