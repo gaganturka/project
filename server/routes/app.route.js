@@ -6,5 +6,5 @@ const Upload = require("../controllers/Upload");
 router.route("/createBorhanUser").post(appCreation.createBorhanUser);
 router.route("/userLogin").post(appCreation.userLogin);
 router.route("/getDesktopPage").get(checkAuth,appCreation.desktopPage);
-
+router.route("/getUserProfile").get(checkAuth, appCreation.getUserDetails);
 module.exports = router;

@@ -20,37 +20,32 @@ const Boom = require("boom");
 import universalFunctions from "../utils/universalFunctions";
 
 module.exports = {
-  userLogin:async (req,res)=>{
-  try{
-    const schema = Joi.object({
-      mobileNo: Joi.string().min(10).max(10).required(),
-      // .allow("")
-    });
-    await universalFunctions.validateRequestPayload(req.body, res, schema);
-   const user=await User.findOne({mobileNo:req.body.mobileNo});
-   
-   if(!user)
-   {
-     throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
-   }
+  userLogin: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        mobileNo: Joi.string().min(10).max(10).required(),
+        // .allow("")
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      const user = await User.findOne({ mobileNo: req.body.mobileNo });
 
-   const token=await jwtFunction.jwtGenerator(user._id);
-       
-   universalFunctions.sendSuccess(
-    {
-      statusCode: 200,
-      message: responseMessages.SUCCESS,
-      data: token,
-    },
-    res
-  );
+      if (!user) {
+        throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
+      }
 
+      const token = await jwtFunction.jwtGenerator(user._id);
 
-  }catch(error)
-
-  { 
-  universalFunctions.sendError(error, res);
-}
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: responseMessages.SUCCESS,
+          data: token,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
   },
   createBorhanUser: async (req, res) => {
     try {
@@ -77,7 +72,7 @@ module.exports = {
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
         // if (user.role === APP_CONSTANTS.role.borhanuser) {
-          throw Boom.badRequest(responseMessages.USER_EXISTS);
+        throw Boom.badRequest(responseMessages.USER_EXISTS);
         // } else {
         //   console.log("otppppforuser", user.otp);
         //   if (req.body.otp !== "999999") {
@@ -100,7 +95,7 @@ module.exports = {
         // }
       }
       console.log("phone number   ", req.body.mobileNo);
-      
+
       let borhanuser = await borhanUser.create({
         isSubscribed: false,
         balance: 0,
@@ -129,8 +124,8 @@ module.exports = {
       //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
       //   Config.jwtsecret
       // );
-      const token=await jwtFunction.jwtGenerator(user._id);
-          
+      const token = await jwtFunction.jwtGenerator(user._id);
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -146,12 +141,12 @@ module.exports = {
   desktopPage: async (req, res) => {
     try {
       let expert;
-      
+
       expert = await expertUser
         .find({
           isApprovedByAdmin: true,
           // isSubscribed: true,
-          
+
           // status: APP_CONSTANTS.activityStatus.active,
         })
         .populate("practiceArea")
@@ -168,85 +163,109 @@ module.exports = {
       //   expert,
       //   "top expert "
       // );
-      
-       
+
       let topOnlineExperts = await expertUser
-      .find({
-        isApprovedByAdmin: true,
-        // isSubscribed: true,
-        status: APP_CONSTANTS.activityStatus.active,
-      })
-      .populate("practiceArea")
-      .populate("category")
-      .populate("userId")
-      .sort({ "rating.avgRating": -1 });
+        .find({
+          isApprovedByAdmin: true,
+          // isSubscribed: true,
+          status: APP_CONSTANTS.activityStatus.active,
+        })
+        .populate("practiceArea")
+        .populate("category")
+        .populate("userId")
+        .sort({ "rating.avgRating": -1 });
 
-    if (!topOnlineExperts) {
-      throw Boom.badRequest("cannot find any online expert");
-    }
-
-    let topOnlinePremiumExperts = await expertUser
-    .find({
-      isApprovedByAdmin: true,
-      isSubscribed: true,
-      status: APP_CONSTANTS.activityStatus.active,
-    })
-    .populate("practiceArea")
-    .populate("category")
-    .populate("userId")
-    .sort({ "rating.avgRating": -1 });
-
-  if (!topOnlinePremiumExperts) {
-    throw Boom.badRequest("cannot find any premium online expert");
-  }
-
-  let categoryData = await category.find();
-  if (!categoryData) {
-    throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
-  }
-  let practiceData = await practiceModel.find();
-  if (!practiceData) {
-    throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
-  }
-  let userId=req.user.id;
-     
-  let upcomingAppointmentData=await appointmentModel.find({userId:userId,status:APP_CONSTANTS.appointmentStatus.confirmed}).populate('userId').populate({path:'expertId', populate:{path:"userId practiceArea"}}).populate('expertId.userId')
-  .limit(parseInt(5));
-
-
-  let topExpertsList=[],topOnlineExpertsList=[],topOnlinePremiumExpertsList=[];
-  
-
-  let i;
-  for(i=0;i<5;i++)
-  {
-    topExpertsList.push(expert[i]);
-    topOnlineExpertsList.push(topOnlineExperts[i]);
-    topOnlinePremiumExpertsList.push(topOnlinePremiumExperts[i]);
-  }
-  
-
-
-  
-  universalFunctions.sendSuccess(
-    {
-      statusCode: 200,
-      message: "All top experts ",
-      data:{ topExpertsList,topOnlineExpertsList,topOnlinePremiumExpertsList,
-        categoryList:categoryData,practiceList:practiceData,
-        upcomingAppointmentList:upcomingAppointmentData,
+      if (!topOnlineExperts) {
+        throw Boom.badRequest("cannot find any online expert");
       }
-    },
-    res
-  );
 
+      let topOnlinePremiumExperts = await expertUser
+        .find({
+          isApprovedByAdmin: true,
+          isSubscribed: true,
+          status: APP_CONSTANTS.activityStatus.active,
+        })
+        .populate("practiceArea")
+        .populate("category")
+        .populate("userId")
+        .sort({ "rating.avgRating": -1 });
 
+      if (!topOnlinePremiumExperts) {
+        throw Boom.badRequest("cannot find any premium online expert");
+      }
+
+      let categoryData = await category.find();
+      if (!categoryData) {
+        throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
+      }
+      let practiceData = await practiceModel.find();
+      if (!practiceData) {
+        throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
+      }
+      let userId = req.user.id;
+
+      let upcomingAppointmentData = await appointmentModel
+        .find({
+          userId: userId,
+          status: APP_CONSTANTS.appointmentStatus.confirmed,
+        })
+        .populate("userId")
+        .populate({
+          path: "expertId",
+          populate: { path: "userId practiceArea" },
+        })
+        .populate("expertId.userId")
+        .limit(parseInt(5));
+
+      let topExpertsList = [],
+        topOnlineExpertsList = [],
+        topOnlinePremiumExpertsList = [];
+
+      let i;
+      for (i = 0; i < 5; i++) {
+        topExpertsList.push(expert[i]);
+        topOnlineExpertsList.push(topOnlineExperts[i]);
+        topOnlinePremiumExpertsList.push(topOnlinePremiumExperts[i]);
+      }
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "All top experts ",
+          data: {
+            topExpertsList,
+            topOnlineExpertsList,
+            topOnlinePremiumExpertsList,
+            categoryList: categoryData,
+            practiceList: practiceData,
+            upcomingAppointmentList: upcomingAppointmentData,
+          },
+        },
+        res
+      );
     } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
-
-
+  getUserDetails: async (req, res) => {
+    try {
+      let id = req.user.id;
+      const userData = await User.findOne({ _id: id });
+      if (!userData) {
+        throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: responseMessages.SUCCESS,
+          data: userData,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
 };
 
 
