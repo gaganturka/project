@@ -876,7 +876,7 @@ module.exports = {
         .find({
           isApprovedByAdmin: true,
           // isSubscribed: true,
-
+          
           // status: APP_CONSTANTS.activityStatus.active,
         })
         .populate("practiceArea")

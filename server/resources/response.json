@@ -1,6 +1,7 @@
 {
     "SUCCESS": "Success",
     "USER_NOT_FOUND": "User not found.",
+    "USER_CREATED":"User Created",
     "TOKEN_NOT_PROVIDED": "You are not authorized to excess this path.Please provide authorization token.",
     "INVALID_TOKEN": "Provided token is invalid",
     "EMAIL_ALREADY_EXISTS": "This user is already registered with us.",
