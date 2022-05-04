@@ -83,35 +83,28 @@ module.exports = {
       let user = await User.findOne({ mobileNo: req.body.mobileNo });
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
-        if (user.role === APP_CONSTANTS.role.borhanuser) {
+        // if (user.role === APP_CONSTANTS.role.borhanuser) {
           throw Boom.badRequest(responseMessages.USER_EXISTS);
-        } else {
-          console.log("otppppforuser", user.otp);
-          // if (user.otp !== req.body.otp) {
-          //   throw Boom.badRequest(responseMessages.INVALID_OTP);
-          // }
-          if (req.body.otp !== "999999") {
-            throw Boom.badRequest(responseMessages.INVALID_OTP);
-          }
-          let borhanuser = await borhanUser.create({
-            isSubscribed: false,
-            balance: 0,
-            userId: user._id,
-          });
-          // const token = jwt.sign(
-          //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-          //   Config.jwtsecret
-          // );
-          const token=await jwtFunction.jwtGenerator(user._id);
-          universalFunctions.sendSuccess(
-            {
-              statusCode: 200,
-              message: "User created",
-              data: token,
-            },
-            res
-          );
-        }
+        // } else {
+        //   console.log("otppppforuser", user.otp);
+        //   if (req.body.otp !== "999999") {
+        //     throw Boom.badRequest(responseMessages.INVALID_OTP);
+        //   }
+        //   let borhanuser = await borhanUser.create({
+        //     isSubscribed: false,
+        //     balance: 0,
+        //     userId: user._id,
+        //   });
+        //  const token=await jwtFunction.jwtGenerator(user._id);
+        //   universalFunctions.sendSuccess(
+        //     {
+        //       statusCode: 200,
+        //       message: "User created",
+        //       data: token,
+        //     },
+        //     res
+        //   );
+        // }
       }
       // let otpmodel = await otpModel.findOne({ mobileNo: req.body.mobileNo });
       // console.log(otpmodel?.otp,"adsfakweni   ",req.body.otp);

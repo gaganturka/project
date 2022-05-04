@@ -7,7 +7,8 @@ const {
   WebsiteRoutes,
   ExpertAdminRoutes,
   BorhanUserAdminRoutes,
-  ExpertPanelRoutes
+  ExpertPanelRoutes,
+  AppRoutes
 } = require("./routes");
 const cookieSession = require("cookie-session");
 const passportSetup = require("../server/config/passport");
@@ -49,6 +50,7 @@ app.use("/admin",ExpertAdminRoutes);
 app.use("/admin",BorhanUserAdminRoutes)
 app.use("/expert",ExpertPanelRoutes)
 app.use("/auth",authRoute)
+app.use('/app',AppRoutes)
 app.get("/", (req, res) => {
   res.send("Hello Satyam");
 });
