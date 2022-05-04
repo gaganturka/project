@@ -263,6 +263,37 @@ module.exports = {
       universalFunctions.sendError(error, res);
     }
   },
+  getAllUpcomingAppointments: async (req, res) => {
+    try {
+     
+      let userId = req.user.id;
+
+      let upcomingAppointmentData = await appointmentModel
+        .find({
+          userId: userId,
+          status: APP_CONSTANTS.appointmentStatus.confirmed,
+        })
+        .populate("userId")
+        .populate({
+          path: "expertId",
+          populate: { path: "userId practiceArea" },
+        })
+
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "All top experts ",
+          data: {
+            upcomingAppointmentList: upcomingAppointmentData,
+          },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
 };
 
 
