@@ -265,7 +265,6 @@ module.exports = {
   },
   getAllUpcomingAppointments: async (req, res) => {
     try {
-     
       let userId = req.user.id;
 
       let upcomingAppointmentData = await appointmentModel
@@ -277,8 +276,7 @@ module.exports = {
         .populate({
           path: "expertId",
           populate: { path: "userId practiceArea" },
-        })
-
+        });
 
       universalFunctions.sendSuccess(
         {
@@ -287,6 +285,57 @@ module.exports = {
           data: {
             upcomingAppointmentList: upcomingAppointmentData,
           },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  getAllExpertData: async (req, res) => {
+    try {
+      let allExportData = await expertUser
+        .find({ isApprovedByAdmin: true })
+        .populate("practiceArea")
+        .populate("category")
+        .populate("userId")
+        .sort({ "rating.avgRating": -1 });
+
+      if (!allExportData) {
+        throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: responseMessages.SUCCESS,
+          data: allExportData,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  getActiveExportData: async (req, res) => {
+    try {
+      let activeExportData = await expertUser
+        .find({
+          isApprovedByAdmin: true,
+          // isSubscribed: true,
+          status: APP_CONSTANTS.activityStatus.active,
+        })
+        .populate("practiceArea")
+        .populate("category")
+        .populate("userId")
+        .sort({ "rating.avgRating": -1 });
+      if (!activeExportData) {
+        throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: responseMessages.SUCCESS,
+          data: activeExportData,
         },
         res
       );

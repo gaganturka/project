@@ -8,6 +8,13 @@ router.route("/userLogin").post(appCreation.userLogin);
 router.route("/getDesktopPage").get(checkAuth,appCreation.desktopPage);
 router.route("/getUserProfile").get(checkAuth, appCreation.getUserDetails);
 router.route("/getAllUpcomingAppointments").get(checkAuth, appCreation.getAllUpcomingAppointments);
+router.route("/getAllExpertData").get(checkAuth, appCreation.getAllExpertData);
+router
+  .route("/getActiveExportData")
+  .get(checkAuth, appCreation.getActiveExportData);
+
+
+
 
 
 module.exports = router;

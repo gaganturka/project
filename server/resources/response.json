@@ -85,7 +85,8 @@
     "PINCODE_DELETE_SUCCESS": "PinCode has been Deleted successfully.",
     "NOT_AVAILABLE": "Product not available.",
     "VARIANTS_REMOVE_SUCCESS":"Variant removed successfully.",
-    "Otp_Not_Match":"Otp Not Match"
+    "Otp_Not_Match":"Otp Not Match",
+    "DATA_NOT_FOUND":"Data Not Found"
 
   }
   
