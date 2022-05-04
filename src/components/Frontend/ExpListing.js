@@ -59,6 +59,7 @@ const ExpListing = () => {
       fetchAllPracticeArea();
       fetchAllOnlineFilteredExperts();
       fetchAllOnlinePremiumExperts();
+      setTimeout(()=>{setDummy(1)},1000)
     }, [selectedCategory,selectedPracticeArea,selectedExpertSorting])
    
 
@@ -114,7 +115,8 @@ const ExpListing = () => {
              console.log(err," fetchAllPremiumExpertsOnline error")
            }else{
              setPremiumExpertList(res.data.list);
-             
+             console.log("online premium exp",res.data.list)
+             setDummy(0);
            }
          });
          
