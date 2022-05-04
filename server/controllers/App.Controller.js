@@ -28,13 +28,10 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       const user = await User.findOne({ mobileNo: req.body.mobileNo });
-
       if (!user) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
-
       const token = await jwtFunction.jwtGenerator(user._id);
-
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
