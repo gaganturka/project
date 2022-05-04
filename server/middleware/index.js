@@ -1,7 +1,7 @@
-import imageUpload from "./imageupload";
-import audioUpload from "./imageupload";
-import videoUpload from "./imageupload";
-import documentUpload from "./imageupload";
+const imageUpload = require("./imageupload");
+const audioUpload = require("./imageupload");
+const videoUpload = require("./imageupload");
+const documentUpload = require("./imageupload");
 
 module.exports = {
   imageUpload,

@@ -8,12 +8,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
 const APP_CONSTANTS = require("../appConstants");
-import responseMessages from "../resources/response.json";
+// import responseMessages from "../resources/response.json";
 const { Config } = require("../config");
 
 
 const Boom = require("boom");
-import universalFunctions from "../utils/universalFunctions";
+const universalFunctions = require("../utils/universalFunctions");
 
 module.exports = {
   showBorhanUsers: async (req, res) => {

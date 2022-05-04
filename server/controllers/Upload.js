@@ -1,8 +1,7 @@
-import multer from "multer";
-import responseMessages from "../resources/response.json";
-
+const multer = require("multer");
 const Boom = require("boom");
-import universalFunctions from "../utils/universalFunctions";
+const responseMessages=  require("../resources/response.json");
+const universalFunctions = require( "../utils/universalFunctions");
 const { Config } = require("../config");
 
 let upload = multer({

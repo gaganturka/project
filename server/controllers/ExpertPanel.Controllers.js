@@ -7,17 +7,15 @@ const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
-import Mongoose from "mongoose";
-import jwtFunction from '../utils/jwtFunction';
+const Mongoose= require("mongoose");
+const jwtFunction = require('../utils/jwtFunction');
 
 const APP_CONSTANTS = require("../appConstants");
 // const User = require("../models/User");
-import responseMessages from "../resources/response.json";
+const responseMessages=  require("../resources/response.json");
+const universalFunctions = require( "../utils/universalFunctions");
 const { Config } = require("../config");
-
 const Boom = require("boom");
-import universalFunctions from "../utils/universalFunctions";
-
 module.exports = {
   sendOtpExpertUser: async (req, res) => {
     try {

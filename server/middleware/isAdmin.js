@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const APP_CONSTANTS = require("../appConstants");
-import universalFunctions from "../utils/universalFunctions";
-const Boom = require("boom");
+const responseMessages=  require("../resources/response.json");
+const universalFunctions = require( "../utils/universalFunctions");const Boom = require("boom");
 const { Config } = require("../config");
 module.exports = {
   isAdmin: async (req, res, next) => {

@@ -4,10 +4,10 @@ const jwt = require("jsonwebtoken");
 const APP_CONSTANTS = require("../appConstants");
 const User = require("../models/User");
 const { Config } = require("../config");
-import _ from 'lodash'
-import models from "../models";
-import Boom from "boom";
-import responseMessages from "../resources/response.json";
+const _ = require('lodash')
+const models = require("../models");
+const Boom = require("boom");
+const responseMessages =require("../resources/response.json");
 exports.addCategories = async (req, res) => {
   try {
     const schema = {

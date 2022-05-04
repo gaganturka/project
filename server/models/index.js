@@ -1,5 +1,5 @@
-import categories from "../models/Categories";
-import practicearea from "../models/Practice_Area";
+const categories = require("../models/Categories");
+const practicearea = require("../models/Practice_Area");
 module.exports = {
   categories,
   practicearea,
