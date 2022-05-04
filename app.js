@@ -8,10 +8,10 @@ const {
   ExpertAdminRoutes,
   BorhanUserAdminRoutes,
   ExpertPanelRoutes,
-  AppRoutes
+  AppRoutes,
 } = require("./routes");
 const cookieSession = require("cookie-session");
-const passportSetup = require("../server/config/passport");
+const passportSetup = require("./config/passport");
 const passport = require("passport");
 const authRoute = require("./routes/google");
 // require("./")
@@ -26,10 +26,15 @@ app.use("/public", express.static("public"));
 // app.set('views', path.join(__dirname, 'views'));
 // app.use(cors());
 app.use(
-  cookieSession({ name: "sessionm", httpOnly: false, keys: ["ayush"], maxAge: 24 * 60 * 60 * 100 })
+  cookieSession({
+    name: "sessionm",
+    httpOnly: false,
+    keys: ["ayush"],
+    maxAge: 24 * 60 * 60 * 100,
+  })
 );
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
+app.engine("html", require("ejs").renderFile);
+app.set("view engine", "html");
 app.use(passport.initialize());
 app.use(passport.session());
 // app.use(
@@ -39,22 +44,21 @@ app.use(passport.session());
 //     credentials: true,
 //   })
 // );
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 //routes available
 
 app.use("/admin", AUTH_ROUTES);
 app.use("/admin", CategoryRoutes);
-app.use("/website",WebsiteRoutes);
-app.use("/admin",ExpertAdminRoutes);
-app.use("/admin",BorhanUserAdminRoutes)
-app.use("/expert",ExpertPanelRoutes)
-app.use("/auth",authRoute)
-app.use('/app',AppRoutes)
+app.use("/website", WebsiteRoutes);
+app.use("/admin", ExpertAdminRoutes);
+app.use("/admin", BorhanUserAdminRoutes);
+app.use("/expert", ExpertPanelRoutes);
+app.use("/auth", authRoute);
+app.use("/app", AppRoutes);
 app.get("/", (req, res) => {
   res.send("Hello Satyam");
 });
-
 
 //fixture user
 const { fixture } = require("./fixture/fixtureUser");
