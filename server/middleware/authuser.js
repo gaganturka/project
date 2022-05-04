@@ -1,8 +1,8 @@
 const APP_CONSTANTS = require("../appConstants");
 const { Config } = require("../config");
 const Jwt = require("jsonwebtoken");
-import universalFunctions from "../utils/universalFunctions";
-import responseMessages from "../resources/response.json";
+const responseMessages=  require("../resources/response.json");
+const universalFunctions = require( "../utils/universalFunctions");
 const Boom = require("boom");
 const User=require("../models/User")
 const checkAuth =  async(req, res, next) => {

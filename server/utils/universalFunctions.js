@@ -1,6 +1,8 @@
-import Boom from "boom";
-import Joi from "@hapi/joi";
-import responseMessages from "../resources/response.json";
+const Boom = require("boom");
+const Joi = require("@hapi/joi");
+const {Config} = require('../config')
+const jwt = require('jsonwebtoken')
+const responseMessages = require("../resources/response.json");
 
 const validateRequestPayload = async (requestObj, res, schema) => {
   return new Promise((resolve, reject) => {

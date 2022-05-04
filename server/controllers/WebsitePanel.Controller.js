@@ -9,11 +9,11 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
 const APP_CONSTANTS = require("../appConstants");
-import responseMessages from "../resources/response.json";
-const { Config } = require("../config");
+const responseMessages=  require("../resources/response.json");
+const universalFunctions = require( "../utils/universalFunctions");const { Config } = require("../config");
 const Testimony =require('../models/Testimony');
 const Boom = require("boom");
-import universalFunctions from "../utils/universalFunctions";
+
 const expertTimeAvailable=require("../models/ExpertTimeSlot");
 module.exports = {
   showOnlineExperts: async (req, res) => {

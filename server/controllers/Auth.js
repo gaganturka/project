@@ -7,10 +7,10 @@ const jwt = require("jsonwebtoken");
 const { Config } = require("../config");
 const Joi = require("@hapi/joi");
 const APP_CONSTANTS = require("../appConstants");
-import responseMessages from "../resources/response.json";
-import jwtFunction from '../utils/jwtFunction';
+const responseMessages=  require("../resources/response.json");
+const jwtFunction = require('../utils/jwtFunction');
 const Boom = require("boom");
-import universalFunctions from "../utils/universalFunctions";
+const universalFunctions = require("../utils/universalFunctions");
 
 module.exports = {
   otpGeneration: async (req, res) => {
