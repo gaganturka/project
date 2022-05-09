@@ -8,7 +8,7 @@ const practiceModel = require("../models/Practice_Area");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
-const Mongoose = require("Mongoose");
+// const Mongoose = require("Mongoose");
 const jwtFunction = require("../utils/jwtFunction");
 // import Mongoose from "mongoose";
 // import jwtFunction from '../utils/jwtFunction';
