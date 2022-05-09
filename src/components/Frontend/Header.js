@@ -811,7 +811,7 @@ const Header = () => {
                         Send OTP
                       </button>
                     </div>
-                    <p>Or Sign in with</p>
+                    {/* <p>Or Sign in with</p> */}
                     <ul>
                       <li className="pe-2">
                         {/* <GoogleLogin
@@ -822,7 +822,7 @@ const Header = () => {
               isSignedIn={true}
               cookiePolicy={"single_host_origin"}
             /> */}
-                        <button onClick={signinWithGoogleUsingFirebase}>login/signup with google firebase</button>
+                        {/* <button onClick={signinWithGoogleUsingFirebase}>login/signup with google firebase</button> */}
 
                       </li>
                       <li className="ps-2">
@@ -836,7 +836,7 @@ const Header = () => {
                      callback={responseFacebook}
                     
                     /> */}
-                        <button onClick={signinWithFacebookUsingFirebase}>login/signup with facebook firebase</button>
+                        {/* <button onClick={signinWithFacebookUsingFirebase}>login/signup with facebook firebase</button> */}
 
                       </li>
                     </ul>
