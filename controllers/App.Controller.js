@@ -327,7 +327,8 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
-        .sort({ "rating.avgRating": -1 });
+        .sort({ "rating.avgRating": -1 }).skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
 
       if (!allExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
@@ -336,7 +337,7 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: allExportData,
+          data: {expertList:allExportData,currentPage:req.query.page}
         },
         res
       );
@@ -355,15 +356,16 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
-        .sort({ "rating.avgRating": -1 });
-      if (!activeExportData) {
+          .sort({ "rating.avgRating": -1 }).skip(parseInt((req.query.page - 1) * req.query.limit))
+          .limit(parseInt(req.query.limit));
+        if (!activeExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: activeExportData,
+          data: {onlineExperts:activeExportData,currentPage:req.query.page}
         },
         res
       );
@@ -373,6 +375,8 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
   },
   getAllOnlinePremiumExpertsData: async (req, res) => {
     try {
+      let page=req.query.page;
+      let limit=req.query.limit
       let activeExportData = await expertUser
         .find({
           isApprovedByAdmin: true,
@@ -382,7 +386,9 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
-        .sort({ "rating.avgRating": -1 });
+        .sort({ "rating.avgRating": -1 })
+        .skip(parseInt((page - 1) * limit))
+        .limit(parseInt(limit));
       if (!activeExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
@@ -390,7 +396,7 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: activeExportData,
+          data: {onlineExperts:activeExportData,currentPage:req.query.page},
         },
         res
       );
@@ -443,8 +449,6 @@ catch(error)
   getFilteredExperts: async (req, res) => {
     try {
       const schema = Joi.object({
-        limit: Joi.number(),
-        page: Joi.number(),
         category: Joi.string().allow(""),
         practiceArea: Joi.string().allow(""),
       
@@ -488,8 +492,8 @@ catch(error)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-        .limit(parseInt(req.body.limit));
+            .skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -503,8 +507,8 @@ catch(error)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-        .limit(parseInt(req.body.limit));
+            .skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -519,8 +523,8 @@ catch(error)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-        .limit(parseInt(req.body.limit));;
+            .skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
         } else {
           expert = await expertUser
             .find({
@@ -531,8 +535,8 @@ catch(error)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-        .limit(parseInt(req.body.limit));;
+            .skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
         }
      
 
@@ -550,7 +554,7 @@ catch(error)
           message: "All experts online and filtered are",
           data: {
             list: expert,
-            currentPage:req.body.page,
+            currentPage:req.query.page,
           },
         },
         res
