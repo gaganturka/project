@@ -31,9 +31,6 @@ const UserSchema = new Schema({
   isEmailVerified: {
     type: Boolean,
   },
-  otp: {
-    type: String,
-  },
   password: { type: String, default: "" },
   role: {
     type: String,
@@ -54,6 +51,15 @@ const UserSchema = new Schema({
     },
     data: { type: Schema.Types.ObjectId, refPath: "userData.model" },
   },
+  mobileFirebaseUid:{
+    type:String
+  },
+  token:[
+    {
+      deviceType:{type:String,enum:["1","2","3"]},
+      deviceToken:{type:String}
+    }
+  ]
 });
 
 module.exports = mongoose.model("user", UserSchema);
