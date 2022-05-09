@@ -59,7 +59,7 @@ const ExpListing = () => {
       fetchAllPracticeArea();
       fetchAllOnlineFilteredExperts();
       fetchAllOnlinePremiumExperts();
-      setTimeout(()=>{setDummy(1)},1000)
+      setDummy(1);
     }, [selectedCategory,selectedPracticeArea,selectedExpertSorting])
    
 
@@ -110,7 +110,7 @@ const ExpListing = () => {
          practiceArea:selectedPracticeArea,
          sortBy:selectedExpertSorting,
       }
-         expListingAction.fetchAllOnlinePremiumExperts(dataToSend,(err,res)=>{
+         expListingAction.fetchAllOnlinePremiumExperts((err,res)=>{
            if(err){
              console.log(err," fetchAllPremiumExpertsOnline error")
            }else{
