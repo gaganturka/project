@@ -16,7 +16,7 @@ router
   router
   .route("/logoutUser")
   .get(checkAuth, appCreation.logoutUser);
-
+  router.route("/getAllOnlinePremiumExpertsData").get(checkAuth, appCreation.getAllOnlinePremiumExpertsData);
 
 
 

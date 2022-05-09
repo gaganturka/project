@@ -371,7 +371,33 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
       universalFunctions.sendError(error, res);
     }
   },
-
+  getAllOnlinePremiumExpertsData: async (req, res) => {
+    try {
+      let activeExportData = await expertUser
+        .find({
+          isApprovedByAdmin: true,
+          isSubscribed: true,
+          status: APP_CONSTANTS.activityStatus.active,
+        })
+        .populate("practiceArea")
+        .populate("category")
+        .populate("userId")
+        .sort({ "rating.avgRating": -1 });
+      if (!activeExportData) {
+        throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: responseMessages.SUCCESS,
+          data: activeExportData,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
   logoutUser:async(req,res)=>{
 try{ 
     const token = req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
