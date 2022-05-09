@@ -197,7 +197,9 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -210,7 +212,9 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -224,7 +228,9 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
         } else {
           expert = await expertUser
             .find({
@@ -234,7 +240,9 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
         }
       } else if (req.body.sortBy == "2") {
         if (req.body.category !== "" && req.body.practiceArea === "") {
@@ -249,7 +257,9 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
-            .sort({ noOfHoursOfSessionsDone: -1 });
+            .sort({ noOfHoursOfSessionsDone: -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -262,7 +272,9 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
-            .sort({ noOfHoursOfSessionsDone: -1 });
+            .sort({ noOfHoursOfSessionsDone: -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -276,7 +288,9 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
-            .sort({ noOfHoursOfSessionsDone: -1 });
+            .sort({ noOfHoursOfSessionsDone: -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
         } else {
           expert = await expertUser
             .find({
@@ -286,7 +300,9 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
-            .sort({ noOfHoursOfSessionsDone: -1 });
+            .sort({ noOfHoursOfSessionsDone: -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
         }
       }
 
@@ -394,7 +410,9 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));;
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -408,7 +426,9 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));;
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -423,7 +443,9 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));;
         } else {
           expert = await expertUser
             .find({
@@ -434,7 +456,9 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));;
         }
       } else if (req.body.sortBy == "2") {
         if (req.body.category !== "" && req.body.practiceArea === "") {
@@ -450,7 +474,9 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
-            .sort({ noOfHoursOfSessionsDone: -1 });
+            .sort({ noOfHoursOfSessionsDone: -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));;
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -464,7 +490,9 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
-            .sort({ noOfHoursOfSessionsDone: -1 });
+            .sort({ noOfHoursOfSessionsDone: -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));;
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -479,7 +507,9 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
-            .sort({ noOfHoursOfSessionsDone: -1 });
+            .sort({ noOfHoursOfSessionsDone: -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));;
         } else {
           expert = await expertUser
             .find({
@@ -490,7 +520,9 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
-            .sort({ noOfHoursOfSessionsDone: -1 });
+            .sort({ noOfHoursOfSessionsDone: -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));;
         }
       }
 
@@ -509,7 +541,7 @@ module.exports = {
           data: {
             list: expert,
             count: await expertUser
-              .find({ status: APP_CONSTANTS.activityStatus.active })
+              .find({ status: APP_CONSTANTS.activityStatus.active,isSubscribed:true })
               .countDocuments(),
           },
         },

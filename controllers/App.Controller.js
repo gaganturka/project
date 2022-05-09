@@ -487,7 +487,9 @@ catch(error)
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -500,7 +502,9 @@ catch(error)
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -514,7 +518,9 @@ catch(error)
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));;
         } else {
           expert = await expertUser
             .find({
@@ -524,7 +530,9 @@ catch(error)
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
-            .sort({ "rating.avgRating": -1 });
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));;
         }
      
 
@@ -542,9 +550,6 @@ catch(error)
           message: "All experts online and filtered are",
           data: {
             list: expert,
-            count: await expertUser
-              .find({ status: APP_CONSTANTS.activityStatus.active })
-              .countDocuments(),
           },
         },
         res
