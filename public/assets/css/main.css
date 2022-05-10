@@ -2076,7 +2076,8 @@ footer {
 }
 
 .sidebar-wrapper li img {
-	margin-right: 10px;
+    height: 20px;
+    margin-right: 10px;
 }
 
 .sidebar-wrapper li.active img {

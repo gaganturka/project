@@ -110,9 +110,11 @@ const ExpListing = () => {
          sortBy:selectedExpertSorting,
       }
          expListingAction.fetchAllOnlinePremiumExperts(dataToSend,(err,res)=>{
+            console.log(err,"nnds")
            if(err){
              console.log(err," fetchAllPremiumExpertsOnline error")
            }else{
+              console.log(res.data.list,"dcjknsdjds")
              setPremiumExpertList(res.data.list);
              
            }
@@ -173,28 +175,29 @@ const ExpListing = () => {
             <div className="row">
                <div className="col-lg-12">
                <OwlCarousel
-                  className="health-owl"
-                  items={10}
-                  loop={true}
-                  rewind={true}
-                  // nav={true}
-                  margin={10}
-                  // rewind={true}
-                  responsive={{
-                    0: {
-                      items: 1,
-                      nav: true,
-                    },
-                    600: {
-                      items: 3,
-                      nav: true,
-                    },
-                    1000: {
-                      items: 5,
-                    },
-                  }}
+                 className="health-owl"
+                 items={10}
+                 loop={true}
+                 rewind={true}
+                 // nav={true}
+                 margin={10}
+                 // rewind={true}
+                 responsive={{
+                   0: {
+                     items: 1,
+                     nav: true,
+                   },
+                   600: {
+                     items: 3,
+                     nav: true,
+                   },
+                   1000: {
+                     items: 5,
+                   },
+                 }}
                 >
-                  {premiumExpertList&&premiumExpertList.map((obj,index)=>{
+                      
+                  {premiumExpertList.length>0 &&premiumExpertList.map((obj,index)=>{
                      return(
                         <div className="item">
                         <div className="expert-box-wrp blue-bg">

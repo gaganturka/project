@@ -79,16 +79,16 @@ const GOOGLE_CLIENT_SECRET = "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";
     setopenmodal(false);
     setmodalstateno(1);
   };
-  const loginG = () => {
-    // let timer: NodeJS.Timeout | null = null;
-    const googleLoginURL = "http://localhost:5000/auth/google";
-    const newWindow = window.open(
-      googleLoginURL,
-      "_self",
+//   const loginG = () => {
+//     // let timer: NodeJS.Timeout | null = null;
+//     const googleLoginURL = "http://localhost:5000/auth/google";
+//     const newWindow = window.open(
+//       googleLoginURL,
+//       "_self",
       
-    );
+//     );
 
- };
+//  };
  const  responseFacebook= (response)=> {
   console.log(response);
   let createData={
@@ -154,28 +154,6 @@ const logout = (response) => {
     console.log(Agent.getLoginType())
     setflagUser(true);
   } 
- const getUser = () => {
-  fetch("http://localhost:5000/auth/login/success", {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Credentials": true,
-    },
-  })
-    .then((response) => {
-      if (response.status === 200) return response.json();
-      throw new Error("authentication has been failed!");
-    })
-    .then((resObject) => {
-      console.log(resObject.user)
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-getUser();
 }, [isLoggedIn]);
   const fetchAllCategories = async () => {
 

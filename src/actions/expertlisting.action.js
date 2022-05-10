@@ -36,7 +36,7 @@ function fetchAllOnlineFilteredExperts( payload,cb) {
         if (typeof cb === 'function') return cb(error, res && res.body);
       });
   }
-  function fetchAllOnlinePremiumExperts( cb) {
+  function fetchAllOnlinePremiumExperts(data,cb) {
     Agent
       .fire('get', `${BACKEND_URL}/website/getOnlinePremiumExperts`)
       .end((err, res) => {

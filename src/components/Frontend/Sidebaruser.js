@@ -88,6 +88,18 @@ const Sidebar = () => {
               </Link>
             </li>
             <li
+              className={`${location.pathname === "/favexperts" ? "active" : ""}`}
+            >
+              <Link to="/favexperts" className="">
+                <img
+                  src="./assets/img/favorite-icon.png"
+                  className="img img-fluid"
+                  alt=""
+                />{" "}
+                Favorite experts
+              </Link>
+            </li>
+            <li
               className={`${location.pathname === "/wallet" ? "active" : ""}`}
             >
               <Link to="/wallet" className="">
