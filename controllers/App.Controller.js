@@ -614,7 +614,9 @@ catch(error)
       universalFunctions.sendError(error, res);
     }
   },
- updateProfileUser:async (req,res)=>{
+  updateProfileUser:async (req,res)=>{
+    try{
+    console.log("sssssss")
   const schema = Joi.object({
     firstName: Joi.string().alphanum().min(2).max(30).required(),
     lastName: Joi.string().alphanum().min(2).max(30).required(),
@@ -628,10 +630,34 @@ catch(error)
     // otp: Joi.string(),
     // .allow("")
   });
-
   await universalFunctions.validateRequestPayload(req.body, res, schema);
-  
-  
+  let payload=req.body;
+  console.log(payload,"payload")
+  let userId=req.user.id;
+  console.log('userId',userId);
+  let user=await User.findByIdAndUpdate({_id:userId},{...payload}
+    , {new:true}
+    );
+  console.log(user,"updatedUser")
+  if(!user){
+    throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
+  }
+
+  universalFunctions.sendSuccess(
+    {
+      statusCode: 200,
+      message: "updated User",
+      data: {
+        user
+      },
+    },
+    res
+  );
+  }
+  catch(error)
+  {
+    universalFunctions.sendError(error,res);
+  }
 
  }
 };
