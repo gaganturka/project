@@ -352,9 +352,11 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
-        .sort({ "rating.avgRating": -1 }).skip(parseInt((page - 1) * limit))
+        .sort({ "rating.avgRating": -1 })
+        .skip(parseInt((page - 1) * limit))
         .limit(parseInt(limit));
-
+//         let total=await expertUser.find({isApprovedByAdmin : true}).countDocuments();
+// console.log(total,"total galat kyu aara",total);
       if (!allExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
@@ -362,7 +364,7 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {list:allExportData,currentPage:page,total:await expertUser.find({isApprovedbyAdmin:true}).countDocuments()}
+          data: {list:allExportData,currentPage:page,total:await expertUser.find({ isApprovedByAdmin : true}).countDocuments()}
         },
         res
       );
