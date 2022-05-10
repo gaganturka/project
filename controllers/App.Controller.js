@@ -22,6 +22,7 @@ const { Config } = require("../config");
 
 const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
+const { join } = require("lodash");
 // import universalFunctions from "../utils/universalFunctions";
 
 module.exports = {
@@ -337,7 +338,7 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {expertList:allExportData,currentPage:req.query.page}
+          data: {list:allExportData,currentPage:req.query.page,total:await expertUser.find({isApprovedbyAdmin:true}).countDocuments()}
         },
         res
       );
@@ -365,7 +366,7 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {onlineExperts:activeExportData,currentPage:req.query.page}
+          data: {list:activeExportData,currentPage:req.query.page,total:await expertUser.find({isApprovedByAdmin:true,status:APP_CONSTANTS.activityStatus.active}).countDocuments()}
         },
         res
       );
@@ -396,7 +397,7 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {onlineExperts:activeExportData,currentPage:req.query.page},
+          data: {list:activeExportData,currentPage:req.query.page,total:await expertUser.find({isApprovedByAdmin:true,isSubscribed:true,status:APP_CONSTANTS.activityStatus.active}).countDocuments()},
         },
         res
       );
@@ -451,7 +452,8 @@ catch(error)
       const schema = Joi.object({
         category: Joi.string().allow(""),
         practiceArea: Joi.string().allow(""),
-      
+        limit:Joi.number(),
+        page:Joi.number(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
@@ -478,7 +480,7 @@ catch(error)
       //     .skip(parseInt((req.body.page - 1) * req.body.limit))
       // .limit(parseInt(req.body.limit));
       let aggregationQuery;
-      let expert;
+      let expert,total;
         if (req.body.category !== "" && req.body.practiceArea === "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -492,8 +494,9 @@ catch(error)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.query.page - 1) * req.query.limit))
-        .limit(parseInt(req.query.limit));
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
+        total=await expertUser.find({category:req.body.category,isApprovedByAdmin:true}).countDocuments();
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -507,8 +510,11 @@ catch(error)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.query.page - 1) * req.query.limit))
-        .limit(parseInt(req.query.limit));
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
+
+        total=await expertUser.find({practiceArea:req.body.practiceArea,isApprovedByAdmin:true}).countDocuments();
+
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -523,8 +529,10 @@ catch(error)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.query.page - 1) * req.query.limit))
-        .limit(parseInt(req.query.limit));
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
+        total=await expertUser.find({category:req.body.category,practiceArea:req.body.practiceArea,isApprovedByAdmin:true}).countDocuments();
+
         } else {
           expert = await expertUser
             .find({
@@ -535,8 +543,10 @@ catch(error)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.query.page - 1) * req.query.limit))
-        .limit(parseInt(req.query.limit));
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit));
+        total=await expertUser.find({isApprovedByAdmin:true}).countDocuments();
+
         }
      
 
@@ -554,7 +564,8 @@ catch(error)
           message: "All experts online and filtered are",
           data: {
             list: expert,
-            currentPage:req.query.page,
+            currentPage:req.body.page,
+            total:total
           },
         },
         res
