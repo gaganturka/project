@@ -626,7 +626,7 @@ catch(error)
     }),
     mobileNo: Joi.string().min(10).max(10).required(),
     profilePic: Joi.string().allow(""),
-    firebaseUid:Joi.string(),
+    // firebaseUid:Joi.string(),
     // otp: Joi.string(),
     // .allow("")
   });
