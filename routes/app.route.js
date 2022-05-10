@@ -7,16 +7,16 @@ router.route("/createBorhanUser").post(appCreation.createBorhanUser);
 router.route("/userLoginOtp").post(appCreation.userLoginOtp);
 router.route("/getDesktopPage").get(checkAuth,appCreation.desktopPage);
 router.route("/getUserProfile").get(checkAuth, appCreation.getUserDetails);
-router.route("/getAllUpcomingAppointments").get(checkAuth, appCreation.getAllUpcomingAppointments);
-router.route("/getAllExpertData").get(checkAuth, appCreation.getAllExpertData);
+router.route("/getAllUpcomingAppointments").post(checkAuth, appCreation.getAllUpcomingAppointments);
+router.route("/getAllExpertData").post(checkAuth, appCreation.getAllExpertData);
 router
   .route("/getActiveExportData")
-  .get(checkAuth, appCreation.getActiveExportData);
+  .post(checkAuth, appCreation.getActiveExportData);
 
   router
   .route("/logoutUser")
   .get(checkAuth, appCreation.logoutUser);
-  router.route("/getAllOnlinePremiumExpertsData").get(checkAuth, appCreation.getAllOnlinePremiumExpertsData);
+  router.route("/getAllOnlinePremiumExpertsData").post(checkAuth, appCreation.getAllOnlinePremiumExpertsData);
   router.route("/getAllFilteredExperts").post(checkAuth,appCreation.getFilteredExperts);
 
 

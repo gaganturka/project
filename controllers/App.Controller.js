@@ -294,7 +294,15 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
   },
   getAllUpcomingAppointments: async (req, res) => {
     try {
+      const schema = Joi.object({
+        limit:Joi.number(),
+        page:Joi.number(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
       let userId = req.user.id;
+   
+      let page=req.body.page;
+      let limit=req.body.limit;
 
       let upcomingAppointmentData = await appointmentModel
         .find({
@@ -305,14 +313,21 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         .populate({
           path: "expertId",
           populate: { path: "userId practiceArea" },
-        });
+        }).skip(parseInt((page - 1) * limit))
+        .limit(parseInt(limit));;
 
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "All top experts ",
           data: {
-            upcomingAppointmentList: upcomingAppointmentData,
+            list: upcomingAppointmentData,
+            currentPage:page,
+            total:await appointmentModel
+            .find({
+              userId: userId,
+              status: APP_CONSTANTS.appointmentStatus.confirmed,
+            }).countDocuments()
           },
         },
         res
@@ -323,13 +338,22 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
   },
   getAllExpertData: async (req, res) => {
     try {
+      const schema = Joi.object({
+        limit:Joi.number(),
+        page:Joi.number(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let page=req.body.page;
+      let limit=req.body.limit;
+
       let allExportData = await expertUser
         .find({ isApprovedByAdmin: true })
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
-        .sort({ "rating.avgRating": -1 }).skip(parseInt((req.query.page - 1) * req.query.limit))
-        .limit(parseInt(req.query.limit));
+        .sort({ "rating.avgRating": -1 }).skip(parseInt((page - 1) * limit))
+        .limit(parseInt(limit));
 
       if (!allExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
@@ -338,7 +362,7 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {list:allExportData,currentPage:req.query.page,total:await expertUser.find({isApprovedbyAdmin:true}).countDocuments()}
+          data: {list:allExportData,currentPage:page,total:await expertUser.find({isApprovedbyAdmin:true}).countDocuments()}
         },
         res
       );
@@ -348,6 +372,14 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
   },
   getActiveExportData: async (req, res) => {
     try {
+      const schema = Joi.object({
+        limit:Joi.number(),
+        page:Joi.number(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let page=req.body.page;
+      let limit=req.body.limit;
       let activeExportData = await expertUser
         .find({
           isApprovedByAdmin: true,
@@ -357,8 +389,8 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
-          .sort({ "rating.avgRating": -1 }).skip(parseInt((req.query.page - 1) * req.query.limit))
-          .limit(parseInt(req.query.limit));
+          .sort({ "rating.avgRating": -1 }).skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
         if (!activeExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
@@ -366,7 +398,7 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {list:activeExportData,currentPage:req.query.page,total:await expertUser.find({isApprovedByAdmin:true,status:APP_CONSTANTS.activityStatus.active}).countDocuments()}
+          data: {list:activeExportData,currentPage:page,total:await expertUser.find({isApprovedByAdmin:true,status:APP_CONSTANTS.activityStatus.active}).countDocuments()}
         },
         res
       );
@@ -376,8 +408,14 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
   },
   getAllOnlinePremiumExpertsData: async (req, res) => {
     try {
-      let page=req.query.page;
-      let limit=req.query.limit
+      const schema = Joi.object({
+        limit:Joi.number(),
+        page:Joi.number(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let page=req.body.page;
+      let limit=req.body.limit;
       let activeExportData = await expertUser
         .find({
           isApprovedByAdmin: true,
@@ -397,7 +435,7 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {list:activeExportData,currentPage:req.query.page,total:await expertUser.find({isApprovedByAdmin:true,isSubscribed:true,status:APP_CONSTANTS.activityStatus.active}).countDocuments()},
+          data: {list:activeExportData,currentPage:req.body.page,total:await expertUser.find({isApprovedByAdmin:true,isSubscribed:true,status:APP_CONSTANTS.activityStatus.active}).countDocuments()},
         },
         res
       );
