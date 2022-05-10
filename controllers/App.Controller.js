@@ -8,8 +8,8 @@ const practiceModel = require("../models/Practice_Area");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
-const Mongoose = require("Mongoose");
-const jwtFunction = require("../utils/universalFunctions");
+// const Mongoose = require("mongoose");
+const jwtFunction = require("../utils/jwtFunction");
 // import Mongoose from "mongoose";
 // import jwtFunction from '../utils/jwtFunction';
 
@@ -25,23 +25,31 @@ const universalFunctions = require("../utils/universalFunctions");
 // import universalFunctions from "../utils/universalFunctions";
 
 module.exports = {
-  userLogin: async (req, res) => {
+  userLoginOtp: async (req, res) => {
     try {
       const schema = Joi.object({
         mobileNo: Joi.string().min(10).max(10).required(),
+        deviceType:Joi.string(),
+        deviceToken:Joi.string().allow(""),
+        firebaseUid:Joi.string(),
+      
         // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      const user = await User.findOne({ mobileNo: req.body.mobileNo });
+      const user = await User.findOne({ mobileNo: req.body.mobileNo }).populate('userData.data');
       if (!user) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
-      const token = await jwtFunction.jwtGenerator(user._id);
+      const newToken=[...user.token,{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}];
+     let finalUser= await User.findByIdAndUpdate({_id:user._id},{token:newToken,mobileFirebaseUid:req.body.firebaseUid})
+     let updatedUser=await User.findOne({_id:finalUser._id}).populate('userData.data')
+      const token = await jwtFunction.jwtGeneratorApp(user._id,req.body.deviceType,req.body.deviceToken);
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: token,
+          data: {token,
+            user:updatedUser}
         },
         res
       );
@@ -61,11 +69,15 @@ module.exports = {
         }),
         mobileNo: Joi.string().min(10).max(10).required(),
         profilePic: Joi.string().allow(""),
+        deviceType:Joi.string(),
+        deviceToken:Joi.string().allow(""),
+        firebaseUid:Joi.string(),
+      
         // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       // const result=await schema.validateAsync(req.body);
-      console.log(req.body, "hello", req.file);
+      // console.log(req.body, "hello", req.file);
       let success = false;
 
       // checks whether the mobileno has already been created
@@ -73,28 +85,29 @@ module.exports = {
       let user = await User.findOne({ mobileNo: req.body.mobileNo });
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
-        // if (user.role === APP_CONSTANTS.role.borhanuser) {
+        if (user.role === APP_CONSTANTS.role.borhanuser) {
         throw Boom.badRequest(responseMessages.USER_EXISTS);
-        // } else {
-        //   console.log("otppppforuser", user.otp);
-        //   if (req.body.otp !== "999999") {
-        //     throw Boom.badRequest(responseMessages.INVALID_OTP);
-        //   }
-        //   let borhanuser = await borhanUser.create({
-        //     isSubscribed: false,
-        //     balance: 0,
-        //     userId: user._id,
-        //   });
-        //  const token=await jwtFunction.jwtGenerator(user._id);
-        //   universalFunctions.sendSuccess(
-        //     {
-        //       statusCode: 200,
-        //       message: "User created",
-        //       data: token,
-        //     },
-        //     res
-        //   );
-        // }
+        } else {
+         
+          let borhanuser = await borhanUser.create({
+            isSubscribed: false,
+            balance: 0,
+            userId: user._id,
+          });
+          let newToken=[...user.token,{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}]
+         let finalUser= await User.findByIdAndUpdate({_id:user._id},{token:newToken,mobileFirebaseUid:req.body.firebaseUid}).populate('userData.data');
+         const token=await jwtFunction.jwtGeneratorApp(user._id,req.body.deviceType,req.body.deviceToken);
+          universalFunctions.sendSuccess(
+            {
+              statusCode: 200,
+              message: "User created",
+              data: {token:token,
+                user:finalUser
+              },
+            },
+            res
+          );
+        }
       }
       console.log("phone number   ", req.body.mobileNo);
 
@@ -116,27 +129,37 @@ module.exports = {
           model: APP_CONSTANTS.role.borhanuser,
           data: borhanuser._id,
         },
+        token:[{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}],
+        mobileFirebaseUid:req.body.firebaseUid
+
       });
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
-
+      // const finalUser=await User.findOne({_id:user._id})
+      // let newToken=[...user.token,]
+      // let finalUser= await User.findByIdAndUpdate({_id:user._id},{token:newToken,mobileFirebaseUid:firebaseUid}).populate('userData.data');
+      
       console.log(user);
-      console.log(res.json, "jwttoken");
-
+      // console.log(res.json, "jwttoken");
+let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
       // const token = jwt.sign(
       //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
       //   Config.jwtsecret
       // );
-      const token = await jwtFunction.jwtGenerator(user._id);
+      const token = await jwtFunction.jwtGeneratorApp(user._id
+        ,req.body.deviceType,req.body.deviceToken
+        );
 
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.USER_CREATED,
-          data: token,
+          data: {token,
+            user:finalUser}
         },
         res
-      );
-    } catch (error) {
+        );
+    } 
+    catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
@@ -304,7 +327,8 @@ module.exports = {
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
-        .sort({ "rating.avgRating": -1 });
+        .sort({ "rating.avgRating": -1 }).skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
 
       if (!allExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
@@ -313,7 +337,7 @@ module.exports = {
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: allExportData,
+          data: {expertList:allExportData,currentPage:req.query.page}
         },
         res
       );
@@ -332,15 +356,16 @@ module.exports = {
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
-        .sort({ "rating.avgRating": -1 });
-      if (!activeExportData) {
+          .sort({ "rating.avgRating": -1 }).skip(parseInt((req.query.page - 1) * req.query.limit))
+          .limit(parseInt(req.query.limit));
+        if (!activeExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: activeExportData,
+          data: {onlineExperts:activeExportData,currentPage:req.query.page}
         },
         res
       );
@@ -348,4 +373,195 @@ module.exports = {
       universalFunctions.sendError(error, res);
     }
   },
+  getAllOnlinePremiumExpertsData: async (req, res) => {
+    try {
+      let page=req.query.page;
+      let limit=req.query.limit
+      let activeExportData = await expertUser
+        .find({
+          isApprovedByAdmin: true,
+          isSubscribed: true,
+          status: APP_CONSTANTS.activityStatus.active,
+        })
+        .populate("practiceArea")
+        .populate("category")
+        .populate("userId")
+        .sort({ "rating.avgRating": -1 })
+        .skip(parseInt((page - 1) * limit))
+        .limit(parseInt(limit));
+      if (!activeExportData) {
+        throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: responseMessages.SUCCESS,
+          data: {onlineExperts:activeExportData,currentPage:req.query.page},
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  logoutUser:async(req,res)=>{
+try{ 
+    const token = req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
+    if (token) {
+      const decoded =  jwt.verify(token, Config.jwtsecret);
+      let user=await User.findOne({_id:decoded.user_id});
+      if(!user)
+      {
+        throw Boom.badRequest(responseMessages.INVALID_TOKEN);
+      }
+      let deviceToken=decoded.deviceToken
+      // console.log(deviceToken,"deviceToken")
+      let newToken=user.token;
+      const filteredToken=newToken.filter((obj)=>obj.deviceToken !==deviceToken)
+      // console.log(newToken,"tokeneee")
+      // console.log(filteredToken,"filteredToken");
+      let finalUser=await User.findByIdAndUpdate({_id:user._id},{token:filteredToken})
+      let updatedUser=await User.findOne({_id:finalUser._id}).populate('userData.data')
+      if(!updatedUser)
+      {
+        throw Boom.badRequest(responseMessages.INVALID_TOKEN);
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: responseMessages.SUCCESS,
+          data: {user:updatedUser},
+        },
+        res
+      );
+    }
+    else {
+      throw Boom.badRequest(responseMessages.TOKEN_NOT_PROVIDED);
+    }
+} 
+catch(error)
+{
+  universalFunctions.sendError(error,res);
+}  
+  },
+
+
+  getFilteredExperts: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        category: Joi.string().allow(""),
+        practiceArea: Joi.string().allow(""),
+      
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      //   let page = req.body.page;
+      //   let limit = req.body.limit;
+      //   let filter = {
+      //     isApprovedByAdmin: true,
+      //   };
+      //   // console.log("searchhhhi", req.body.search, "search mai kya hai");
+      //   if (req.body.search) {
+      //     filter["$or"] = [
+      //       { "userId.firstName": { $regex: req.body.search, $options: "i" } },
+      //       {
+      //         "userId.email": { $regex: req.body.search, $options: "i" },
+      //       },
+      //     ];
+      //   }
+
+      //   const expert = await expertUser
+      //     .find({ isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active })
+      //     .populate("userId")
+      //     .populate("practiceArea")
+      //     .populate("category")
+      //     .skip(parseInt((req.body.page - 1) * req.body.limit))
+      // .limit(parseInt(req.body.limit));
+      let aggregationQuery;
+      let expert;
+        if (req.body.category !== "" && req.body.practiceArea === "") {
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          expert = await expertUser
+            .find({
+              category: req.body.category,
+              isApprovedByAdmin: true,
+              // status: APP_CONSTANTS.activityStatus.active,
+            })
+            .populate("practiceArea")
+            .populate("category")
+            .populate("userId")
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
+        } else if (req.body.category === "" && req.body.practiceArea !== "") {
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          expert = await expertUser
+            .find({
+              practiceArea: req.body.practiceArea,
+              isApprovedByAdmin: true,
+              // status: APP_CONSTANTS.activityStatus.active,
+            })
+            .populate("practiceArea")
+            .populate("category")
+            .populate("userId")
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
+        } else if (req.body.category !== "" && req.body.practiceArea !== "") {
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+          expert = await expertUser
+            .find({
+              practiceArea: req.body.practiceArea,
+              category: req.body.category,
+              isApprovedByAdmin: true,
+              // status: APP_CONSTANTS.activityStatus.active,
+            })
+            .populate("practiceArea")
+            .populate("category")
+            .populate("userId")
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
+        } else {
+          expert = await expertUser
+            .find({
+              isApprovedByAdmin: true,
+              // status: APP_CONSTANTS.activityStatus.active,
+            })
+            .populate("practiceArea")
+            .populate("category")
+            .populate("userId")
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
+        }
+     
+
+      if (!expert) {
+        throw Boom.badRequest("cannot find any expert");
+      }
+      console.log(
+        "expert online filtered are",
+        expert,
+        "expert online filtered"
+      );
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "All experts online and filtered are",
+          data: {
+            list: expert,
+            currentPage:req.query.page,
+          },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+ 
 };

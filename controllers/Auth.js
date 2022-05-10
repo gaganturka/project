@@ -70,7 +70,8 @@ module.exports = {
         }),
         mobileNo: Joi.string().min(10).max(10).required(),
         profilePic: Joi.string().allow(""),
-        otp: Joi.string(),
+        firebaseUid:Joi.string(),
+        // otp: Joi.string(),
         // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
@@ -80,41 +81,37 @@ module.exports = {
 
       // checks whether the mobileno has already been created
 
-      let user = await User.findOne({ mobileNo: req.body.mobileNo });
+      let user = await User.findOne({ mobileNo: req.body.mobileNo}).populate('userData.data');
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
-        // if (user.role === APP_CONSTANTS.role.borhanuser) {
+        if (user.role === APP_CONSTANTS.role.borhanuser) {
           throw Boom.badRequest(responseMessages.USER_EXISTS);
-        // } else {
-        //   console.log("otppppforuser", user.otp);
-        //   if (req.body.otp !== "999999") {
-        //     throw Boom.badRequest(responseMessages.INVALID_OTP);
-        //   }
-        //   let borhanuser = await borhanUser.create({
-        //     isSubscribed: false,
-        //     balance: 0,
-        //     userId: user._id,
-        //   });
-        //  const token=await jwtFunction.jwtGenerator(user._id);
-        //   universalFunctions.sendSuccess(
-        //     {
-        //       statusCode: 200,
-        //       message: "User created",
-        //       data: token,
-        //     },
-        //     res
-        //   );
-        // }
+        } else {
+          
+          let borhanuser = await borhanUser.create({
+            isSubscribed: false,
+            balance: 0,
+            userId: user._id,
+          });
+         const token=await jwtFunction.jwtGenerator(user._id);
+         
+         await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:firebaseUid});
+
+          universalFunctions.sendSuccess(
+            {
+              statusCode: 200,
+              message: "User created",
+              data: {token
+                }
+            },
+            res
+          );
+        }
       }
       // let otpmodel = await otpModel.findOne({ mobileNo: req.body.mobileNo });
       // console.log(otpmodel?.otp,"adsfakweni   ",req.body.otp);
       console.log("phone numder   ", req.body.mobileNo);
-      // if (req.body.otp !== otpmodel.otp) {
-      //   throw Boom.badRequest(responseMessages.INVALID_OTP);
-      // }
-      if (req.body.otp !== "999999") {
-        throw Boom.badRequest(responseMessages.INVALID_OTP);
-      }
+      
       let borhanuser = await borhanUser.create({
         isSubscribed: false,
         balance: 0,
@@ -134,6 +131,8 @@ module.exports = {
           data: borhanuser._id,
         },
         otp: "",
+        mobileFirebaseUid:req.body.firebaseUid
+        ,
       });
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
 
@@ -184,7 +183,8 @@ module.exports = {
         }),
         bankName: Joi.string(),
         accountType: Joi.string(),
-        otp: Joi.string(),
+        firebaseUid:Joi.string(),
+        // otp: Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
@@ -202,12 +202,7 @@ module.exports = {
         if (user.role === APP_CONSTANTS.role.expert) {
           throw Boom.badRequest(responseMessages.USER_EXISTS);
         } else {
-          // if (user.otp !== req.body.otp) {
-          //   throw Boom.badRequest(responseMessages.INVALID_OTP);
-          // }
-          if (req.body.otp !== "999999") {
-            throw Boom.badRequest(responseMessages.INVALID_OTP);
-          }
+         
           let expertUserr = await expertUser.create({
             isSubscribed: false,
             category: req.body.category,
@@ -229,6 +224,7 @@ module.exports = {
           await expertUser.findByIdAndUpdate(expertUserr._id, {
             userId: user._id,
           });
+          await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:req.body.firebaseUid});
           // const token = jwt.sign(
           //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
           //   Config.jwtsecret
@@ -248,13 +244,7 @@ module.exports = {
       // console.log(req.body,"iaenienwieioafeniaaaaa")
       // console.log('######################################################');
       // console.log(req.body.document,"adklgjnaeionianeiondiarrrrrrrrrr");
-      // const otpmodel = await otpModel.findOne({ mobileNo: req.body.mobileNo });
-      // if (otpmodel.otp !== req.body.otp) {
-      //   throw Boom.badRequest(responseMessages.INVALID_OTP);
-      // }
-      if (req.body.otp !== "999999") {
-        throw Boom.badRequest(responseMessages.INVALID_OTP);
-      }
+      
       let expertUserr = await expertUser.create({
         isSubscribed: false,
         category: req.body.category,
@@ -281,16 +271,13 @@ module.exports = {
           model: APP_CONSTANTS.role.expert,
           data: expertUserr._id,
         },
-        otp: "",
+        mobileFirebaseUid:req.body.firebaseUid
       });
       await expertUser.findByIdAndUpdate(expertUserr._id, { userId: user._id });
       // console.log(expertUserr,"eexxpperrttusseerr");
       // console.log('Namaste - ',user);
       // console.log('######################################################');
-      // const token = jwt.sign(
-      //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-      //   Config.jwtSsecret
-      // );
+      
       const token=await jwtFunction.jwtGenerator(user._id);
           
       universalFunctions.sendSuccess(
@@ -310,7 +297,9 @@ module.exports = {
       //  console.log('thid odi bpody - ', req.file, req.files)
       const schema = Joi.object({
         mobileNo: Joi.string().min(10).max(10).required(),
-        otp: Joi.string(),
+        deviceType:Joi.string(),
+        deviceToken:Joi.string().allow(""),
+        firebaseUid:Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
@@ -319,20 +308,15 @@ module.exports = {
       let user = await User.findOne({ mobileNo: req.body.mobileNo });
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
-        // if (user.otp !== req.body.otp) {
-        //   throw Boom.badRequest(responseMessages.INVALID_OTP);
-        // }
-        if (req.body.otp !== "999999") {
-          throw Boom.badRequest(responseMessages.INVALID_OTP);
-        }
-        // const token = jwt.sign(
-        //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-        //   Config.jwtsecret
-        // );
-        const token=await jwtFunction.jwtGenerator(user._id);
-        console.log("token borhan usser",token)
+        
           
         if (user.role === APP_CONSTANTS.role.borhanuser) {
+          const token=await jwtFunction.jwtGenerator(user._id);
+          console.log("token borhan usser",token)
+         
+          // let newToken=[...user.token,{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}]
+          // console.log(newToken,"token new");
+          await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:req.body.firebaseUid})
           universalFunctions.sendSuccess(
             {
               statusCode: 200,
@@ -341,20 +325,16 @@ module.exports = {
             },
             res
           );
-        } else if (user.role === APP_CONSTANTS.role.expert) {
-          universalFunctions.sendSuccess(
-            {
-              statusCode: 200,
-              message: "You are signed in as expert",
-              data: token,
-            },
-            res
-          );
         }
-      } else {
+       else {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
-    } catch (error) {
+    }
+    else
+    {
+      throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
+    }
+    }catch(error) {
       universalFunctions.sendError(error, res);
     }
   },
