@@ -614,5 +614,24 @@ catch(error)
       universalFunctions.sendError(error, res);
     }
   },
- 
+ updateProfileUser:async (req,res)=>{
+  const schema = Joi.object({
+    firstName: Joi.string().alphanum().min(2).max(30).required(),
+    lastName: Joi.string().alphanum().min(2).max(30).required(),
+    email: Joi.string().email({
+      minDomainSegments: 2,
+      tlds: { allow: ["com", "net"] },
+    }),
+    mobileNo: Joi.string().min(10).max(10).required(),
+    profilePic: Joi.string().allow(""),
+    firebaseUid:Joi.string(),
+    // otp: Joi.string(),
+    // .allow("")
+  });
+
+  await universalFunctions.validateRequestPayload(req.body, res, schema);
+  
+  
+
+ }
 };
