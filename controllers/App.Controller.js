@@ -492,8 +492,9 @@ catch(error)
       const schema = Joi.object({
         category: Joi.string().allow(""),
         practiceArea: Joi.string().allow(""),
-        limit:Joi.number(),
-        page:Joi.number(),
+        limit: Joi.number(),
+        page: Joi.number(),
+        search: Joi.string().allow(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
@@ -520,74 +521,99 @@ catch(error)
       //     .skip(parseInt((req.body.page - 1) * req.body.limit))
       // .limit(parseInt(req.body.limit));
       let aggregationQuery;
-      let expert,total;
-        if (req.body.category !== "" && req.body.practiceArea === "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          expert = await expertUser
-            .find({
-              category: req.body.category,
-              isApprovedByAdmin: true,
-              // status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-        .limit(parseInt(req.body.limit));
-        total=await expertUser.find({category:req.body.category,isApprovedByAdmin:true}).countDocuments();
-        } else if (req.body.category === "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          expert = await expertUser
-            .find({
-              practiceArea: req.body.practiceArea,
-              isApprovedByAdmin: true,
-              // status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-        .limit(parseInt(req.body.limit));
+      let filter = {};
+      if (req.body.search) {
+        // filter["$or"]= [ {$text: { $search: text}}];
+        filter["$or"] = [
+          { firstName: { $regex: req.body.search, $options: "i" } },
+          { lastName: { $regex: req.body.search, $options: "i" } },
+        ];
+      }
+      let expert, total;
+      if (req.body.category !== "" && req.body.practiceArea === "") {
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        // console.log("this is else conditiob")
+        expert = await expertUser
+          .find({
+            category: req.body.category,
+            isApprovedByAdmin: true,
+            // filter,
+            // status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate("userId")
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+        total = await expertUser
+          .find({ category: req.body.category, isApprovedByAdmin: true })
+          .countDocuments();
+      } else if (req.body.category === "" && req.body.practiceArea !== "") {
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        expert = await expertUser
+          .find({
+            practiceArea: req.body.practiceArea,
+            isApprovedByAdmin: true,
+            // filter,
+            // status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate("userId")
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
 
-        total=await expertUser.find({practiceArea:req.body.practiceArea,isApprovedByAdmin:true}).countDocuments();
-
-        } else if (req.body.category !== "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          expert = await expertUser
-            .find({
-              practiceArea: req.body.practiceArea,
-              category: req.body.category,
-              isApprovedByAdmin: true,
-              // status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-        .limit(parseInt(req.body.limit));
-        total=await expertUser.find({category:req.body.category,practiceArea:req.body.practiceArea,isApprovedByAdmin:true}).countDocuments();
-
-        } else {
-          expert = await expertUser
-            .find({
-              isApprovedByAdmin: true,
-              // status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-        .limit(parseInt(req.body.limit));
-        total=await expertUser.find({isApprovedByAdmin:true}).countDocuments();
-
-        }
+        total = await expertUser
+          .find({
+            practiceArea: req.body.practiceArea,
+            isApprovedByAdmin: true,
+          })
+          .countDocuments();
+      } else if (req.body.category !== "" && req.body.practiceArea !== "") {
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        expert = await expertUser
+          .find({
+            practiceArea: req.body.practiceArea,
+            category: req.body.category,
+            isApprovedByAdmin: true,
+            // filter,
+            // status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate("userId")
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+        total = await expertUser
+          .find({
+            category: req.body.category,
+            practiceArea: req.body.practiceArea,
+            isApprovedByAdmin: true,
+          })
+          .countDocuments();
+      } else {
+        console.log("this is else condtion", filter);
+        expert = await expertUser
+          .find({
+            isApprovedByAdmin: true,
+            // status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate({ path: "userId", match:  filter  })
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+        total = await expertUser
+          .find({ isApprovedByAdmin: true })
+          .countDocuments();
+      }
      
 
       if (!expert) {
