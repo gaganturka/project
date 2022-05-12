@@ -4,6 +4,7 @@ const expertUser = require("../models/Expert_User");
 const appointmentModel = require("../models/Appointment");
 const expertTimeAvailable = require("../models/ExpertTimeSlot");
 const category = require("../models/Categories");
+const appointment = require("../models/Appointment");
 const practiceModel = require("../models/Practice_Area");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -30,27 +31,40 @@ module.exports = {
     try {
       const schema = Joi.object({
         mobileNo: Joi.string().min(10).max(10).required(),
-        deviceType:Joi.string(),
-        deviceToken:Joi.string().allow(""),
-        firebaseUid:Joi.string(),
-      
+        deviceType: Joi.string(),
+        deviceToken: Joi.string().allow(""),
+        firebaseUid: Joi.string(),
+
         // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      const user = await User.findOne({ mobileNo: req.body.mobileNo }).populate('userData.data');
+      const user = await User.findOne({ mobileNo: req.body.mobileNo }).populate(
+        "userData.data"
+      );
       if (!user) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
-      const newToken=[...user.token,{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}];
-     let finalUser= await User.findByIdAndUpdate({_id:user._id},{token:newToken,mobileFirebaseUid:req.body.firebaseUid})
-     let updatedUser=await User.findOne({_id:finalUser._id}).populate('userData.data')
-      const token = await jwtFunction.jwtGeneratorApp(user._id,req.body.deviceType,req.body.deviceToken);
+      const newToken = [
+        ...user.token,
+        { deviceType: req.body.deviceType, deviceToken: req.body.deviceToken },
+      ];
+      let finalUser = await User.findByIdAndUpdate(
+        { _id: user._id },
+        { token: newToken, mobileFirebaseUid: req.body.firebaseUid }
+      );
+      let updatedUser = await User.findOne({ _id: finalUser._id }).populate(
+        "userData.data"
+      );
+      const token = await jwtFunction.jwtGeneratorApp(
+        user._id,
+        req.body.deviceType,
+        req.body.deviceToken
+      );
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {token,
-            user:updatedUser}
+          data: { token, user: updatedUser },
         },
         res
       );
@@ -70,10 +84,10 @@ module.exports = {
         }),
         mobileNo: Joi.string().min(10).max(10).required(),
         profilePic: Joi.string().allow(""),
-        deviceType:Joi.string(),
-        deviceToken:Joi.string().allow(""),
-        firebaseUid:Joi.string(),
-      
+        deviceType: Joi.string(),
+        deviceToken: Joi.string().allow(""),
+        firebaseUid: Joi.string(),
+
         // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
@@ -87,24 +101,34 @@ module.exports = {
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
         if (user.role === APP_CONSTANTS.role.borhanuser) {
-        throw Boom.badRequest(responseMessages.USER_EXISTS);
+          throw Boom.badRequest(responseMessages.USER_EXISTS);
         } else {
-         
           let borhanuser = await borhanUser.create({
             isSubscribed: false,
             balance: 0,
             userId: user._id,
           });
-          let newToken=[...user.token,{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}]
-         let finalUser= await User.findByIdAndUpdate({_id:user._id},{token:newToken,mobileFirebaseUid:req.body.firebaseUid}).populate('userData.data');
-         const token=await jwtFunction.jwtGeneratorApp(user._id,req.body.deviceType,req.body.deviceToken);
+          let newToken = [
+            ...user.token,
+            {
+              deviceType: req.body.deviceType,
+              deviceToken: req.body.deviceToken,
+            },
+          ];
+          let finalUser = await User.findByIdAndUpdate(
+            { _id: user._id },
+            { token: newToken, mobileFirebaseUid: req.body.firebaseUid }
+          ).populate("userData.data");
+          const token = await jwtFunction.jwtGeneratorApp(
+            user._id,
+            req.body.deviceType,
+            req.body.deviceToken
+          );
           universalFunctions.sendSuccess(
             {
               statusCode: 200,
               message: "User created",
-              data: {token:token,
-                user:finalUser
-              },
+              data: { token: token, user: finalUser },
             },
             res
           );
@@ -130,15 +154,19 @@ module.exports = {
           model: APP_CONSTANTS.role.borhanuser,
           data: borhanuser._id,
         },
-        token:[{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}],
-        mobileFirebaseUid:req.body.firebaseUid
-
+        token: [
+          {
+            deviceType: req.body.deviceType,
+            deviceToken: req.body.deviceToken,
+          },
+        ],
+        mobileFirebaseUid: req.body.firebaseUid,
       });
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
       // const finalUser=await User.findOne({_id:user._id})
       // let newToken=[...user.token,]
       // let finalUser= await User.findByIdAndUpdate({_id:user._id},{token:newToken,mobileFirebaseUid:firebaseUid}).populate('userData.data');
-      
+
       console.log(user);
       // console.log(res.json, "jwttoken");
       let finalUser = await User.findOne({ _id: user._id }).populate(
@@ -148,21 +176,21 @@ module.exports = {
       //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
       //   Config.jwtsecret
       // );
-      const token = await jwtFunction.jwtGeneratorApp(user._id
-        ,req.body.deviceType,req.body.deviceToken
-        );
+      const token = await jwtFunction.jwtGeneratorApp(
+        user._id,
+        req.body.deviceType,
+        req.body.deviceToken
+      );
 
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.USER_CREATED,
-          data: {token,
-            user:finalUser}
+          data: { token, user: finalUser },
         },
         res
-        );
-    } 
-    catch (error) {
+      );
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
@@ -297,14 +325,14 @@ module.exports = {
   getAllUpcomingAppointments: async (req, res) => {
     try {
       const schema = Joi.object({
-        limit:Joi.number(),
-        page:Joi.number(),
+        limit: Joi.number(),
+        page: Joi.number(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let userId = req.user.id;
-   
-      let page=req.body.page;
-      let limit=req.body.limit;
+
+      let page = req.body.page;
+      let limit = req.body.limit;
 
       let upcomingAppointmentData = await appointmentModel
         .find({
@@ -315,8 +343,9 @@ module.exports = {
         .populate({
           path: "expertId",
           populate: { path: "userId practiceArea" },
-        }).skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));;
+        })
+        .skip(parseInt((page - 1) * limit))
+        .limit(parseInt(limit));
 
       universalFunctions.sendSuccess(
         {
@@ -324,12 +353,13 @@ module.exports = {
           message: "All top experts ",
           data: {
             list: upcomingAppointmentData,
-            currentPage:page,
-            total:await appointmentModel
-            .find({
-              userId: userId,
-              status: APP_CONSTANTS.appointmentStatus.confirmed,
-            }).countDocuments()
+            currentPage: page,
+            total: await appointmentModel
+              .find({
+                userId: userId,
+                status: APP_CONSTANTS.appointmentStatus.confirmed,
+              })
+              .countDocuments(),
           },
         },
         res
@@ -341,13 +371,13 @@ module.exports = {
   getAllExpertData: async (req, res) => {
     try {
       const schema = Joi.object({
-        limit:Joi.number(),
-        page:Joi.number(),
+        limit: Joi.number(),
+        page: Joi.number(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-      let page=req.body.page;
-      let limit=req.body.limit;
+      let page = req.body.page;
+      let limit = req.body.limit;
 
       let allExportData = await expertUser
         .find({ isApprovedByAdmin: true })
@@ -357,8 +387,8 @@ module.exports = {
         .sort({ "rating.avgRating": -1 })
         .skip(parseInt((page - 1) * limit))
         .limit(parseInt(limit));
-//         let total=await expertUser.find({isApprovedByAdmin : true}).countDocuments();
-// console.log(total,"total galat kyu aara",total);
+      //         let total=await expertUser.find({isApprovedByAdmin : true}).countDocuments();
+      // console.log(total,"total galat kyu aara",total);
       if (!allExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
@@ -366,7 +396,13 @@ module.exports = {
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {list:allExportData,currentPage:page,total:await expertUser.find({ isApprovedByAdmin : true}).countDocuments()}
+          data: {
+            list: allExportData,
+            currentPage: page,
+            total: await expertUser
+              .find({ isApprovedByAdmin: true })
+              .countDocuments(),
+          },
         },
         res
       );
@@ -377,13 +413,13 @@ module.exports = {
   getActiveExportData: async (req, res) => {
     try {
       const schema = Joi.object({
-        limit:Joi.number(),
-        page:Joi.number(),
+        limit: Joi.number(),
+        page: Joi.number(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-      let page=req.body.page;
-      let limit=req.body.limit;
+      let page = req.body.page;
+      let limit = req.body.limit;
       let activeExportData = await expertUser
         .find({
           isApprovedByAdmin: true,
@@ -393,16 +429,26 @@ module.exports = {
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
-          .sort({ "rating.avgRating": -1 }).skip(parseInt((page - 1) * limit))
-          .limit(parseInt(limit));
-        if (!activeExportData) {
+        .sort({ "rating.avgRating": -1 })
+        .skip(parseInt((page - 1) * limit))
+        .limit(parseInt(limit));
+      if (!activeExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {list:activeExportData,currentPage:page,total:await expertUser.find({isApprovedByAdmin:true,status:APP_CONSTANTS.activityStatus.active}).countDocuments()}
+          data: {
+            list: activeExportData,
+            currentPage: page,
+            total: await expertUser
+              .find({
+                isApprovedByAdmin: true,
+                status: APP_CONSTANTS.activityStatus.active,
+              })
+              .countDocuments(),
+          },
         },
         res
       );
@@ -413,13 +459,13 @@ module.exports = {
   getAllOnlinePremiumExpertsData: async (req, res) => {
     try {
       const schema = Joi.object({
-        limit:Joi.number(),
-        page:Joi.number(),
+        limit: Joi.number(),
+        page: Joi.number(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-      let page=req.body.page;
-      let limit=req.body.limit;
+      let page = req.body.page;
+      let limit = req.body.limit;
       let activeExportData = await expertUser
         .find({
           isApprovedByAdmin: true,
@@ -439,7 +485,17 @@ module.exports = {
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {list:activeExportData,currentPage:req.body.page,total:await expertUser.find({isApprovedByAdmin:true,isSubscribed:true,status:APP_CONSTANTS.activityStatus.active}).countDocuments()},
+          data: {
+            list: activeExportData,
+            currentPage: req.body.page,
+            total: await expertUser
+              .find({
+                isApprovedByAdmin: true,
+                isSubscribed: true,
+                status: APP_CONSTANTS.activityStatus.active,
+              })
+              .countDocuments(),
+          },
         },
         res
       );
@@ -447,47 +503,51 @@ module.exports = {
       universalFunctions.sendError(error, res);
     }
   },
-  logoutUser:async(req,res)=>{
-try{ 
-    const token = req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
-    if (token) {
-      const decoded =  jwt.verify(token, Config.jwtsecret);
-      let user=await User.findOne({_id:decoded.user_id});
-      if(!user)
-      {
-        throw Boom.badRequest(responseMessages.INVALID_TOKEN);
+  logoutUser: async (req, res) => {
+    try {
+      const token =
+        req.headers["x-access-token"] ||
+        req.query["x-access-token"] ||
+        req.headers["authorization"];
+      if (token) {
+        const decoded = jwt.verify(token, Config.jwtsecret);
+        let user = await User.findOne({ _id: decoded.user_id });
+        if (!user) {
+          throw Boom.badRequest(responseMessages.INVALID_TOKEN);
+        }
+        let deviceToken = decoded.deviceToken;
+        // console.log(deviceToken,"deviceToken")
+        let newToken = user.token;
+        const filteredToken = newToken.filter(
+          (obj) => obj.deviceToken !== deviceToken
+        );
+        // console.log(newToken,"tokeneee")
+        // console.log(filteredToken,"filteredToken");
+        let finalUser = await User.findByIdAndUpdate(
+          { _id: user._id },
+          { token: filteredToken }
+        );
+        let updatedUser = await User.findOne({ _id: finalUser._id }).populate(
+          "userData.data"
+        );
+        if (!updatedUser) {
+          throw Boom.badRequest(responseMessages.INVALID_TOKEN);
+        }
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: responseMessages.SUCCESS,
+            data: { user: updatedUser },
+          },
+          res
+        );
+      } else {
+        throw Boom.badRequest(responseMessages.TOKEN_NOT_PROVIDED);
       }
-      let deviceToken=decoded.deviceToken
-      // console.log(deviceToken,"deviceToken")
-      let newToken=user.token;
-      const filteredToken=newToken.filter((obj)=>obj.deviceToken !==deviceToken)
-      // console.log(newToken,"tokeneee")
-      // console.log(filteredToken,"filteredToken");
-      let finalUser=await User.findByIdAndUpdate({_id:user._id},{token:filteredToken})
-      let updatedUser=await User.findOne({_id:finalUser._id}).populate('userData.data')
-      if(!updatedUser)
-      {
-        throw Boom.badRequest(responseMessages.INVALID_TOKEN);
-      }
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: responseMessages.SUCCESS,
-          data: {user:updatedUser},
-        },
-        res
-      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
     }
-    else {
-      throw Boom.badRequest(responseMessages.TOKEN_NOT_PROVIDED);
-    }
-} 
-catch(error)
-{
-  universalFunctions.sendError(error,res);
-}  
   },
-
 
   getFilteredExperts: async (req, res) => {
     try {
@@ -629,7 +689,6 @@ catch(error)
           .find({ isApprovedByAdmin: true })
           .countDocuments();
       }
-     
 
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
@@ -645,8 +704,8 @@ catch(error)
           message: "All experts online and filtered are",
           data: {
             list: expert,
-            currentPage:req.body.page,
-            total:total
+            currentPage: req.body.page,
+            total: total,
           },
         },
         res
@@ -655,50 +714,88 @@ catch(error)
       universalFunctions.sendError(error, res);
     }
   },
-  updateProfileUser:async (req,res)=>{
-    try{
-    console.log("sssssss")
-  const schema = Joi.object({
-    firstName: Joi.string().alphanum().min(2).max(30).required(),
-    lastName: Joi.string().alphanum().min(2).max(30).required(),
-    email: Joi.string().email({
-      minDomainSegments: 2,
-      tlds: { allow: ["com", "net"] },
-    }),
-    mobileNo: Joi.string().min(10).max(10).required(),
-    profilePic: Joi.string().allow(""),
-    // firebaseUid:Joi.string(),
-    // otp: Joi.string(),
-    // .allow("")
-  });
-  await universalFunctions.validateRequestPayload(req.body, res, schema);
-  let payload=req.body;
-  console.log(payload,"payload")
-  let userId=req.user.id;
-  console.log('userId',userId);
-  let user=await User.findByIdAndUpdate({_id:userId},{...payload}
-    , {new:true}
-    );
-  console.log(user,"updatedUser")
-  if(!user){
-    throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
-  }
+  updateProfileUser: async (req, res) => {
+    try {
+      console.log("sssssss");
+      const schema = Joi.object({
+        firstName: Joi.string().alphanum().min(2).max(30).required(),
+        lastName: Joi.string().alphanum().min(2).max(30).required(),
+        email: Joi.string().email({
+          minDomainSegments: 2,
+          tlds: { allow: ["com", "net"] },
+        }),
+        mobileNo: Joi.string().min(10).max(10).required(),
+        profilePic: Joi.string().allow(""),
+        // firebaseUid:Joi.string(),
+        // otp: Joi.string(),
+        // .allow("")
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+      console.log(payload, "payload");
+      let userId = req.user.id;
+      console.log("userId", userId);
+      let user = await User.findByIdAndUpdate(
+        { _id: userId },
+        { ...payload },
+        { new: true }
+      );
+      console.log(user, "updatedUser");
+      if (!user) {
+        throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
+      }
 
-  universalFunctions.sendSuccess(
-    {
-      statusCode: 200,
-      message: "updated User",
-      data: {
-        user
-      },
-    },
-    res
-  );
-  }
-  catch(error)
-  {
-    universalFunctions.sendError(error,res);
-  }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "updated User",
+          data: {
+            user,
+          },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  getAppointmentDetails: async (req, res) => {
+    try {
+      let userId = req.user.id;
+      const schema = Joi.object({
+        limit: Joi.number(),
+        page: Joi.number(),
+      });
+      await universalFunctions.validateRequestPayload(req.query, res, schema);
 
- }
+      let appointmentData = await appointment
+        .find({
+          userId: userId,
+          // status: APP_CONSTANTS.appointmentStatus.completed,
+        })
+        .populate("userId")
+        .populate({
+          path: "expertId",
+          populate: { path: "userId practiceArea" },
+        })
+        .skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
+
+      if (!appointmentData) {
+        if (!expert) {
+          throw Boom.badRequest("Appointment Data Not Found");
+        }
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: appointmentData,
+        },
+        res
+      );
+    } catch (error) {
+      return universalFunctions.sendError(error, res);
+    }
+  },
 };

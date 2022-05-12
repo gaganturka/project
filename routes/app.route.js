@@ -18,7 +18,14 @@ router
   .get(checkAuth, appCreation.logoutUser);
   router.route("/getAllOnlinePremiumExpertsData").post(checkAuth, appCreation.getAllOnlinePremiumExpertsData);
   router.route("/getAllFilteredExperts").post(checkAuth,appCreation.getFilteredExperts);
-  router.route("/updateProfileUser").post(checkAuth,appCreation.updateProfileUser);
+router
+  .route("/updateProfileUser")
+  .post(checkAuth, appCreation.updateProfileUser);
+router
+  .route("/getAppointmentDetail")
+  .get(checkAuth, appCreation.getAppointmentDetails);
+
+  
 
 
 
