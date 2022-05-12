@@ -583,7 +583,6 @@ catch(error)
             practiceArea: req.body.practiceArea,
             category: req.body.category,
             isApprovedByAdmin: true,
-            // filter,
             // status: APP_CONSTANTS.activityStatus.active,
           })
           .populate("practiceArea")
