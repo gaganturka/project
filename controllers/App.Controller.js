@@ -141,7 +141,9 @@ module.exports = {
       
       console.log(user);
       // console.log(res.json, "jwttoken");
-let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
+      let finalUser = await User.findOne({ _id: user._id }).populate(
+        "userData.data"
+      );
       // const token = jwt.sign(
       //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
       //   Config.jwtsecret
@@ -597,8 +599,7 @@ catch(error)
             isApprovedByAdmin: true,
           })
           .countDocuments();
-      } else {
-        console.log("this is else condtion", filter);
+      } else if (req.body.search) {
         expert = await expertUser
           .find({
             isApprovedByAdmin: true,
@@ -606,7 +607,22 @@ catch(error)
           })
           .populate("practiceArea")
           .populate("category")
-          .populate({ path: "userId", match:  filter  })
+          .populate({ path: "userId", match: filter })
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+        total = await expertUser
+          .find({ isApprovedByAdmin: true })
+          .countDocuments();
+      } else {
+        expert = await expertUser
+          .find({
+            isApprovedByAdmin: true,
+            // status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate("userId")
           .sort({ "rating.avgRating": -1 })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit));
