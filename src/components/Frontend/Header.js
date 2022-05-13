@@ -127,7 +127,7 @@ const Header = () => {
         const credential = FacebookAuthProvider.credentialFromResult(result);
         const accessToken = credential.accessToken;
         console.log("firebasefacebookcredentials", credential);
-        responseFacebook(user);
+        // responseFacebook(user);
         // ...
       })
       .catch((error) => {
@@ -548,50 +548,7 @@ const Header = () => {
     // resetModal();
     // setTimeout(() =>{resetModal();},1000)
   };
-  const generateOtpExpert = async () => {
-    if (!expertcredential.mobileNo) {
-      alert("fill");
-    }
-    const response = await fetch(`${config.BACKEND_URL}/admin/generateotp`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-
-      },
-      body: JSON.stringify({
-        mobileNo: expertcredential.mobileNo,
-      }),
-    });
-    const json = await response.json();
-  };
-  const generateOtpUser = async () => {
-    const response = await fetch(`${config.BACKEND_URL}/admin/generateotp`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        mobileNo: usercredential.mobileNo,
-      }),
-    });
-    const json = await response.json();
-  };
-  const otpFinder = async () => {
-    const response = await fetch(
-      `${config.BACKEND_URL}/admin/otpsendertofrontend`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-
-        },
-        body: JSON.stringify({
-          mobileNo: logincredential.mobileNo,
-        }),
-      }
-    );
-    const json = await response.json();
-  };
+  
   const profileViewer = () => {
     if (flagUser) {
       history("/userdashboard");
