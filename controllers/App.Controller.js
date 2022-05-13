@@ -4,6 +4,7 @@ const expertUser = require("../models/Expert_User");
 const appointmentModel = require("../models/Appointment");
 const expertTimeAvailable = require("../models/ExpertTimeSlot");
 const category = require("../models/Categories");
+const appointment = require("../models/Appointment");
 const practiceModel = require("../models/Practice_Area");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -22,6 +23,7 @@ const { Config } = require("../config");
 
 const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
+const { join } = require("lodash");
 // import universalFunctions from "../utils/universalFunctions";
 
 module.exports = {
@@ -29,27 +31,40 @@ module.exports = {
     try {
       const schema = Joi.object({
         mobileNo: Joi.string().min(10).max(10).required(),
-        deviceType:Joi.string(),
-        deviceToken:Joi.string().allow(""),
-        firebaseUid:Joi.string(),
-      
+        deviceType: Joi.string(),
+        deviceToken: Joi.string().allow(""),
+        firebaseUid: Joi.string(),
+
         // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      const user = await User.findOne({ mobileNo: req.body.mobileNo }).populate('userData.data');
+      const user = await User.findOne({ mobileNo: req.body.mobileNo }).populate(
+        "userData.data"
+      );
       if (!user) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
-      const newToken=[...user.token,{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}];
-     let finalUser= await User.findByIdAndUpdate({_id:user._id},{token:newToken,mobileFirebaseUid:req.body.firebaseUid})
-     let updatedUser=await User.findOne({_id:finalUser._id}).populate('userData.data')
-      const token = await jwtFunction.jwtGeneratorApp(user._id,req.body.deviceType,req.body.deviceToken);
+      const newToken = [
+        ...user.token,
+        { deviceType: req.body.deviceType, deviceToken: req.body.deviceToken },
+      ];
+      let finalUser = await User.findByIdAndUpdate(
+        { _id: user._id },
+        { token: newToken, mobileFirebaseUid: req.body.firebaseUid }
+      );
+      let updatedUser = await User.findOne({ _id: finalUser._id }).populate(
+        "userData.data"
+      );
+      const token = await jwtFunction.jwtGeneratorApp(
+        user._id,
+        req.body.deviceType,
+        req.body.deviceToken
+      );
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {token,
-            user:updatedUser}
+          data: { token, user: updatedUser },
         },
         res
       );
@@ -69,10 +84,10 @@ module.exports = {
         }),
         mobileNo: Joi.string().min(10).max(10).required(),
         profilePic: Joi.string().allow(""),
-        deviceType:Joi.string(),
-        deviceToken:Joi.string().allow(""),
-        firebaseUid:Joi.string(),
-      
+        deviceType: Joi.string(),
+        deviceToken: Joi.string().allow(""),
+        firebaseUid: Joi.string(),
+
         // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
@@ -86,24 +101,34 @@ module.exports = {
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
         if (user.role === APP_CONSTANTS.role.borhanuser) {
-        throw Boom.badRequest(responseMessages.USER_EXISTS);
+          throw Boom.badRequest(responseMessages.USER_EXISTS);
         } else {
-         
           let borhanuser = await borhanUser.create({
             isSubscribed: false,
             balance: 0,
             userId: user._id,
           });
-          let newToken=[...user.token,{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}]
-         let finalUser= await User.findByIdAndUpdate({_id:user._id},{token:newToken,mobileFirebaseUid:req.body.firebaseUid}).populate('userData.data');
-         const token=await jwtFunction.jwtGeneratorApp(user._id,req.body.deviceType,req.body.deviceToken);
+          let newToken = [
+            ...user.token,
+            {
+              deviceType: req.body.deviceType,
+              deviceToken: req.body.deviceToken,
+            },
+          ];
+          let finalUser = await User.findByIdAndUpdate(
+            { _id: user._id },
+            { token: newToken, mobileFirebaseUid: req.body.firebaseUid }
+          ).populate("userData.data");
+          const token = await jwtFunction.jwtGeneratorApp(
+            user._id,
+            req.body.deviceType,
+            req.body.deviceToken
+          );
           universalFunctions.sendSuccess(
             {
               statusCode: 200,
               message: "User created",
-              data: {token:token,
-                user:finalUser
-              },
+              data: { token: token, user: finalUser },
             },
             res
           );
@@ -129,37 +154,43 @@ module.exports = {
           model: APP_CONSTANTS.role.borhanuser,
           data: borhanuser._id,
         },
-        token:[{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}],
-        mobileFirebaseUid:req.body.firebaseUid
-
+        token: [
+          {
+            deviceType: req.body.deviceType,
+            deviceToken: req.body.deviceToken,
+          },
+        ],
+        mobileFirebaseUid: req.body.firebaseUid,
       });
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
       // const finalUser=await User.findOne({_id:user._id})
       // let newToken=[...user.token,]
       // let finalUser= await User.findByIdAndUpdate({_id:user._id},{token:newToken,mobileFirebaseUid:firebaseUid}).populate('userData.data');
-      
+
       console.log(user);
       // console.log(res.json, "jwttoken");
-let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
+      let finalUser = await User.findOne({ _id: user._id }).populate(
+        "userData.data"
+      );
       // const token = jwt.sign(
       //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
       //   Config.jwtsecret
       // );
-      const token = await jwtFunction.jwtGeneratorApp(user._id
-        ,req.body.deviceType,req.body.deviceToken
-        );
+      const token = await jwtFunction.jwtGeneratorApp(
+        user._id,
+        req.body.deviceType,
+        req.body.deviceToken
+      );
 
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.USER_CREATED,
-          data: {token,
-            user:finalUser}
+          data: { token, user: finalUser },
         },
         res
-        );
-    } 
-    catch (error) {
+      );
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
@@ -178,21 +209,22 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         .populate("category")
         .populate("userId")
         .sort({ "rating.avgRating": -1 });
-
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
+      let expertData = JSON.parse(JSON.stringify(expert));
 
-      // console.log(
-      //   "expert top are",
-      //   expert,
-      //   "top expert "
-      // );
-
+      expertData.map((ele) => {
+        delete ele.__v;
+        delete ele.category.__v;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+      });
       let topOnlineExperts = await expertUser
         .find({
           isApprovedByAdmin: true,
-          // isSubscribed: true,
           status: APP_CONSTANTS.activityStatus.active,
         })
         .populate("practiceArea")
@@ -203,7 +235,15 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
       if (!topOnlineExperts) {
         throw Boom.badRequest("cannot find any online expert");
       }
-
+      let topOnlineExpertsData = JSON.parse(JSON.stringify(topOnlineExperts));
+      topOnlineExpertsData.map((ele) => {
+        delete ele.__v;
+        delete ele.category.__v;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+      });
       let topOnlinePremiumExperts = await expertUser
         .find({
           isApprovedByAdmin: true,
@@ -218,6 +258,17 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
       if (!topOnlinePremiumExperts) {
         throw Boom.badRequest("cannot find any premium online expert");
       }
+      let topOnlinePremiumExpertsData = JSON.parse(
+        JSON.stringify(topOnlinePremiumExperts)
+      );
+      topOnlinePremiumExpertsData.map((ele) => {
+        delete ele.__v;
+        delete ele.category.__v;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+      });
 
       let categoryData = await category.find();
       if (!categoryData) {
@@ -229,7 +280,7 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
       }
       let userId = req.user.id;
 
-      let upcomingAppointmentData = await appointmentModel
+      let upcomingAppointmentDatas = await appointmentModel
         .find({
           userId: userId,
           status: APP_CONSTANTS.appointmentStatus.confirmed,
@@ -241,16 +292,36 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         })
         .populate("expertId.userId")
         .limit(parseInt(5));
-
+      if (!upcomingAppointmentDatas) {
+        throw Boom.badRequest(responseMessages.APPOINTMENT_DATA_NOT_FOUND);
+      }
+       let upcomingAppointmentData = JSON.parse(
+         JSON.stringify(upcomingAppointmentDatas)
+       );
+       upcomingAppointmentData.map((ele) => {
+         delete ele.__v;
+         if (ele && ele.userId) {
+           delete ele.userId.isEmailVerified;
+           delete ele.userId.password;
+           delete ele.userId.__v;
+           delete ele.userId.userData;
+         }
+         if (ele && ele.expertId && ele.expertId.userId) {
+           delete ele.expertId.userId.isEmailVerified;
+           delete ele.expertId.userId.password;
+           delete ele.expertId.userId.__v;
+           delete ele.expertId.userId.userData;
+         }
+       });
       let topExpertsList = [],
         topOnlineExpertsList = [],
         topOnlinePremiumExpertsList = [];
 
       let i;
       for (i = 0; i < 5; i++) {
-        topExpertsList.push(expert[i]);
-        topOnlineExpertsList.push(topOnlineExperts[i]);
-        topOnlinePremiumExpertsList.push(topOnlinePremiumExperts[i]);
+        topExpertsList.push(expertData[i]);
+        topOnlineExpertsList.push(topOnlineExpertsData[i]);
+        topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
       }
 
       universalFunctions.sendSuccess(
@@ -293,7 +364,15 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
   },
   getAllUpcomingAppointments: async (req, res) => {
     try {
+      const schema = Joi.object({
+        limit: Joi.number(),
+        page: Joi.number(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
       let userId = req.user.id;
+
+      let page = req.body.page;
+      let limit = req.body.limit;
 
       let upcomingAppointmentData = await appointmentModel
         .find({
@@ -304,14 +383,44 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         .populate({
           path: "expertId",
           populate: { path: "userId practiceArea" },
-        });
+        })
+        .skip(parseInt((page - 1) * limit))
+        .limit(parseInt(limit));
+      if (!upcomingAppointmentData) {
+        throw Boom.badRequest("Appointment Data Not Found");
+      }
+      let getAllUpcomingAppointmentData = JSON.parse(
+        JSON.stringify(upcomingAppointmentData)
+      );
+      getAllUpcomingAppointmentData.map((ele) => {
+        delete ele.__v;
+        if (ele && ele.userId) {
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
+        }
+        if (ele && ele.expertId && ele.expertId.userId) {
+          delete ele.expertId.userId.isEmailVerified;
+          delete ele.expertId.userId.password;
+          delete ele.expertId.userId.__v;
+          delete ele.expertId.userId.userData;
+        }
+      });
 
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "All top experts ",
           data: {
-            upcomingAppointmentList: upcomingAppointmentData,
+            list: getAllUpcomingAppointmentData,
+            currentPage: page,
+            total: await appointmentModel
+              .find({
+                userId: userId,
+                status: APP_CONSTANTS.appointmentStatus.confirmed,
+              })
+              .countDocuments(),
           },
         },
         res
@@ -322,22 +431,47 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
   },
   getAllExpertData: async (req, res) => {
     try {
+      const schema = Joi.object({
+        limit: Joi.number(),
+        page: Joi.number(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let page = req.body.page;
+      let limit = req.body.limit;
+
       let allExportData = await expertUser
         .find({ isApprovedByAdmin: true })
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
-        .sort({ "rating.avgRating": -1 }).skip(parseInt((req.query.page - 1) * req.query.limit))
-        .limit(parseInt(req.query.limit));
-
+        .sort({ "rating.avgRating": -1 })
+        .skip(parseInt((page - 1) * limit))
+        .limit(parseInt(limit));
       if (!allExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
+      let getAllExportData = JSON.parse(JSON.stringify(allExportData));
+
+      getAllExportData.map((ele) => {
+        delete ele.__v;
+        delete ele.category.__v;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+      });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {expertList:allExportData,currentPage:req.query.page}
+          data: {
+            list: getAllExportData,
+            currentPage: page,
+            total: await expertUser
+              .find({ isApprovedByAdmin: true })
+              .countDocuments(),
+          },
         },
         res
       );
@@ -347,6 +481,14 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
   },
   getActiveExportData: async (req, res) => {
     try {
+      const schema = Joi.object({
+        limit: Joi.number(),
+        page: Joi.number(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let page = req.body.page;
+      let limit = req.body.limit;
       let activeExportData = await expertUser
         .find({
           isApprovedByAdmin: true,
@@ -356,27 +498,53 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
-          .sort({ "rating.avgRating": -1 }).skip(parseInt((req.query.page - 1) * req.query.limit))
-          .limit(parseInt(req.query.limit));
-        if (!activeExportData) {
+        .sort({ "rating.avgRating": -1 })
+        .skip(parseInt((page - 1) * limit))
+        .limit(parseInt(limit));
+      if (!activeExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: responseMessages.SUCCESS,
-          data: {onlineExperts:activeExportData,currentPage:req.query.page}
-        },
-        res
-      );
+       let getActiveExportData = JSON.parse(JSON.stringify(activeExportData));
+
+       getActiveExportData.map((ele) => {
+         delete ele.__v;
+         delete ele.category.__v;
+         delete ele.userId.isEmailVerified;
+         delete ele.userId.password;
+         delete ele.userId.__v;
+         delete ele.userId.userData;
+       });
+       universalFunctions.sendSuccess(
+         {
+           statusCode: 200,
+           message: responseMessages.SUCCESS,
+           data: {
+             list: getActiveExportData,
+             currentPage: page,
+             total: await expertUser
+               .find({
+                 isApprovedByAdmin: true,
+                 status: APP_CONSTANTS.activityStatus.active,
+               })
+               .countDocuments(),
+           },
+         },
+         res
+       );
     } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
   getAllOnlinePremiumExpertsData: async (req, res) => {
     try {
-      let page=req.query.page;
-      let limit=req.query.limit
+      const schema = Joi.object({
+        limit: Joi.number(),
+        page: Joi.number(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let page = req.body.page;
+      let limit = req.body.limit;
       let activeExportData = await expertUser
         .find({
           isApprovedByAdmin: true,
@@ -392,11 +560,33 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
       if (!activeExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
+      let getActiveExportData = JSON.parse(JSON.stringify(activeExportData));
+
+      getActiveExportData.map((ele) => {
+        delete ele.__v;
+        delete ele.category.__v;
+        if (ele && ele.userId && ele.userId != null) {
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
+        }
+      });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: {onlineExperts:activeExportData,currentPage:req.query.page},
+          data: {
+            list: getActiveExportData,
+            currentPage: req.body.page,
+            total: await expertUser
+              .find({
+                isApprovedByAdmin: true,
+                isSubscribed: true,
+                status: APP_CONSTANTS.activityStatus.active,
+              })
+              .countDocuments(),
+          },
         },
         res
       );
@@ -404,54 +594,60 @@ let finalUser=await User.findOne({_id:user._id}).populate('userData.data')
       universalFunctions.sendError(error, res);
     }
   },
-  logoutUser:async(req,res)=>{
-try{ 
-    const token = req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
-    if (token) {
-      const decoded =  jwt.verify(token, Config.jwtsecret);
-      let user=await User.findOne({_id:decoded.user_id});
-      if(!user)
-      {
-        throw Boom.badRequest(responseMessages.INVALID_TOKEN);
+  logoutUser: async (req, res) => {
+    try {
+      const token =
+        req.headers["x-access-token"] ||
+        req.query["x-access-token"] ||
+        req.headers["authorization"];
+      if (token) {
+        const decoded = jwt.verify(token, Config.jwtsecret);
+        let user = await User.findOne({ _id: decoded.user_id });
+        if (!user) {
+          throw Boom.badRequest(responseMessages.INVALID_TOKEN);
+        }
+        let deviceToken = decoded.deviceToken;
+        // console.log(deviceToken,"deviceToken")
+        let newToken = user.token;
+        const filteredToken = newToken.filter(
+          (obj) => obj.deviceToken !== deviceToken
+        );
+        // console.log(newToken,"tokeneee")
+        // console.log(filteredToken,"filteredToken");
+        let finalUser = await User.findByIdAndUpdate(
+          { _id: user._id },
+          { token: filteredToken }
+        );
+        let updatedUser = await User.findOne({ _id: finalUser._id }).populate(
+          "userData.data"
+        );
+        if (!updatedUser) {
+          throw Boom.badRequest(responseMessages.INVALID_TOKEN);
+        }
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: responseMessages.SUCCESS,
+            data: { user: updatedUser },
+          },
+          res
+        );
+      } else {
+        throw Boom.badRequest(responseMessages.TOKEN_NOT_PROVIDED);
       }
-      let deviceToken=decoded.deviceToken
-      // console.log(deviceToken,"deviceToken")
-      let newToken=user.token;
-      const filteredToken=newToken.filter((obj)=>obj.deviceToken !==deviceToken)
-      // console.log(newToken,"tokeneee")
-      // console.log(filteredToken,"filteredToken");
-      let finalUser=await User.findByIdAndUpdate({_id:user._id},{token:filteredToken})
-      let updatedUser=await User.findOne({_id:finalUser._id}).populate('userData.data')
-      if(!updatedUser)
-      {
-        throw Boom.badRequest(responseMessages.INVALID_TOKEN);
-      }
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: responseMessages.SUCCESS,
-          data: {user:updatedUser},
-        },
-        res
-      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
     }
-    else {
-      throw Boom.badRequest(responseMessages.TOKEN_NOT_PROVIDED);
-    }
-} 
-catch(error)
-{
-  universalFunctions.sendError(error,res);
-}  
   },
-
 
   getFilteredExperts: async (req, res) => {
     try {
       const schema = Joi.object({
         category: Joi.string().allow(""),
         practiceArea: Joi.string().allow(""),
-      
+        limit: Joi.number(),
+        page: Joi.number(),
+        search: Joi.string().allow(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
@@ -478,83 +674,137 @@ catch(error)
       //     .skip(parseInt((req.body.page - 1) * req.body.limit))
       // .limit(parseInt(req.body.limit));
       let aggregationQuery;
-      let expert;
-        if (req.body.category !== "" && req.body.practiceArea === "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          expert = await expertUser
-            .find({
-              category: req.body.category,
-              isApprovedByAdmin: true,
-              // status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.query.page - 1) * req.query.limit))
-        .limit(parseInt(req.query.limit));
-        } else if (req.body.category === "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          expert = await expertUser
-            .find({
-              practiceArea: req.body.practiceArea,
-              isApprovedByAdmin: true,
-              // status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.query.page - 1) * req.query.limit))
-        .limit(parseInt(req.query.limit));
-        } else if (req.body.category !== "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          expert = await expertUser
-            .find({
-              practiceArea: req.body.practiceArea,
-              category: req.body.category,
-              isApprovedByAdmin: true,
-              // status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.query.page - 1) * req.query.limit))
-        .limit(parseInt(req.query.limit));
-        } else {
-          expert = await expertUser
-            .find({
-              isApprovedByAdmin: true,
-              // status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.query.page - 1) * req.query.limit))
-        .limit(parseInt(req.query.limit));
-        }
-     
+      let filter = {};
+      if (req.body.search) {
+        // filter["$or"]= [ {$text: { $search: text}}];
+        filter["$or"] = [
+          { firstName: { $regex: req.body.search, $options: "i" } },
+          { lastName: { $regex: req.body.search, $options: "i" } },
+        ];
+      }
+      let expert, total;
+      if (req.body.category !== "" && req.body.practiceArea === "") {
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        // console.log("this is else conditiob")
+        expert = await expertUser
+          .find({
+            category: req.body.category,
+            isApprovedByAdmin: true,
+            // filter,
+            // status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate("userId")
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+        total = await expertUser
+          .find({ category: req.body.category, isApprovedByAdmin: true })
+          .countDocuments();
+      } else if (req.body.category === "" && req.body.practiceArea !== "") {
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        expert = await expertUser
+          .find({
+            practiceArea: req.body.practiceArea,
+            isApprovedByAdmin: true,
+            // filter,
+            // status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate("userId")
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+
+        total = await expertUser
+          .find({
+            practiceArea: req.body.practiceArea,
+            isApprovedByAdmin: true,
+          })
+          .countDocuments();
+      } else if (req.body.category !== "" && req.body.practiceArea !== "") {
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+        expert = await expertUser
+          .find({
+            practiceArea: req.body.practiceArea,
+            category: req.body.category,
+            isApprovedByAdmin: true,
+            // status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate("userId")
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+        total = await expertUser
+          .find({
+            category: req.body.category,
+            practiceArea: req.body.practiceArea,
+            isApprovedByAdmin: true,
+          })
+          .countDocuments();
+      } else if (req.body.search) {
+        expert = await expertUser
+          .find({
+            isApprovedByAdmin: true,
+            // status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate({ path: "userId", match: filter })
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+        total = await expertUser
+          .find({ isApprovedByAdmin: true })
+          .countDocuments();
+      } else {
+        expert = await expertUser
+          .find({
+            isApprovedByAdmin: true,
+            // status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate("userId")
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+        total = await expertUser
+          .find({ isApprovedByAdmin: true })
+          .countDocuments();
+      }
 
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
-      console.log(
-        "expert online filtered are",
-        expert,
-        "expert online filtered"
-      );
+      let expertData = JSON.parse(JSON.stringify(expert));
+
+      expertData.map((ele) => {
+        if (ele && ele.userId &&  ele.userId != null) {
+          delete ele.__v;
+          delete ele.category.__v;
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
+        }
+      });
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "All experts online and filtered are",
           data: {
-            list: expert,
-            currentPage:req.query.page,
+            list: expertData,
+            currentPage: req.body.page,
+            total: total,
           },
         },
         res
@@ -563,5 +813,86 @@ catch(error)
       universalFunctions.sendError(error, res);
     }
   },
- 
+  updateProfileUser: async (req, res) => {
+    try {
+      console.log("sssssss");
+      const schema = Joi.object({
+        firstName: Joi.string().alphanum().min(2).max(30).required(),
+        lastName: Joi.string().alphanum().min(2).max(30).required(),
+        email: Joi.string().email({
+          minDomainSegments: 2,
+          tlds: { allow: ["com", "net"] },
+        }),
+        mobileNo: Joi.string().min(10).max(10).required(),
+        profilePic: Joi.string().allow(""),
+        // firebaseUid:Joi.string(),
+        // otp: Joi.string(),
+        // .allow("")
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+      console.log(payload, "payload");
+      let userId = req.user.id;
+      console.log("userId", userId);
+      let user = await User.findByIdAndUpdate(
+        { _id: userId },
+        { ...payload },
+        { new: true }
+      );
+      console.log(user, "updatedUser");
+      if (!user) {
+        throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
+      }
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "updated User",
+          data: {
+            user,
+          },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  getAppointmentDetails: async (req, res) => {
+    try {
+      let userId = req.user.id;
+      const schema = Joi.object({
+        limit: Joi.number(),
+        page: Joi.number(),
+      });
+      await universalFunctions.validateRequestPayload(req.query, res, schema);
+
+      let appointmentData = await appointment
+        .find({
+          userId: userId,
+          // status: APP_CONSTANTS.appointmentStatus.completed,
+        })
+        .populate("userId")
+        .populate({
+          path: "expertId",
+          populate: { path: "userId practiceArea" },
+        })
+        .skip(parseInt((req.query.page - 1) * req.query.limit))
+        .limit(parseInt(req.query.limit));
+
+      if (!appointmentData) {
+          throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: appointmentData,
+        },
+        res
+      );
+    } catch (error) {
+      return universalFunctions.sendError(error, res);
+    }
+  },
 };
