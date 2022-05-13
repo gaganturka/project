@@ -8,6 +8,11 @@ import 'react-calendar/dist/Calendar.css';
 import NewsletterSubscribed from './NewsletterSubscribed';
 import moment from "moment";
 import { isDisabled } from '@testing-library/user-event/dist/utils';
+import videopng from "../../img/video-call-icon.png";
+import audiopng from "../../img/audio-call-icon.png";
+import chatpng from "../../img/chat-icon.png";
+import appointmentAction from '../../actions/appointment.action';
+
 const ExpProfile = () => {
    // moment(currentTime).format("hh:mm"))
    const params = useParams();
@@ -17,10 +22,10 @@ const ExpProfile = () => {
    const [typeCall,setTypeCall]=useState(1);
    const [categorie,setCategorie]=useState("");
    const [practiceArea,setPracticeArea]=useState("");
-   const [Duration,setDuration]=useState("");
+   const [Duration,setDuration]=useState(null);
    const [question,SetQuestion]=useState("")
    const [startAppointmentTime,SetStartAppointmentTime]=useState(null)
-   const [appointmentTime,SetAppointmentTime]=useState("17:00:00")
+   const [appointmentTime,SetAppointmentTime]=useState("")
    const [timeList,setTimeList]=useState([]);
    const [endAppointmentTime,SetEndAppointmentTime]=useState(null)
    const [timeSlotId,setTimeSlotId]=useState("");
@@ -28,27 +33,42 @@ const ExpProfile = () => {
 
    
   const [appointmentType, setAppointmentType] = useState(null);
+  const scrollToTop = () => {
+   window.scrollTo({
+     top: 10,
+     behavior: "smooth",
+   });
+ };
   useEffect(() => {
-
+   
    fetchExpert();
+   scrollToTop();
    let date=new Date();
    date=moment(date).format('YYYY-MM-DD');
-   fetchTime(date)
+   SetDateSlot(date)
   },[]);
-  
+  useEffect(()=>{
+     fetchTime();
+  },[dateSlot,Duration])
  //moment().format('MMMM Do YYYY, h:mm:ss a');
- const setinterval=(e)=>{
+ const setinterval1=(e)=>{
 
      let start=  moment(e.startAppointmentTime).format('hh:mm');
      let end=  moment(e.endAppointmentTime).format('hh:mm');
-     console.log(start+"-"+end);
+   //   console.log(start+"-"+end);
      return start+"-"+end
  }
- const fetchTime=(e)=>{
+ const fetchTime=()=>{
+    console.log(Duration,dateSlot,"sdclkndcs")
    let id = params.id;
+
+   if(!Duration&&!dateSlot){
+      return ;
+   }
    let payload={
       expertId:id,
-      appointmentDate:e
+      appointmentDate:dateSlot,
+      duration:Duration
    }
    expextAction.getAvailableTimeForUser(payload,(err,res)=>{
       if(err){
@@ -67,7 +87,7 @@ const ExpProfile = () => {
       e=moment(e).format('YYYY-MM-DD');
       console.log(e,"date to selected")
       SetDateSlot(e);
-      fetchTime(e);
+      // fetchTime();
 
    }
    const onSelectTime=(start,end)=>{
@@ -81,14 +101,15 @@ const ExpProfile = () => {
       console.log(localdate,"here is ");
       console.log(moment(localdate),'locaDate')
       console.log(moment.utc(moment(localdate)).format(),'start time')
-      SetStartAppointmentTime(moment.utc(moment(localdate)).format());
+      SetStartAppointmentTime(start);
 
 
       let afterSomeMinutes =dateSlot+' '+end; 
-      console.log(afterSomeMinutes,"here is ");
+      console.log(afterSomeMinutes,end,"here is ");
       console.log(moment(afterSomeMinutes),'locaDate')
       console.log(moment.utc(moment(afterSomeMinutes)).format(),'end time')
-      SetEndAppointmentTime(moment.utc(moment(afterSomeMinutes)).format());
+      SetEndAppointmentTime(end);
+
       }
    }
    const fetchExpert=async ()=>{
@@ -114,10 +135,9 @@ const ExpProfile = () => {
       return
    }
    let dataToSend={
-      question:question,
       duration:Duration,
       timeSlotId:timeSlotId,
-      appointmentTime:appointmentTime,
+      appointmentTime:startAppointmentTime,
       appointmentDate:dateSlot,
       practiceArea:"625fef06f962a2761cd19e74",
       expertId:id,
@@ -132,19 +152,36 @@ expextAction.bookAnAppoitment(dataToSend,(err,res)=>{
    if(err){
 
    }else{
-      // 
-      console.log(res,"here is resoser in exprofile.js")
+      alert(" Successfull appointment ")
+      console.log(res,"here is resposnse in exprofile.js")
    }
 })
 
 
 }
-const handlemodal=(e)=>{
-    
-      setscheduleappointmentmodal(true)
+const handlemodal=()=>{
+   let id = params.id;
+   let playload={
+      expertId:id,
+      question:question
+   }
+   appointmentAction.bookChatAppointment(playload,(err,res)=>{
+      if(err){
 
+      }else{
+         alert("Successfull appointment call ")
+         console.log(res,"here is resposnse in exprofile.js")
+      }
+   })
 }
-
+const newHandle=()=>{
+   if(typeCall===3){
+      setbookappointmentmodal(true);
+      return
+   }else{
+      setscheduleappointmentmodal(true);
+   }
+}
 const handlemodal1=()=>{
    
    if(startAppointmentTime==null||dateSlot==null){
@@ -233,7 +270,7 @@ const handlemodal1=()=>{
                            </li>
                            <li>
                               <div className="exp-intro">
-                              <img src="./assets/img/volume-icon.png" className="img img-fluid" alt=""/>
+                              <img src={videopng} className="img img-fluid" alt=""/>
                                  </div>
                                  <div>
 
@@ -254,38 +291,38 @@ const handlemodal1=()=>{
                      <div className="exp-communicate-btn-row">
                      
                         <div><button className={`btn  ${
-                      typeCall == 1 ? "bg-success" : ""
+                      typeCall == 1 ? "bg-dark text-white" : ""
                     }`} type="button "  onClick={e=>{
                      e.preventDefault();
                      setTypeCall(1)
                   }}>
                        
                        
-                       <img src="./assets/img/video-call-icon.png" className="img img-fluid" alt=""/>
+                       <img src={videopng} className="img img-fluid" alt=""/>
                         Video Call</button>
                         </div>
-                    <div><button className={`btn  ${
-                      typeCall == 2 ? "bg-success" : ""
-                    }`} type="button" onClick={e=>{
+                        <div>
+                       <button className={`btn  ${typeCall == 2 ? "bg-dark text-white" : "" }`} type="button" onClick={e=>{
                      e.preventDefault();
                      setTypeCall(2)
                   }}>
                        
                        
-                       <img src="./assets/img/video-call-icon.png" className="img img-fluid" alt=""/> Audio Call</button></div>
-
-                        {/* <!-- <div><button className="btn" type="button"><img src="./img/chat-icon.png" className="img img-fluid" alt=""> Chat</button></div> --> */}
+                       <img src={audiopng} className="img img-fluid" alt=""/> Audio Call</button></div>
+                    <div>
+                       <button className={`btn  ${ typeCall == 3 ? "bg-dark text-white" : ""  }`} type="button" onClick={e=>{
+                          e.preventDefault();
+                         setTypeCall(3)
+                          }}>
+                       
+                       
+                       <img src={chatpng} className="img img-fluid" alt=""/> Chat</button></div>
                      </div>
                      <div className="continue-booking-btn">
-                        {/* <button data-bs-target="#bookAppointmentModal" data-bs-toggle="modal" className="btn" type="button"> Continue to Book Appointment </button> */}
-                         <button className="btn" onClick={(e)=>{
-                            e.preventDefault();
-                            setbookappointmentmodal(true)
+                         <button className="btn" onClick={(e)=>{ e.preventDefault(); newHandle();
                            }
                            }
-                             type="button" >Continue to Book Appointment
-                         
-                                                            </button>
+                             type="button" >Continue to Book Appointment  </button>
                      </div>
                      <div className="exp-wallet-amount">
                         <p>Burhan Wallet Amount - <a href="javascript:;">06 h 30 min remaining</a></p>
@@ -325,7 +362,7 @@ const handlemodal1=()=>{
            scheduleappointmentmodal
             } 
              toggle={()=>{
-                       setscheduleappointmentmodal(false);setbookappointmentmodal(false);}
+                       setscheduleappointmentmodal(false); setbookappointmentmodal(false);}
                       } >
                        <div className="modal-content">
                <div className="modal-body">
@@ -350,13 +387,29 @@ const handlemodal1=()=>{
                                                       onChange={e=>{
                                                          // e.preventDefault()
                                                          Datehandel(e);
-                                                                                                            }}/>
+                                              }}/>
                                              </div>
                                           </div>
                                        </div>
                                        <div className="col-lg-6">
+                                     
                                           <div className="book-app-box">
+
                                           <h1> Appointment Time</h1>
+                                          <div className="col-lg-6">
+                                             <div className="form-group">
+                                                {/* <label for="">Select call Duration time</label> */}
+                                                <select className="form-select " aria-label="example" onChange={e=>{
+                                                   console.log(e.target.value);
+                                                   setDuration(e.target.value);
+                                                }}>
+                                                   <option selected value={15}>15 Mintues</option>
+                                                   <option value={30}>30 Mintues</option>
+                                                   <option value={45}>45 Mintues</option>
+                                                   <option value={60}>60 Mintues</option>
+                                                </select>
+                                             </div>
+                                          </div>
                                              <div className="select-time-slot">
                                              
                                                 <img src="./assets/img/time-slot.png" className="img img-fluid" alt=""/>
@@ -371,10 +424,10 @@ const handlemodal1=()=>{
                                                             setTimeSlotId(e._id);
                                                             alert(e._id,"selected time id")
                                                          }}>
-                                                            {e.startAppointmentTime+"-"+e.endAppointmentTime}
+                                                            {setinterval1(e)}
                                                             </button>:
                                                             <button className="btn btn-white bg-white btn-appointment" disabled>
-                                                            {e.startAppointmentTime+"-"+e.endAppointmentTime}
+                                                            {setinterval1(e)}
                                                             </button>
                                                             }
                                                          </div>)
@@ -402,18 +455,17 @@ const handlemodal1=()=>{
                   </div>
                </div>
             </div>
-                                                            </Modal>
-                                                            <Modal
-                         className="authentication-modal modal-dialog modal-dialog-centered modal-xl"
-                                                              isOpen={
-                                                                 bookappointmentmodal
-                                                              }
-                                                              toggle={
-                                                                ()=>{setbookappointmentmodal(false)}
+          </Modal>
+              <Modal className="authentication-modal modal-dialog modal-dialog-centered modal-xl"
+                     isOpen={
+                            bookappointmentmodal
+                              }
+                              toggle={
+             ()=>{setbookappointmentmodal(false)}
                                                               }
                                                             >
-                                                            <ModalBody>
-                                                               <div className="modal-content">
+           <ModalBody>
+            <div className="modal-content">
                <div className="modal-body">
                   <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={()=>setbookappointmentmodal(false)}></button>
                   <div className="auth-modal-wrp">
@@ -421,7 +473,7 @@ const handlemodal1=()=>{
                         <div className="col-lg-12">
                            <div className="auth-modal-content">
                               <div className="w-100">
-                                 <div className="book-appointment-box">
+                                 {/* <div className="book-appointment-box">
                                     <h1>Book an Appointment</h1>
                                     <div className="book-app-box">
                                        <div className="row">
@@ -444,10 +496,10 @@ const handlemodal1=()=>{
                                                    console.log(e.target.value);
                                                    setDuration(e.target.value);
                                                 }}>
-                                                   <option selected value="30">30 Mintues</option>
-                                                   <option value="40">40 Mintues</option>
-                                                   <option value="50">50 Mintues</option>
-                                                   <option value="60">60 Mintues</option>
+                                                   <option selected value={15}>15 Mintues</option>
+                                                   <option value={30}>30 Mintues</option>
+                                                   <option value={45}>45 Mintues</option>
+                                                   <option value={60}>60 Mintues</option>
                                                 </select>
                                              </div>
                                           </div>
@@ -459,21 +511,11 @@ const handlemodal1=()=>{
                                           </div>
                                        </div>
                                     </div>
-                                 </div>
+                                 </div> */}
                                  <div className="book-appointment-box">
                                     <h1>Add your details</h1>
                                     <div className="book-app-box">
                                        <div className="row">
-                                          {/* <!-- <div className="col-lg-4">
-                                             <div className="form-group">
-                                                <input type="text" className="form-control" placeholder="Name"/>
-                                             </div>
-                                          </div>
-                                          <div className="col-lg-4">
-                                             <div className="form-group">
-                                                <input type="email" className="form-control" placeholder="Email"/>
-                                             </div>
-                                          </div> --> */}
                                           <div className="col-lg-12">
                                              <div className="form-group">
                                                 <input type="text" className="form-control" onChange={(e)=>{
@@ -490,8 +532,9 @@ const handlemodal1=()=>{
                                     <button className="btn"  onClick={(e)=>{
                                        e.preventDefault();
                                        handlemodal();
+                                       // fetchTime()
                                     }
-                                       } >Continue to Book Appointment
+                                       } >Request For Chat
                                     
                                    </button>
                                  </div>

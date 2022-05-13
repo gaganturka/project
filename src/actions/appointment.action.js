@@ -30,8 +30,48 @@ function getAppointments( payload,cb) {
                 if (typeof cb === 'function') return cb(error, res && res.body);
               });
             }
+            function bookChatAppointment( payload,cb) {
+              Agent
+                .fire('post', `${BACKEND_URL}/website/bookChatAppointment`)
+                .send(payload)
+                .end((err, res) => {
+                  var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
+                  if (typeof cb === 'function') return cb(error, res && res.body);
+                });
+              }
+              function getChatAppointment(payload,cb) {
+                Agent
+                  .fire('get', `${BACKEND_URL}/expert/getChatAppointment`)
+                  .query(payload)
+                  .end((err, res) => {
+                    var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
+                    if (typeof cb === 'function') return cb(error, res && res.body);
+                  });
+              }
+              function updateChatAppointment(payload,cb) {
+                Agent
+                  .fire('post', `${BACKEND_URL}/expert/updateChatAppointment`)
+                  .send(payload)
+                  .end((err, res) => {
+                    var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
+                    if (typeof cb === 'function') return cb(error, res && res.body);
+                  });
+              }
+              function getChatAppointmentById(payload,cb) {
+                Agent
+                  .fire('get', `${BACKEND_URL}/expert/getChatAppointmentById`)
+                  .query(payload)
+                  .end((err, res) => {
+                    var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
+                    if (typeof cb === 'function') return cb(error, res && res.body);
+                  });
+              }
+          
+              
 export default {
     getAppointments,
     rescheduleAppointment,
     cancelAppointment,
+    bookChatAppointment,
+    getChatAppointmentById
   }

@@ -19,6 +19,11 @@ import {AuthContext} from './context/AuthContext'
 import { useContext, useEffect } from 'react';
 import homeAction from './actions/home.action';
 import CategoryAndPracticeContextProvider from './context/CategoryAndPracticeContext';
+import Room from './components/Frontend/ChatRoom';
+import "./assets/css/main.css";
+import "./assets/css/responsive.css";
+import './assets/css/bootstrap.min.css';
+
 function App() {
   
     {/* <AuthContextProvider> */}
@@ -49,6 +54,8 @@ function App() {
         {  isLoggedIn=== false ?
                   <Routes>
               <Route exact path="/expertlisting" key="expertlisting"  element={<ExpListing/>} />
+             
+              <Route exact path="/room" key="room"  element={<Room/>} />
        
               <Route exact path="/" key="home" element={<Home/>} />
                 
@@ -69,6 +76,7 @@ function App() {
 
               :
               <Routes>
+                 <Route exact path="/room/:id" key="room"  element={<Room/>} />
               <Route exact path="/expertlisting" key="expertlisting"  element={<ExpListing/>} />
        
        <Route exact path="/" key="home" element={<Home/>} />
