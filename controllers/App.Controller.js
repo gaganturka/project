@@ -209,21 +209,22 @@ module.exports = {
         .populate("category")
         .populate("userId")
         .sort({ "rating.avgRating": -1 });
-
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
+      let expertData = JSON.parse(JSON.stringify(expert));
 
-      // console.log(
-      //   "expert top are",
-      //   expert,
-      //   "top expert "
-      // );
-
+      expertData.map((ele) => {
+        delete ele.__v;
+        delete ele.category.__v;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+      });
       let topOnlineExperts = await expertUser
         .find({
           isApprovedByAdmin: true,
-          // isSubscribed: true,
           status: APP_CONSTANTS.activityStatus.active,
         })
         .populate("practiceArea")
@@ -234,7 +235,15 @@ module.exports = {
       if (!topOnlineExperts) {
         throw Boom.badRequest("cannot find any online expert");
       }
-
+      let topOnlineExpertsData = JSON.parse(JSON.stringify(topOnlineExperts));
+      topOnlineExpertsData.map((ele) => {
+        delete ele.__v;
+        delete ele.category.__v;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+      });
       let topOnlinePremiumExperts = await expertUser
         .find({
           isApprovedByAdmin: true,
@@ -249,6 +258,17 @@ module.exports = {
       if (!topOnlinePremiumExperts) {
         throw Boom.badRequest("cannot find any premium online expert");
       }
+      let topOnlinePremiumExpertsData = JSON.parse(
+        JSON.stringify(topOnlinePremiumExperts)
+      );
+      topOnlinePremiumExpertsData.map((ele) => {
+        delete ele.__v;
+        delete ele.category.__v;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+      });
 
       let categoryData = await category.find();
       if (!categoryData) {
@@ -260,7 +280,7 @@ module.exports = {
       }
       let userId = req.user.id;
 
-      let upcomingAppointmentData = await appointmentModel
+      let upcomingAppointmentDatas = await appointmentModel
         .find({
           userId: userId,
           status: APP_CONSTANTS.appointmentStatus.confirmed,
@@ -272,16 +292,36 @@ module.exports = {
         })
         .populate("expertId.userId")
         .limit(parseInt(5));
-
+      if (!upcomingAppointmentDatas) {
+        throw Boom.badRequest(responseMessages.APPOINTMENT_DATA_NOT_FOUND);
+      }
+       let upcomingAppointmentData = JSON.parse(
+         JSON.stringify(upcomingAppointmentDatas)
+       );
+       upcomingAppointmentData.map((ele) => {
+         delete ele.__v;
+         if (ele && ele.userId) {
+           delete ele.userId.isEmailVerified;
+           delete ele.userId.password;
+           delete ele.userId.__v;
+           delete ele.userId.userData;
+         }
+         if (ele && ele.expertId && ele.expertId.userId) {
+           delete ele.expertId.userId.isEmailVerified;
+           delete ele.expertId.userId.password;
+           delete ele.expertId.userId.__v;
+           delete ele.expertId.userId.userData;
+         }
+       });
       let topExpertsList = [],
         topOnlineExpertsList = [],
         topOnlinePremiumExpertsList = [];
 
       let i;
       for (i = 0; i < 5; i++) {
-        topExpertsList.push(expert[i]);
-        topOnlineExpertsList.push(topOnlineExperts[i]);
-        topOnlinePremiumExpertsList.push(topOnlinePremiumExperts[i]);
+        topExpertsList.push(expertData[i]);
+        topOnlineExpertsList.push(topOnlineExpertsData[i]);
+        topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
       }
 
       universalFunctions.sendSuccess(
@@ -346,13 +386,34 @@ module.exports = {
         })
         .skip(parseInt((page - 1) * limit))
         .limit(parseInt(limit));
+      if (!upcomingAppointmentData) {
+        throw Boom.badRequest("Appointment Data Not Found");
+      }
+      let getAllUpcomingAppointmentData = JSON.parse(
+        JSON.stringify(upcomingAppointmentData)
+      );
+      getAllUpcomingAppointmentData.map((ele) => {
+        delete ele.__v;
+        if (ele && ele.userId) {
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
+        }
+        if (ele && ele.expertId && ele.expertId.userId) {
+          delete ele.expertId.userId.isEmailVerified;
+          delete ele.expertId.userId.password;
+          delete ele.expertId.userId.__v;
+          delete ele.expertId.userId.userData;
+        }
+      });
 
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "All top experts ",
           data: {
-            list: upcomingAppointmentData,
+            list: getAllUpcomingAppointmentData,
             currentPage: page,
             total: await appointmentModel
               .find({
@@ -387,17 +448,25 @@ module.exports = {
         .sort({ "rating.avgRating": -1 })
         .skip(parseInt((page - 1) * limit))
         .limit(parseInt(limit));
-      //         let total=await expertUser.find({isApprovedByAdmin : true}).countDocuments();
-      // console.log(total,"total galat kyu aara",total);
       if (!allExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
+      let getAllExportData = JSON.parse(JSON.stringify(allExportData));
+
+      getAllExportData.map((ele) => {
+        delete ele.__v;
+        delete ele.category.__v;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+      });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
           data: {
-            list: allExportData,
+            list: getAllExportData,
             currentPage: page,
             total: await expertUser
               .find({ isApprovedByAdmin: true })
@@ -435,23 +504,33 @@ module.exports = {
       if (!activeExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: responseMessages.SUCCESS,
-          data: {
-            list: activeExportData,
-            currentPage: page,
-            total: await expertUser
-              .find({
-                isApprovedByAdmin: true,
-                status: APP_CONSTANTS.activityStatus.active,
-              })
-              .countDocuments(),
-          },
-        },
-        res
-      );
+       let getActiveExportData = JSON.parse(JSON.stringify(activeExportData));
+
+       getActiveExportData.map((ele) => {
+         delete ele.__v;
+         delete ele.category.__v;
+         delete ele.userId.isEmailVerified;
+         delete ele.userId.password;
+         delete ele.userId.__v;
+         delete ele.userId.userData;
+       });
+       universalFunctions.sendSuccess(
+         {
+           statusCode: 200,
+           message: responseMessages.SUCCESS,
+           data: {
+             list: getActiveExportData,
+             currentPage: page,
+             total: await expertUser
+               .find({
+                 isApprovedByAdmin: true,
+                 status: APP_CONSTANTS.activityStatus.active,
+               })
+               .countDocuments(),
+           },
+         },
+         res
+       );
     } catch (error) {
       universalFunctions.sendError(error, res);
     }
@@ -481,12 +560,22 @@ module.exports = {
       if (!activeExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
+      let getActiveExportData = JSON.parse(JSON.stringify(activeExportData));
+
+      getActiveExportData.map((ele) => {
+        delete ele.__v;
+        delete ele.category.__v;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+      });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
           data: {
-            list: activeExportData,
+            list: getActiveExportData,
             currentPage: req.body.page,
             total: await expertUser
               .find({
@@ -693,23 +782,29 @@ module.exports = {
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
-      console.log(
-        "expert online filtered are",
-        expert,
-        "expert online filtered"
-      );
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "All experts online and filtered are",
-          data: {
-            list: expert,
-            currentPage: req.body.page,
-            total: total,
-          },
-        },
-        res
-      );
+            let expertData = JSON.parse(JSON.stringify(expert));
+
+            expertData.map((ele) => {
+              delete ele.__v;
+              delete ele.category.__v;
+              delete ele.userId.isEmailVerified;
+              delete ele.userId.password;
+              delete ele.userId.__v;
+              delete ele.userId.userData;
+            });
+
+            universalFunctions.sendSuccess(
+              {
+                statusCode: 200,
+                message: "All experts online and filtered are",
+                data: {
+                  list: expertData,
+                  currentPage: req.body.page,
+                  total: total,
+                },
+              },
+              res
+            );
     } catch (error) {
       universalFunctions.sendError(error, res);
     }
@@ -782,9 +877,7 @@ module.exports = {
         .limit(parseInt(req.query.limit));
 
       if (!appointmentData) {
-        if (!expert) {
-          throw Boom.badRequest("Appointment Data Not Found");
-        }
+          throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
       universalFunctions.sendSuccess(
         {
