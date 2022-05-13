@@ -565,10 +565,12 @@ module.exports = {
       getActiveExportData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
-        delete ele.userId.isEmailVerified;
-        delete ele.userId.password;
-        delete ele.userId.__v;
-        delete ele.userId.userData;
+        if (ele && ele.userId && ele.userId != null) {
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
+        }
       });
       universalFunctions.sendSuccess(
         {
@@ -782,29 +784,31 @@ module.exports = {
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
-            let expertData = JSON.parse(JSON.stringify(expert));
+      let expertData = JSON.parse(JSON.stringify(expert));
 
-            expertData.map((ele) => {
-              delete ele.__v;
-              delete ele.category.__v;
-              delete ele.userId.isEmailVerified;
-              delete ele.userId.password;
-              delete ele.userId.__v;
-              delete ele.userId.userData;
-            });
+      expertData.map((ele) => {
+        if (ele && ele.userId &&  ele.userId != null) {
+          delete ele.__v;
+          delete ele.category.__v;
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
+        }
+      });
 
-            universalFunctions.sendSuccess(
-              {
-                statusCode: 200,
-                message: "All experts online and filtered are",
-                data: {
-                  list: expertData,
-                  currentPage: req.body.page,
-                  total: total,
-                },
-              },
-              res
-            );
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "All experts online and filtered are",
+          data: {
+            list: expertData,
+            currentPage: req.body.page,
+            total: total,
+          },
+        },
+        res
+      );
     } catch (error) {
       universalFunctions.sendError(error, res);
     }
