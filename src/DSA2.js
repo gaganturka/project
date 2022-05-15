@@ -145,6 +145,82 @@
 
 // tryy('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaazsdeerer')
 
+////////////////////////.........................Find the largest substring with k distinct charactor......./
+
+function isCurrentWindowValid(count, k){
+    
+    let curr_u_c = 0
+    for(let i=0; i<count.length; i++){
+        if(count[i]>0){
+            curr_u_c++
+        }
+    }
+    return k>=curr_u_c
+}
+
+function findKthLargestSubString(str, k){
+    let u_c_count =0
+    let count = []
+
+    for(let i=0; i<26; i++){
+        count.push(0)
+    }
+
+    for(let i=0; i<str.length; i++){
+        if(count[str[i].charCodeAt(0) - 'a'.charCodeAt(0)] === 0){
+            u_c_count++
+        }
+        count[str[i].charCodeAt(0) - 'a'.charCodeAt(0)]++
+    }  
+    //   console.log(str)
+
+    // console.log(k)
+    // console.log(u_c_count)
+    // console.log(count)
+    if(k>u_c_count){
+        console.log('subString cannot formed')
+        return
+    }
+
+    for(let i=0; i<26; i++){
+        count[i] =0
+    }
+
+    let start = 0
+    let end = 0
+
+    let max_window_size = 1
+    let max_window_start = 0
+    count[str[0].charCodeAt(0) - 'a'.charCodeAt]++
+
+    for(let i=1; i<str.length; i++){
+        count[str[i].charCodeAt(0)- 'a'.charCodeAt]++
+        end++
+    }
+    while(!isCurrentWindowValid(count,k)){
+        count[str[i].charCodeAt(0)- 'a'.charCodeAt]--
+        start++
+    }
+
+    if(end-start+1 > max_window_size){
+        max_window_size =end-start+1
+        max_window_start = start
+    }
+
+    return [max_window_size,max_window_start]
+}
+
+console.log(findKthLargestSubString('aabacbebebe', 3))
+
+
+
+
+
+
+
+
+
+
 //////////////................................................recursion.....................///////////
 
 //...........iteration is different from recurson like -------iteration all element come one by one and recurson :-
