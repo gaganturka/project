@@ -23,7 +23,7 @@ const { Config } = require("../config");
 
 const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
-const { join } = require("lodash");
+const { join, truncate, stubFalse } = require("lodash");
 // import universalFunctions from "../utils/universalFunctions";
 
 module.exports = {
@@ -295,24 +295,24 @@ module.exports = {
       if (!upcomingAppointmentDatas) {
         throw Boom.badRequest(responseMessages.APPOINTMENT_DATA_NOT_FOUND);
       }
-       let upcomingAppointmentData = JSON.parse(
-         JSON.stringify(upcomingAppointmentDatas)
-       );
-       upcomingAppointmentData.map((ele) => {
-         delete ele.__v;
-         if (ele && ele.userId) {
-           delete ele.userId.isEmailVerified;
-           delete ele.userId.password;
-           delete ele.userId.__v;
-           delete ele.userId.userData;
-         }
-         if (ele && ele.expertId && ele.expertId.userId) {
-           delete ele.expertId.userId.isEmailVerified;
-           delete ele.expertId.userId.password;
-           delete ele.expertId.userId.__v;
-           delete ele.expertId.userId.userData;
-         }
-       });
+      let upcomingAppointmentData = JSON.parse(
+        JSON.stringify(upcomingAppointmentDatas)
+      );
+      upcomingAppointmentData.map((ele) => {
+        delete ele.__v;
+        if (ele && ele.userId) {
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
+        }
+        if (ele && ele.expertId && ele.expertId.userId) {
+          delete ele.expertId.userId.isEmailVerified;
+          delete ele.expertId.userId.password;
+          delete ele.expertId.userId.__v;
+          delete ele.expertId.userId.userData;
+        }
+      });
       let topExpertsList = [],
         topOnlineExpertsList = [],
         topOnlinePremiumExpertsList = [];
@@ -504,33 +504,33 @@ module.exports = {
       if (!activeExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
-       let getActiveExportData = JSON.parse(JSON.stringify(activeExportData));
+      let getActiveExportData = JSON.parse(JSON.stringify(activeExportData));
 
-       getActiveExportData.map((ele) => {
-         delete ele.__v;
-         delete ele.category.__v;
-         delete ele.userId.isEmailVerified;
-         delete ele.userId.password;
-         delete ele.userId.__v;
-         delete ele.userId.userData;
-       });
-       universalFunctions.sendSuccess(
-         {
-           statusCode: 200,
-           message: responseMessages.SUCCESS,
-           data: {
-             list: getActiveExportData,
-             currentPage: page,
-             total: await expertUser
-               .find({
-                 isApprovedByAdmin: true,
-                 status: APP_CONSTANTS.activityStatus.active,
-               })
-               .countDocuments(),
-           },
-         },
-         res
-       );
+      getActiveExportData.map((ele) => {
+        delete ele.__v;
+        delete ele.category.__v;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+      });
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: responseMessages.SUCCESS,
+          data: {
+            list: getActiveExportData,
+            currentPage: page,
+            total: await expertUser
+              .find({
+                isApprovedByAdmin: true,
+                status: APP_CONSTANTS.activityStatus.active,
+              })
+              .countDocuments(),
+          },
+        },
+        res
+      );
     } catch (error) {
       universalFunctions.sendError(error, res);
     }
@@ -676,13 +676,12 @@ module.exports = {
       let aggregationQuery;
       let filter = {};
       if (req.body.search) {
-        // filter["$or"]= [ {$text: { $search: text}}];
         filter["$or"] = [
           { firstName: { $regex: req.body.search, $options: "i" } },
           { lastName: { $regex: req.body.search, $options: "i" } },
         ];
       }
-      let expert, total;
+      let expert=[], total;
       if (req.body.category !== "" && req.body.practiceArea === "") {
         // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
         // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -750,20 +749,86 @@ module.exports = {
           })
           .countDocuments();
       } else if (req.body.search) {
-        expert = await expertUser
+        let expertData  = await expertUser
           .find({
             isApprovedByAdmin: true,
             // status: APP_CONSTANTS.activityStatus.active,
           })
           .populate("practiceArea")
           .populate("category")
-          .populate({ path: "userId", match: filter })
+          .populate({
+            path: "userId",
+            match: filter,
+            // options: {
+            //   limit: req.body.limit,
+            //   skip: req.body.page - 1 * req.body.limit,
+            // },
+          })
           .sort({ "rating.avgRating": -1 })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit));
-        total = await expertUser
-          .find({ isApprovedByAdmin: true })
-          .countDocuments();
+        // total = await expertUser
+        //   .find({
+        //     category: req.body.category,
+        //     practiceArea: req.body.practiceArea,
+        //     isApprovedByAdmin: true,
+        //   })
+        //   .countDocuments();
+
+        // expert = await expertUser.aggregate([
+        //   { $match: { isApprovedByAdmin: true } },
+        //   {
+        //     $lookup: {
+        //       from: "users",
+        //       localField: "userId",
+        //       foreignField: "_id",
+        //       as: "userId",
+        //     },
+        //   },
+        //   { $unwind: "$userId" },
+        //   {
+        //     $lookup: {
+        //       from: "users",
+        //       // localField: "userId",
+        //       // let: { userId: "$userId" },
+        //       pipeline: [
+        //         // {
+        //         //   $match: { $expr: { $eq: ["$userId", "$$userId"] } },
+        //         // },
+        //         {
+        //           $match: {
+        //             firstName: { $regex: new RegExp(req.body.search, "i") }
+        //           },
+        //         },
+        //       ],
+        //       // foreignField: "_id",
+        //       as: "userDetails",
+        //     },
+        //   },
+        //   // { $unwind: "$userDetails" },
+        // ]);
+        // expert = await expertUser
+        //   .find({
+        //     isApprovedByAdmin: true,
+        //     // status: APP_CONSTANTS.activityStatus.active,
+        //   })
+        //   .select({ "firstName": 1 })
+        //   .populate("practiceArea")
+        //   .populate("category")
+        //   .populate({ path: "userId" })
+        //   .sort({ "rating.avgRating": -1 })
+        //   .skip(parseInt((req.body.page - 1) * req.body.limit))
+        //   .limit(parseInt(req.body.limit));
+        // total = await expertUser
+        //   .find({ isApprovedByAdmin: true })
+        //   .countDocuments();
+        let expertDatas = JSON.parse(JSON.stringify(expertData));
+        expertDatas.map((ele) => {
+          if (ele.userId != null) {
+            expert.push(ele)
+          }
+        });
+        total=expert.length;
       } else {
         expert = await expertUser
           .find({
@@ -787,7 +852,7 @@ module.exports = {
       let expertData = JSON.parse(JSON.stringify(expert));
 
       expertData.map((ele) => {
-        if (ele && ele.userId &&  ele.userId != null) {
+        if (ele && ele.userId && ele.userId != null) {
           delete ele.__v;
           delete ele.category.__v;
           delete ele.userId.isEmailVerified;
@@ -881,7 +946,7 @@ module.exports = {
         .limit(parseInt(req.query.limit));
 
       if (!appointmentData) {
-          throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
+        throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
       universalFunctions.sendSuccess(
         {
