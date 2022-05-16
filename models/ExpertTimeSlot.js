@@ -9,16 +9,9 @@ const AppointmentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "expert",
   },
-//   appointmentType: {
-//     type: String,
-//     enum: [
-//       APP_CONSTANTS.appointmentType.audio,
-//       APP_CONSTANTS.appointmentType.video,
-//     ],
-//   },
-//   duration: {
-//     type: Number,
-//   },
+  duration: {
+    type: Number,
+  },
 //   appointmentDate: {
 //     type: Date,
 //   },
@@ -26,23 +19,22 @@ const AppointmentSchema = new Schema({
 //     type: String,
 //   },
   startAppointmentTime: {
-    type: String,
+    type: Date,
   },
   endAppointmentTime: {
-    type: String,
+    type: Date,
   },
-//   appointDateandTime: {
-//     type: Date,
-//   },
-
-//   status: {
-//     type: String,
-//     enum: [
-//       APP_CONSTANTS.appointmentStatus.confirmed,
-//       APP_CONSTANTS.appointmentStatus.pending,
-//     ],
-//     default:APP_CONSTANTS.appointmentStatus.pending
-//   },
+  appointmentDate: {
+    type: Date,
+  },
+  status: {
+    type: String,
+    enum: [
+      APP_CONSTANTS.appointmentStatus.confirmed,
+      APP_CONSTANTS.appointmentStatus.pending,
+    ],
+    default:APP_CONSTANTS.appointmentStatus.pending
+  },
 //   practiceArea: {
 //     type: Schema.Types.ObjectId,
 //     ref: "practicearea",

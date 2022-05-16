@@ -21,12 +21,14 @@ router.route("/getPracticeAreaDataSearched").post( WebsiteController.getPractice
 router.route("/getFilteredOnlinePremiumExperts").post( WebsiteController.getFilteredOnlinePremiumExperts);
 router.route("/getOnlinePremiumExperts").get(WebsiteController.getOnlinePremiumExperts);
 router.route("/getSingleExpert").get(WebsiteController.getSingleExpert);
-router.route("/bookAppointment").post(authUser.checkAuth,WebsiteController.bookAppointment);    
+router.route("/bookAppointment").post(authUser.checkAuth,WebsiteController.bookAppointment);
+router.route("/bookChatAppointment").post(authUser.checkAuth,WebsiteController.bookChatAppointment);        
 router.route("/getQuesAndAns").get(BorhanController.getQuesAndAns);
 router.route("/getTopExperts").get(WebsiteController.getTopExperts);
 router.route("/getTestimonies").get(WebsiteController.getTestimonies);
 router.route("/createTestimony").post(WebsiteController.createTestimony);
-router.route("/subscribeNewsletter").post(WebsiteController.subscribeNewsletter);router.route("/getAvailableTimeForUser").get( WebsiteController.getAvailableTimeForUser);
+router.route("/subscribeNewsletter").post(WebsiteController.subscribeNewsletter);
+router.route("/getAvailableTimeForUser").get( WebsiteController.getAvailableTimeForUser);
 router.route("/getAppointments").post(authUser.checkAuth,WebsiteController.getAppointments);
 router.route("/cancelAppointment/:id").delete(authUser.checkAuth,WebsiteController.cancelAppointment);
 router.route("/rescheduleAppointment/:id").put(authUser.checkAuth,WebsiteController.rescheduleAppointment);

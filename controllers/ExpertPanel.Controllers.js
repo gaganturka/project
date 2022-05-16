@@ -9,12 +9,14 @@ const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
 const Mongoose= require("mongoose");
 const jwtFunction = require('../utils/jwtFunction');
-
+const moment =require("moment");
 const APP_CONSTANTS = require("../appConstants");
 // const User = require("../models/User");
 const responseMessages=  require("../resources/response.json");
 const universalFunctions = require( "../utils/universalFunctions");
 const { Config } = require("../config");
+const chatappointment =require('../models/ChatAppointment');
+
 const Boom = require("boom");
 module.exports = {
   sendOtpExpertUser: async (req, res) => {
@@ -303,71 +305,83 @@ try{
   let payload=req.body;
   payload.expertId=id;
   // console.log(payload,"here is body ")
-//   let start=payload.startAppointmentTime,end= payload.endAppointmentTime,appointmentDate=payload.appointmentDate;
-//   let data= await expertTimeAvailable.find({
-//     $and: [
-//   {
-//     "expertId":id
-//   },
-//   {
-//       "appointmentDate": new Date(appointmentDate)
-//   }, {
-//       $or: [
-//           {
-//             $and: [
-//               {
-//                   "startAppointmentTime": {
-//                       $gt: new Date(start)
-//                   }
-//               }, {
-//                   "startAppointmentTime": {
-//                       $lte: new Date(end)
-//                   }
-//               }
-//           ]
-//           }, {
-//             $and: [
-//               {
-//                   "endAppointmentTime": {
-//                       $gt: new Date(start)
-//                   }
-//               }, {
-//                   "endAppointmentTime": {
-//                       $lte: new Date(end)
-//                   }
-//               }
-//           ]
-//           },{
-//             $and: [
-//               {
-//                   "startAppointmentTime": {
-//                       $lt: new Date(start)
-//                   }
-//               }, {
-//                   "endAppointmentTime": {
-//                       $gt: new Date(end)
-//                   }
-//               }
-//           ]
-//           }
-//           ]
-//   }
+  let start=payload.startAppointmentTime,end= payload.endAppointmentTime,appointmentDate=payload.appointmentDate;
+   start =new Date(appointmentDate+' '+start); 
+  // console.log(localdate,"here is ");
+  // console.log(moment.utc(moment(localdate)).format(),'start time 11')
+  // start=moment.utc(moment(localdate)).format();
 
-//   ]
-//   }
-// )
+  end =new Date(appointmentDate+' '+end); 
+  // console.log(localdate ,new Date(localdate),"here is ");
+  // console.log(moment.utc(moment(localdate)).format(),'start time')
+  // end=moment.utc(moment(localdate)).format();
+
+  let data= await expertTimeAvailable.find({
+    $and: [
+  {
+    "expertId":id
+  },
+  {
+      "appointmentDate": new Date(appointmentDate)
+  }, {
+      $or: [
+          {
+            $and: [
+              {
+                  "startAppointmentTime": {
+                      $gt: new Date(start)
+                  }
+              }, {
+                  "startAppointmentTime": {
+                      $lte: new Date(end)
+                  }
+              }
+          ]
+          }, {
+            $and: [
+              {
+                  "endAppointmentTime": {
+                      $gt: new Date(start)
+                  }
+              }, {
+                  "endAppointmentTime": {
+                      $lte: new Date(end)
+                  }
+              }
+          ]
+          },{
+            $and: [
+              {
+                  "startAppointmentTime": {
+                      $lt: new Date(start)
+                  }
+              }, {
+                  "endAppointmentTime": {
+                      $gt: new Date(end)
+                  }
+              }
+          ]
+          }
+          ]
+  }
+
+  ]
+  }
+)
 
 // console.log(data,"jhhjh")
-// if(data.length>0){
-//   universalFunctions.sendSuccess(
-//     {
-//       statusCode: 200,
-//       message: "expert is busy at is time ",
-//       data: data,
-//     },
-//     res
-//   );
-// }else{
+if(data.length>0){
+  universalFunctions.sendSuccess(
+    {
+      statusCode: 200,
+      message: "expert is busy at is time ",
+      data: data,
+    },
+    res
+  );
+}else{
+  payload.startAppointmentTime=start;
+  payload.endAppointmentTime=end;
   const expertTime = await expertTimeAvailable.create(payload);
   if (!expertTime) {
     throw Boom.badRequest("invalid id or token");
@@ -381,7 +395,7 @@ try{
     res
   );
 
-// }
+}
 
 }catch(error){
   console.log(error)
@@ -410,7 +424,82 @@ getAvailableTimeForUser:async (req,res)=>{
     universalFunctions.sendError(error, res);  
   }
   },
-
+getChatAppointment:async (req,res)=>{
+    try{ 
+      let id = req.user.expertId;
+      let payload={
+        expertId:id
+      }
+      const chatappointmentdata = await chatappointment.find(payload).populate({ path: "userId expertId" });
+      if (!chatappointmentdata) {
+        throw Boom.badRequest("invalid id or token");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Successfull get appointment",
+          data: chatappointmentdata,
+        },
+        res
+      );
+    
+    }catch(err){
+      console.log(err)
+      universalFunctions.sendError(err, res);  
+    }
+    },
+    updateChatAppointment:async (req, res) => {
+      try{
+        let appointmentId=req.body.id
+        let payload=req.body.payload;
+        console.log(payload,"here is body ")
+        const updateChatAppointment = await chatappointment.findByIdAndUpdate(
+          { _id:appointmentId },
+         { $set:payload},
+        { new: true }
+        );
+        if (!updateChatAppointment) {
+          throw Boom.badRequest("invalid id or token");
+        }
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "Appointment found",
+            data: updateChatAppointment,
+          },
+          res
+        );
+      }
+      catch(error)
+      {
+        console.log(error)
+          universalFunctions.sendError(error, res);   
+      }
+    },
+    getChatAppointmentById:async (req,res)=>{
+      try{ 
+        let id = req.query.id;
+        console.log(req.user ,'sscs')
+        console.log(req.query,'kjk');
+        const chatappointmentdata = await chatappointment.findOne({_id:id}).populate({ path: "userId expertId" });
+        const expertProfileData=await User.findOne({_id:chatappointmentdata.expertId.userId});
+        if (!chatappointmentdata) {
+          throw Boom.badRequest("invalid id or token");
+        }
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "Successfull get appointment",
+            data: {chatappointmentdata,expertProfileData},
+          },
+          res
+        );
+      
+      }catch(err){
+        console.log(err)
+        universalFunctions.sendError(err, res);  
+      }
+      }
 };
 
 

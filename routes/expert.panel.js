@@ -13,5 +13,10 @@ router.route("/getExpertUserInfo").get(isexpert.isExpert,ExpertController.getExp
 router.route("/getExpertAppointment").get(isexpert.isExpert,ExpertController.getExpertAppointment);
 router.route("/updateAppointment").post(isexpert.isExpert,ExpertController.updateAppointment);
 router.route("/setAvailableByExpert").post(isexpert.isExpert,ExpertController.setAvailableByExpert);
+router.route("/getChatAppointment").get(isexpert.isExpert,ExpertController.getChatAppointment);
+router.route("/getChatAppointmentById").get(ExpertController.getChatAppointmentById);
+router.route("/updateChatAppointment").post(isexpert.isExpert,ExpertController.updateChatAppointment);
+
+
 
 module.exports = router;

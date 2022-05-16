@@ -12,6 +12,7 @@ const APP_CONSTANTS = require("../appConstants");
 const responseMessages=  require("../resources/response.json");
 const universalFunctions = require( "../utils/universalFunctions");const { Config } = require("../config");
 const Testimony =require('../models/Testimony');
+const chatappointment =require('../models/ChatAppointment');
 const Boom = require("boom");
 
 const expertTimeAvailable=require("../models/ExpertTimeSlot");
@@ -710,7 +711,6 @@ module.exports = {
         startAppointmentTime: Joi.date().required(),
         appointmentTime: Joi.string().allow(""),
         appointDateandTime: Joi.date().required(),
-        question:Joi.string().allow("").optional(""),
         status: Joi.string().allow(""),
         practiceArea: Joi.string().length(24).required(),
 
@@ -1046,12 +1046,18 @@ module.exports = {
   getAvailableTimeForUser:async (req,res)=>{
     try{ 
      
-      let {expertId,appointmentDate }=req.query;
+      let {expertId,appointmentDate ,duration }=req.query;
       const expertTime = await expertTimeAvailable.find({
         $and: [
           {
             "expertId":expertId
-          },]});
+          },{
+            "appointmentDate":appointmentDate,
+
+          },{
+            "duration":duration
+          }
+        ]});
 
 
       if (!expertTime) {
@@ -1068,7 +1074,7 @@ module.exports = {
         console.log("css sds",data)
         e.avialble=false;
       }else{
-        console.log("css")
+        // console.log("css")
         e.avialble=true;
       }
       })
@@ -1087,8 +1093,40 @@ module.exports = {
       universalFunctions.sendError(error, res);  
     }
     },
+    bookChatAppointment : async (req,res)=>{
+      try{ 
+        console.log(req.body,'body req is here ');
+        let userId=req.user.id;
+        let payload=req.body;
+       
+        const schema = Joi.object({
+          expertId: Joi.string().length(24).required(),
+          question: Joi.string().allow("")
+        });
+        await universalFunctions.validateRequestPayload(req.body, res, schema);
+        payload.userId=userId;
+        console.log(payload,'body req is here ');
+        let data=chatappointment.create(payload);
+        if(!data){
+          throw Boom.badRequest("something is wrong ");
+        }
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "Success",
+            data:data,
+          },
+          res
+        );
+      
+      }catch(error){
+        console.log(error)
+        universalFunctions.sendError(error, res);  
+      }
+    },
   
 };
+
 
 
   
