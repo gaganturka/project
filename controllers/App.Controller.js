@@ -749,7 +749,7 @@ module.exports = {
           })
           .countDocuments();
       } else if (req.body.search) {
-        let expertData  = await expertUser
+        let expertData = await expertUser
           .find({
             isApprovedByAdmin: true,
             // status: APP_CONSTANTS.activityStatus.active,
@@ -822,13 +822,16 @@ module.exports = {
         // total = await expertUser
         //   .find({ isApprovedByAdmin: true })
         //   .countDocuments();
-        let expertDatas = JSON.parse(JSON.stringify(expertData));
-        expertDatas.map((ele) => {
+        // let expertDatas = JSON.parse(JSON.stringify(expertData));
+        if (!expertData) {
+          throw Boom.badRequest("cannot find any expert");
+        }
+        expertData.map((ele) => {
           if (ele.userId != null) {
-            expert.push(ele)
+            expert.push(ele);
           }
         });
-        total=expert.length;
+        total = expert.length;
       } else {
         expert = await expertUser
           .find({
