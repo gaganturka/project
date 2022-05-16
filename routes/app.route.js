@@ -23,7 +23,7 @@ router
   .post(checkAuth, appCreation.updateProfileUser);
 router
   .route("/getAppointmentDetail")
-  .get(checkAuth, appCreation.getAppointmentDetails);
+  .post(checkAuth, appCreation.getAppointmentDetails);
 
   
 

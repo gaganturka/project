@@ -434,20 +434,52 @@ module.exports = {
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
+        search: Joi.string().allow(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
       let page = req.body.page;
       let limit = req.body.limit;
-
-      let allExportData = await expertUser
-        .find({ isApprovedByAdmin: true })
-        .populate("practiceArea")
-        .populate("category")
-        .populate("userId")
-        .sort({ "rating.avgRating": -1 })
-        .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
+       let filter = {};
+       if (req.body.search) {
+         filter["$or"] = [
+           { firstName: { $regex: req.body.search, $options: "i" } },
+           { lastName: { $regex: req.body.search, $options: "i" } },
+         ];
+       }
+       let allExportData = [],
+         total;
+       if (req.body.search) {
+         let allExportDatas = await expertUser
+           .find({ isApprovedByAdmin: true })
+           .populate("practiceArea")
+           .populate("category")
+           .populate({ path: "userId", match: filter })
+           .sort({ "rating.avgRating": -1 })
+           .skip(parseInt((page - 1) * limit))
+           .limit(parseInt(limit));
+         if (!allExportDatas) {
+           throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
+         }
+         allExportDatas.map((ele) => {
+           if (ele.userId != null) {
+             allExportData.push(ele);
+           }
+         });
+         total = allExportData.length;
+       } else {
+         allExportData = await expertUser
+           .find({ isApprovedByAdmin: true })
+           .populate("practiceArea")
+           .populate("category")
+           .populate("userId")
+           .sort({ "rating.avgRating": -1 })
+           .skip(parseInt((page - 1) * limit))
+           .limit(parseInt(limit));
+         total = await expertUser
+           .find({ isApprovedByAdmin: true })
+           .countDocuments();
+       }
       if (!allExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
@@ -468,9 +500,7 @@ module.exports = {
           data: {
             list: getAllExportData,
             currentPage: page,
-            total: await expertUser
-              .find({ isApprovedByAdmin: true })
-              .countDocuments(),
+            total: total,
           },
         },
         res
@@ -484,23 +514,63 @@ module.exports = {
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
+        search: Joi.string().allow(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
+      let filter = {};
+      if (req.body.search) {
+        filter["$or"] = [
+          { firstName: { $regex: req.body.search, $options: "i" } },
+          { lastName: { $regex: req.body.search, $options: "i" } },
+        ];
+      }
       let page = req.body.page;
       let limit = req.body.limit;
-      let activeExportData = await expertUser
-        .find({
-          isApprovedByAdmin: true,
-          // isSubscribed: true,
-          status: APP_CONSTANTS.activityStatus.active,
-        })
-        .populate("practiceArea")
-        .populate("category")
-        .populate("userId")
-        .sort({ "rating.avgRating": -1 })
-        .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
+      let activeExportData = [];
+      let total = {};
+      if (req.body.search) {
+        let activeExportDatas = await expertUser
+          .find({
+            isApprovedByAdmin: true,
+            status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate({ path: "userId", match: filter })
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
+        if (!activeExportDatas) {
+          throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
+        }
+        activeExportDatas.map((ele) => {
+          if (ele.userId != null) {
+            activeExportData.push(ele);
+          }
+        });
+        total = activeExportData.length;
+      } else {
+        activeExportData = await expertUser
+          .find({
+            isApprovedByAdmin: true,
+            // isSubscribed: true,
+            status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("practiceArea")
+          .populate("category")
+          .populate("userId")
+          .sort({ "rating.avgRating": -1 })
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
+        total = await expertUser
+          .find({
+            isApprovedByAdmin: true,
+            status: APP_CONSTANTS.activityStatus.active,
+          })
+          .countDocuments();
+      }
+
       if (!activeExportData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
@@ -514,6 +584,7 @@ module.exports = {
         delete ele.userId.__v;
         delete ele.userId.userData;
       });
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -521,12 +592,7 @@ module.exports = {
           data: {
             list: getActiveExportData,
             currentPage: page,
-            total: await expertUser
-              .find({
-                isApprovedByAdmin: true,
-                status: APP_CONSTANTS.activityStatus.active,
-              })
-              .countDocuments(),
+            total: total,
           },
         },
         res
@@ -932,21 +998,36 @@ module.exports = {
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
+        status: Joi.string().allow(""),
       });
       await universalFunctions.validateRequestPayload(req.query, res, schema);
-
-      let appointmentData = await appointment
-        .find({
-          userId: userId,
-          // status: APP_CONSTANTS.appointmentStatus.completed,
-        })
-        .populate("userId")
-        .populate({
-          path: "expertId",
-          populate: { path: "userId practiceArea" },
-        })
-        .skip(parseInt((req.query.page - 1) * req.query.limit))
-        .limit(parseInt(req.query.limit));
+      let appointmentData = {};
+      if (req.body.status) {
+        appointmentData = await appointment
+          .find({
+            userId: userId,
+            status: req.body.status,
+          })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+      } else {
+        appointmentData = await appointment
+          .find({
+            userId: userId,
+          })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+      }
 
       if (!appointmentData) {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
