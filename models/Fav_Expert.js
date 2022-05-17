@@ -12,7 +12,7 @@ const FavExpertSchema = new Schema({
   },
   expertUserId: {
     type: Schema.Types.ObjectId,
-    ref: "expertborhanuser",
+    ref: "expert",
   },
   expertId: {
     type: Schema.Types.ObjectId,
