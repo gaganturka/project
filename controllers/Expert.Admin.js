@@ -59,14 +59,14 @@ module.exports = {
       let page = req.body.page;
       let limit = req.body.limit;
       let filter = {
-        isApprovedByAdmin: true,
+        
       };
       // console.log("searchhhhi", req.body.search, "search mai kya hai");
       if (req.body.search) {
         filter["$or"] = [
-          { "userId.firstName": { $regex: req.body.search, $options: "i" } },
+          { firstName: { $regex: req.body.search, $options: "i" } },
           {
-            "userId.email": { $regex: req.body.search, $options: "i" },
+            email: { $regex: req.body.search, $options: "i" },
           },
         ];
       }
@@ -132,7 +132,7 @@ module.exports = {
 
       const expert = await expertUser
         .find({ isApprovedByAdmin: true })
-        .populate("userId")
+        .populate({ path: "userId", match: filter })
         .populate("practiceArea")
         .populate("category")
         .skip(parseInt((page - 1) * limit))
@@ -147,7 +147,7 @@ module.exports = {
           message: "All experts requests are",
           data: {
             list: expert,
-            count: await expertUser.find().countDocuments(),
+            count: await expertUser.find({isApprovedByAdmin: true}).countDocuments(),
           },
         },
         res
