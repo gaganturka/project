@@ -58,9 +58,7 @@ module.exports = {
 
       let page = req.body.page;
       let limit = req.body.limit;
-      let filter = {
-        
-      };
+      let filter = {};
       // console.log("searchhhhi", req.body.search, "search mai kya hai");
       if (req.body.search) {
         filter["$or"] = [
@@ -70,73 +68,32 @@ module.exports = {
           },
         ];
       }
-      //   const expert=await expertUser.aggregate([
-
-      //   //   {
-      //   //   $project: {
-      //   //     userId: 1,
-      //   //   },
-      //   // },
-      //   {
-      //     $match:{
-      //       isApprovedByAdmin: true,
-      //     },
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: "users",
-      //       localField: "userId",
-      //       foreignField: "_id",
-
-      //       as:"userId",
-
-      //     },
-
-      //   },
-      //   {
-      //     $unwind:"$userId"
-      //   },
-
-      //  { $filter:{
-      //     input:"$userId",
-      //     as:"userId",
-      //     cond:{
-      //        firstName: { $regex: req.query.text, $options: "i" } ,
-      //        email: { $regex: req.query.text, $options: "i" } ,
-
-      //     }
-
-      //   }
-      // },
-      //   {
-      //     $lookup: {
-      //       from: "categories",
-      //       localField: "category",
-      //       foreignField: "_id",
-      //       as:"category",
-      //     },
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: "practiceareas",
-      //       localField: "practiceArea",
-      //       foreignField: "_id",
-      //       as:"practiceArea",
-      //     },
-
-      //   },
-      //   // { $sort: { dayOfMonth: 1 } },
-      // ])
-
-      //  console.log(expert)
-
-      const expert = await expertUser
-        .find({ isApprovedByAdmin: true })
-        .populate({ path: "userId", match: filter })
-        .populate("practiceArea")
-        .populate("category")
-        .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
+      let expert = [],
+        count;
+      if (req.body.search) {
+        let expertData = await expertUser
+          .find({ isApprovedByAdmin: true })
+          .populate({ path: "userId", match: filter })
+          .populate("practiceArea")
+          .populate("category")
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
+        expertData.map((ele) => {
+          if (ele.userId != null) {
+            expert.push(ele);
+          }
+        });
+        count = expert.length;
+      } else {
+        expert = await expertUser
+          .find({ isApprovedByAdmin: true })
+          .populate("userId")
+          .populate("practiceArea")
+          .populate("category")
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
+        count = await expertUser.find().countDocuments();
+      }
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
@@ -147,7 +104,7 @@ module.exports = {
           message: "All experts requests are",
           data: {
             list: expert,
-            count: await expertUser.find({isApprovedByAdmin: true}).countDocuments(),
+            count: count,
           },
         },
         res
@@ -372,7 +329,6 @@ module.exports = {
             lastName: req.body.lastName,
             profilePic: req.body.profilePic,
             isEmailVerified: false,
-
             otp: req.body.otp,
           },
         }

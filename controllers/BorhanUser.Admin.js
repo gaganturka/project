@@ -31,31 +31,52 @@ module.exports = {
       //   isApprovedByAdmin: true,
       // };
       // console.log("searchhhhi", req.body.search, "search mai kya hai");
-      // if (req.body.search) {
-      //   filter["$or"] = [
-      //     {"userId.firstName": { $regex: req.body.search, $options: "i" } },
-      //     {
-      //       "userId.email": { $regex: req.body.search, $options: "i" } },
-      //   ];
-      // }
-      const user = await borhanUser
-        .find({ role: APP_CONSTANTS.role.borhanuser })
-        .populate("userId")
-        .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
-      if (user === null) {
+      let userData = [],
+        count;
+      let filter = {};
+      if (req.body.search) {
+        filter["$or"] = [
+          { firstName: { $regex: req.body.search, $options: "i" } },
+          {
+            email: { $regex: req.body.search, $options: "i" },
+          },
+        ];
+      }
+      if (req.body.search) {
+        let user = await borhanUser
+          .find({ role: APP_CONSTANTS.role.borhanuser })
+          .populate({ path: "userId", match: filter })
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
+
+        user.map((ele) => {
+          if (ele.userId != null) {
+            userData.push(ele);
+          }
+        });
+        count = userData.length;
+      } else {
+        userData = await borhanUser
+          .find({ role: APP_CONSTANTS.role.borhanuser })
+          .populate({ path: "userId" })
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
+        count = await User.find({
+          role: APP_CONSTANTS.role.borhanuser,
+        }).countDocuments();
+      }
+      if (userData === null) {
         throw Boom.badRequest("cannot find any user");
       }
-      console.log("userrrr", user, "useerrrrr");
+
+      // console.log("userrrr", user, "useerrrrr");
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "All users are",
           data: {
-            list: user,
-            count: await User.find({
-              role: APP_CONSTANTS.role.borhanuser,
-            }).countDocuments(),
+            list: userData,
+            count: count,
           },
         },
         res
