@@ -1020,7 +1020,6 @@ module.exports = {
           //   ele.expertId.userId &&
           //   ele.expertId.userId.email;
           // delete ele.exportId.userId.role;
-
           // delete ele.userId.userData;
         }
       });

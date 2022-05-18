@@ -214,9 +214,22 @@ exports.getPracticeAreaData = async (req, res) => {
 };
 exports.getPracticeAreaDataPopulated = async (req, res) => {
   try {
-    let practiceAreaData = await models.practicearea
-      .find()
-      .populate("categoryId");
+    let filter = {};
+
+    if (req.query.search) {
+      filter["$or"] = [{ name: { $regex: req.query.search, $options: "i" } }];
+    }
+    let practiceAreaData;
+    if (req.query.search) {
+      practiceAreaData = await models.practicearea
+        .find(filter)
+        .populate("categoryId");
+    } else {
+      practiceAreaData = await models.practicearea
+        .find()
+        .populate("categoryId");
+    }
+    
     if (!practiceAreaData) {
       throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
     }
