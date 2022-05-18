@@ -23,7 +23,24 @@ router
   .post(checkAuth, appCreation.updateProfileUser);
 router
   .route("/getAppointmentDetail")
-  .get(checkAuth, appCreation.getAppointmentDetails);
+  .post(checkAuth, appCreation.getAppointmentDetails);
+  router
+    .route("/createFavouriteExport")
+    .post(checkAuth, appCreation.createFavouriteExport);
+  router
+    .route("/getFavouriteExpert")
+    .get(checkAuth, appCreation.getFavouriteExpert);
+  router
+    .route("/appointmentCancel")
+    .post(checkAuth, appCreation.appointmentCancel);
+  router
+    .route("/rescheduleAppointment")
+    .post(checkAuth, appCreation.rescheduleAppointment);
+ 
+    
+    
+  
+  
 
   
 
