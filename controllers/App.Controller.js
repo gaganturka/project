@@ -951,7 +951,6 @@ module.exports = {
       if (req.body.status) {
         appointmentData = await appointment
           .find({
-            // status: { $nin: [APP_CONSTANTS.appointmentStatus.cancelled] }, 
             userId: userId,
             status: req.body.status,
           })
@@ -969,10 +968,7 @@ module.exports = {
         appointmentData = await appointment
           .find({
             status: {
-              $nin: [
-                APP_CONSTANTS.appointmentStatus.cancelled,
-                APP_CONSTANTS.appointmentStatus.rescheduled,
-              ],
+              $nin: [APP_CONSTANTS.appointmentStatus.cancelled],
             },
             userId: userId,
           })
@@ -1058,10 +1054,51 @@ module.exports = {
   },
   rescheduleAppointment: async (req, res) => {
     try {
+      const schema = Joi.object({
+        timeSlotId: Joi.string().length(24).required(),
+        expertId: Joi.string().length(24).required(),
+        appointmentType: Joi.string().allow(""),
+        duration: Joi.string().allow(""),
+        appointmentDate: Joi.date().required(),
+        endAppointmentTime: Joi.date().required(),
+        startAppointmentTime: Joi.date().required(),
+        appointmentTime: Joi.string().allow(""),
+        appointDateandTime: Joi.date().required(),
+        status: Joi.string().allow(""),
+        practiceArea: Joi.string().length(24).required(),
+      });
+      let {
+        id,
+        appointDateandTime,
+        appointmentDate,
+        appointmentTime,
+        appointmentType,
+        duration,
+        endAppointmentTime,
+        practiceArea,
+        startAppointmentTime,
+        timeSlotId,
+        status,
+      } = req.body;
       let rescheduledAppointment = await appointment.findByIdAndUpdate(
-        req.body.id,
-        { status: APP_CONSTANTS.appointmentStatus.rescheduled }
+        { _id: id },
+        {
+          $set: {
+            appointDateandTime: appointDateandTime,
+            appointmentDate: appointmentDate,
+            appointmentTime: appointmentTime,
+            appointmentType: appointmentType,
+            duration: duration,
+            endAppointmentTime: endAppointmentTime,
+            practiceArea: practiceArea,
+            startAppointmentTime: startAppointmentTime,
+            timeSlotId: timeSlotId,
+            status: status,
+            isRescheduled: true,
+          },
+        }
       );
+      // console.log("this is update data", rescheduledAppointment);
       if (!rescheduledAppointment) {
         throw Boom.badRequest("cannot find any appointment to reschedule");
       }
