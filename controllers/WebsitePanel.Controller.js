@@ -1199,7 +1199,7 @@ module.exports = {
         statusCode: 200,
   
         message: "Room successfully joined",
-        data:{token:token.toJwt(),roomId:appointments.videoChatId}
+        data:{token:token.toJwt(),roomId:appointments.videoChatId,identity:appointments?.userId?.firstName+" "+appointments?.userId?.lastName}
       },
       res
     );
@@ -1287,7 +1287,7 @@ module.exports = {
       {
         statusCode: 200,
         message: "Room successfully joined",
-        data:{token:token.toJwt()}
+        data:{token:token.toJwt(),roomId:appointments.videoChatId,identity:appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName}
       },
       res
     );
