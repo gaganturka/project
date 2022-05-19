@@ -23,7 +23,7 @@ const FavExp =()=>{
                <div className="col-lg-3">
                   <div className="exp-listing-box">
                      <div className="exp-listing-img">
-                        <img src="./assets/img/exp-img-1.png" className="img img-fluid" alt="" />
+                        <img src="/assets/img/exp-img-1.png" className="img img-fluid" alt="" />
                      </div>
                      <div className="exp-listing-content">
                         <h1>Heather Nikolaus</h1>
@@ -36,7 +36,7 @@ const FavExp =()=>{
                <div className="col-lg-3">
                   <div className="exp-listing-box">
                      <div className="exp-listing-img">
-                        <img src="./assets/img/exp-img-2.png" className="img img-fluid" alt="" />
+                        <img src="/assets/img/exp-img-2.png" className="img img-fluid" alt="" />
                      </div>
                      <div className="exp-listing-content">
                         <h1>Heather Nikolaus</h1>
@@ -49,7 +49,7 @@ const FavExp =()=>{
                <div className="col-lg-3">
                   <div className="exp-listing-box">
                      <div className="exp-listing-img">
-                        <img src="./assets/img/exp-img-3.png" className="img img-fluid" alt="" />
+                        <img src="/assets/img/exp-img-3.png" className="img img-fluid" alt="" />
                      </div>
                      <div className="exp-listing-content">
                         <h1>Heather Nikolaus</h1>
@@ -62,7 +62,7 @@ const FavExp =()=>{
                <div className="col-lg-3">
                   <div className="exp-listing-box">
                      <div className="exp-listing-img">
-                        <img src="./assets/img/exp-img-1.png" className="img img-fluid" alt="" />
+                        <img src="/assets/img/exp-img-1.png" className="img img-fluid" alt="" />
                      </div>
                      <div className="exp-listing-content">
                         <h1>Heather Nikolaus</h1>
@@ -75,7 +75,7 @@ const FavExp =()=>{
                <div className="col-lg-3">
                   <div className="exp-listing-box">
                      <div className="exp-listing-img">
-                        <img src="./assets/img/exp-img-2.png" className="img img-fluid" alt="" />
+                        <img src="/assets/img/exp-img-2.png" className="img img-fluid" alt="" />
                      </div>
                      <div className="exp-listing-content">
                         <h1>Heather Nikolaus</h1>
@@ -88,7 +88,7 @@ const FavExp =()=>{
                <div className="col-lg-3">
                   <div className="exp-listing-box">
                      <div className="exp-listing-img">
-                        <img src="./assets/img/exp-img-3.png" className="img img-fluid" alt="" />
+                        <img src="/assets/img/exp-img-3.png" className="img img-fluid" alt="" />
                      </div>
                      <div className="exp-listing-content">
                         <h1>Heather Nikolaus</h1>
@@ -101,7 +101,7 @@ const FavExp =()=>{
                <div className="col-lg-3">
                   <div className="exp-listing-box">
                      <div className="exp-listing-img">
-                        <img src="./assets/img/exp-img-1.png" className="img img-fluid" alt="" />
+                        <img src="/assets/img/exp-img-1.png" className="img img-fluid" alt="" />
                      </div>
                      <div className="exp-listing-content">
                         <h1>Heather Nikolaus</h1>
@@ -114,7 +114,7 @@ const FavExp =()=>{
                <div className="col-lg-3">
                   <div className="exp-listing-box">
                      <div className="exp-listing-img">
-                        <img src="./assets/img/exp-img-2.png" className="img img-fluid" alt="" />
+                        <img src="/assets/img/exp-img-2.png" className="img img-fluid" alt="" />
                      </div>
                      <div className="exp-listing-content">
                         <h1>Heather Nikolaus</h1>

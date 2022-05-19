@@ -116,7 +116,7 @@ const PremiumExpert = () => {
                   <div class="breadcrumb-search">
                      <div class="position-relative">
                         <input type="text" class="form-control" placeholder="Search any....."/>
-                        <button class="btn"><img src="./assets/img/search-icon.png" class="img img-fluid" alt="" /></button>
+                        <button class="btn"><img src="/assets/img/search-icon.png" class="img img-fluid" alt="" /></button>
                      </div>
                   </div>
                </div>
@@ -232,7 +232,7 @@ getPracticeArea.length>0 &&
                    {/* <div class="col-lg-4 p-4">
                       <div class="exp-listing-box">
                          <div class="exp-listing-img">
-                            <img src="./assets/img/exp-img-1.png" class="img img-fluid" alt="" />
+                            <img src="/assets/img/exp-img-1.png" class="img img-fluid" alt="" />
                             <span class="star">
                                 
                              </span>
@@ -257,10 +257,10 @@ getPracticeArea.length>0 &&
                             <p>At vero eos et accusamus et iusto odio dignissimos ducimus</p>
                             <ul>
                                <li>
-                                  <h3><img src="./assets/img/clock-icon.png" class="img img-fluid" alt="" /> 230 h</h3>
+                                  <h3><img src="/assets/img/clock-icon.png" class="img img-fluid" alt="" /> 230 h</h3>
                                </li>
                                <li>
-                                  <h3><img src="./assets/img/eye-icon.png" class="img img-fluid" alt="" /> 1280</h3>
+                                  <h3><img src="/assets/img/eye-icon.png" class="img img-fluid" alt="" /> 1280</h3>
                                </li>
                             </ul>
                             <Link to="/expprofile"><button class="btn" type="button">Book Appointment</button></Link>
@@ -272,7 +272,7 @@ getPracticeArea.length>0 &&
                          return(<div className="col-lg-4 p-4">
                         <div className="exp-listing-box">
                            <div className="exp-listing-img">
-                              <img src={`${obj?.userId?.profilePic ===''?"./assets/img/exp-img-1.png":obj?.userId?.profilePic}`} className="img img-fluid" alt=""/>
+                              <img src={`${obj?.userId?.profilePic ===''?"/assets/img/exp-img-1.png":obj?.userId?.profilePic}`} className="img img-fluid" alt=""/>
                               <span className="star">
                                  <span className="star-icon fa fa-star"></span>
                                </span>
@@ -283,7 +283,7 @@ getPracticeArea.length>0 &&
                                     <h1>{obj?.userId?.firstName} {obj?.userId?.lastName}</h1>
                                  </div>
                                  <div className="col-2">
-                                    <div className="req-chat-icon"><img src="./assets/img/chat-btn-icon.png" alt=""/></div>
+                                    <div className="req-chat-icon"><img src="/assets/img/chat-btn-icon.png" alt=""/></div>
                                  </div>
                                 </div>
                               <h4>{obj?.practiceArea[0]?.name}</h4>
@@ -309,10 +309,10 @@ getPracticeArea.length>0 &&
                               <p>{obj.bio}</p>
                               <ul>
                                  <li>
-                                    <h3><img src="./assets/img/clock-icon.png" className="img img-fluid" alt=""/> {obj.noOfHoursOfSessionsDone} h</h3>
+                                    <h3><img src="/assets/img/clock-icon.png" className="img img-fluid" alt=""/> {obj.noOfHoursOfSessionsDone} h</h3>
                                  </li>
                                  <li>
-                                    <h3><img src="./assets/img/eye-icon.png" className="img img-fluid" alt="" /> {obj.noOfSessionsDone}</h3>
+                                    <h3><img src="/assets/img/eye-icon.png" className="img img-fluid" alt="" /> {obj.noOfSessionsDone}</h3>
                                  </li>
                               </ul>
                               <Link to="/expprofile"><button className="btn" type="button">Book Appointment</button></Link>

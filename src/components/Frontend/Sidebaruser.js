@@ -38,7 +38,7 @@ const Sidebar = () => {
     <>
       <div className="sidebar-toggle">
         <button className="btn sidebar-mb-toggle-btn">
-          <img src="./assets/img/expand-sidebar.png" alt="" /> User Menu
+          <img src="/assets/img/expand-sidebar.png" alt="" /> User Menu
         </button>
       </div>
       <div className="sidebar-wrapper">
@@ -47,7 +47,7 @@ const Sidebar = () => {
             <img
               src={`${
                 loggedInBorhanUserInfo.profilePic === ""
-                  ? "./assets/img/mathew-wade.png"
+                  ? "/assets/img/mathew-wade.png"
                   : loggedInBorhanUserInfo.profilePic
               }`}
               className="img img-fluid"
@@ -66,7 +66,7 @@ const Sidebar = () => {
             >
               <Link to="/userdashboard" className="">
                 <img
-                  src="./assets/img/profile-icon.png"
+                  src="/assets/img/profile-icon.png"
                   className="img img-fluid"
                   alt=""
                 />{" "}
@@ -80,7 +80,7 @@ const Sidebar = () => {
             >
               <Link to="/appointmentdetails" className="">
                 <img
-                  src="./assets/img/appointment-icon.png"
+                  src="/assets/img/appointment-icon.png"
                   className="img img-fluid"
                   alt=""
                 />{" "}
@@ -92,7 +92,7 @@ const Sidebar = () => {
             >
               <Link to="/favexperts" className="">
                 <img
-                  src="./assets/img/favorite-icon.png"
+                  src="/assets/img/favorite-icon.png"
                   className="img img-fluid"
                   alt=""
                 />{" "}
@@ -104,7 +104,7 @@ const Sidebar = () => {
             >
               <Link to="/wallet" className="">
                 <img
-                  src="./assets/img/wallet-icon.png"
+                  src="/assets/img/wallet-icon.png"
                   className="img img-fluid"
                   alt=""
                 />{" "}
@@ -112,9 +112,19 @@ const Sidebar = () => {
               </Link>
             </li>
             <li className="">
+              <Link to="/ChatSupport" className="">
+                <img
+                  src="/assets/img/saved-cards-icon.png"
+                  className="img img-fluid"
+                  alt=""
+                />{" "}
+                Chat Support
+              </Link>
+            </li>
+            <li className="">
               <Link to="javascript:;" className="">
                 <img
-                  src="./assets/img/saved-cards-icon.png"
+                  src="/assets/img/saved-cards-icon.png"
                   className="img img-fluid"
                   alt=""
                 />{" "}
@@ -128,7 +138,7 @@ const Sidebar = () => {
             >
               <Link to="/managemembership" className="">
                 <img
-                  src="./assets/img/vuesax-linear-chart-white.png"
+                  src="/assets/img/vuesax-linear-chart-white.png"
                   className="img img-fluid"
                   alt=""
                 />{" "}
@@ -145,7 +155,7 @@ const Sidebar = () => {
                 }}
               >
                 <img
-                  src="./assets/img/logout-icon.png"
+                  src="/assets/img/logout-icon.png"
                   class="img img-fluid"
                   alt=""
                 />{" "}

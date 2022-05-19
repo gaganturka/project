@@ -5,28 +5,8 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 import moment from 'moment';
 import {db,auth} from '../../../firebase';
 import appointmentAction from '../../../actions/appointment.action';
-// import expertUserActions from '../../actions/expertUser.Actions';
 import { useParams } from "react-router-dom"
-
-// const firebaseConfig = {
-//   type: "service_account",
-//   projectId: "borhan-33e53",
-//   private_key_id: "78e6d9a4ab437e0cff49f380eee73610687d0fd4",
-//   private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCvGPDNPm/8zjKm\nX6GSLUwZzSe/LO/j649hV0E4RMwjaF5YwUTXAnOvTttdwaaxZ0tQEEckIJrP1QkW\n87k9b+yNMcZ0dqW/c0uFCwKSupdCKOqxvwU/9+Sf+XW8vhVlHU1WfODuyBRaj1DF\nNyBYQUM7x+ZNEWznRiRrYKqHztocGT95qINjUPTQEmPVVp2fZ/3Kyn+bvOQF+Qj7\nv9dProk3hzXkS4dObJfhyWPYg+ZlocnGeXpzKvrfY7bVmT1lyRtoAwTYzzmR6Ewy\nM1JoTyUTotqTc0r2Ji/KCO5SYbkp1558W6j9N6Sz8d1NBpuqEl/5LyJpUroIcS81\nizhNi7vtAgMBAAECggEAF0yBykW7IBAN9E54UNufKzW9yrX/i7vt/b1fC843vaRn\nHXdGIjgMzbB4Bx87/5InltU7qiZ+gxYtWfT/Wpn4h4cuiZO6FWIRk/f1lTGn6+FG\n7XTmDW9+Z/0JOh6u+R/viQkf4xYTg0Nbs4pUzvmMKTm9vtaJP7L5KKKZvm17X06S\nXGf2drXPkv87D+TUQvjmgLP5HLntLSQR6x8G4toAKvT0Uo9aHbAFpFQw7iUoirkj\nCn+wA2vwXjg2T5H1oaEarwVSCX71U6dXPD61A207xOGzFMFKfOTotoVMlkXPFN91\nu1U3Dj6erJbUbJ6eRl1+ej98ey4htEOFv9KnTt1pTwKBgQDcYHI+ocGKQkWBwVuj\nd2G2A99NoPzK9ysCUqJCG2HCT5n5NWRF/ZmkjRSlHcLQkrGcZlxPQrBr+UwVjf91\nvQ9Z2b/BfYXAZhGw3LJJFiugXZBIZTAtV0QC6/Vpm5MPzuAVrSrk/lJYSWgRVnPk\nT9Wr3Y3ktC0+0E5BZ2zSSkxIrwKBgQDLZsLnImXiNw8JDy8QpiI2pQrgO0YkCPhq\nHQ8jsBGQq/pZ3N6xUqPah4L+VZcowxwo3YQ82Ae5JvtM6qa8FxU/+WISFnYz27Dy\nNf3waIP6Eta6y9W6Se4PtEmW1uHDEOK0A1BXZNgmO3624xCRqOORfW5JanJLhMdS\noh3lRVn0IwKBgQC3SXPbSZd5kVLT72hzFXhr9N6FZw65FEduICIZj0KIZMIv9csX\nNyvRIxF3nsAHzunvpWbC+TlYJDi2eKpuVzbsSOFmYSqb8YhnK7cQeGMCdq7ot1gR\nbdIACBXNpvnyHOJcxPC3EhqUmUD3ooqy6f9ReOxpub0j0AY1+XoVkHvPuwKBgCcp\nT9lEjC0zwJdT7xHbirbOq/tkLir99yYnFiUe3yLlmbv3hIDLknSepp/lRsc4WZGc\npLs6NLJ3SOcUPqn0H8lDcJhe7r8pSzY3Iv9IgDCDtAge+rV1SnqHkauTD8CI3b0e\n7jcFWYBy8ACyUxxYUghPCA7mib70f5PvVqYv5hPVAoGAA0lx8Aer9/Xgi9c+tWCu\nTVLVkKpyuFtRx/M7is0zsYV4SZEJ0Q//rfX4cFhSwkcf03iPVNs1umE7R3Pbslx4\nA3X7wq/ioqD4oG8tx3urVN61wjRuYvbcIN2osFEqG3JsNcWoWL+ZRl3auIVaAlgk\ntQSLMH7fsrI6mwrS0FbIUxM=\n-----END PRIVATE KEY-----\n",
-//   client_email: "firebase-adminsdk-rf954@borhan-33e53.iam.gserviceaccount.com",
-//   client_id: "104461572710667083825",
-//   auth_uri: "https://accounts.google.com/o/oauth2/auth",
-//   token_uri: "https://oauth2.googleapis.com/token",
-//   auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-//   storageBucket:"gs://borhan-33e53.appspot.com",
-//   client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-rf954%40borhan-33e53.iam.gserviceaccount.com"
-// };
-
-
-// firebase.initializeApp(firebaseConfig);
-
-// const storage = firebase.storage();
-
+import Sidebaruser from "../Sidebaruser"
 const  App=()=>  {
  
   let unsubscribe;
@@ -34,21 +14,22 @@ const  App=()=>  {
   const params = useParams();
     const [input,setInput]=useState("");
   const [listmessages,setlistmessages]=useState([]);
-  const [myId,setMyId]=useState("1");
-  const [receiverId,setReceiverId]=useState("2");
-  const [userData,setUserData]=useState({});
-  const [expertData,setExpertData]=useState({});
-  const [chatRoomId,setChatRoomId]=useState("")
+  const [myId,setMyId]=useState(null);
+  const [receiverId,setReceiverId]=useState(null);
+  const [userData,setUserData]=useState(null);
+  const [expertData,setExpertData]=useState("");
+  const [chatRoomId,setChatRoomId]=useState(null)
   const scrollToBottom = () => {
     const objDiv = document.getElementById('scrollbarbc');
         objDiv.scrollTop = objDiv.scrollHeight;
     
   }
-
+// sbfv
   const getRealtimeUsers =async () => { 
-
     console.log("wdcdcdc")
-    const messageRef = collection(db, "room", "12new", "messages");
+    if(chatRoomId){
+
+    const messageRef = collection(db, "room",chatRoomId, "messages");
     const q = query(messageRef, orderBy("createdAt", "asc"));
 
     onSnapshot(q, (querySnapshot) => {
@@ -59,14 +40,17 @@ const  App=()=>  {
                         users.push(doc.data());
                     }
         });
-        
+        console.log("user:",users)
         setlistmessages(users)
         scrollToBottom()
       });
 
     return unsubscribe;
-
+    }
 }
+useEffect(()=>{
+  getRealtimeUsers();
+},[chatRoomId])
 function urlify(text) {
   var urlRegex = /(https?:\/\/[^\s]+)/g;
   return text.replace(urlRegex, function(url) {
@@ -88,6 +72,9 @@ useEffect(() => {
       setUserData(data.userId);
       setExpertData(expertProfileData);
       setChatRoomId(data.chatRoomId);
+      setReceiverId(data.expertId._id);
+      setMyId(data.userId._id);
+
       console.log(res.data);
     }
   })
@@ -97,19 +84,21 @@ useEffect(() => {
 
 
   const updateMessage = async () => {
-      console.log("lmkmlnk")
-    
       let text=urlify(input);
+
       console.log(text);
-      let msgObj={
-        sendId:"2",
-        message:text,
-        type:0,
-        receiverid:"1",
-        imageUrl:"",  
-      }
-      console.log("ecknjcdkjndc");
-    const messageRef = collection(db, "room", "12new", "messages");
+      
+    
+      if(expertData&&userData,chatRoomId&&myId){
+        let msgObj={
+          sendId:myId,
+          message:text,
+          type:0,
+          receiverid:receiverId,
+          imageUrl:"",  
+        }
+      const messageRef = collection(db, "room",chatRoomId, "messages");
+    
     addDoc(messageRef, {
         ...msgObj,
         isView: false,
@@ -123,31 +112,7 @@ useEffect(() => {
     .catch(error => {
         console.log(error)
     });
-
-    // await setDoc(doc(citiesRef, "SF"));
-    // let msgObj={
-    //   sendId:"2",
-    //   message:input,
-    //   type:0,
-    //   receiverid:"1",
-    //   imageUrl:"",  
-    // }
-    // const db = firestore();
-    //  db.collection('room')
-    // .doc("12new")
-    // .collection("messages").add({
-    //     ...msgObj,
-    //     isView: false,
-    //     createdAt: new Date()
-    
-    // })
-    // .then((data) => {
-    //     console.log(data)
-    // })
-    // .catch(error => {
-    //     console.log(error)
-    // });
-
+  }
 
 }
 const formHandler = (e) => {
@@ -155,6 +120,11 @@ const formHandler = (e) => {
   console.log(e.target)
   const file = e.target.files[0];
   console.log( e.target.files, e.target.files[0])
+  if (!e.target.files[0].name.match(/.(jpg|jpeg|png|gif)$/i)){
+    alert('not an image');
+    return
+  }
+    
   uploadFiles(file);
 };
 
@@ -163,7 +133,7 @@ const uploadFiles = (file) => {
     const storageRef = ref(storage, `files/${file.name}`);
     
     const uploadTask = uploadBytesResumable(storageRef, file);
- 
+    if(expertData&&userData,chatRoomId&&myId){
     uploadTask.on('state_changed', 
       (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -184,14 +154,14 @@ const uploadFiles = (file) => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           console.log('File available at', downloadURL);
           let msgObj={
-                        sendId:"2",
+                        sendId:myId,
                         message:"",
                         type:1,
-                        receiverid:"1",
+                        receiverid:receiverId,
                         imageUrl:downloadURL, 
                         fileName:file.name 
                       }
-          const messageRef = collection(db, "room", "12new", "messages");
+          const messageRef = collection(db, "room",chatRoomId, "messages");
           addDoc(messageRef, {
               ...msgObj,
               isView: false,
@@ -207,7 +177,7 @@ const uploadFiles = (file) => {
         });
       }
     );
-
+    }
 };
 const formHandler1 = (e) => {
     console.log(e);
@@ -222,7 +192,7 @@ const formHandler1 = (e) => {
       const storageRef = ref(storage, `files/${file.name}`);
       
       const uploadTask = uploadBytesResumable(storageRef, file);
-   
+      if(expertData&&userData,chatRoomId&&myId){
       uploadTask.on('state_changed', 
         (snapshot) => {
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -243,14 +213,14 @@ const formHandler1 = (e) => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             console.log('File available at', downloadURL);
             let msgObj={
-                          sendId:"2",
-                          message:"",
-                          type:2,
-                          receiverid:"1",
-                          imageUrl:downloadURL, 
-                          fileName:file.name 
-                        }
-            const messageRef = collection(db, "room", "12new", "messages");
+              sendId:myId,
+              message:"",
+              type:2,
+              receiverid:receiverId,
+              imageUrl:downloadURL, 
+              fileName:file.name 
+            }
+            const messageRef = collection(db, "room", chatRoomId, "messages");
             addDoc(messageRef, {
                 ...msgObj,
                 isView: false,
@@ -266,45 +236,36 @@ const formHandler1 = (e) => {
           });
         }
       );
-  
+      }
   };
  
     return (
     <>
+    <section className="admin-wrapper">
+         <Sidebaruser/>
+         <div className="admin-content-wrapper">
+            <div className="row">
+               <div className="col-lg-12">
   <div class="app">
  <div class="header">
   <div class="logo">
   <img class="user-profile account-profile" src={expertData.profilePic} alt=""/>
   </div>
   <div class="search-bar">
-   <h1>{expertData.firstName?expertData.firstName:""+" "+expertData.lastName?expertData.lastName:""} (Expert)</h1>
+   <h1>{expertData.firstName?expertData.firstName:""} </h1>
   </div>
-  {/* <div class="user-settings">
-   <div class="dark-light">
-    <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-     <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
-   </div>
-   <div class="settings">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-     <circle cx="12" cy="12" r="3" />
-     <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" /></svg>
-   </div>
-   <img class="user-profile account-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%281%29.png"   alt="" />
-  </div> */}
  </div>
  <div class="wrapper">
  <div class="chat-area" id='scrollbarbc'>
-    <div class="chat-area-header">
-    <div class="chat-area-title">expert chat</div>
-   </div>
+   
    <div class="chat-area-main">
    {
-      listmessages.length>0?
+      listmessages.length>0&&myId&&expertData&&userData?
        listmessages.map(e=>{
         let sentby="";
         let userprofile=expertData.profilePic;
         console.log(e.type,'dwccd')
-        if(e.sendId=="2"){
+        if(e.sendId===myId){
           sentby="owner"
           userprofile=userData.profilePic
 
@@ -405,6 +366,9 @@ const formHandler1 = (e) => {
   </div>
  </div>
 </div>
+</div></div>
+</div>
+</section>
     </>
     );
   

@@ -35,7 +35,7 @@ const Membership = () => {
                   <div class="membership-plan-box">
                      <div class="side-indicator"></div>
                      <h3>Basic</h3>
-                     <h5><img src="./assets/img/clock-green.png" class="img img-fluid" alt=""/> 10h / month</h5>
+                     <h5><img src="/assets/img/clock-green.png" class="img img-fluid" alt=""/> 10h / month</h5>
                      <h4> <span></span> OMR 8</h4>
                      <h4><b>5.5 OMR</b></h4>
                      <h6>Billed Monthly</h6>
@@ -48,7 +48,7 @@ const Membership = () => {
                      <div class="bv-tag">Best Value</div>
                      <div class="side-indicator"></div>
                      <h3>Premium</h3>
-                     <h5><img src="./assets/img/clock-yellow.png" class="img img-fluid" alt=""/> 22h / month</h5>
+                     <h5><img src="/assets/img/clock-yellow.png" class="img img-fluid" alt=""/> 22h / month</h5>
                      <h4> <span></span> OMR 100</h4>
                      <h4><b>60 OMR</b></h4>
                      <h6>Billed Annual</h6>
@@ -60,7 +60,7 @@ const Membership = () => {
                   <div class="membership-plan-box">
                      <div class="side-indicator"></div>
                      <h3>Advance</h3>
-                     <h5><img src="./assets/img/clock-green.png" class="img img-fluid" alt=""/> 22h / month</h5>
+                     <h5><img src="/assets/img/clock-green.png" class="img img-fluid" alt=""/> 22h / month</h5>
                      <h4> <span></span> OMR 8</h4>
                      <h4><b>5.5 OMR</b></h4>
                      <h6>Billed Monthly</h6>
@@ -70,7 +70,7 @@ const Membership = () => {
                </div>
             </div>
          </div>
-         <div class="mem-plan-layer"><img src="./assets/img/membership-plan-bg.png" class="img img-fluid" alt=""/></div>
+         <div class="mem-plan-layer"><img src="/assets/img/membership-plan-bg.png" class="img img-fluid" alt=""/></div>
       </section>
     <section class="membership-plan-detail mt-5">
         <div class="container">
@@ -91,39 +91,39 @@ const Membership = () => {
                     <tbody >
                       <tr class="membership-table-row">
                         <td><p>Case Management</p></td>
-                        <td><img src="./assets/img/check.png" class="check-img"/></td>
-                        <td><img src="./assets/img/check.png" class="check-img"/></td>
-                        <td><img src="./assetsimg/check.png" class="check-img"/></td>
+                        <td><img src="/assets/img/check.png" class="check-img"/></td>
+                        <td><img src="/assets/img/check.png" class="check-img"/></td>
+                        <td><img src="/assetsimg/check.png" class="check-img"/></td>
                       </tr>
                       <tr>
                         <td><p>Case Management</p></td>
                         <td></td>
                         <td></td>
-                        <td><img src="./assets/img/check.png" class="check-img"/></td>
+                        <td><img src="/assets/img/check.png" class="check-img"/></td>
                       </tr>
                       <tr>
                         <td><p>Case Management</p></td>
                         <td></td>
                         <td></td>
-                        <td><img src="./assets/img/check.png" class="check-img"/></td>
+                        <td><img src="/assets/img/check.png" class="check-img"/></td>
                       </tr>
                       <tr>
                         <td><p>Case Management</p></td>
                         <td></td>
-                        <td><img src="./assets/img/check.png" class="check-img"/></td>
-                        <td><img src="./assets/img/check.png" class="check-img"/></td>
+                        <td><img src="/assets/img/check.png" class="check-img"/></td>
+                        <td><img src="/assets/img/check.png" class="check-img"/></td>
                       </tr>
                       <tr>
                         <td><p>Case Management</p></td>
                         <td></td>
                         <td></td>
-                        <td><img src="./assets/img/check.png" class="check-img"/></td>
+                        <td><img src="/assets/img/check.png" class="check-img"/></td>
                       </tr>
                       <tr>
                         <td><p>Case Management</p></td>
                         <td></td>
-                        <td><img src="./assets/img/check.png" class="check-img"/></td>
-                        <td><img src="./assets/img/check.png" class="check-img"/></td>
+                        <td><img src="/assets/img/check.png" class="check-img"/></td>
+                        <td><img src="/assets/img/check.png" class="check-img"/></td>
                       </tr>
                     </tbody>
                   </table>

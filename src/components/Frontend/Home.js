@@ -255,7 +255,7 @@ const Home = () => {
                           }}
                         >
                           <img
-                            src="./assets/img/search-icon.png"
+                            src="/assets/img/search-icon.png"
                             className="img img-fluid"
                             alt=""
                           />
@@ -277,7 +277,7 @@ const Home = () => {
             <div className="col-lg-5">
               <div className="main-bn-img">
                 <img
-                  src="./assets/img/man-img.png"
+                  src="/assets/img/man-img.png"
                   className="img img-fluid"
                   alt=""
                 />
@@ -388,7 +388,7 @@ const Home = () => {
                       <div className="lp-box-wrp lp-green-bg">
                         <div className="text-center">
                           <img
-                            src="./assets/img/banking-sector-icon.png"
+                            src="/assets/img/banking-sector-icon.png"
                             className="img img-fluid"
                             alt=""
                           />
@@ -402,7 +402,7 @@ const Home = () => {
                       <div className="lp-box-wrp lp-white-bg">
                         <div className="text-center">
                           <img
-                            src="./assets/img/crime-la-icon.png"
+                            src="/assets/img/crime-la-icon.png"
                             className="img img-fluid"
                             alt=""
                           />
@@ -416,7 +416,7 @@ const Home = () => {
                       <div className="lp-box-wrp lp-green-bg">
                         <div className="text-center">
                           <img
-                            src="./assets/img/case-services-icon.png"
+                            src="/assets/img/case-services-icon.png"
                             className="img img-fluid"
                             alt=""
                           />
@@ -433,7 +433,7 @@ const Home = () => {
                       <div className="lp-box-wrp lp-white-bg">
                         <div className="text-center">
                           <img
-                            src="./assets/img/consumer-matter-icon.png"
+                            src="/assets/img/consumer-matter-icon.png"
                             className="img img-fluid"
                             alt=""
                           />
@@ -447,7 +447,7 @@ const Home = () => {
                       <Link to="javascript:;">
                         <div className="text-center">
                           <img
-                            src="./assets/img/banking-services-icon.png"
+                            src="/assets/img/banking-services-icon.png"
                             className="img img-fluid"
                             alt=""
                           />
@@ -461,7 +461,7 @@ const Home = () => {
                       <div className="lp-box-wrp lp-white-bg">
                         <div className="text-center">
                           <img
-                            src="./assets/img/company-matter-icon.png"
+                            src="/assets/img/company-matter-icon.png"
                             className="img img-fluid"
                             alt=""
                           />
@@ -475,7 +475,7 @@ const Home = () => {
                       <div className="lp-box-wrp lp-green-bg">
                         <div className="text-center">
                           <img
-                            src="./assets/img/recovery-matter-icon.png"
+                            src="/assets/img/recovery-matter-icon.png"
                             className="img img-fluid"
                             alt=""
                           />
@@ -489,7 +489,7 @@ const Home = () => {
                       <div className="lp-box-wrp lp-white-bg">
                         <div className="text-center">
                           <img
-                            src="./assets/img/view-more-icon.png"
+                            src="/assets/img/view-more-icon.png"
                             className="img img-fluid"
                             alt=""
                           />
@@ -548,7 +548,7 @@ const Home = () => {
                 {/* <div className="item">
                       <div className="expert-box-wrp">
                          <div className="position-relative">
-                            <img src="./assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
+                            <img src="/assets/img/expert-thumb.png" className="img img-fluid" alt=""/>
                             <span className="active-dot"></span>
                          </div>
                          <div className="p-3">
@@ -576,7 +576,7 @@ const Home = () => {
                             <img
                               src={`${
                                 obj?.userId?.profilePic === ""
-                                  ? "./assets/img/expert-thumb.png"
+                                  ? "/assets/img/expert-thumb.png"
                                   : obj?.userId?.profilePic
                               }`}
                               className="img img-fluid"
@@ -669,13 +669,13 @@ const Home = () => {
                   <div className="item">
                <div className="top-legal-box-wrp ">
                   <div className="top-legal-user-img">
-                     <img src="./assets/img/legal-expert-1.png" alt="" />
+                     <img src="/assets/img/legal-expert-1.png" alt="" />
                   </div>
                   <div>
                      <h4>{obj?.userId?.firstName}</h4>
                      <p>
                      <img
-                        src={`${obj?.userId?.profilePic===""?"./assets/img/location-arrow-icon.png":obj?.userId?.profilePic}`}
+                        src={`${obj?.userId?.profilePic===""?"/assets/img/location-arrow-icon.png":obj?.userId?.profilePic}`}
                         alt=""
                      />{" "}
                      Ruwi Muscat(location)
@@ -726,7 +726,7 @@ const Home = () => {
               <div className="hwg-box">
                 <div className="">
                   <img
-                    src="./assets/img/signup-in-second.png"
+                    src="/assets/img/signup-in-second.png"
                     className="img img-fluid"
                     alt=""
                   />
@@ -742,7 +742,7 @@ const Home = () => {
               <div className="hwg-box">
                 <div className="">
                   <img
-                    src="./assets/img/select-book.png"
+                    src="/assets/img/select-book.png"
                     className="img img-fluid"
                     alt=""
                   />
@@ -758,7 +758,7 @@ const Home = () => {
               <div className="hwg-box">
                 <div className="">
                   <img
-                    src="./assets/img/video-call.png"
+                    src="/assets/img/video-call.png"
                     className="img img-fluid"
                     alt=""
                   />
@@ -790,7 +790,7 @@ const Home = () => {
                 <h3>Basic</h3>
                 <h5>
                   <img
-                    src="./assets/img/clock-green.png"
+                    src="/assets/img/clock-green.png"
                     className="img img-fluid"
                     alt=""
                   />{" "}
@@ -817,7 +817,7 @@ const Home = () => {
                 <h3>Premium</h3>
                 <h5>
                   <img
-                    src="./assets/img/clock-yellow.png"
+                    src="/assets/img/clock-yellow.png"
                     className="img img-fluid"
                     alt=""
                   />{" "}
@@ -843,7 +843,7 @@ const Home = () => {
                 <h3>Advance</h3>
                 <h5>
                   <img
-                    src="./assets/img/clock-green.png"
+                    src="/assets/img/clock-green.png"
                     className="img img-fluid"
                     alt=""
                   />{" "}
@@ -867,7 +867,7 @@ const Home = () => {
         </div>
         <div className="mem-plan-layer">
           <img
-            src="./assets/img/membership-plan-bg.png"
+            src="/assets/img/membership-plan-bg.png"
             className="img img-fluid"
             alt=""
           />
@@ -879,7 +879,7 @@ const Home = () => {
             <div className="col-lg-6">
               <div className="premium-expert-img">
                 <img
-                  src="./assets/img/premium-expert.png"
+                  src="/assets/img/premium-expert.png"
                   className="img img-fluid"
                   alt=""
                 />
@@ -949,7 +949,7 @@ const Home = () => {
                   <div className="client-feature-box">
                     <div className="client-feature-img">
                       <img
-                        src={`${obj?.image === "" ? "./assets/img/legal-expert-1.png":obj?.image}`}
+                        src={`${obj?.image === "" ? "/assets/img/legal-expert-1.png":obj?.image}`}
                         className="img img-fluid"
                         alt=""
                       />
@@ -970,7 +970,7 @@ const Home = () => {
                    <div className="item">
                       <div className="client-feature-box">
                          <div className="client-feature-img">
-                            <img src="./assets/img/legal-expert-1.png" className="img img-fluid" alt=""/>
+                            <img src="/assets/img/legal-expert-1.png" className="img img-fluid" alt=""/>
                          </div>
                          <div className="client-feature-content">
                             <p>A wonderful platform for clearing your doubts on all the Legal Matters, all the Legal
@@ -984,7 +984,7 @@ const Home = () => {
                    <div className="item">
                       <div className="client-feature-box">
                          <div className="client-feature-img">
-                            <img src="./assets/img/legal-expert-1.png" className="img img-fluid" alt=""/>
+                            <img src="/assets/img/legal-expert-1.png" className="img img-fluid" alt=""/>
                          </div>
                          <div className="client-feature-content">
                             <p>A wonderful platform for clearing your doubts on all the Legal Matters, all the Legal
@@ -998,7 +998,7 @@ const Home = () => {
                    <div className="item">
                       <div className="client-feature-box">
                          <div className="client-feature-img">
-                            <img src="./assets/img/legal-expert-1.png" className="img img-fluid" alt=""/>
+                            <img src="/assets/img/legal-expert-1.png" className="img img-fluid" alt=""/>
                          </div>
                          <div className="client-feature-content">
                             <p>A wonderful platform for clearing your doubts on all the Legal Matters, all the Legal

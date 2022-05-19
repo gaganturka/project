@@ -213,7 +213,7 @@ const handlemodal1=()=>{
                   <div className="breadcrumb-search">
                      <div className="position-relative">
                         <input type="text" className="form-control" placeholder="Search any....."/>
-                        <button className="btn"><img src="./assets/img/search-icon.png" className="img img-fluid" alt=""/></button>
+                        <button className="btn"><img src="/assets/img/search-icon.png" className="img img-fluid" alt=""/></button>
                      </div>
                   </div>
                </div> */}
@@ -234,7 +234,7 @@ const handlemodal1=()=>{
                            <li>
                               <div className="exp-user-dt">
                                  <div>
-                                    <img src="./assets/img/pratice-area-thumb.png" className="img img-fluid" alt=""/>
+                                    <img src="/assets/img/pratice-area-thumb.png" className="img img-fluid" alt=""/>
                                  </div>
                                  <div>
                                     <h4>{expert.userId && expert.userId.firstName}{" "} {expert.userId.lastName} Nikolaus</h4>
@@ -412,7 +412,7 @@ const handlemodal1=()=>{
                                           </div>
                                              <div className="select-time-slot">
                                              
-                                                <img src="./assets/img/time-slot.png" className="img img-fluid" alt=""/>
+                                                <img src="/assets/img/time-slot.png" className="img img-fluid" alt=""/>
                                                 <div className='row '>
                                                    {
                                                       timeList.length>0?timeList.map((e,index)=>{

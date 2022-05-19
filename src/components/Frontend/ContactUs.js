@@ -33,7 +33,7 @@ const ContactUs = () => {
 				</form>
 		  </div>
 		  <div class="col-xl-5 col-lg-5 col-md-12">
-			  <img src="./assets/img/Contact us-rafiki.png" class="img-fluid contact-form-img "/>
+			  <img src="/assets/img/Contact us-rafiki.png" class="img-fluid contact-form-img "/>
 		  </div>
 		</div>
 	  </div>
@@ -70,8 +70,8 @@ const ContactUs = () => {
 		  <div class="contact-details-inner">
 		   <h5 class="text-center">Download Borhan app</h5> 
 		   <ul class="pt-3 list-address text-center">
-			  <li><a href=""><img src="./assets/img/app-store-btn.png"/></a></li>
-			  <li class="mt-2"><a href=""><img src="./assets/img/google-play-store-btn.png"/></a></li>
+			  <li><a href=""><img src="/assets/img/app-store-btn.png"/></a></li>
+			  <li class="mt-2"><a href=""><img src="/assets/img/google-play-store-btn.png"/></a></li>
 			</ul>  
 		  </div>
 		 </div>

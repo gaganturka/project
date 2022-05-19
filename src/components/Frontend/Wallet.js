@@ -24,7 +24,7 @@ const Wallet = () => {
                 <div className="wallet-recharge-wrp">
                    <div className="wallet-recharge-content">
                       <div> 
-                         <img src="./assets/img/wallet-icon.png" alt="" />
+                         <img src="/assets/img/wallet-icon.png" alt="" />
                       </div>
                       <div>
                          <h3>04 h 30 mins</h3>
@@ -43,10 +43,10 @@ const Wallet = () => {
                    <div className="table-responsive">
                       <table className="table">
                          <thead>
-                            <th>Name <img src="./assets/img/sort-icon.png" alt="" /></th>
-                            <th>Date <img src="./assets/img/sort-icon.png" alt="" /></th>
-                            <th>Amount <img src="./assets/img/sort-icon.png" alt="" /></th>
-                            <th>Status <img src="./assets/img/sort-icon.png" alt="" /></th>
+                            <th>Name <img src="/assets/img/sort-icon.png" alt="" /></th>
+                            <th>Date <img src="/assets/img/sort-icon.png" alt="" /></th>
+                            <th>Amount <img src="/assets/img/sort-icon.png" alt="" /></th>
+                            <th>Status <img src="/assets/img/sort-icon.png" alt="" /></th>
                             <th> &nbsp; </th>
                          </thead>
                          <tbody>
@@ -65,8 +65,8 @@ const Wallet = () => {
                                </td>
                                <td>
                                   <div className="action-btn-group">
-                                     <button className="btn" type="button"> <img src="./assets/img/blue-icon.png" alt="" /> </button>
-                                     <button className="btn" type="button"> <img src="./assets/img/export-icon.png" alt="" /> </button>
+                                     <button className="btn" type="button"> <img src="/assets/img/blue-icon.png" alt="" /> </button>
+                                     <button className="btn" type="button"> <img src="/assets/img/export-icon.png" alt="" /> </button>
                                   </div>
                                </td>
                             </tr>
@@ -85,8 +85,8 @@ const Wallet = () => {
                                </td>
                                <td>
                                   <div className="action-btn-group">
-                                     <button className="btn" type="button"> <img src="./assets/img/blue-icon.png" alt="" /> </button>
-                                     <button className="btn" type="button"> <img src="./assets/img/export-icon.png" alt="" /> </button>
+                                     <button className="btn" type="button"> <img src="/assets/img/blue-icon.png" alt="" /> </button>
+                                     <button className="btn" type="button"> <img src="/assets/img/export-icon.png" alt="" /> </button>
                                   </div>
                                </td>
                             </tr>
@@ -105,8 +105,8 @@ const Wallet = () => {
                                </td>
                                <td>
                                   <div className="action-btn-group">
-                                     <button className="btn" type="button"> <img src="./assets/img/blue-icon.png" alt="" /> </button>
-                                     <button className="btn" type="button"> <img src="./assets/img/export-icon.png" alt="" /> </button>
+                                     <button className="btn" type="button"> <img src="/assets/img/blue-icon.png" alt="" /> </button>
+                                     <button className="btn" type="button"> <img src="/assets/img/export-icon.png" alt="" /> </button>
                                   </div>
                                </td>
                             </tr>
@@ -125,8 +125,8 @@ const Wallet = () => {
                                </td>
                                <td>
                                   <div className="action-btn-group">
-                                     <button className="btn" type="button"> <img src="./assets/img/blue-icon.png" alt="" /> </button>
-                                     <button className="btn" type="button"> <img src="./assets/img/export-icon.png" alt="" /> </button>
+                                     <button className="btn" type="button"> <img src="/assets/img/blue-icon.png" alt="" /> </button>
+                                     <button className="btn" type="button"> <img src="/assets/img/export-icon.png" alt="" /> </button>
                                   </div>
                                </td>
                             </tr>
@@ -145,8 +145,8 @@ const Wallet = () => {
                                </td>
                                <td>
                                   <div className="action-btn-group">
-                                     <button className="btn" type="button"> <img src="./assets/img/blue-icon.png" alt="" /> </button>
-                                     <button className="btn" type="button"> <img src="./assets/img/export-icon.png" alt="" /> </button>
+                                     <button className="btn" type="button"> <img src="/assets/img/blue-icon.png" alt="" /> </button>
+                                     <button className="btn" type="button"> <img src="/assets/img/export-icon.png" alt="" /> </button>
                                   </div>
                                </td>
                             </tr>

@@ -11,6 +11,7 @@ import Terms from './components/Frontend/Terms';
 import Privacy from './components/Frontend/Privacy';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from './components/Frontend/Header';
+import ChatSupport from './components/Frontend/ChatSupport';
 import Membership from './components/Frontend/Membership';
 import ContactUs from './components/Frontend/ContactUs';
 import PremiumExpert from './components/Frontend/PremiumExpert';
@@ -22,7 +23,7 @@ import CategoryAndPracticeContextProvider from './context/CategoryAndPracticeCon
 import Room from './components/Frontend/ChatRoom';
 import "./assets/css/main.css";
 import "./assets/css/responsive.css";
-import './assets/css/bootstrap.min.css';
+// import './assets/css/bootstrap.min.css'
 
 function App() {
   
@@ -77,6 +78,7 @@ function App() {
               :
               <Routes>
                  <Route exact path="/room/:id" key="room"  element={<Room/>} />
+                 <Route exact path="/ChatSupport" key="room"  element={<ChatSupport/>} />
               <Route exact path="/expertlisting" key="expertlisting"  element={<ExpListing/>} />
        
        <Route exact path="/" key="home" element={<Home/>} />

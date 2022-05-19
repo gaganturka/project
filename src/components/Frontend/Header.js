@@ -589,7 +589,7 @@ const Header = () => {
             <Link className="navbar-brand" to="/">
               <img
                 className="logo-img"
-                src="./assets/img/main-logo.png"
+                src="/assets/img/main-logo.png"
                 alt=""
               />
             </Link>
@@ -646,7 +646,7 @@ const Header = () => {
                   // to="/privacypolicy"
                   >
                     <img
-                      src="./assets/img/Icon awesome-mobile-alt.png"
+                      src="/assets/img/Icon awesome-mobile-alt.png"
                       class="brohan-app-icon"
                     />{" "}
                     Borhan App
@@ -705,7 +705,7 @@ const Header = () => {
               <div className="auth-modal-artwork">
                 
                 <img
-                  src="./assets/img/human-right-artwok.png"
+                  src="/assets/img/human-right-artwok.png"
                   className="img img-fluid"
                   alt=""
                 />
@@ -717,7 +717,7 @@ const Header = () => {
                   <div className="w-100">
                     <div className="auth-modal-logo">
                       <img
-                        src="./assets/img/main-logo.png"
+                        src="/assets/img/main-logo.png"
                         className="img img-fluid"
                         alt=""
                       />
@@ -822,7 +822,7 @@ const Header = () => {
                   <div className="w-100">
                     <div className="auth-modal-logo">
                       <img
-                        src="./assets/img/main-logo.png"
+                        src="/assets/img/main-logo.png"
                         className="img img-fluid"
                         alt=""
                       />
@@ -866,7 +866,7 @@ const Header = () => {
                   <div className="w-100">
                     <div className="auth-modal-logo">
                       <img
-                        src="./assets/img/main-logo.png"
+                        src="/assets/img/main-logo.png"
                         className="img img-fluid"
                         alt=""
                       />
@@ -908,7 +908,7 @@ const Header = () => {
                       <div className="profile-pic-chooose">
 
                         <img
-                          src={`${getProfilePic == "" ? "./assets/img/profile-picture-icon.png" : getProfilePic}`}
+                          src={`${getProfilePic == "" ? "/assets/img/profile-picture-icon.png" : getProfilePic}`}
                           className="img img-fluid"
                           alt=""
                         />
@@ -1000,7 +1000,7 @@ const Header = () => {
                       <div className="profile-pic-chooose">
 
                         <img
-                          src={`${getProfilePic == "" ? "./assets/img/profile-picture-icon.png" : getProfilePic}`}
+                          src={`${getProfilePic == "" ? "/assets/img/profile-picture-icon.png" : getProfilePic}`}
                           className="img img-fluid"
                           alt=""
                         />
@@ -1190,7 +1190,7 @@ const Header = () => {
                             <div className="btn-audio">
                               <button className="btn" type="button">
                                 <img
-                                  src="./assets/img/audio-record-icon.png"
+                                  src="/assets/img/audio-record-icon.png"
                                   className="img img-fluid"
                                   alt=""
                                 />
@@ -1212,7 +1212,7 @@ const Header = () => {
                             <div className="btn-video">
                               <button className="btn" type="button">
                                 <img
-                                  src="./assets/img/video-record-icon.png"
+                                  src="/assets/img/video-record-icon.png"
                                   className="img img-fluid"
                                   alt=""
                                 />
@@ -1245,7 +1245,7 @@ const Header = () => {
                             />
                             <div className="artifical-doc-feild">
                               <img
-                                src="./assets/img/upload-document-icon.png"
+                                src="/assets/img/upload-document-icon.png"
                                 className="img img-fluid"
                                 alt=""
                               />
@@ -1280,7 +1280,7 @@ const Header = () => {
                   <div className="w-100">
                     <div className="auth-modal-logo">
                       <img
-                        src="./assets/img/main-logo.png"
+                        src="/assets/img/main-logo.png"
                         className="img img-fluid"
                         alt=""
                       />
@@ -1323,7 +1323,7 @@ const Header = () => {
                   <div className="w-100">
                     <div className="auth-modal-logo">
                       <img
-                        src="./assets/img/main-logo.png"
+                        src="/assets/img/main-logo.png"
                         className="img img-fluid"
                         alt=""
                       />
@@ -1375,7 +1375,7 @@ const Header = () => {
             <div class="col-xl-6 col-lg-12 col-md-12 p-5 text-center-md">
               <div class="logo-img text-center">
                 <img
-                  src="./assets/img/favicon.png"
+                  src="/assets/img/favicon.png"
                   class="img-fluid text-center"
                 />
               </div>
@@ -1392,7 +1392,7 @@ const Header = () => {
                 <div class="col-lg-6 mt-3">
                   <a href="">
                     <img
-                      src="./assets/img/google-play-store-btn.png"
+                      src="/assets/img/google-play-store-btn.png"
                       class="img-fluid"
                     />
                   </a>
@@ -1400,7 +1400,7 @@ const Header = () => {
                 <div class="col-lg-6 mt-3">
                   <a href="">
                     <img
-                      src="./assets/img/app-store-btn.png"
+                      src="/assets/img/app-store-btn.png"
                       class="img-fluid"
                     />
                   </a>
@@ -1433,7 +1433,7 @@ const Header = () => {
             </div>
             <div class="col-xl-6   p-0 get-app-banner">
               <div id="container text-center">
-                <img src="./assets/img/get-app-banner.png" />
+                <img src="/assets/img/get-app-banner.png" />
               </div>
             </div>
           </div>

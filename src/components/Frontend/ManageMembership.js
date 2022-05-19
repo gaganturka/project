@@ -63,7 +63,7 @@ const ManageMembership = () => {
 						 <div class="membership-plan-box">
 							<div class="side-indicator"></div>
 							<h3>Advance</h3>
-							<h5><img src="./assets/img/clock-green.png" class="img img-fluid" alt=""/> 22h / month</h5>
+							<h5><img src="/assets/img/clock-green.png" class="img img-fluid" alt=""/> 22h / month</h5>
 							<h4> <span></span> OMR 8</h4>
 							<h4><b>5.5 OMR</b></h4>
 							<h6>Billed Monthly</h6>
@@ -76,7 +76,7 @@ const ManageMembership = () => {
 							 <div class="bv-tag">Best Value</div>
 							 <div class="side-indicator"></div>
 							 <h3>Premium</h3>
-							 <h5><img src="./assets/img/clock-yellow.png" class="img img-fluid" alt=""/> 22h / month</h5>
+							 <h5><img src="/assets/img/clock-yellow.png" class="img img-fluid" alt=""/> 22h / month</h5>
 							 <h4> <span></span> OMR 100</h4>
 							 <h4><b>60 OMR</b></h4>
 							 <h6>Billed Annual</h6>

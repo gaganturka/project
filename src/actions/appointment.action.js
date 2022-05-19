@@ -41,7 +41,7 @@ function getAppointments( payload,cb) {
               }
               function getChatAppointment(payload,cb) {
                 Agent
-                  .fire('get', `${BACKEND_URL}/expert/getChatAppointment`)
+                  .fire('get', `${BACKEND_URL}/website/getChatAppointment`)
                   .query(payload)
                   .end((err, res) => {
                     var error = err || res.error ? ServerError(res) : (res.body && res.body.error) ? ServerError(res) : null;
@@ -73,5 +73,6 @@ export default {
     rescheduleAppointment,
     cancelAppointment,
     bookChatAppointment,
-    getChatAppointmentById
+    getChatAppointmentById,
+    getChatAppointment
   }

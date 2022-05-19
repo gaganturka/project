@@ -6,7 +6,7 @@ const ErrorPage = () => {
     <>
       <section className="page-error-wrp">
          <div className="error-img">
-            <img src="./assets/img/404-img.png" className="img img-fluid" alt="" />
+            <img src="/assets/img/404-img.png" className="img img-fluid" alt="" />
          </div>
          <div className="page-not-found-content">
             <div className="container">

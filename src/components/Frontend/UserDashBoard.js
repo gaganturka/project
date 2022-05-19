@@ -102,7 +102,7 @@ const UserDashBoard = () => {
                     <img
                       src={`${
                         getProfilePic === ""
-                          ? "./assets/img/mathew-wade.png"
+                          ? "/assets/img/mathew-wade.png"
                           : getProfilePic
                       }`}
                       className="img img-fluid"
@@ -123,7 +123,7 @@ const UserDashBoard = () => {
                     <div className="upt-edit-icon">
                       <Link to="javascript:;">
                         <img
-                          src="./assets/img/edit-white-icon.png"
+                          src="/assets/img/edit-white-icon.png"
                           className="img img-fluid"
                           alt=""
                         />
@@ -184,7 +184,7 @@ const UserDashBoard = () => {
                                     <label for="">Date of Birth</label>
                                     <div className="input-date">
                                        <input type="date" className="form-control" placeholder="" value=""/>
-                                       <img src="./assets/img/cal-icon.png" className="img img-fluid" alt=""/>
+                                       <img src="/assets/img/cal-icon.png" className="img img-fluid" alt=""/>
                                     </div>
                                  </div>
                               </div> */}

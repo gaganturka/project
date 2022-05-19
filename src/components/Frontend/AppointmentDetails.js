@@ -143,12 +143,28 @@ const AppointmentDetails = () => {
                                        {console.log("appoii",appointmentList)}
                                           {
                                            appointmentList.length>0 && appointmentList.map((obj,index)=>{
+                                             var today = new Date();
+                                             var startTime = new Date(obj.appointmentDate);
+                                             let endTime =new Date(obj.endAppointmentTime);
+                                             var dif = (startTime - today);
+                                             var dif = Math.round((dif/1000)/60);
+                                             var diffend = (endTime - today);
+                                             var diffend = Math.round((diffend/1000)/60);
+
+                                             let flag =false;
+                                             if(dif<=5&&dif>=0&&obj.status=="confirmed"){
+                                                flag=true;
+                                             } 
+                                             if(diffend<=obj.duration&&diffend>=0){
+                                                flag=true;
+                                             }
+                                             console.log(diffend,obj.duration,endTime, dif,flag ,"kjjkkjkjk")
                                               return(
                                           <tr>
                                              <td>
                                                 <div className="table-user">
                                                    <div> 
-                                                      <img src="./assets/img/megan-smith.png" className="" alt="" />
+                                                      <img src="/assets/img/megan-smith.png" className="" alt="" />
                                                    </div>
                                                                 <div>
                                                       <h5>{obj?.expertId?.userId?.firstName}</h5>
@@ -164,14 +180,20 @@ const AppointmentDetails = () => {
                                                 <h6>{obj?.appointmentType}</h6>
                                                 <h6>{moment(obj?.startAppointmentTime).format("MMM Do YY h:mm:ss a")}</h6>
                                              </td>
-                                             <td>
+                                           {flag?<td>
+                                                <div className="table-btn-group">
+                                                   <button style={{backgroundColor:"green"}} className="btn" type="button" onClick={()=>{CancelAppointment(obj)}} >Join</button>
+                                                  
+                                                </div>
+                                             </td>
+                                             :<td>
                                                 <div className="table-btn-group">
                                                    <button className="btn" type="button" onClick={()=>{CancelAppointment(obj)}} >Cancel</button>
                                                    <button 
                                                    // data-bs-target="#appointmentDetailsModal"  data-bs-dismiss="modal" data-bs-toggle="modal" 
                                                    className="btn" type="button" onClick={()=>{setreschedulemodal(true);setRescheduleModalDetails(obj)}}>Reschedule</button>
                                                 </div>
-                                             </td>
+                                             </td>}
                                           </tr>)
                                            })
                                           }
@@ -233,7 +255,7 @@ const AppointmentDetails = () => {
                                           <div className="appointment-details-modal-wrp">
                                              <div className="app-user-wrp">
                                                 <div>
-                                                   <img src="./assets/img/megan-smith.png" alt="" />
+                                                   <img src="/assets/img/megan-smith.png" alt="" />
                                                 </div>
                                                 <div>
                                                    <h4>Meghan Smith</h4>
@@ -305,7 +327,7 @@ const AppointmentDetails = () => {
                                           <div className="appointment-details-modal-wrp">
                                              <div className="app-user-wrp">
                                                 <div>
-                                                   <img src="./assets/img/megan-smith.png" alt="" />
+                                                   <img src="/assets/img/megan-smith.png" alt="" />
                                                 </div>
                                                 <div>
                                                    <h4>{rescheduleModalDetails?.expertId?.userId?.firstName}</h4>

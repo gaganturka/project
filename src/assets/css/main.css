@@ -6,7 +6,9 @@ html,
 body {
 	scroll-behavior: smooth;
 }
-
+a{
+	text-decoration: none !important;
+}
 body {
 	overflow-x: hidden !important;
 	font-weight: 400;
@@ -92,9 +94,13 @@ footer {
 
 .navigation {
 	background: #fff;
-	padding: 5px;
-	position: relative;
-	z-index: 9;
+    padding: 5px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9;
 }
 
 .navigation .logo-img {
@@ -2033,7 +2039,7 @@ footer {
 	width: calc(100% - 325px);
 	margin-left: 325px;
 	padding: 50px;
-	/* margin-top: 95px; */
+	margin-top: 95px;
 	padding-bottom: 0px !important;
 }
 
@@ -2966,3 +2972,17 @@ ul.blocklist {
 	color: white;
     background: #0c0c02 !important;
 }
+ .chatroom {
+    background: transparent;
+    border: 2px solid #D1D1D1;
+    width: 40px !important;
+    font-size: 14px;
+    height: 40px !important;
+    border-radius: 55px !important;
+    margin-left: 15px;
+    font-weight: 500;
+}
+.td-disable
+         {
+           opacity: .5;
+         }

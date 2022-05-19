@@ -92,9 +92,13 @@ footer {
 
 .navigation {
 	background: #fff;
-	padding: 5px;
-	position: relative;
-	z-index: 9;
+    padding: 5px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9;
 }
 
 .navigation .logo-img {
@@ -2033,7 +2037,7 @@ footer {
 	width: calc(100% - 325px);
 	margin-left: 325px;
 	padding: 50px;
-	/* margin-top: 95px; */
+	margin-top: 95px;
 	padding-bottom: 0px !important;
 }
 
