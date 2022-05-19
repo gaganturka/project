@@ -1296,7 +1296,39 @@ module.exports = {
     catch (error) {
       universalFunctions.sendError(error, res);
     }
-  }
+  }, 
+   getChatAppointment:async (req,res)=>{
+    try{ 
+      let id = req.user.id;
+      let payload={
+        userId:id
+      }
+      const chatappointmentdata = await chatappointment.find(payload).populate({ path: "userId expertId userId" });
+      if (!chatappointmentdata) {
+        throw Boom.badRequest("invalid id or token");
+      }
+      let tempobj = JSON.parse(JSON.stringify(chatappointmentdata));
+      await universalFunctions.asyncForEach(tempobj,async ( e,index)=>{
+        console.log(e,"hello ji ");
+        let expertData=await User.findOne({_id:e.expertId.userId});
+        e.expertData=expertData;
+    
+      })
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Successfull get appointment",
+          data: tempobj,
+        },
+        res
+      );
+    
+    }catch(err){
+      console.log(err)
+      universalFunctions.sendError(err, res);  
+    }
+    },
+
 
 
 };

@@ -35,5 +35,6 @@ router.route("/rescheduleAppointment/:id").put(authUser.checkAuth,WebsiteControl
 router.route("/videoChatTokenUser").post(authUser.checkAuth,WebsiteController.twilioVideoChatTokenUser);
 router.route("/videoChatTokenExpert").post(authUser.checkAuth,WebsiteController.twilioVideoChatTokenExpert);
 
+router.route("/getChatAppointment").get(authUser.checkAuth,WebsiteController.getChatAppointment);
 
   module.exports = router;

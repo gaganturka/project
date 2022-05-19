@@ -113,7 +113,7 @@ module.exports = {
   },
   getExportUserDetail: async (req, res) => {
     try{
-    let { id } = req.query;
+    let id =req.user.id;
     console.log("this is id ", id);
     const expert = await User.findOne({
       _id: id,
@@ -165,16 +165,17 @@ module.exports = {
   },
   updateExpertUser: async (req, res) => {
     try{
+      console.log(req.user)
+      let expertId=req.user.expertId
     let {
       firstName,
       lastName,
       email,
       bio,
-      expertId,
       getAudioFilePath,
       getVideoFilePath,
     } = req.body;
-    let { id } = req.query;
+    let  id  =req.user.id;
     let payload = {
       firstName,
       lastName,
