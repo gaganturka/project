@@ -8,7 +8,7 @@ router.route("/exportLogin").post(ExpertController.exportLogin);
 
 router.route("/getExpertUser").get(isexpert.isExpert,ExpertController.getExpertUser);
 router.route("/getExportUserDetail").get(isexpert.isExpert,ExpertController.getExportUserDetail);
-router.route("/updateExpertUser").post( ExpertController.updateExpertUser);
+router.route("/updateExpertUser").post(isexpert.isExpert,ExpertController.updateExpertUser);
 router.route("/getExpertUserInfo").get(isexpert.isExpert,ExpertController.getExpertUserInfoUsingUserModel);
 router.route("/getExpertAppointment").get(isexpert.isExpert,ExpertController.getExpertAppointment);
 router.route("/updateAppointment").post(isexpert.isExpert,ExpertController.updateAppointment);
