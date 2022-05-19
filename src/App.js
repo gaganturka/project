@@ -23,6 +23,7 @@ import CategoryAndPracticeContextProvider from './context/CategoryAndPracticeCon
 import Room from './components/Frontend/ChatRoom';
 import "./assets/css/main.css";
 import "./assets/css/responsive.css";
+import VideoChat from './components/Frontend/VideoChat/VideoChat';
 // import './assets/css/bootstrap.min.css'
 
 function App() {
@@ -100,7 +101,7 @@ function App() {
               <Route  path="/userdashboard" key="userdashboard" element={<UserDashBoard/>}/>
               <Route  path="/appointmentdetails" key="appointmentdetails" element={<AppointmentDetails/>}/>
               <Route  path="/managemembership" key="managemembership" element={<ManageMembership/>}/>
-
+              <Route  path='/videochat' key='videochat' element={<VideoChat/>}/>
               </Routes>
         }
 

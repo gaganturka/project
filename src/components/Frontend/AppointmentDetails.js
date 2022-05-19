@@ -95,7 +95,14 @@ const AppointmentDetails = () => {
             });
             
           };
-         
+      
+         const twilioVideoChat=(obj)=>{
+            history('/videochat',
+            // search: 'abcd',
+            {state: { appointmentId: obj._id }}
+         )
+         } 
+
   return (
      
     <>
@@ -180,20 +187,21 @@ const AppointmentDetails = () => {
                                                 <h6>{obj?.appointmentType}</h6>
                                                 <h6>{moment(obj?.startAppointmentTime).format("MMM Do YY h:mm:ss a")}</h6>
                                              </td>
-                                           {flag?<td>
+                                           {/* {flag? */}
+                                           <td>
                                                 <div className="table-btn-group">
-                                                   <button style={{backgroundColor:"green"}} className="btn" type="button" onClick={()=>{CancelAppointment(obj)}} >Join</button>
+                                                   <button style={{backgroundColor:"green"}} className="btn" type="button" onClick={()=>{twilioVideoChat(obj)}} >Join</button>
                                                   
                                                 </div>
                                              </td>
-                                             :<td>
-                                                <div className="table-btn-group">
-                                                   <button className="btn" type="button" onClick={()=>{CancelAppointment(obj)}} >Cancel</button>
-                                                   <button 
-                                                   // data-bs-target="#appointmentDetailsModal"  data-bs-dismiss="modal" data-bs-toggle="modal" 
-                                                   className="btn" type="button" onClick={()=>{setreschedulemodal(true);setRescheduleModalDetails(obj)}}>Reschedule</button>
-                                                </div>
-                                             </td>}
+                                             {/* // :<td>
+                                             //    <div className="table-btn-group">
+                                             //       <button className="btn" type="button" onClick={()=>{CancelAppointment(obj)}} >Cancel</button>
+                                             //       <button 
+                                             //       // data-bs-target="#appointmentDetailsModal"  data-bs-dismiss="modal" data-bs-toggle="modal" 
+                                             //       className="btn" type="button" onClick={()=>{setreschedulemodal(true);setRescheduleModalDetails(obj)}}>Reschedule</button>
+                                             //    </div>
+                                             // </td>} */}
                                           </tr>)
                                            })
                                           }
