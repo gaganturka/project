@@ -67,6 +67,10 @@ const AppointmentSchema = new Schema({
   question: {
     type: String,
   },
+  videoChatId:{
+    type:String,
+    default:"",
+  }
 });
 
 module.exports = mongoose.model("appointment", AppointmentSchema);
