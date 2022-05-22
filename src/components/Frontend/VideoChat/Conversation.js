@@ -117,7 +117,7 @@ class Conversation extends Component {
                     }}
                 >
                   <input id="files" {...getInputProps()} />
-                  <div style={{flexBasis: "100%", flexGrow: 2, flexShrink: 1, overflowY: "scroll"}}>
+                  <div style={{flexBasis: "100%", flexGrow: 2, flexShrink: 1, }}>
                     <ConversationsMessages
                         identity={this.props.myIdentity}
                         messages={this.state.messages}/>

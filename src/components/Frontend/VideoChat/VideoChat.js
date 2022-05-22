@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import {useLocation } from 'react-router-dom'
+import {useLocation,useNavigate } from 'react-router-dom'
 import Loader from "react-js-loader";
 import Room from './Room';
 import './convo/Video.css'
@@ -16,6 +16,7 @@ const [convoId,setConvoId]=useState('');
 //     setUsername(event.target.value);
 //   }, []);
 const location = useLocation();
+const history=useNavigate();
   const handleRoomNameChange = useCallback(event => {
     setRoomName(event.target.value);
   }, []);
@@ -45,6 +46,7 @@ const location = useLocation();
   },[])
   const handleLogout = useCallback(event => {
     setToken(null);
+    history('/appointmentdetails')
   }, []);
 
   let render;
