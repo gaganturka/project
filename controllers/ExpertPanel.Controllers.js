@@ -73,26 +73,14 @@ module.exports = {
 
   exportLogin: async (req, res) => {
     const schema = Joi.object({
-      mobileNo: Joi.number().required(),
-      otp: Joi.number().required(),
+      mobileNo: Joi.number().required()    
     });
     await universalFunctions.validateRequestPayload(req.body, res, schema);
     // let userLogin = await User.findOne({ mobile: req.body.mobileNo });
-    let { otp, mobileNo } = req.body;
-    let loginData = await otpModel.findOne({
-      mobileNo: mobileNo,
-      otp: otp,
-    });
-    if (!loginData) {
-      universalFunctions.sendError(
-        {
-          statusCode: 404,
-          message: responseMessages.Otp_Not_Match,
-        },
-        res
-      );
+    let {mobileNo } = req.body;
+ 
       // throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
-    }
+    
 
     let userData = await User.findOne({ mobileNo: mobileNo });
     // const token = jwt.sign({ user_id: userData._id }, Config.jwtsecret);
