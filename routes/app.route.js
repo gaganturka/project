@@ -25,8 +25,8 @@ router
   .route("/getAppointmentDetail")
   .post(checkAuth, appCreation.getAppointmentDetails);
   router
-    .route("/createFavouriteExport")
-    .post(checkAuth, appCreation.createFavouriteExport);
+    .route("/createFavouriteExpert")
+    .post(checkAuth, appCreation.createFavouriteExpert);
   router
     .route("/getFavouriteExpert")
     .get(checkAuth, appCreation.getFavouriteExpert);

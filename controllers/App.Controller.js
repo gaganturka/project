@@ -1044,7 +1044,7 @@ module.exports = {
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
-          message: "Success",
+          message: "Appointment Cancelled",
         },
         res
       );
@@ -1113,24 +1113,40 @@ module.exports = {
       return universalFunctions.sendError(error, res);
     }
   },
-  createFavouriteExport: async (req, res) => {
+  createFavouriteExpert: async (req, res) => {
     try {
-      let { borhanUserId, userId, expertUserId, expertId } = req.body;
+      let userId = req.user.id;
+      let {expertId,favourite } = req.body;
       let payload = {
-        borhanUserId,
         userId,
-        expertUserId,
         expertId,
       };
-      let favouriteExportCreated = await favouriteExport.create(payload);
-      universalFunctions.sendSuccess(
+      if (favourite===APP_CONSTANTS.checkfavExpert) {
+        await favouriteExport.create(payload);
+        universalFunctions.sendSuccess(
         {
           statusCode: 200,
-          message: "Favourite Export Created",
-          data: favouriteExportCreated,
+          message: "Expert Added To Favourite",
         },
         res
       );
+      }
+      else
+      {
+       let removeFavouriteExpert= await favouriteExport.deleteOne({ expertId: expertId })
+        if (removeFavouriteExpert)
+        {
+          throw Boom.badRequest("Expert Is Not Found"); 
+        }
+        universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Expert Remove To Favourite",
+        },
+        res
+      );
+      }
+     
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }
@@ -1140,14 +1156,14 @@ module.exports = {
       let favouriteExportData = await favouriteExport
         .find()
         .populate({ path: "userId", select: "firstName lastName profilePic" })
-        .populate({
-          path: "borhanUserId",
-          populate: {
-            path: "userId",
-            select: "firstName lastName profilePic",
-          },
-        })
-        .populate("expertUserId")
+        // .populate({
+        //   path: "borhanUserId",
+        //   populate: {
+        //     path: "userId",
+        //     select: "firstName lastName profilePic",
+        //   },
+        // })
+        // .populate("expertUserId")
         .populate({
           path: "expertId",
           select: "firstName lastName profilePic",

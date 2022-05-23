@@ -17,6 +17,7 @@ const appointmentType = {
   audio: "audio",
   video: "video",
 };
+const checkfavExpert = 1;
 
 const appointmentStatus = {
   cancelled: "cancelled",
@@ -39,4 +40,5 @@ module.exports = {
   appointmentType,
   appointmentStatus,
   chatRoomStatus,
+  checkfavExpert,
 };
