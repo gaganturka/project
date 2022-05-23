@@ -169,30 +169,8 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-      //   let page = req.body.page;
-      //   let limit = req.body.limit;
-      //   let filter = {
-      //     isApprovedByAdmin: true,
-      //   };
-      //   // console.log("searchhhhi", req.body.search, "search mai kya hai");
-      //   if (req.body.search) {
-      //     filter["$or"] = [
-      //       { "userId.firstName": { $regex: req.body.search, $options: "i" } },
-      //       {
-      //         "userId.email": { $regex: req.body.search, $options: "i" },
-      //       },
-      //     ];
-      //   }
-
-      //   const expert = await expertUser
-      //     .find({ isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active })
-      //     .populate("userId")
-      //     .populate("practiceArea")
-      //     .populate("category")
-      //     .skip(parseInt((req.body.page - 1) * req.body.limit))
-      // .limit(parseInt(req.body.limit));
-      let aggregationQuery;
-      let expert;
+     
+      let expert,total;
       if (req.body.sortBy == "1") {
         if (req.body.category !== "" && req.body.practiceArea === "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -209,6 +187,13 @@ module.exports = {
             .sort({ "rating.avgRating": -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
+            total = await expertUser
+            .find({
+              category: req.body.category,
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+            })
+            .populate("practiceArea").countDocuments();
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -224,6 +209,12 @@ module.exports = {
             .sort({ "rating.avgRating": -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
+            total = await expertUser
+            .find({
+              practiceArea: req.body.practiceArea,
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+            }).countDocuments();
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -240,6 +231,13 @@ module.exports = {
             .sort({ "rating.avgRating": -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
+            total = await expertUser
+            .find({
+              practiceArea: req.body.practiceArea,
+              category: req.body.category,
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+            }).countDocuments();
         } else {
           expert = await expertUser
             .find({
@@ -252,6 +250,11 @@ module.exports = {
             .sort({ "rating.avgRating": -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
+            total = await expertUser
+            .find({
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+            }).countDocuments();
         }
       } else if (req.body.sortBy == "2") {
         if (req.body.category !== "" && req.body.practiceArea === "") {
@@ -269,6 +272,13 @@ module.exports = {
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
+            total = await expertUser
+            .find({
+              category: req.body.category,
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+            })
+           .countDocuments();
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -284,6 +294,13 @@ module.exports = {
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
+            total = await expertUser
+            .find({
+              practiceArea: req.body.practiceArea,
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+            })
+            .countDocuments();
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
           // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
@@ -300,6 +317,14 @@ module.exports = {
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
+            total = await expertUser
+            .find({
+              practiceArea: req.body.practiceArea,
+              category: req.body.category,
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+            })
+            .countDocuments();
         } else {
           expert = await expertUser
             .find({
@@ -312,6 +337,12 @@ module.exports = {
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
+            total = await expertUser
+            .find({
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+            })
+           .countDocuments();
         }
       }
 
@@ -329,9 +360,7 @@ module.exports = {
           message: "All experts online and filtered are",
           data: {
             list: expert,
-            count: await expertUser
-              .find({ status: APP_CONSTANTS.activityStatus.active })
-              .countDocuments(),
+            count: total,
           },
         },
         res
