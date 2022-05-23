@@ -1,6 +1,4 @@
-div {
-    /* border: 1px solid black;*/
-  }
+
   
   #ChatWindow {
     border: 1px solid #eee;
@@ -34,10 +32,10 @@ div {
     flex-direction: column;
   }
   
-  .nav-pills .nav-item {
+  /* .nav-pills .nav-item {
     border: 1px solid #dddddd;
     border-radius: 8px;
     padding-left: 0.3em;
     padding-right: 0.3em;
-  }
+  } */
   
