@@ -210,7 +210,7 @@ const ExpListing = () => {
                            <div className="p-3">
                               <h5>{obj?.userId?.firstName}</h5>
                               <h6>{obj?.practiceArea[0].name}</h6>
-                              <Link to="/expprofile"><button className="btn">View Profile</button></Link>
+                              <Link to={`/expprofile/${obj._id}`}><button className="btn">View Profile</button></Link>
                            </div>
                         </div>
                      </div>
@@ -340,8 +340,8 @@ const ExpListing = () => {
                         <div className="exp-listing-box">
                            <div className="exp-listing-img">
                               <img src={`${obj?.userId?.profilePic ===''?"/assets/img/exp-img-1.png":obj?.userId?.profilePic}`} className="img img-fluid" alt=""/>
-                              <span className="star">
-                                 <span className="star-icon fa fa-star"></span>
+                              <span className="star" >
+                                 <span  className="star-icon fa fa-star bg-light"></span>
                                </span>
                            </div>
                            <div className="exp-listing-content">
