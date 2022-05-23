@@ -105,7 +105,16 @@ exports.editCategories = async (req, res) => {
 
 exports.getCategoriesData = async (req, res) => {
   try {
-    let categorieData = await models.categories.find();
+    let categorieData;
+    let filter = {};
+    if (req.query.search) {
+      filter["$or"] = [{ name: { $regex: req.query.search, $options: "i" } }];
+    }
+    if (req.query.search) {
+      categorieData = await models.categories.find(filter);
+    } else {
+      categorieData = await models.categories.find();
+    }
     if (!categorieData) {
       throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
     }
