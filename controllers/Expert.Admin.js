@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const borhanUser = require("../models/Borhan_User");
 const expertUser = require("../models/Expert_User");
+const adminUser=require('../models/Admin_User');
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -369,4 +370,27 @@ module.exports = {
     );
   },
   
+  getAdminDetails: async (req,res)=>{
+    try{
+      let  id=req.user.id
+      console.log(req.user,'req.user',id);
+      let admin=await User.findOne({_id:id}).populate('userData.data');
+      if(!admin)
+      {
+        throw Boom.badRequest(responseMessages.INVALID_CREDENTIALS);
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "completely deleted expert",
+          data:admin
+        },
+        res
+      );
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error,res);
+    }
+  }
 };

@@ -7,7 +7,7 @@ const { Config } = require("../config");
 module.exports = {
   isAdmin: async (req, res, next) => {
     try {
-      const token = req.header("auth-token");
+      const token = req.header("auth-token")|| req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
       if (!token) {
         res
           .status(403)
@@ -23,6 +23,14 @@ module.exports = {
       if (user === null) {
         throw Boom.badRequest("invalid credentials no such admin exists");
       } else if (user.role === APP_CONSTANTS.role.admin) {
+        console.log(
+          'adminuser')
+        let userInfo = {
+          id: user._id,
+    
+        };
+        req.user = userInfo;
+      
         next();
       } else {
         throw Boom.badRequest("invalid credentials of admin");
