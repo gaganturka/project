@@ -1044,7 +1044,7 @@ module.exports = {
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
-          message: "Success",
+          message: "Appointment Cancelled",
         },
         res
       );
