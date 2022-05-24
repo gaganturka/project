@@ -34,20 +34,6 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-      //   let page = req.body.page;
-      //   let limit = req.body.limit;
-      //   let filter = {
-      //     isApprovedByAdmin: true,
-      //   };
-      //   // console.log("searchhhhi", req.body.search, "search mai kya hai");
-      //   if (req.body.search) {
-      //     filter["$or"] = [
-      //       { "userId.firstName": { $regex: req.body.search, $options: "i" } },
-      //       {
-      //         "userId.email": { $regex: req.body.search, $options: "i" },
-      //       },
-      //     ];
-      //   }
 
       const expert = await expertUser
         .find({
@@ -61,7 +47,7 @@ module.exports = {
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
-      console.log("expert online", expert, "expert online");
+      
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -76,9 +62,9 @@ module.exports = {
   },
   showBorhanUserDetails: async (req, res) => {
     try {
-      console.log(req.user.id, "kya req.user mai");
+      
       let id = req.user.id;
-      console.log("id of user", id);
+      
       const borhanuser = await User.findOne({ _id: id }).populate(
         "userData.data"
       );
@@ -86,7 +72,6 @@ module.exports = {
         throw Boom.badRequest("cannot find any user");
       }
 
-      console.log("userdetails", borhanuser, "user details");
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -96,6 +81,7 @@ module.exports = {
         res
       );
     } catch (error) {
+      console.log("error:",error)
       universalFunctions.sendError(error, res);
     }
   },
@@ -145,8 +131,7 @@ module.exports = {
       if (!borhan) {
         throw Boom.badRequest("could not update user");
       }
-      console.log("updated borhan", borhan);
-      console.log("newupdated user", user);
+     
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -185,8 +170,7 @@ module.exports = {
       let expert,total;
       if (req.body.sortBy == "1") {
         if (req.body.category !== "" && req.body.practiceArea === "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+      
           expert = await expertUser
             .find({
               category: req.body.category,
@@ -208,8 +192,7 @@ module.exports = {
             })
             .populate("practiceArea").countDocuments();
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+      
           expert = await expertUser
             .find({
               practiceArea: req.body.practiceArea,
@@ -230,8 +213,7 @@ module.exports = {
               status: APP_CONSTANTS.activityStatus.active,
             }).countDocuments();
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+      
           expert = await expertUser
             .find({
               practiceArea: req.body.practiceArea,
@@ -274,8 +256,7 @@ module.exports = {
         }
       } else if (req.body.sortBy == "2") {
         if (req.body.category !== "" && req.body.practiceArea === "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+      
           expert = await expertUser
             .find({
               category: req.body.category,
@@ -297,8 +278,7 @@ module.exports = {
             })
            .countDocuments();
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+      
           expert = await expertUser
             .find({
               practiceArea: req.body.practiceArea,
@@ -320,8 +300,7 @@ module.exports = {
             })
             .countDocuments();
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+      
           expert = await expertUser
             .find({
               practiceArea: req.body.practiceArea,
@@ -467,8 +446,7 @@ module.exports = {
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));;
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+      
           expert = await expertUser
             .find({
               practiceArea: req.body.practiceArea,
@@ -484,8 +462,7 @@ module.exports = {
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));;
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+      
           expert = await expertUser
             .find({
               practiceArea: req.body.practiceArea,
@@ -518,8 +495,7 @@ module.exports = {
         }
       } else if (req.body.sortBy == "2") {
         if (req.body.category !== "" && req.body.practiceArea === "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+      
           expert = await expertUser
             .find({
               category: req.body.category,
@@ -535,8 +511,7 @@ module.exports = {
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));;
         } else if (req.body.category === "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+
           expert = await expertUser
             .find({
               practiceArea: req.body.practiceArea,
@@ -552,8 +527,7 @@ module.exports = {
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));;
         } else if (req.body.category !== "" && req.body.practiceArea !== "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+ 
           expert = await expertUser
             .find({
               practiceArea: req.body.practiceArea,
@@ -617,90 +591,10 @@ module.exports = {
   },
   getOnlinePremiumExperts: async (req, res) => {
     try {
-      // const schema = Joi.object({
-      //   limit: Joi.number(),
-      //   page: Joi.number(),
-      //  category:Joi.string().allow(""),
-      //  practiceArea:Joi.string().allow(""),
-      //  sortBy:Joi.string(),
-      // });
-      // await universalFunctions.validateRequestPayload(req.body, res, schema);
-
-      //   let page = req.body.page;
-      //   let limit = req.body.limit;
-      //   let filter = {
-      //     isApprovedByAdmin: true,
-      //   };
-      //   // console.log("searchhhhi", req.body.search, "search mai kya hai");
-      //   if (req.body.search) {
-      //     filter["$or"] = [
-      //       { "userId.firstName": { $regex: req.body.search, $options: "i" } },
-      //       {
-      //         "userId.email": { $regex: req.body.search, $options: "i" },
-      //       },
-      //     ];
-      //   }
-
-      //   const expert = await expertUser
-      //     .find({ isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active })
-      //     .populate("userId")
-      //     .populate("practiceArea")
-      //     .populate("category")
-      //     .skip(parseInt((req.body.page - 1) * req.body.limit))
-      // .limit(parseInt(req.body.limit));
+ 
       let aggregationQuery;
       let expert;
-      //    if(req.body.sortBy=="1")
-      //   {if ( req.body.category !== "" &&req.body.practiceArea === "") {
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //          expert = await expertUser.find({category: req.body.category,isApprovedByAdmin: true,isSubscribed:true, status:APP_CONSTANTS.activityStatus.active}).populate('practiceArea').populate('category').populate('userId').sort({"rating.avgRating":-1})
 
-      //   }
-      //   else  if ( req.body.category === "" &&req.body.practiceArea !== "") {
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //          expert = await expertUser.find({practiceArea: req.body.practiceArea,isApprovedByAdmin: true,isSubscribed:true, status:APP_CONSTANTS.activityStatus.active}).populate('practiceArea').populate('category').populate('userId').sort({"rating.avgRating":-1});
-
-      //   }
-      //   else  if ( req.body.category !== "" &&req.body.practiceArea !== "") {
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //          expert = await expertUser.find({practiceArea: req.body.practiceArea, category:req.body.category,isApprovedByAdmin: true,isSubscribed:true, status:APP_CONSTANTS.activityStatus.active}).populate('practiceArea').populate('category').populate('userId').sort({"rating.avgRating":-1});
-
-      //   }
-      //   else
-      //   {
-      //     expert = await expertUser.find({isApprovedByAdmin: true,isSubscribed:true, status:APP_CONSTANTS.activityStatus.active}).populate('practiceArea').populate('category').populate('userId').sort({"rating.avgRating":-1})
-
-      //   }
-
-      // }
-
-      // else if(req.body.sortBy=="2")
-      //   {if ( req.body.category !== "" &&req.body.practiceArea === "") {
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //          expert = await expertUser.find({category: req.body.category,isApprovedByAdmin: true,isSubscribed:true, status:APP_CONSTANTS.activityStatus.active}).populate('category').populate('practiceArea').populate('userId').sort({"noOfHoursOfSessionsDone":-1})
-
-      //   }
-      //   else  if ( req.body.category === "" &&req.body.practiceArea !== "") {
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //          expert = await expertUser.find({practiceArea: req.body.practiceArea,isApprovedByAdmin: true,isSubscribed:true, status:APP_CONSTANTS.activityStatus.active}).populate('category').populate('practiceArea').populate('userId').sort({"noOfHoursOfSessionsDone":-1})
-
-      //   }
-      //   else  if ( req.body.category !== "" &&req.body.practiceArea !== "") {
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //     // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-      //          expert = await expertUser.find({practiceArea: req.body.practiceArea, category:req.body.category,isApprovedByAdmin: true,isSubscribed:true, status:APP_CONSTANTS.activityStatus.active}).populate('category').populate('practiceArea').populate('userId').sort({"noOfHoursOfSessionsDone":-1});
-
-      //   }
-      //   else
-      //   {
-      //     expert = await expertUser.find({isApprovedByAdmin: true,isSubscribed:true, status:APP_CONSTANTS.activityStatus.active}).populate('category').populate('practiceArea').populate('userId').sort({"noOfHoursOfSessionsDone":-1})
-
-      //   }}
 
       expert = await expertUser
         .find({
@@ -716,11 +610,7 @@ module.exports = {
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
-      console.log(
-        "expert online filtered are",
-        expert,
-        "expert online filtered"
-      );
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -741,7 +631,7 @@ module.exports = {
   getSingleExpert: async (req, res) => {
     try {
       let id = req.query.id;
-      console.log(id, "sdlndcsjnkjdsscdkjsdkjndskj")
+      
       const expertData = await expertUser
         .findOne({ _id: id })
         .populate({ path: "category practiceArea userId" });
@@ -787,7 +677,7 @@ module.exports = {
         }
       })
       payload.userId = userId;
-      console.log(data, "heolll  kjnsdnkjccsjsdjkj")
+      
       let createAppointment = await appointment.create(payload);
 
       universalFunctions.sendSuccess(
@@ -868,8 +758,7 @@ module.exports = {
 
         }).countDocuments()
       }
-      // payload.userId=userId;
-      // console.log(data,"heolll  kjnsdnkjccsjsdjkj")
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -886,23 +775,11 @@ module.exports = {
   cancelAppointment: async (req, res) => {
     try {
       let userId = req.user.id;
-      // const schema = Joi.object({
-      //   filterType:Joi.string(),
-      // });
-      // await universalFunctions.validateRequestPayload(req.body, res, schema);
+
       let data;
       let expert;
-      console.log("iddd kya aai", req.params.id);
       let deletedAppointment = await appointment.findByIdAndUpdate(req.params.id, { status: APP_CONSTANTS.appointmentStatus.cancelled })
-      // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
-
-      // data=await appointment.find({userId:userId,startAppointmentTime: {
-      //   $lt: new Date()},
-      //   status:APP_CONSTANTS.appointmentStatus.confirmed,
-
-      // }),
-      // payload.userId=userId;
-      // console.log(data,"heolll  kjnsdnkjccsjsdjkj")
+  
       if (!deletedAppointment) {
         throw Boom.badRequest("cannot find any appointment to delete");
 
@@ -923,23 +800,11 @@ module.exports = {
   rescheduleAppointment: async (req, res) => {
     try {
       let userId = req.user.id;
-      // const schema = Joi.object({
-      //   filterType:Joi.string(),
-      // });
-      // await universalFunctions.validateRequestPayload(req.body, res, schema);
+  
       let data;
       let expert;
-      // console.log("iddd kya aai",req.params.id);
       let rescheduledAppointment = await appointment.findByIdAndUpdate(req.params.id, { status: APP_CONSTANTS.appointmentStatus.rescheduled })
-      // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
-
-      // data=await appointment.find({userId:userId,startAppointmentTime: {
-      //   $lt: new Date()},
-      //   status:APP_CONSTANTS.appointmentStatus.confirmed,
-
-      // }),
-      // payload.userId=userId;
-      // console.log(data,"heolll  kjnsdnkjccsjsdjkj")
+ 
       if (!rescheduledAppointment) {
         throw Boom.badRequest("cannot find any appointment to delete");
 
@@ -967,9 +832,7 @@ module.exports = {
       expert = await expertUser
         .find({
           isApprovedByAdmin: true,
-          // isSubscribed: true,
 
-          // status: APP_CONSTANTS.activityStatus.active,
         })
         .populate("practiceArea")
         .populate("category")
@@ -979,11 +842,7 @@ module.exports = {
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
-      console.log(
-        "expert top are",
-        expert,
-        "top expert "
-      );
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1005,11 +864,7 @@ module.exports = {
   createTestimony: async (req, res) => {
     try {
       const schema = Joi.object({
-        // limit: Joi.number(),
-        // page: Joi.number(),
-        // category: Joi.string().allow(""),
-        // practiceArea: Joi.string().allow(""),
-        // sortBy: Joi.string(),
+
         feedback: Joi.string(),
         name: Joi.string(),
         image: Joi.string().allow(""),
@@ -1126,10 +981,8 @@ module.exports = {
           timeSlotId: e._id ? e._id : "",
         })
         if (data.length > 0) {
-          console.log("css sds", data)
           e.avialble = false;
         } else {
-          // console.log("css")
           e.avialble = true;
         }
       })
@@ -1150,7 +1003,6 @@ module.exports = {
   },
   bookChatAppointment: async (req, res) => {
     try {
-      console.log(req.body, 'body req is here ');
       let userId = req.user.id;
       let payload = req.body;
 
@@ -1160,7 +1012,6 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       payload.userId = userId;
-      // console.log(payload,'body req is here ');
       let data = chatappointment.create(payload);
       if (!data) {
         throw Boom.badRequest("something is wrong ");
@@ -1186,36 +1037,27 @@ module.exports = {
     try {
       const schema = Joi.object({
         appointmentId: Joi.string().required(),
-        // userId:Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let appointments = await appointment.findOne({ _id: req.body.appointmentId }).populate('userId');
-      // console.log('assa',appointments);
     
       if (!appointments.videoChatId) {
     let     roomId = appointments.appointDateandTime + req.body.appointmentId;
-        console.log(roomId, 'roomId');
+      
         appointments = await appointment.findByIdAndUpdate({ _id: req.body.appointmentId }, { videoChatId: roomId }, { new: true }).populate('userId')
       }
-      console.log('appointment', appointments);
     
-      // console.log("twilioconfig",twilioConfig);
-      // const identity = req.body.identity;
-      // const room = req.body.roomName;
+
       let videoGrant, chatGrant;
       videoGrant = new VideoGrant({room:appointments.videoChatId}  );
       chatGrant = new ChatGrant({
         serviceSid: Config.serviceSid,
       })
       let sid, participantId, convoId;
-      // await  client.conversations.conversations(req.body.convoId)
-      //   .fetch()
-      //   .then(conversation =>{ console.log(conversation);sid= conversation.sid})
-      //   .catch(error => {console.log(error);});
+      
       const convo = await client.conversations.conversations.list();
-      console.log(convo, 'convo')
+      
       convo.forEach(con => {
-        // console.log(con.uniqueName,"    isme compare     ",appointments.videoChatId);
         if (con.uniqueName == appointments.videoChatId)
           sid = con.sid;
       })
@@ -1227,10 +1069,8 @@ module.exports = {
           throw Boom.badRequest('Internal Server Error');
         }
       }
-    //  console.log(appointments?.userId?._id,"kya hai isme ab")
 
       convoId = sid;
-      // console.log(convoId);
       await client.conversations.conversations(convoId)
         .participants
         .create({ identity: appointments?.userId?.firstName+" "+appointments?.userId?.lastName})
@@ -1244,7 +1084,6 @@ module.exports = {
       token.addGrant(videoGrant);
       token.addGrant(chatGrant);
       token.identity = appointments?.userId?.firstName+" "+appointments?.userId?.lastName;
-      // console.log(appointments.userId.firstName +appointments.userId.lastName,'identity');
    if(!token){
      throw Boom.badRequest("token not found")
     }
@@ -1271,40 +1110,32 @@ module.exports = {
     try {
       const schema = Joi.object({
         appointmentId: Joi.string().required(),
-        // userId:Joi.string(),
+      
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let appointments = await appointment.findOne({ _id: req.body.appointmentId }).populate({path:'expertId',populate:{
       path:"userId"
     }
   });
-      // console.log('assa',appointments);
+      
       if (!appointments.videoChatId) {
         let roomId = appointments.appointDateandTime + req.body.appointmentId;
-        console.log(roomId, 'roomId');
+       
         appointments = await appointment.findByIdAndUpdate({ _id: req.body.appointmentId }, { videoChatId: roomId }, { new: true }).populate('expertId')
       }
-      console.log('appointment', appointments);
+      
      
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      // return 400 if the request has an empty body or no roomName
-      // console.log("twilioconfig",twilioConfig);
-      // const identity = req.body.identity;
-      // const room = req.body.roomName;
+  
       let videoGrant, chatGrant;
       videoGrant = new VideoGrant({room:appointments.videoChatId}  );
       chatGrant = new ChatGrant({
         serviceSid: Config.serviceSid,
       })
       let sid, participantId, convoId;
-      // await  client.conversations.conversations(req.body.convoId)
-      //   .fetch()
-      //   .then(conversation =>{ console.log(conversation);sid= conversation.sid})
-      //   .catch(error => {console.log(error);});
+ 
       const convo = await client.conversations.conversations.list();
-      console.log(convo, 'convo')
       convo.forEach(con => {
-        // console.log(con.uniqueName,"    isme compare     ",appointments.videoChatId);
         if (con.uniqueName == appointments.videoChatId)
           sid = con.sid;
       })
@@ -1316,10 +1147,9 @@ module.exports = {
           throw Boom.badRequest('Internal Server Error');
         }
       }
-    //  console.log(appointments?.userId?._id,"kya hai isme ab")
-
+   
       convoId = sid;
-      // console.log(convoId);
+      
       await client.conversations.conversations(convoId)
         .participants
         .create({ identity: appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName })
@@ -1333,7 +1163,6 @@ module.exports = {
       token.addGrant(videoGrant);
       token.addGrant(chatGrant);
       token.identity = appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName;
-      console.log(appointments.expertId.userId.firstName +appointments.expertId.userId.lastName,'identity');
    if(!token){
      throw Boom.badRequest("token not found")
     }
@@ -1364,7 +1193,7 @@ module.exports = {
       }
       let tempobj = JSON.parse(JSON.stringify(chatappointmentdata));
       await universalFunctions.asyncForEach(tempobj,async ( e,index)=>{
-        console.log(e,"hello ji ");
+        
         let expertData=await User.findOne({_id:e.expertId.userId});
         e.expertData=expertData;
     
@@ -1392,7 +1221,7 @@ module.exports = {
                isFavorite:true
          },
               });
-      console.log(data);
+   
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1411,21 +1240,20 @@ module.exports = {
       let id = req.user.id;
       let payload=req.body;
       let favoriteData=await favExpertModel.findOne({expertId:payload.expertId,userId:id});
-      console.log("favoriteData",favoriteData)
       let favoriteUpdated;
       if(favoriteData){
         let isFavorite= !favoriteData.isFavorite;
-        console.log(isFavorite)
+        
         favoriteUpdated=  await favExpertModel.findByIdAndUpdate(
           {_id:favoriteData._id},
           {
             isFavorite:isFavorite
           }
           );
-          console.log(favoriteUpdated,"favoriteUpdated")
+         
       }else{
         payload.userId=id;
-        console.log(payload,"payload:")
+        
         favoriteUpdated= await favExpertModel.create(payload);
 
       }
