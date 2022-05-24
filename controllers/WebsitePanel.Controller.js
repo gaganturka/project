@@ -22,7 +22,7 @@ const accountSid = Config.twilioAccountSid;
 const authToken = Config.authToken;
 const twilio = require('twilio');
 const client = new twilio(accountSid, authToken);
-
+const favExpertModel = require("../models/Fav_Expert");
 const expertTimeAvailable = require("../models/ExpertTimeSlot");
 module.exports = {
   showOnlineExperts: async (req, res) => {
@@ -160,6 +160,18 @@ module.exports = {
   },
   getFilteredOnlineExperts: async (req, res) => {
     try {
+     let id = req.user.id;
+     let payload={
+      path: "userId"
+     }
+     if(id){
+      payload={
+         path: "expertlisting", match:{
+          userId: id,
+          isFavorite:true
+         },
+      }
+     }
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
@@ -184,6 +196,7 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
+            .populate(payload)
             .sort({ "rating.avgRating": -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
@@ -206,6 +219,7 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
+            .populate(payload)
             .sort({ "rating.avgRating": -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
@@ -228,6 +242,7 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
+            .populate(payload)
             .sort({ "rating.avgRating": -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
@@ -247,6 +262,7 @@ module.exports = {
             .populate("practiceArea")
             .populate("category")
             .populate("userId")
+            .populate(payload)
             .sort({ "rating.avgRating": -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
@@ -269,6 +285,7 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
+            .populate(payload)
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
@@ -291,6 +308,7 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
+            .populate(payload)
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
@@ -314,6 +332,7 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
+            .populate(payload)
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
@@ -334,6 +353,7 @@ module.exports = {
             .populate("category")
             .populate("practiceArea")
             .populate("userId")
+            .populate(payload)
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
@@ -349,17 +369,22 @@ module.exports = {
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
-      console.log(
-        "expert online filtered are",
-        expert,
-        "expert online filtered"
-      );
+      let tempobj = JSON.parse(JSON.stringify(expert));
+      if(id){
+      tempobj.map((ele)=>{
+        if(ele.expertlisting.length>0&&ele.expertlisting){
+          ele.isFavorite=true;
+        }else{
+          ele.isFavorite=false;
+        }
+      })
+    }
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "All experts online and filtered are",
           data: {
-            list: expert,
+            list: tempobj,
             count: total,
           },
         },
@@ -401,6 +426,18 @@ module.exports = {
   },
   getFilteredOnlinePremiumExperts: async (req, res) => {
     try {
+      let id = req.user.id;
+      let payload={
+       path: "userId"
+      }
+      if(id){
+       payload={
+          path: "expertlisting", match:{
+           userId: id,
+           isFavorite:true
+          },
+       }
+      }
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
@@ -410,34 +447,11 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-      //   let page = req.body.page;
-      //   let limit = req.body.limit;
-      //   let filter = {
-      //     isApprovedByAdmin: true,
-      //   };
-      //   // console.log("searchhhhi", req.body.search, "search mai kya hai");
-      //   if (req.body.search) {
-      //     filter["$or"] = [
-      //       { "userId.firstName": { $regex: req.body.search, $options: "i" } },
-      //       {
-      //         "userId.email": { $regex: req.body.search, $options: "i" },
-      //       },
-      //     ];
-      //   }
-
-      //   const expert = await expertUser
-      //     .find({ isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active })
-      //     .populate("userId")
-      //     .populate("practiceArea")
-      //     .populate("category")
-      //     .skip(parseInt((req.body.page - 1) * req.body.limit))
-      // .limit(parseInt(req.body.limit));
       let aggregationQuery;
       let expert;
       if (req.body.sortBy == "1") {
         if (req.body.category !== "" && req.body.practiceArea === "") {
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-          // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+       
           expert = await expertUser
             .find({
               category: req.body.category,
@@ -446,6 +460,7 @@ module.exports = {
               status: APP_CONSTANTS.activityStatus.active,
             })
             .populate("practiceArea")
+            .populate(payload)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
@@ -462,6 +477,7 @@ module.exports = {
               status: APP_CONSTANTS.activityStatus.active,
             })
             .populate("practiceArea")
+            .populate(payload)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
@@ -479,6 +495,7 @@ module.exports = {
               status: APP_CONSTANTS.activityStatus.active,
             })
             .populate("practiceArea")
+            .populate(payload)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
@@ -492,6 +509,7 @@ module.exports = {
               status: APP_CONSTANTS.activityStatus.active,
             })
             .populate("practiceArea")
+            .populate(payload)
             .populate("category")
             .populate("userId")
             .sort({ "rating.avgRating": -1 })
@@ -511,6 +529,7 @@ module.exports = {
             })
             .populate("category")
             .populate("practiceArea")
+            .populate(payload)
             .populate("userId")
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
@@ -527,6 +546,7 @@ module.exports = {
             })
             .populate("category")
             .populate("practiceArea")
+            .populate(payload)
             .populate("userId")
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
@@ -544,6 +564,7 @@ module.exports = {
             })
             .populate("category")
             .populate("practiceArea")
+            .populate(payload)
             .populate("userId")
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
@@ -557,6 +578,7 @@ module.exports = {
             })
             .populate("category")
             .populate("practiceArea")
+            .populate(payload)
             .populate("userId")
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
@@ -567,20 +589,24 @@ module.exports = {
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }
-      console.log(
-        "expert online filtered are",
-        expert,
-        "expert online filtered"
-      );
+      let count= await expertUser.find({ status: APP_CONSTANTS.activityStatus.active, isSubscribed: true }).countDocuments();
+      let tempobj = JSON.parse(JSON.stringify(expert));
+      if(id){
+      tempobj.map((ele)=>{
+        if(ele.expertlisting.length>0&&ele.expertlisting){
+          ele.isFavorite=true;
+        }else{
+          ele.isFavorite=false;
+        }
+      })
+    }
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "All experts online and filtered are",
           data: {
-            list: expert,
-            count: await expertUser
-              .find({ status: APP_CONSTANTS.activityStatus.active, isSubscribed: true })
-              .countDocuments(),
+            list: tempobj,
+            count: count,
           },
         },
         res
@@ -1357,8 +1383,66 @@ module.exports = {
       universalFunctions.sendError(err, res);  
     }
     },
+   getFavExpert:async (req,res)=>{
+    try{ 
+      let id = req.user.id;
+      let data =await expertUser.find().populate({ path: "expertlisting", 
+         match:{
+               userId: id,
+               isFavorite:true
+         },
+              });
+      console.log(data);
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Successfull get ",
+          data: data,
+        },
+        res
+      );
+    }catch(err){
+      console.log(err)
+      universalFunctions.sendError(err, res); 
+    }
+  },
+  setFavExpert:async (req,res)=>{
+    try{
+      let id = req.user.id;
+      let payload=req.body;
+      let favoriteData=await favExpertModel.findOne({expertId:payload.expertId,userId:id});
+      console.log("favoriteData",favoriteData)
+      let favoriteUpdated;
+      if(favoriteData){
+        let isFavorite= !favoriteData.isFavorite;
+        console.log(isFavorite)
+        favoriteUpdated=  await favExpertModel.findByIdAndUpdate(
+          {_id:favoriteData._id},
+          {
+            isFavorite:isFavorite
+          }
+          );
+          console.log(favoriteUpdated,"favoriteUpdated")
+      }else{
+        payload.userId=id;
+        console.log(payload,"payload:")
+        favoriteUpdated= await favExpertModel.create(payload);
 
-
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Successfull get ",
+          data: favoriteUpdated,
+        },
+        res
+      );
+  
+    }catch(err){
+      console.log(err)
+      universalFunctions.sendError(err, res); 
+    }
+  }
 
 };
 

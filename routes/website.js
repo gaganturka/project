@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const isAdmin = require("../middleware/isAdmin");
 const authUser = require("../middleware/authuser");
+const authUser2 = require("../middleware/authuser2");
+
 const WebsiteController = require("../controllers/WebsitePanel.Controller");
 const BorhanController = require("../controllers/BorhanUser.Admin");
 // router
@@ -16,9 +18,9 @@ const BorhanController = require("../controllers/BorhanUser.Admin");
 router.route("/getOnlineExperts").get( WebsiteController.showOnlineExperts);
 router.route("/getBorhanUserDetails").get( authUser.checkAuth,WebsiteController.showBorhanUserDetails);
 router.route("/editBorhanUserDetails").put( authUser.checkAuth,WebsiteController.editBorhanUserDetails);
-router.route("/getFilteredOnlineExperts").post( WebsiteController.getFilteredOnlineExperts);
+router.route("/getFilteredOnlineExperts").post(authUser2.checkAuth2, WebsiteController.getFilteredOnlineExperts);
 router.route("/getPracticeAreaDataSearched").post( WebsiteController.getPracticeAreaDataSearched);
-router.route("/getFilteredOnlinePremiumExperts").post( WebsiteController.getFilteredOnlinePremiumExperts);
+router.route("/getFilteredOnlinePremiumExperts").post(authUser2.checkAuth2, WebsiteController.getFilteredOnlinePremiumExperts);
 router.route("/getOnlinePremiumExperts").get(WebsiteController.getOnlinePremiumExperts);
 router.route("/getSingleExpert").get(WebsiteController.getSingleExpert);
 router.route("/bookAppointment").post(authUser.checkAuth,WebsiteController.bookAppointment);
@@ -36,5 +38,7 @@ router.route("/videoChatTokenUser").post(authUser.checkAuth,WebsiteController.tw
 router.route("/videoChatTokenExpert").post(authUser.checkAuth,WebsiteController.twilioVideoChatTokenExpert);
 
 router.route("/getChatAppointment").get(authUser.checkAuth,WebsiteController.getChatAppointment);
+router.route("/getFavExpert").get(authUser.checkAuth,WebsiteController.getFavExpert);
+router.route("/setFavExpert").post(authUser.checkAuth,WebsiteController.setFavExpert);
 
   module.exports = router;
