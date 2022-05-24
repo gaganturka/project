@@ -158,11 +158,12 @@ const Header = () => {
   const generateOtpUsingFirebase = async (e, mobileNo) => {
 
     e.preventDefault();
+   
     if (recaptchaWrapperRef) {
       recaptchaWrapperRef.innerHTML = `<div id="sign-in-button"></div>`
     }
    if(mobileNo.length<10||mobileNo.length>10){
-      // toast('Phone Number Invalid')
+      toast('Phone Number Invalid')
       return;
    }
       await ConfigureRecaptcha();
@@ -246,16 +247,7 @@ const Header = () => {
 
     });
   }
-  const loginG = () => {
-    // let timer: NodeJS.Timeout | null = null;
-    const googleLoginURL = "http://localhost:5000/auth/google";
-    const newWindow = window.open(
-      googleLoginURL,
-      "_self",
 
-    );
-
-  };
   const responseFacebook = (response) => {
     console.log(response);
     let createData = {
@@ -321,28 +313,7 @@ const Header = () => {
       console.log(Agent.getLoginType())
       setflagUser(true);
     }
-    const getUser = () => {
-      fetch("http://localhost:5000/auth/login/success", {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": true,
-        },
-      })
-        .then((response) => {
-          if (response.status === 200) return response.json();
-          throw new Error("authentication has been failed!");
-        })
-        .then((resObject) => {
-          console.log(resObject.user)
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    getUser();
+
   }, [isLoggedIn]);
   const fetchAllCategories = async () => {
 
@@ -1311,7 +1282,7 @@ const Header = () => {
                     </div>
                     <h5>
                       Not Received your code ?{" "}
-                      <a onClick={generateOtpUsingFirebase}> Resend code</a>
+                      <a onClick={(e)=>generateOtpUsingFirebase(e,usercredential.mobileNo)}> Resend code</a>
                     </h5>
                   </div>
                 </div>
@@ -1354,7 +1325,7 @@ const Header = () => {
                     </div>
                     <h5>
                       Not Received your code ?{" "}
-                      <a onClick={generateOtpUsingFirebase}> Resend code</a>
+                      <a onClick={(e)=>generateOtpUsingFirebase(e,expertcredential.mobileNo)}> Resend code</a>
                     </h5>
                   </div>
                 </div>

@@ -243,7 +243,7 @@ const ExpListing = () => {
                            <div className="p-3">
                               <h5>{obj?.userId?.firstName}</h5>
                               <h6>{obj?.practiceArea[0].name}</h6>
-                              <Link to="/expprofile"><button className="btn">View Profile</button></Link>
+                              <Link to={`/expprofile/${obj._id}`}><button className="btn">View Profile</button></Link>
                            </div>
                         </div>
                      </div>

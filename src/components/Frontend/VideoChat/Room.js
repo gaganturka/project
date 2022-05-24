@@ -48,7 +48,7 @@ const Room = ({ roomName, token, handleLogout }) => {
       <div className="room">
           <div >
         <h2 className="room-detail">Borhan VideoChat</h2>
-        <button onClick={handleLogout}>Log out</button>
+        <button  onClick={handleLogout}>Log out</button>
         <div className="local-participant">
           {room ? (
               <Participant

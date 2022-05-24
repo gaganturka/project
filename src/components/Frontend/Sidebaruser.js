@@ -114,10 +114,12 @@ const Sidebar = () => {
                 Wallet
               </Link>
             </li>
-            <li className="">
+            <li 
+              className={`${location.pathname === "/ChatSupport" ? "active" : ""}`}
+            >
               <Link to="/ChatSupport" className="">
                 <img
-                  src="/assets/img/saved-cards-icon.png"
+                  src="/assets/img/Vectorchat.png"
                   className="img img-fluid"
                   alt=""
                 />{" "}

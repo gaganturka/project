@@ -124,7 +124,7 @@ class Conversation extends Component {
                         messages={this.state.messages}/>
                   </div>
                   <div>
-                    <Form onSubmit={this.sendMessage}>
+                    <Form className='Form' onSubmit={this.sendMessage}>
                       <Input.Group compact={true} style={{
                         width: "100%",
                         display: "flex",
@@ -141,7 +141,7 @@ class Conversation extends Component {
                             onChange={this.onMessageChanged}
                             value={this.state.newMessage}
                         />
-                        <Button icon="enter" htmlType="submit" type={"submit"} style={{backgroundColor:'#095D52'}} />
+                        <Button  className="btn bg-dark text-white send-number" icon="enter" htmlType="submit" type={"submit"}/>
                       </Input.Group>
                     </Form>
                   </div>

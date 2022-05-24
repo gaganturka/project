@@ -1,20 +1,7 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+
+ 
   
-  html {
-    height: 100%;
-  }
-  
-  body {
-    font-family: Helvetica, Arial, sans-serif;
-    color: #333e5a;
-    min-height: 100%;
-  }
-  
-  header {
+  .ant-layout-header {
     background: #333e5a;
     color: #fff;
     text-align: center;
@@ -22,14 +9,7 @@
     margin-bottom: 2em;
   }
   
-  h1 {
-    font-weight: 300;
-    padding: 0.4em 0;
-  }
-  
-  #root {
-    min-height: 100vh;
-  }
+
   
   .app {
     min-height: 100vh;
@@ -42,45 +22,11 @@
     flex-grow: 1;
   }
   
-  form {
+  .Form {
     max-width: 300px;
     margin: 0 auto;
   }
   
-  h2 {
-    font-weight: 300;
-    margin-bottom: 1em;
-    text-align: center;
-  }
-  
-  form > div {
-    width: 100%;
-    margin-bottom: 1em;
-  }
-  form > div > label {
-    display: block;
-    margin-bottom: 0.3em;
-  }
-  form > div > input {
-    display: block;
-    width: 100%;
-    font-size: 16px;
-    padding: 0.4em;
-    border-radius: 6px;
-    border: 1px solid #333e5a;
-  }
-  
-  button {
-    background: #333e5a;
-    color: #fff;
-    font-size: 16px;
-    padding: 0.4em;
-    border-radius: 6px;
-    border: 1px solid transparent;
-  }
-  button:hover {
-    filter: brightness(150%);
-  }
   
   .room {
     position: relative;

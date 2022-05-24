@@ -95,6 +95,8 @@ const ExpProfile = () => {
       // e=moment(e).format('YYYY-MM-DD');
       // console.log(e,"date to selected")
       // console.log(e)
+      if(dateSlot){
+         alert("ok")
       if(1)
       {
       let localdate =dateSlot+' '+start; 
@@ -111,6 +113,7 @@ const ExpProfile = () => {
       SetEndAppointmentTime(end);
 
       }
+   }
    }
    const fetchExpert=async ()=>{
       let id = params.id;
@@ -366,7 +369,7 @@ const handlemodal1=()=>{
                       } >
                        <div className="modal-content">
                <div className="modal-body">
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={     ()=>{setscheduleappointmentmodal(false)} }></button>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={     ()=>{setbookappointmentmodal(false)} }></button>
                   <div className="auth-modal-wrp">
                      <div className="row">
                         <div className="col-lg-12">
@@ -412,7 +415,7 @@ const handlemodal1=()=>{
                                           </div>
                                              <div className="select-time-slot">
                                              
-                                                <img src="/assets/img/time-slot.png" className="img img-fluid" alt=""/>
+                                                {/* <img src="/assets/img/time-slot.png" className="img img-fluid" alt=""/> */}
                                                 <div className='row '>
                                                    {
                                                       timeList.length>0?timeList.map((e,index)=>{
