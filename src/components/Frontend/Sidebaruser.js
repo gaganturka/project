@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation ,useNavigate} from "react-router-dom"
 import homeAction from "../../actions/home.action"
 import { GoogleLogout } from "react-google-login"
 import { AuthContext } from "../../context/AuthContext"
 
 const Sidebar = () => {
-  const { loggedInBorhanUserInfo, setLoggedInBorhanUserInfo } =
+  const history=useNavigate();
+  const { loggedInBorhanUserInfo, setLoggedInBorhanUserInfo,isLoggedIn,setIsLoggedIn } =
     useContext(AuthContext)
   const CLIENT_ID =
     "192073990165-k8uk1edbbhb0lm03lqb7ikvf3ibqotr5.apps.googleusercontent.com"
@@ -31,6 +32,8 @@ const Sidebar = () => {
   }, [])
   const logout = () => {
     localStorage.removeItem("token")
+    setIsLoggedIn(false);
+    history('/')
     window.location.reload()
   }
 

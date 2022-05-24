@@ -114,10 +114,11 @@ class Conversation extends Component {
                     className={styles.messages}
                     style={{
                       filter: `blur(${isDragActive ? 4 : 0}px)`,
+                      paddingBottom:'20px'
                     }}
                 >
                   <input id="files" {...getInputProps()} />
-                  <div style={{flexBasis: "100%", flexGrow: 2, flexShrink: 1, }}>
+                  <div style={{flexBasis: "100%", flexGrow: 2, flexShrink: 1 }}>
                     <ConversationsMessages
                         identity={this.props.myIdentity}
                         messages={this.state.messages}/>
@@ -130,7 +131,7 @@ class Conversation extends Component {
                         flexDirection: "row"
                       }}>
                         <Input
-                            style={{flexBasis: "100%"}}
+                            style={{flexBasis: "100%",border:'1px solid #cccc'}}
                             placeholder={"Type your message here..."}
                             type={"text"}
                             name={"message"}
@@ -140,7 +141,7 @@ class Conversation extends Component {
                             onChange={this.onMessageChanged}
                             value={this.state.newMessage}
                         />
-                        <Button icon="enter" htmlType="submit" type={"submit"}/>
+                        <Button icon="enter" htmlType="submit" type={"submit"} style={{backgroundColor:'#095D52'}} />
                       </Input.Group>
                     </Form>
                   </div>

@@ -36,6 +36,8 @@ function App() {
         homeAction.getBorhanUserDetails((err,res)=>{
           if(err){
             console.log(err,"helllooo")
+            setIsLoggedIn(false);
+            localStorage.removeItem('token');
           }else{
           //   setGetCategories(res.data);
           //   console.log(res.data,"user details daata ");

@@ -20,7 +20,7 @@ import { auth } from '../../firebase'
 const Header = () => {
   let ref=useRef(null)
   let location = useLocation();
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const {isAuthModalOpen,setIsAuthModalOpen,isLoggedIn,setIsLoggedIn}=useContext(AuthContext);
   // let CLIENT_ID=""
   const CLIENT_ID = "192073990165-k8uk1edbbhb0lm03lqb7ikvf3ibqotr5.apps.googleusercontent.com";
   const GOOGLE_CLIENT_SECRET = "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";
@@ -77,13 +77,13 @@ const Header = () => {
     profilePic: "",
 
   });
-  const [openmodal, setopenmodal] = useState(false);
+  // const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [borhanApp, setBorhanApp] = useState(false);
   const [modalstateno, setmodalstateno] = useState(1);
   const [profileViewerState, setProfileViewerState] = useState(0);
   const [profileViewerModal, setProfileViewerModal] = useState(false);
   const toggle = () => {
-    setopenmodal(false);
+    setIsAuthModalOpen(false);
     setmodalstateno(1);
   };
   let recaptchaWrapperRef ;
@@ -398,7 +398,7 @@ const Header = () => {
     if (json.statusCode === 200) {
       localStorage.setItem("token", json.data);
 
-      setopenmodal(false);
+      setIsAuthModalOpen(false);
       setProfileViewerModal(false);
       setmodalstateno(1);
       setIsLoggedIn(true)
@@ -454,7 +454,7 @@ const Header = () => {
           // localStorage.setItem("token", response.data);
           // history("/userdashboard");
 
-          setopenmodal(false);
+          setIsAuthModalOpen(false);
           setProfileViewerModal(false);
           setmodalstateno(1);
         }
@@ -482,7 +482,7 @@ const Header = () => {
         json = res;
 
         if (json.statusCode === 200) {
-          setopenmodal(false);
+          setIsAuthModalOpen(false);
           setProfileViewerModal(false);
           setmodalstateno(1);
           localStorage.setItem("token", json.data);
@@ -552,11 +552,11 @@ const Header = () => {
   const profileViewer = () => {
     if (flagUser) {
       history("/userdashboard");
-      setopenmodal(false);
+      setIsAuthModalOpen(false);
     }
     else {
 
-      setopenmodal(true);
+      setIsAuthModalOpen(true);
     }
 
   }
@@ -564,11 +564,11 @@ const Header = () => {
     // if(localStorage.getItem('token')!==null)
     if (isLoggedIn === true) {
       history("/expertlisting");
-      setopenmodal(false);
+      setIsAuthModalOpen(false);
     }
     else {
 
-      setopenmodal(true);
+      setIsAuthModalOpen(true);
     }
 
   }
@@ -693,7 +693,7 @@ const Header = () => {
       </div>
 
       <Modal
-        isOpen={openmodal}
+        isOpen={isAuthModalOpen}
         toggle={() => {
           toggle();
         }}

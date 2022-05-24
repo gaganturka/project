@@ -164,7 +164,7 @@ class ConversationsApp extends React.Component {
         <div className="conversations-window-wrapper">
           <Layout className="conversations-window-container">
             <Header
-              style={{ display: "flex", alignItems: "center", padding: 0 }}
+              style={{ display: "flex", alignItems: "center", padding: 0 ,backgroundColor: '#095D52' }}
             >
               <div
                 style={{
@@ -174,31 +174,28 @@ class ConversationsApp extends React.Component {
                   alignItems: "center"
                 }}
               >
-                <HeaderItem style={{ paddingRight: "0", display: "flex" }}>
-                  {/* <Logo /> */}
-                </HeaderItem>
-                <HeaderItem>
+                <HeaderItem style={{ paddingRight: "0", display: "flex",paddingTop:'10px',paddingBottom:'10px' }}>
                   <Text strong style={{ color: "white" }}>
-                    Conversations
+                    Chats
                   </Text>
                 </HeaderItem>
               </div>
               <div style={{ display: "flex", width: "100%" }}>
                 <HeaderItem>
-                  <Text strong style={{ color: "white" }}>
+                  {/* <Text strong style={{ color: "white" }}>
                     {selectedConversation &&
-                      (selectedConversation.friendlyName || selectedConversation.sid)}
-                  </Text>
+                      (selectedConversation.friendlyName || selectedConversation.sid)} */}
+                  {/* </Text> */}
                 </HeaderItem>
                 <HeaderItem style={{ float: "right", marginLeft: "auto" }}>
-                  <span
+                  {/* <span
                     style={{ color: "white" }}
                   >{` ${this.state.statusString}`}</span>
                   <Badge
                     dot={true}
                     status={this.state.status}
                     style={{ marginLeft: "1em" }}
-                  />
+                  /> */}
                 </HeaderItem>
                 <HeaderItem>
                   {/* <Icon

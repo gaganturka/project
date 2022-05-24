@@ -22,10 +22,16 @@ code {
 }
 
 .conversations-window-wrapper {
-  height: inherit;
   background-color: #f0f2f5;
+  position: fixed;
+  right:0;
+  width:inherit;
+  margin-top: 3px;
 }
-
+.room-detail 
+{
+  font-size: 18px;
+}
 .conversations-window-container {
   position: relative;
   max-width: 1268px;

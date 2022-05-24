@@ -7,7 +7,7 @@ import expListingAction from '../../actions/expertlisting.action'
 import {Link} from 'react-router-dom'
 import ReactPaginate from 'react-paginate'
 import StarRatings from 'react-star-ratings'
-
+import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import categoriesAction from "../../actions/categories.action";
 import FetchCategoriesList from './FetchCategoriesList';
@@ -15,13 +15,14 @@ import FetchPracticeAreaList from './FetchPracticeAreaList';
 import { CategoryAndPracticeContext } from '../../context/CategoryAndPracticeContext';
 import {useLocation} from "react-router-dom";
 import NewsletterSubscribed from './NewsletterSubscribed';
+import { AuthContext } from '../../context/AuthContext';
 
 const ExpListing = () => {
-   // const {selectedCategories,setSelectedCategories,selectedPractice,setSelectedPractice}=useContext(CategoryAndPracticeContext);
+   const {isAuthModalOpen,setIsAuthModalOpen,isLoggedIn,setIsLoggedIn}=useContext(AuthContext);
    const search = useLocation().search;
    const selectedPractice = new URLSearchParams(search).get('selectedPractice');
    const selectedCategories = new URLSearchParams(search).get('selectedCategories');
-
+   const history=useNavigate();
    const [selectedExpertSorting,setSelectedExpertSorting]=useState("1");
    const [selectedPracticeArea, setSelectedPracticeArea] = useState(selectedPractice===null?"":selectedPractice);
    const [selectedCategory, setSelectedCategory] = useState(selectedCategories===null?"":selectedCategories);
@@ -134,7 +135,39 @@ const ExpListing = () => {
       // else if (filterType == 1) onClickShowExperts(current, searchedTerm);
       // else if (filterType == 2) onClickShowFreelancers(current, searchedTerm);
     };
+
+    const handleBookAppointment =(obj)=>{
+      
+      if(isLoggedIn===true)
+      {
+         history(`/expprofile/${obj._id}`)
+      }
+      else
+      {
+         setIsAuthModalOpen(true);
+      }
+    }
+
+    const handleFavourite=(obj)=>{
+       let dataToSend;
+      if(isLoggedIn===true)
+      {
+         expListingAction.setExpertFavorite(dataToSend,(err,res)=>{
+            if(err)
+            {
+               console.log(err,'handleFavourite erro')
+            }
+            else{
+
+            }
+         })
+      }
+      else{
+         setIsAuthModalOpen(true)
+      }
+    }
   return (
+
    <>
         
       <section className="breadcrumb-section">
@@ -250,7 +283,6 @@ const ExpListing = () => {
                     },
                   }}
                 >
-                {console.log(getCategories,"ashishsirissayinggodblessyouall")}
                 {
 
                    getCategories.length>0 &&
@@ -340,8 +372,8 @@ const ExpListing = () => {
                         <div className="exp-listing-box">
                            <div className="exp-listing-img">
                               <img src={`${obj?.userId?.profilePic ===''?"/assets/img/exp-img-1.png":obj?.userId?.profilePic}`} className="img img-fluid" alt=""/>
-                              <span className="star">
-                                 <span className="star-icon fa fa-star"></span>
+                              <span className="star ">
+                                 <span className={`star-icon fa fa-star ${obj.isFavorite?'text-warning':''}`} onClick={()=>handleFavourite(obj)}></span>
                                </span>
                            </div>
                            <div className="exp-listing-content">
@@ -382,7 +414,10 @@ const ExpListing = () => {
                                     <h3><img src="/assets/img/eye-icon.png" className="img img-fluid" alt="" /> {obj.noOfSessionsDone}</h3>
                                  </li>
                               </ul>
-                              <Link to={`/expprofile/${obj._id}`}><button className="btn" type="button">Book Appointment</button></Link>
+                              
+                              {/* <Link to={`/expprofile/${obj._id}`}> */}
+                                 <button className="btn" type="button" onClick={()=>handleBookAppointment(obj)} >Book Appointment</button>
+                                 {/* </Link> */}
                            </div>
                         </div>
                      </div>)

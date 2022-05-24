@@ -15,7 +15,7 @@ const Participant = ({ participant }) => {
     const trackSubscribed = track => {
       if (track.kind === 'video') {
         setVideoTracks(videoTracks => [...videoTracks, track]);
-      } else {
+      } else if (track.kind === 'audio'){
         setAudioTracks(audioTracks => [...audioTracks, track]);
       }
     };
@@ -23,7 +23,7 @@ const Participant = ({ participant }) => {
     const trackUnsubscribed = track => {
       if (track.kind === 'video') {
         setVideoTracks(videoTracks => videoTracks.filter(v => v !== track));
-      } else {
+      } else if (track.kind === 'audio'){
         setAudioTracks(audioTracks => audioTracks.filter(a => a !== track));
       }
     };
@@ -64,7 +64,7 @@ const Participant = ({ participant }) => {
     <div className="participant">
       <h3>{participant.identity}</h3>
       <video ref={videoRef} autoPlay={true} />
-      <audio ref={audioRef} autoPlay={true} muted={true} />
+      <audio ref={audioRef} autoPlay={true}  />
     </div>
   );
 };
