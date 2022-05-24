@@ -5,19 +5,24 @@ const responseMessages=  require("../resources/response.json");
 const universalFunctions = require( "../utils/universalFunctions");
 const Boom = require("boom");
 const User=require("../models/User")
-const checkAuth =  async(req, res, next) => {
+const checkAuth2 =  async(req, res, next) => {
     const token = req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
-  
+    
       if (token) {
         const decoded =  Jwt.verify(token, Config.jwtsecret);
-            
+            console.log(Config.jwtsecret,"jwt");
+        
           try {
-            
+           
+              
               
               let user = await User.findOne({ _id: decoded.user_id,role: APP_CONSTANTS.role.borhanuser});
               if (!user) {
                 throw Boom.unauthorized(responseMessages.USER_NOT_FOUND);
-              }              
+              }
+              
+ 
+              
                 let userInfo = {
                   id: user._id,
             
@@ -29,14 +34,16 @@ const checkAuth =  async(req, res, next) => {
           }
          
       } else {
-        return universalFunctions.sendError(
-          Boom.forbidden(responseMessages.TOKEN_NOT_PROVIDED),
-          res
-        );
+        let userInfo = {
+            id: null,
+      
+          };
+          req.user = userInfo;
+        next();
       }
   };
 
 
   module.exports={
-    checkAuth
+    checkAuth2
   }

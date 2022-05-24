@@ -104,6 +104,14 @@ const ExpertUserSchema = new Schema({
     type:Number,
     default:0,
   }
-});
+},{
+  toJSON: { virtuals: true }, toObject: { virtuals: true }
 
+});
+ExpertUserSchema.virtual("expertlisting", {
+  ref: "favexpert", //must be changed to the name you used for Comment model.
+  foreignField: "expertId",
+  localField: "_id",
+  
+});
 module.exports = mongoose.model("expert", ExpertUserSchema);
