@@ -19,9 +19,6 @@ const FavExpertSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "user",
   },
-  isFavorite:{
-    type:Boolean,
-  }
 });
 
 module.exports = mongoose.model("favexpert", FavExpertSchema);

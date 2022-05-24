@@ -152,8 +152,7 @@ module.exports = {
      if(id){
       payload={
          path: "expertlisting", match:{
-          userId: id,
-          isFavorite:true
+          userId: id
          },
       }
      }
@@ -413,7 +412,6 @@ module.exports = {
        payload={
           path: "expertlisting", match:{
            userId: id,
-           isFavorite:true
           },
        }
       }
@@ -1218,7 +1216,7 @@ module.exports = {
       let data =await expertUser.find().populate({ path: "expertlisting", 
          match:{
                userId: id,
-               isFavorite:true
+  
          },
               });
    
@@ -1236,36 +1234,40 @@ module.exports = {
     }
   },
   setFavExpert:async (req,res)=>{
-    try{
-      let id = req.user.id;
-      let payload=req.body;
-      let favoriteData=await favExpertModel.findOne({expertId:payload.expertId,userId:id});
-      let favoriteUpdated;
-      if(favoriteData){
-        let isFavorite= !favoriteData.isFavorite;
-        
-        favoriteUpdated=  await favExpertModel.findByIdAndUpdate(
-          {_id:favoriteData._id},
-          {
-            isFavorite:isFavorite
-          }
-          );
-         
-      }else{
-        payload.userId=id;
-        
-        favoriteUpdated= await favExpertModel.create(payload);
-
-      }
-      universalFunctions.sendSuccess(
+    try {
+      let userId = req.user.id;
+      let {expertId,favourite } = req.body;
+      let payload = {
+        userId,
+        expertId,
+      };
+      if (favourite===APP_CONSTANTS.checkfavExpert) {
+        await favExpertModel.create(payload);
+        universalFunctions.sendSuccess(
         {
           statusCode: 200,
-          message: "Successfull get ",
-          data: favoriteUpdated,
+          message: "Expert Added To Favourite",
         },
         res
       );
-  
+      }
+      else
+      {
+       let removeFavouriteExpert= await favExpertModel.deleteOne(payload)
+        if (!removeFavouriteExpert)
+        {
+          throw Boom.badRequest("Expert Is Not Found"); 
+        }
+        universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Expert Remove To Favourite",
+          data:removeFavouriteExpert
+        },
+        res
+      );
+      }
+     
     }catch(err){
       console.log(err)
       universalFunctions.sendError(err, res); 

@@ -432,6 +432,13 @@ module.exports = {
   },
   getAllExpertData: async (req, res) => {
     try {
+      let id = req.user.id;
+      let payload={
+          path: "expertlisting", match:{
+           userId: id
+          },
+       }
+    
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
@@ -456,6 +463,7 @@ module.exports = {
           .populate("practiceArea")
           .populate("category")
           .populate({ path: "userId", match: filter })
+          .populate(payload)
           .sort({ "rating.avgRating": -1 })
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
@@ -474,6 +482,7 @@ module.exports = {
           .populate("practiceArea")
           .populate("category")
           .populate("userId")
+          .populate(payload)
           .sort({ "rating.avgRating": -1 })
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
@@ -488,11 +497,18 @@ module.exports = {
 
       getAllExportData.map((ele) => {
         delete ele.__v;
-        delete ele.category.__v;
+        // delete ele.category.__v;
         delete ele.userId.isEmailVerified;
         delete ele.userId.password;
         delete ele.userId.__v;
         delete ele.userId.userData;
+        if(ele.expertlisting.length>0&&ele.expertlisting){
+          ele.isFavorite=true;
+          delete ele.expertlisting;
+        }else{
+          ele.isFavorite=false;
+          delete ele.expertlisting;
+        }
       });
       universalFunctions.sendSuccess(
         {
@@ -604,6 +620,13 @@ module.exports = {
   },
   getAllOnlinePremiumExpertsData: async (req, res) => {
     try {
+      let id = req.user.id;
+      let payload={
+          path: "expertlisting", match:{
+           userId: id
+          },
+       }
+    
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
@@ -621,6 +644,7 @@ module.exports = {
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
+        .populate(payload)
         .sort({ "rating.avgRating": -1 })
         .skip(parseInt((page - 1) * limit))
         .limit(parseInt(limit));
@@ -628,17 +652,24 @@ module.exports = {
         throw Boom.badRequest(responseMessages.DATA_NOT_FOUND);
       }
       let getActiveExportData = JSON.parse(JSON.stringify(activeExportData));
-
       getActiveExportData.map((ele) => {
         delete ele.__v;
-        delete ele.category.__v;
+        // delete ele.category.__v;
         if (ele && ele.userId && ele.userId != null) {
           delete ele.userId.isEmailVerified;
           delete ele.userId.password;
           delete ele.userId.__v;
           delete ele.userId.userData;
         }
+        if(ele.expertlisting.length>0&&ele.expertlisting){
+          ele.isFavorite=true;
+          delete ele.expertlisting;
+        }else{
+          ele.isFavorite=false;
+          delete ele.expertlisting;
+        }
       });
+     
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -709,6 +740,14 @@ module.exports = {
 
   getFilteredExperts: async (req, res) => {
     try {
+      let id = req.user.id;
+      let payload={
+          path: "expertlisting",
+           match:{
+           userId: id
+          },
+       }
+    
       const schema = Joi.object({
         category: Joi.string().allow(""),
         practiceArea: Joi.string().allow(""),
@@ -718,28 +757,6 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-      //   let page = req.body.page;
-      //   let limit = req.body.limit;
-      //   let filter = {
-      //     isApprovedByAdmin: true,
-      //   };
-      //   // console.log("searchhhhi", req.body.search, "search mai kya hai");
-      //   if (req.body.search) {
-      //     filter["$or"] = [
-      //       { "userId.firstName": { $regex: req.body.search, $options: "i" } },
-      //       {
-      //         "userId.email": { $regex: req.body.search, $options: "i" },
-      //       },
-      //     ];
-      //   }
-
-      //   const expert = await expertUser
-      //     .find({ isApprovedByAdmin: true, status:APP_CONSTANTS.activityStatus.active })
-      //     .populate("userId")
-      //     .populate("practiceArea")
-      //     .populate("category")
-      //     .skip(parseInt((req.body.page - 1) * req.body.limit))
-      // .limit(parseInt(req.body.limit));
       let aggregationQuery;
       let filter = {};
       if (req.body.search) {
@@ -751,19 +768,16 @@ module.exports = {
       let expert = [],
         total;
       if (req.body.category !== "" && req.body.practiceArea === "") {
-        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-        // console.log("this is else conditiob")
+
         expert = await expertUser
           .find({
             category: req.body.category,
             isApprovedByAdmin: true,
-            // filter,
-            // status: APP_CONSTANTS.activityStatus.active,
           })
           .populate("practiceArea")
           .populate("category")
           .populate("userId")
+          .populate(payload)
           .sort({ "rating.avgRating": -1 })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit));
@@ -771,18 +785,16 @@ module.exports = {
           .find({ category: req.body.category, isApprovedByAdmin: true })
           .countDocuments();
       } else if (req.body.category === "" && req.body.practiceArea !== "") {
-        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
+     
         expert = await expertUser
           .find({
             practiceArea: req.body.practiceArea,
             isApprovedByAdmin: true,
-            // filter,
-            // status: APP_CONSTANTS.activityStatus.active,
           })
           .populate("practiceArea")
           .populate("category")
           .populate("userId")
+          .populate(payload)
           .sort({ "rating.avgRating": -1 })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit));
@@ -794,8 +806,6 @@ module.exports = {
           })
           .countDocuments();
       } else if (req.body.category !== "" && req.body.practiceArea !== "") {
-        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
-        // console.log("console mai kya hai practiceArea ke",req.body.practiceArea);
         expert = await expertUser
           .find({
             practiceArea: req.body.practiceArea,
@@ -806,6 +816,7 @@ module.exports = {
           .populate("practiceArea")
           .populate("category")
           .populate("userId")
+          .populate(payload)
           .sort({ "rating.avgRating": -1 })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit));
@@ -823,13 +834,10 @@ module.exports = {
           })
           .populate("practiceArea")
           .populate("category")
+          .populate(payload)
           .populate({
             path: "userId",
             match: filter,
-            // options: {
-            //   limit: req.body.limit,
-            //   skip: req.body.page - 1 * req.body.limit,
-            // },
           })
           .sort({ "rating.avgRating": -1 })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
@@ -853,6 +861,7 @@ module.exports = {
           .populate("practiceArea")
           .populate("category")
           .populate("userId")
+          .populate(payload)
           .sort({ "rating.avgRating": -1 })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit));
@@ -866,6 +875,7 @@ module.exports = {
       }
       let expertData = JSON.parse(JSON.stringify(expert));
 
+
       expertData.map((ele) => {
         if (ele && ele.userId && ele.userId != null) {
           delete ele.__v;
@@ -874,6 +884,13 @@ module.exports = {
           delete ele.userId.password;
           delete ele.userId.__v;
           delete ele.userId.userData;
+        }
+        if(ele.expertlisting.length>0&&ele.expertlisting){
+          ele.isFavorite=true;
+          delete ele.expertlisting;
+        }else{
+          ele.isFavorite=false;
+          delete ele.expertlisting;
         }
       });
 
@@ -1133,8 +1150,8 @@ module.exports = {
       }
       else
       {
-       let removeFavouriteExpert= await favouriteExport.deleteOne({ expertId: expertId })
-        if (removeFavouriteExpert)
+       let removeFavouriteExpert= await favouriteExport.deleteOne(payload)
+        if (!removeFavouriteExpert)
         {
           throw Boom.badRequest("Expert Is Not Found"); 
         }
