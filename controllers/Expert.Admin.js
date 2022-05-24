@@ -330,7 +330,7 @@ module.exports = {
             lastName: req.body.lastName,
             profilePic: req.body.profilePic,
             isEmailVerified: false,
-            otp: req.body.otp,
+            otp: req.body.otp,  
           },
         }
       );
