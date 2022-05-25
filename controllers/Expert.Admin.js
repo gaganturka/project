@@ -93,7 +93,7 @@ module.exports = {
           .populate("category")
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
-        count = await expertUser.find().countDocuments();
+        count = await expertUser.find({ isApprovedByAdmin: true }).countDocuments();
       }
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
@@ -114,91 +114,91 @@ module.exports = {
       universalFunctions.sendError(error, res);
     }
   },
-  showExpertsAccountTypeExpert: async (req, res) => {
-    try {
-      const schema = Joi.object({
-        limit: Joi.number(),
-        page: Joi.number(),
-      });
-      await universalFunctions.validateRequestPayload(req.body, res, schema);
-      let page = req.body.page;
-      let limit = req.body.limit;
+  // showExpertsAccountTypeExpert: async (req, res) => {
+  //   try {
+  //     const schema = Joi.object({
+  //       limit: Joi.number(),
+  //       page: Joi.number(),
+  //     });
+  //     await universalFunctions.validateRequestPayload(req.body, res, schema);
+  //     let page = req.body.page;
+  //     let limit = req.body.limit;
 
-      const expertuser = await expertUser
-        .find({
-          accountType: APP_CONSTANTS.accountType.expert,
-          isApprovedByAdmin: true,
-        })
-        .populate("userId")
-        .populate("practiceArea")
-        .populate("category")
-        .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
-      if (!expertuser) {
-        throw Boom.badRequest("cannot find any expert");
-      }
-      // console.log("type request",expertuser,"type expert")
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "All experts type are",
-          data: {
-            list: expertuser,
-            count: await expertUser
-              .find({
-                accountType: APP_CONSTANTS.accountType.expert,
-                isApprovedByAdmin: true,
-              })
-              .countDocuments(),
-          },
-        },
-        res
-      );
-    } catch (error) {
-      universalFunctions.sendError(error, res);
-    }
-  },
-  showExpertsAccountTypeFreelancer: async (req, res) => {
-    try {
-      const schema = Joi.object({
-        limit: Joi.number(),
-        page: Joi.number(),
-      });
-      await universalFunctions.validateRequestPayload(req.body, res, schema);
-      let page = req.body.page;
-      let limit = req.body.limit;
+  //     const expertuser = await expertUser
+  //       .find({
+  //         accountType: APP_CONSTANTS.accountType.expert,
+  //         isApprovedByAdmin: true,
+  //       })
+  //       .populate("userId")
+  //       .populate("practiceArea")
+  //       .populate("category")
+  //       .skip(parseInt((page - 1) * limit))
+  //       .limit(parseInt(limit));
+  //     if (!expertuser) {
+  //       throw Boom.badRequest("cannot find any expert");
+  //     }
+  //     // console.log("type request",expertuser,"type expert")
+  //     universalFunctions.sendSuccess(
+  //       {
+  //         statusCode: 200,
+  //         message: "All experts type are",
+  //         data: {
+  //           list: expertuser,
+  //           count: await expertUser
+  //             .find({
+  //               accountType: APP_CONSTANTS.accountType.expert,
+  //               isApprovedByAdmin: true,
+  //             })
+  //             .countDocuments(),
+  //         },
+  //       },
+  //       res
+  //     );
+  //   } catch (error) {
+  //     universalFunctions.sendError(error, res);
+  //   }
+  // },
+  // showExpertsAccountTypeFreelancer: async (req, res) => {
+  //   try {
+  //     const schema = Joi.object({
+  //       limit: Joi.number(),
+  //       page: Joi.number(),
+  //     });
+  //     await universalFunctions.validateRequestPayload(req.body, res, schema);
+  //     let page = req.body.page;
+  //     let limit = req.body.limit;
 
-      const expertuser = await expertUser
-        .find({
-          accountType: APP_CONSTANTS.accountType.freelancer,
-          isApprovedByAdmin: true,
-        })
-        .populate("userId")
-        .populate("practiceArea")
-        .populate("category")
-        .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
-      if (!expertuser) {
-        throw Boom.badRequest("cannot find any freelancer");
-      }
-      // console.log("freelancers",expertuser,"freelancers")
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "All freelancers are",
-          data: {
-            list: expertuser,
-            count: await expertUser
-              .find({ accountType: APP_CONSTANTS.accountType.freelancer })
-              .countDocuments(),
-          },
-        },
-        res
-      );
-    } catch (error) {
-      universalFunctions.sendError(error, res);
-    }
-  },
+  //     const expertuser = await expertUser
+  //       .find({
+  //         accountType: APP_CONSTANTS.accountType.freelancer,
+  //         isApprovedByAdmin: true,
+  //       })
+  //       .populate("userId")
+  //       .populate("practiceArea")
+  //       .populate("category")
+  //       .skip(parseInt((page - 1) * limit))
+  //       .limit(parseInt(limit));
+  //     if (!expertuser) {
+  //       throw Boom.badRequest("cannot find any freelancer");
+  //     }
+  //     // console.log("freelancers",expertuser,"freelancers")
+  //     universalFunctions.sendSuccess(
+  //       {
+  //         statusCode: 200,
+  //         message: "All freelancers are",
+  //         data: {
+  //           list: expertuser,
+  //           count: await expertUser
+  //             .find({ accountType: APP_CONSTANTS.accountType.freelancer })
+  //             .countDocuments(),
+  //         },
+  //       },
+  //       res
+  //     );
+  //   } catch (error) {
+  //     universalFunctions.sendError(error, res);
+  //   }
+  // },
 
   showExpertsRequests: async (req, res) => {
     try {

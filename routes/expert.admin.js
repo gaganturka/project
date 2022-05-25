@@ -10,12 +10,12 @@ router
   .route("/getExpertRejectedByAdmin/:_id")
   .get(isAdmin.isAdmin, ExpertController.getExpertRejectedByAdmin);
 router.route("/getExperts").post(isAdmin.isAdmin, ExpertController.showExperts);
-router
-  .route("/getExpertsAccountTypeExpert")
-  .post(isAdmin.isAdmin, ExpertController.showExpertsAccountTypeExpert);
-router
-  .route("/getExpertsAccountTypeFreelancer")
-  .post(isAdmin.isAdmin, ExpertController.showExpertsAccountTypeFreelancer);
+// router
+//   .route("/getExpertsAccountTypeExpert")
+//   .post(isAdmin.isAdmin, ExpertController.showExpertsAccountTypeExpert);
+// router
+//   .route("/getExpertsAccountTypeFreelancer")
+//   .post(isAdmin.isAdmin, ExpertController.showExpertsAccountTypeFreelancer);
 
 router
   .route("/getExpertsRequests")
