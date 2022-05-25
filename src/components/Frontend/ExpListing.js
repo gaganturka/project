@@ -16,6 +16,9 @@ import { CategoryAndPracticeContext } from '../../context/CategoryAndPracticeCon
 import {useLocation} from "react-router-dom";
 import NewsletterSubscribed from './NewsletterSubscribed';
 import { AuthContext } from '../../context/AuthContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const ExpListing = () => {
    const {isAuthModalOpen,setIsAuthModalOpen,isLoggedIn,setIsLoggedIn}=useContext(AuthContext);
@@ -149,16 +152,56 @@ const ExpListing = () => {
     }
 
     const handleFavourite=(obj)=>{
-       let dataToSend;
+       let dataToSend={
+          expertId:obj._id,
+       };
       if(isLoggedIn===true)
       {
+            if(obj.isFavorite===true)
+            {
+               dataToSend.favourite=2;
+            }
+            else
+            {
+               dataToSend.favourite=1;
+            }
          expListingAction.setExpertFavorite(dataToSend,(err,res)=>{
             if(err)
             {
                console.log(err,'handleFavourite erro')
             }
             else{
-
+               let payload={
+                  limit:sizePerPage,
+                  page:currentPage,
+                  category:selectedCategory,
+                  practiceArea:selectedPracticeArea,
+                  sortBy:selectedExpertSorting,
+               }
+                  expListingAction.fetchAllOnlineFilteredExperts(payload,(err,res)=>{
+                    if(err){
+                      console.log(err," fetchAllFilteredExpertsOnline error")
+                    }else{
+                       if(obj.isFavorite)
+                       {
+                          toast('Expert removed from favorite');
+                       }
+                       else
+                       {
+                          toast('Expert added to favorite');
+                       }
+                      setExpertList(res.data.list);
+                      setCountExperts(res.data.count)
+                      setPages(
+                        parseInt(res.data.count % sizePerPage) == 0
+                          ? parseInt(res.data.count / sizePerPage)
+                          : parseInt(res.data.count / sizePerPage + 1)
+                      );
+                  setDummy(0);
+                      console.log(res.data," online experts filtered");
+                    }
+                  });
+              
             }
          })
       }
@@ -169,7 +212,8 @@ const ExpListing = () => {
   return (
 
    <>
-        
+      <ToastContainer/>
+      
       <section className="breadcrumb-section">
          <div className="container">
             <div className="row">
