@@ -12,6 +12,7 @@ const { Config } = require("../config");
 
 const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
+const { isBuffer } = require("lodash");
 
 
 module.exports = {
@@ -54,9 +55,21 @@ module.exports = {
         limit: Joi.number(),
         page: Joi.number(),
         search: Joi.string().allow(""),
+        filterType:Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-
+      let filterType
+      if(req.body.filterType =='2')
+      {
+      filterType=APP_CONSTANTS.accountType.freelancer;
+      }
+      else if(req.body.filterType =='1')
+      {
+        filterType=APP_CONSTANTS.accountType.expert;
+      }
+      else{
+        throw Boom.badRequest(responseMessages.INVALID_CREDENTIALS);
+      }
       let page = req.body.page;
       let limit = req.body.limit;
       let filter = {};
@@ -70,30 +83,42 @@ module.exports = {
         ];
       }
       let expert = [],
+
         count;
+        let finalExperts=[];
+       
       if (req.body.search) {
         let expertData = await expertUser
-          .find({ isApprovedByAdmin: true })
+          .find({ isApprovedByAdmin: true,accountType:filterType })
           .populate({ path: "userId", match: filter })
           .populate("practiceArea")
           .populate("category")
-          .skip(parseInt((page - 1) * limit))
-          .limit(parseInt(limit));
+          // .skip(parseInt((page - 1) * limit))
+          // .limit(parseInt(limit));
         expertData.map((ele) => {
+          if(ele !=null)
+          {
           if (ele.userId != null) {
             expert.push(ele);
           }
+        }
         });
         count = expert.length;
+        let i;
+        for(i=parseInt((page - 1) * limit);i<parseInt((page - 1) * limit)+limit;i++)
+        {
+          if(expert[i]!=null)
+            finalExperts.push(expert[i]);
+        }
       } else {
-        expert = await expertUser
-          .find({ isApprovedByAdmin: true })
+        finalExperts = await expertUser
+          .find({ isApprovedByAdmin: true,accountType:filterType })
           .populate("userId")
           .populate("practiceArea")
           .populate("category")
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
-        count = await expertUser.find({ isApprovedByAdmin: true }).countDocuments();
+        count = await expertUser.find({ isApprovedByAdmin: true,accountType:filterType }).countDocuments();
       }
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
@@ -104,7 +129,7 @@ module.exports = {
           statusCode: 200,
           message: "All experts requests are",
           data: {
-            list: expert,
+            list: finalExperts,
             count: count,
           },
         },
