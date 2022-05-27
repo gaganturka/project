@@ -9,9 +9,9 @@ code {
   display: none;
 }
 
-#root {
+/* #root {
     height: 100vh;
-}
+}  */
 
 .conversations-window-wrapper {
   background-color: #f0f2f5;

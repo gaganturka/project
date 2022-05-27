@@ -5,6 +5,7 @@ const FetchCategoriesList = ({selectedCategory,setSelectedCategory,getCategories
       <><select
       class="form-control"
       onChange={(e) => {
+        console.log('the changes')
         setSelectedCategory(e.target.value);
       }}
       value={selectedCategory}
