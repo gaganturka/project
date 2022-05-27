@@ -13,11 +13,11 @@ const FavExpertSchema = new Schema({
   },
   expertUserId: {
     type: Schema.Types.ObjectId,
-    ref: "expert",
+    ref: "user",
   },
   expertId: {
     type: Schema.Types.ObjectId,
-    ref: "user",
+    ref: "expert",
   },
 });
 

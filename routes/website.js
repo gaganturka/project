@@ -40,5 +40,8 @@ router.route("/videoChatTokenExpert").post(authUser.checkAuth,WebsiteController.
 router.route("/getChatAppointment").get(authUser.checkAuth,WebsiteController.getChatAppointment);
 router.route("/getFavExpert").get(authUser.checkAuth,WebsiteController.getFavExpert);
 router.route("/setFavExpert").post(authUser.checkAuth,WebsiteController.setFavExpert);
+router.route("/getUsersFavoriteExperts").get(authUser.checkAuth,WebsiteController.getUsersFavoriteExperts);
+
+
 
   module.exports = router;

@@ -1213,7 +1213,7 @@ module.exports = {
    getFavExpert:async (req,res)=>{
     try{ 
       let id = req.user.id;
-      let data =await expertUser.find().populate({ path: "expertlisting", 
+      let data =await expertUser.find({isApprovedByAdmin:true}).populate({ path: "expertlisting", 
          match:{
                userId: id,
   
@@ -1236,10 +1236,11 @@ module.exports = {
   setFavExpert:async (req,res)=>{
     try {
       let userId = req.user.id;
-      let {expertId,favourite } = req.body;
+      let {expertId,favourite,expertUserId } = req.body;
       let payload = {
         userId,
-        expertId,
+        expertId, 
+        expertUserId,
       };
       if (favourite===APP_CONSTANTS.checkfavExpert) {
         await favExpertModel.create(payload);
@@ -1272,7 +1273,28 @@ module.exports = {
       console.log(err)
       universalFunctions.sendError(err, res); 
     }
-  }
+  },
+
+
+  getUsersFavoriteExperts:async (req,res)=>{
+    try{ 
+      let id = req.user.id;
+      let data =await favExpertModel.find({userId:id})
+      .populate( "expertUserId").populate('expertId');
+   
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Successfully got your fav experts ",
+          data: data,
+        },
+        res
+      );
+    }catch(err){
+      console.log(err)
+      universalFunctions.sendError(err, res); 
+    }
+  },
 
 };
 
