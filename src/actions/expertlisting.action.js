@@ -98,6 +98,14 @@ function setExpertFavorite( payload,cb) {
       if (typeof cb === 'function') return cb(error, res && res.body);
     });
 }
+
+function getUsersFavoriteExperts(cb){
+  Agent.fire('get',`${BACKEND_URL}/website/getUsersFavoriteExperts`)
+  .end((err,res)=>{
+    var error=err || res.error ? ServerError (res) : (res.body && res.body.error)? ServerError(res): null;
+    if(typeof cb === 'function') return cb (error, res && res.body);
+  });
+}
 export default {
     fetchAllOnlineFilteredExperts,
     bookAnAppoitment,
@@ -107,5 +115,6 @@ export default {
     getQuesAndAns,
     fetchTopExperts,
     getAvailableTimeForUser,
-    setExpertFavorite
+    setExpertFavorite,
+    getUsersFavoriteExperts,
   }

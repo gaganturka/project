@@ -95,7 +95,7 @@ footer {
 .navigation {
 	background: #fff;
     padding: 5px;
-    position: fixed;
+    /* position: fixed; */
     width: 100%;
     top: 0;
     left: 0;
@@ -140,6 +140,7 @@ footer {
 	position: relative;
 	display: flex;
 	align-items: center;
+	z-index:-1;
 } 
 
 .nav-link.login-nav-btn {
@@ -1024,7 +1025,7 @@ footer {
 	font-size: 24px;
 	font-weight: 500;
 	border-bottom: 2px solid #fff;
-	width: 50%;
+	/* width: 50%; */
 	padding-bottom: 11px;
 	margin-bottom: 30px;
 }
@@ -1486,6 +1487,12 @@ footer {
 	font-weight: 500;
 	padding: 15px;
 	margin-bottom: 0px;
+	text-align: center;
+}
+
+.img-content{
+	display: flex;
+	justify-content: center;;
 }
 
 .pratice-area-wrp {

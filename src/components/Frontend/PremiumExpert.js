@@ -1,4 +1,4 @@
-import {React,useState,useEffect} from 'react'
+import {React,useState,useEffect,useContext} from 'react'
 import Footer from './Footer'
 import {Link } from 'react-router-dom'
 import OwlCarousel from "react-owl-carousel";
@@ -12,6 +12,10 @@ import ReactPaginate from 'react-paginate'
 import StarRatings from 'react-star-ratings';
 import categoriesAction from '../../actions/categories.action';
 import NewsletterSubscribed from './NewsletterSubscribed';
+import { AuthContext } from '../../context/AuthContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const PremiumExpert = () => {
     const [getCategories,setGetCategories]=useState([]);
    const [dummy,setDummy]=useState(false);
@@ -24,7 +28,8 @@ const PremiumExpert = () => {
    const [selectedPracticeArea, setSelectedPracticeArea] = useState("");
    const [selectedCategory, setSelectedCategory] = useState("");
    const [getPracticeArea,setGetPracticeArea]=useState([]);
-  
+   const {isAuthModalOpen,setIsAuthModalOpen,isLoggedIn,setIsLoggedIn}=useContext(AuthContext);
+   
 
    const fetchAllPracticeArea = async () => {
       categoriesAction.fetchAllPracticeArea((err,res)=>{
@@ -99,11 +104,74 @@ const PremiumExpert = () => {
          // else if (filterType == 1) onClickShowExperts(current, searchedTerm);
          // else if (filterType == 2) onClickShowFreelancers(current, searchedTerm);
        };
+
+
+       const handleFavourite=(obj)=>{
+         let dataToSend={
+            expertId:obj._id,
+            expertUserId:obj.userId._id,
+         };
+        if(isLoggedIn===true)
+        {
+              if(obj.isFavorite===true)
+              {
+                 dataToSend.favourite=2;
+              }
+              else
+              {
+                 dataToSend.favourite=1;
+              }
+              expertlistingAction.setExpertFavorite(dataToSend,(err,res)=>{
+              if(err)
+              {
+                 console.log(err,'handleFavourite error')
+              }
+              else{
+               let dataToSend={
+                  limit:sizePerPage,
+                  page:currentPage,
+                  category:selectedCategory,
+                  practiceArea:selectedPracticeArea,
+                  sortBy:selectedExpertSorting,
+               }
+                  expertlistingAction.fetchAllOnlineFilteredPremiumExperts(dataToSend,(err,res)=>{
+                    if(err){
+                      console.log(err," fetchAllFilteredExpertsOnline error")
+                    }else{
+                     if(obj.isFavorite===true)
+                     {
+                        toast('Expert has been removed from favorite')
+                        
+                        
+                     }
+                     else if(obj.isFavorite===false){
+                        toast('Expert has been successfully added to favorite')
+                     }
+                       
+                      setExpertList(res.data.list);
+                      setCountExperts(res.data.count)
+                      setPages(
+                        parseInt(res.data.count % sizePerPage) == 0
+                          ? parseInt(res.data.count / sizePerPage)
+                          : parseInt(res.data.count / sizePerPage + 1)
+                      );
+                  setDummy(0);
+                      console.log(res.data," online experts filtered");
+                    }
+                  });
+                
+                 
+                
+              }
+           })
+        }
+        else{
+           setIsAuthModalOpen(true)
+        }
+      }
   return (
       <>
-      {
-         
-      }
+      <ToastContainer/>
       <section class="breadcrumb-section p-5">
          <div class="container">
             <div class="row">
@@ -274,7 +342,7 @@ getPracticeArea.length>0 &&
                            <div className="exp-listing-img">
                               <img src={`${obj?.userId?.profilePic ===''?"/assets/img/exp-img-1.png":obj?.userId?.profilePic}`} className="img img-fluid" alt=""/>
                               <span className="star">
-                                 <span className="star-icon fa fa-star"></span>
+                                 <span className={`star-icon fa fa-star ${obj.isFavorite?'text-warning':''}`} onClick={()=>handleFavourite(obj)}></span>
                                </span>
                            </div>
                            <div className="exp-listing-content">

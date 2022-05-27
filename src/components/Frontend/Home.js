@@ -238,10 +238,10 @@ const Home = () => {
                                         setSelectedPractice(e.target.className);
                                         setSearchedTermPractice(e.target.id);
                                       }}
-                                      id={`${obj.name}`}
+                                      id={`${obj?.name}`}
                                       className={`${obj._id}`}
                                     >
-                                      {obj.name}
+                                      {obj?.name}
                                     </li>
                                   );
                                 })}
@@ -322,7 +322,7 @@ const Home = () => {
      <div className="pratice-area-box">
         <div className="col">
         <div className="">
-        <div>
+        <div className="img-content">
            <img src=
            {`${obj[0]?.url?.original}`}
             className="img img-fluid" alt=""/>
@@ -333,11 +333,11 @@ const Home = () => {
            <h4>
            {/* {obj?.name}  */}
            
-           {obj[0].name} </h4>
+           {obj[0]?.name} </h4>
         </div>
      </div>
-     <div className="">
-        <div>
+     <div >
+        <div className="img-content">
            <img src=
            {`${obj[1]?.url?.original}`}
             className="img img-fluid" alt=""/>
@@ -696,7 +696,7 @@ const Home = () => {
                            {obj?.rating?.avgRating}
                      </div>
                      <p>{obj?.experience} Yrs Experience</p>
-                     <p>{obj?.practiceArea[0].name}</p>
+                     <p>{obj?.practiceArea[0]?.name}</p>
                   </div>
                </div>
                </div>
@@ -958,7 +958,7 @@ const Home = () => {
                       <p>
                         {obj?.feedback}
                       </p>
-                      <h5>{obj.name}</h5>
+                      <h5>{obj?.name}</h5>
                     </div>
                   </div>
                 </div>

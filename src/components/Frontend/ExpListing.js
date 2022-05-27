@@ -61,10 +61,10 @@ const ExpListing = () => {
     useEffect(() => {
       fetchAllCategories();
       fetchAllPracticeArea();
-      fetchAllOnlineFilteredExperts();
+      fetchAllOnlineFilteredExperts(currentPage);
       fetchAllOnlinePremiumExperts();
       setDummy(1);
-    }, [selectedCategory,selectedPracticeArea,selectedExpertSorting])
+    }, [selectedCategory,selectedPracticeArea,selectedExpertSorting,currentPage])
    
 
     const fetchAllPracticeArea = async () => {
@@ -79,10 +79,10 @@ const ExpListing = () => {
      
     };
    
-    const fetchAllOnlineFilteredExperts = async () => {
+    const fetchAllOnlineFilteredExperts = async (current) => {
    let dataToSend={
       limit:sizePerPage,
-      page:currentPage,
+      page:current,
       category:selectedCategory,
       practiceArea:selectedPracticeArea,
       sortBy:selectedExpertSorting,
@@ -134,6 +134,8 @@ const ExpListing = () => {
       let current = data.selected + 1;
       console.log(current, "currentpage");
       setCurrentPage(current);
+
+      fetchAllOnlinePremiumExperts(current)
       // if (filterType == 0) fetchAllExperts(current, searchedTerm);
       // else if (filterType == 1) onClickShowExperts(current, searchedTerm);
       // else if (filterType == 2) onClickShowFreelancers(current, searchedTerm);
@@ -154,6 +156,7 @@ const ExpListing = () => {
     const handleFavourite=(obj)=>{
        let dataToSend={
           expertId:obj._id,
+          expertUserId:obj.userId._id,
        };
       if(isLoggedIn===true)
       {
@@ -168,7 +171,7 @@ const ExpListing = () => {
          expListingAction.setExpertFavorite(dataToSend,(err,res)=>{
             if(err)
             {
-               console.log(err,'handleFavourite erro')
+               console.log(err,'handleFavourite error')
             }
             else{
                let payload={
@@ -286,7 +289,7 @@ const ExpListing = () => {
                            </div>
                            <div className="p-3">
                               <h5>{obj?.userId?.firstName}</h5>
-                              <h6>{obj?.practiceArea[0].name}</h6>
+                              <h6>{obj?.practiceArea[0]?.name}</h6>
                               <Link to={`/expprofile/${obj._id}`}><button className="btn">View Profile</button></Link>
                            </div>
                         </div>
@@ -335,10 +338,10 @@ const ExpListing = () => {
                                  <div className="item" key={index}>
                         <div className="pratice-area-box">
                            <div>
-                           <img src={`${obj.url.original}`} className="img img-fluid" alt=""/>
+                           <img src={`${obj?.url?.original}`} className="img img-fluid" alt=""/>
                         </div>
                            <div>
-                              <h4>{obj.name}  </h4>
+                              <h4>{obj?.name}  </h4>
                            </div>
                         </div>
                      </div>
@@ -495,15 +498,15 @@ const ExpListing = () => {
                             "pagination justify-content-center"
                           }
                           forcePage={currentPage - 1}
-                          pageClassName={"page-item"}
-                          pageLinkClassName={"page-link"}
-                          previousClassName={"page-item"}
-                          previousLinkClassName={"page-link"}
-                          nextClassName={"page-item"}
-                          nextLinkClassName={"page-link"}
-                          breakClassName={"page-item"}
-                          breakLinkClassName={"page-link"}
-                          activeClassName={"active"}
+                          pageClassName={"page-item "}
+                          pageLinkClassName={"page-link "}
+                          previousClassName={"page-item "}
+                          previousLinkClassName={"page-link "}
+                          nextClassName={"page-item "}
+                          nextLinkClassName={"page-link "}
+                          breakClassName={"page-item "}
+                          breakLinkClassName={"page-link "}
+                          activeClassName={"active "}
                         />
             </div>
          </div>

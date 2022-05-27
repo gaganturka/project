@@ -12,6 +12,7 @@ import videopng from "../../img/video-call-icon.png";
 import audiopng from "../../img/audio-call-icon.png";
 import chatpng from "../../img/chat-icon.png";
 import appointmentAction from '../../actions/appointment.action';
+import categoriesAction from '../../actions/categories.action';
 
 const ExpProfile = () => {
    // moment(currentTime).format("hh:mm"))
@@ -30,7 +31,7 @@ const ExpProfile = () => {
    const [endAppointmentTime,SetEndAppointmentTime]=useState(null)
    const [timeSlotId,setTimeSlotId]=useState("");
    const [dateSlot,SetDateSlot]=useState(null) 
-
+   const [getPracticeArea,setGetPracticeArea]=useState([]);
    
   const [appointmentType, setAppointmentType] = useState(null);
   const scrollToTop = () => {
@@ -121,7 +122,7 @@ const ExpProfile = () => {
          if(err){
  
          }else{
-            console.log(res)
+            // console.log(res,'')
             setExpert(res.data);
             console.log(expert)
          }
@@ -185,6 +186,7 @@ const newHandle=()=>{
       setscheduleappointmentmodal(true);
    }
 }
+
 const handlemodal1=()=>{
    
    if(startAppointmentTime==null||dateSlot==null){
@@ -240,8 +242,11 @@ const handlemodal1=()=>{
                                     <img src="/assets/img/pratice-area-thumb.png" className="img img-fluid" alt=""/>
                                  </div>
                                  <div>
-                                    <h4>{expert.userId && expert.userId.firstName}{" "} {expert.userId.lastName} Nikolaus</h4>
-                                    <p>( Business & Finance Expert )</p>
+                                    <h4>{expert?.userId && expert?.userId?.firstName}{" "} {expert?.userId?.lastName} </h4>
+                                    <p>{
+                                       expert?.practiceArea[0].name
+                                       }
+                                        </p>
                                  </div>
                               </div>
                            </li>

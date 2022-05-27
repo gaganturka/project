@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebaruser";
 import homeAction from "../../actions/home.action";
 import config from "../../config/configg";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import Cookies from 'universal-cookie';
 import Agent from "../../actions/superAgent";
@@ -13,7 +15,7 @@ const UserDashBoard = () => {
   const {isLoggedIn,setIsLoggedIn,loggedInBorhanUserInfo,setLoggedInBorhanUserInfo}=useContext(AuthContext)
   const [dummy,setDummy]=useState(0);
   const [getProfilePic, setGetProfilePic] = useState("");
-  
+  const [isEditable,setIsEditable]=useState(false);
   useEffect(() => {
     // let k=Agent.getLoginType();
     // console.log(k,"mddcs,dc sdmc sdcsdcsdcsdcdcscs   s csd m")
@@ -43,7 +45,7 @@ const UserDashBoard = () => {
   //   });
   // };
   const onSubmitEditExpert = async (e) => {
-    //   e.preventDefault();
+      e.preventDefault();
     let dataToSend = {
       firstName: loggedInBorhanUserInfo.firstName,
       lastName: loggedInBorhanUserInfo.lastName,
@@ -57,11 +59,14 @@ const UserDashBoard = () => {
         console.log(err);
       } else {
         json = res;
-
+         toast('Profile has been updated successfully')
         //  if (json.statusCode === 200) {
         //    localStorage.setItem("token", json.data);
         //    history("/userdashboard");
         //  }
+        setTimeout(()=>{
+         window.location.reload()
+        },100)
       }
     });
   };
@@ -87,8 +92,16 @@ const UserDashBoard = () => {
     }
   };
 
+  const handleEditableProfile=()=>{
+    if(!isEditable)
+    toast('Profile can now be edited');
+ 
+    setIsEditable(!isEditable);
+   
+  }
   return (
     <>
+    <ToastContainer/>
       {/* {console.log(decodedToken,"dedc decoded")} */}
       <section className="admin-wrapper">
         <Sidebar />
@@ -120,14 +133,16 @@ const UserDashBoard = () => {
                     />
                     <p>Update Profile Picture </p>
 
-                    <div className="upt-edit-icon">
-                      <Link to="javascript:;">
+                    <div className="upt-edit-icon" >
+                      <a onClick={handleEditableProfile}>
                         <img
                           src="/assets/img/edit-white-icon.png"
                           className="img img-fluid"
                           alt=""
+
+                          
                         />
-                      </Link>
+                        </a>
                     </div>
                   </div>
                 </div>
@@ -137,6 +152,17 @@ const UserDashBoard = () => {
                       <div className="col-lg-6">
                         <div className="">
                           <label for="">First name</label>
+                         {isEditable?<input
+                            type="text"
+                            name="firstName"
+                            value={loggedInBorhanUserInfo?.firstName}
+                            onChange={(e) => {
+                              onChangeBorhanUser(e);
+                            }}
+                            className="form-control "
+                            placeholder=""
+                            
+                          />:
                           <input
                             type="text"
                             name="firstName"
@@ -144,15 +170,17 @@ const UserDashBoard = () => {
                             onChange={(e) => {
                               onChangeBorhanUser(e);
                             }}
-                            className="form-control"
+                            className="form-control "
                             placeholder=""
-                          />
+                            disabled
+                          />}
+                          
                         </div>
                       </div>
                       <div className="col-lg-6">
                         <div className="">
                           <label for="">Last name</label>
-                          <input
+                          {isEditable?<input
                             type="text"
                             name="lastName"
                             value={loggedInBorhanUserInfo?.lastName}
@@ -161,13 +189,34 @@ const UserDashBoard = () => {
                             }}
                             className="form-control"
                             placeholder=""
-                          />
+                          />:<input
+                          type="text"
+                          name="lastName"
+                          value={loggedInBorhanUserInfo?.lastName}
+                          onChange={(e) => {
+                            onChangeBorhanUser(e);
+                          }}
+                          className="form-control"
+                          placeholder=""
+                          disabled
+                        />}
                         </div>
                       </div>
                       <div className="col-lg-12">
                         <div className="">
-                          <label for="">Email ID</label>
+                          <label for="">Registered Email ID</label>
+                          {isEditable?
                           <input
+                          type="email"
+                          className="form-control"
+                          value={loggedInBorhanUserInfo?.email}
+                          name="email"
+                          onChange={(e) => {
+                            onChangeBorhanUser(e);
+                          }}
+                          placeholder=""
+                        />:
+                        <input
                             type="email"
                             className="form-control"
                             value={loggedInBorhanUserInfo?.email}
@@ -176,7 +225,8 @@ const UserDashBoard = () => {
                               onChangeBorhanUser(e);
                             }}
                             placeholder=""
-                          />
+                            disabled
+                          />}
                         </div>
                       </div>
                       {/* <div className="col-lg-12">
@@ -188,7 +238,7 @@ const UserDashBoard = () => {
                                     </div>
                                  </div>
                               </div> */}
-                      <div className="col-lg-12">
+                      {/* <div className="col-lg-12">
                         <div className="">
                           <label for="">Registered email</label>
                           <div className="add-new-input">
@@ -201,7 +251,7 @@ const UserDashBoard = () => {
                             <Link to="javascript:;">Add new</Link>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                       <div className="col-lg-12">
                         <div className="">
                           <label for="">Registered Mobile number</label>
@@ -215,8 +265,9 @@ const UserDashBoard = () => {
                               }}
                               className="form-control"
                               placeholder=""
+                              disabled
                             />
-                            <Link to="javascript:;">Add new</Link>
+                            {/* <Link to="javascript:;">Add new</Link> */}
                           </div>
                         </div>
                       </div>
