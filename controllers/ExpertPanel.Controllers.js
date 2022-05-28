@@ -162,12 +162,29 @@ module.exports = {
       bio,
       getAudioFilePath,
       getVideoFilePath,
+      profilePic
     } = req.body;
+    const schema = Joi.object({
+      firstName: Joi.string(),
+      lastName: Joi.string(),
+      email: Joi.string().email({
+        minDomainSegments: 2,
+        tlds: { allow: ["com", "net"] },
+      }),
+      expertId:Joi.string(),
+      bio: Joi.string(),
+      getAudioFilePath: Joi.string().allow(''),
+      getVideoFilePath: Joi.string().allow(''),
+      profilePic:Joi.string().allow('')
+    });
+    await universalFunctions.validateRequestPayload(req.body, res, schema);
+
     let  id  =req.user.id;
     let payload = {
       firstName,
       lastName,
       email,
+      profilePic
     };
 
     const expert = await User.findOneAndUpdate(
@@ -488,6 +505,45 @@ getChatAppointment:async (req,res)=>{
         console.log(err)
         universalFunctions.sendError(err, res);  
       }
+      },
+
+
+      setExpertStatus:async (req,res)=>{
+        try{
+          let id=req.user.expertId;
+          const schema = Joi.object({
+    
+          status:Joi.string(),
+      });
+      let {status}=req.body;
+      let newStatus;
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      if(status==='Unavailable')
+        newStatus=APP_CONSTANTS.activityStatus.unavailable;
+      else if(status==='Active')
+      newStatus=APP_CONSTANTS.activityStatus.active;
+      else if(status==='Busy')
+      newStatus=APP_CONSTANTS.activityStatus.busy;
+       let expert=await expertUser.findByIdAndUpdate({_id:id},{status:newStatus});
+       
+       if(!expert)
+       {
+         throw Boom.badRequest('Expert not found');
+       }
+       
+       universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Successfully changed status",
+          data: {expert},
+        },
+        res
+       )
+        }
+        catch(error)
+        {
+         universalFunctions.sendError(error,res);
+        }
       }
 };
 

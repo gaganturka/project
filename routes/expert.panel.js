@@ -16,6 +16,7 @@ router.route("/setAvailableByExpert").post(isexpert.isExpert,ExpertController.se
 router.route("/getChatAppointment").get(isexpert.isExpert,ExpertController.getChatAppointment);
 router.route("/getChatAppointmentById").get(ExpertController.getChatAppointmentById);
 router.route("/updateChatAppointment").post(isexpert.isExpert,ExpertController.updateChatAppointment);
+router.route("/setExpertStatus").post(isexpert.isExpert,ExpertController.setExpertStatus);
 
 
 
