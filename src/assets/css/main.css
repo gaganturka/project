@@ -3003,14 +3003,7 @@ ul.blocklist {
 .btn-appointment1{
 	margin-bottom:14px;
 }
-.react-calendar__tile--now:enabled:hover, .react-calendar__tile--now:enabled:focus {
-    color: white;
-    background: #0c0c02 !important;
-}
-.react-calendar__tile--now {
-	color: white;
-    background: #0c0c02 !important;
-}
+
  .chatroom {
     background: transparent;
     border: 2px solid #D1D1D1;
