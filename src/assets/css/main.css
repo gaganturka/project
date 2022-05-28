@@ -1460,23 +1460,32 @@ footer {
 }
 
 .pratice-area-box {
-	background: #E4F7F3;
 	padding: 15px;
 	border-radius: 10px;
 	display: flex;
 	align-items: center;
+	padding: 20px 0;
+	background-color: #E4F7F3;
+	padding: 20px 0;
+	box-shadow: 0px 4px 20px rgb(0 0 0 / 7%);
+	margin-bottom: 22px;
+	height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-
+.pratice-area-owl .owl-item:nth-child(odd) .pratice-area-box {
+    background: #fff !important;
+	border-top:1px solid #FAFAF9;
+	
+}
 .pratice-area-box img {
 	height: 50px;
 	width: 50px !important;
 	object-fit: cover;
 	border-radius: 10px;
 }
-
 .pratice-area-box {
-	background: #E4F7F3;
-	padding: 10px;
 	border-radius: 10px;
 	display: flex;
 	align-items: center;
@@ -1488,6 +1497,7 @@ footer {
 	padding: 15px;
 	margin-bottom: 0px;
 	text-align: center;
+	color: #000;
 }
 
 .img-content{
@@ -1498,8 +1508,8 @@ footer {
 .pratice-area-wrp {
 	padding: 100px 0px;
 	position: relative;
+	border-radius: 20px;
 }
-
 
 .pratice-area-owl .owl-nav span {
 	display: none;
@@ -1609,8 +1619,30 @@ footer {
 	-moz-box-shadow: -1px 15px 40px -10px rgba(0,0,0,0.32);
 	box-shadow: -1px 15px 40px -10px rgba(0,0,0,0.32);
 	margin-bottom: 30px;
+	height: 94%;
 }
-
+.pratice-area-listing .page-item.active .page-link 
+{
+	background-color: #000 !important;
+	color: #fff !important;
+	border: none;
+}
+.pratice-area-listing .page-link 
+{
+	color: #000;
+}
+.pratice-area-listing .page-link:hover
+{
+	color: #000;
+}
+.pratice-area-listing .page-link:focus
+{
+	outline: none;
+}
+.pratice-area-listing .pagination 
+{
+	justify-content: center!important;
+}
 .exp-listing-content {
 	padding: 25px;
 }
