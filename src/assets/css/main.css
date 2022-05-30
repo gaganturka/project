@@ -132,7 +132,7 @@ footer {
 }
 
 .main-bn-wrapper {
-	background: url("../img/banner-img.png");
+	background: url("/public/assets/img/banner-img.png");
 	height: calc( 100vh - 96px);
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -449,7 +449,7 @@ footer {
 
 .our-experts-wrp .owl-nav .owl-prev::before {
 	content: "";
-	background: url("../img/owl-prev-icon.png");
+	background: url("/public/assets/img/owl-prev-icon.png");
 	background-repeat: no-repeat;
 	position: absolute;
 	height: 40px;
@@ -459,7 +459,7 @@ footer {
 
 .our-experts-wrp .owl-nav .owl-next::after {
 	content: "";
-	background: url("../img/owl-next-icon.png");
+	background: url("/public/assets/img/owl-next-icon.png");
 	background-repeat: no-repeat;
 	position: absolute;
 	height: 40px;
@@ -524,7 +524,7 @@ footer {
 
 .top-legal-user-img {
 	margin-bottom: 15px;
-	background: url("../img/legal-expert-cbg.png");
+	background: url("/public/assets/img/legal-expert-cbg.png");
 	background-repeat: no-repeat;
 	background-size: 100px;
 	margin: 0 auto;
@@ -583,7 +583,7 @@ footer {
 
 .top-legal-owl .owl-nav .owl-prev::before {
 	content: "";
-	background: url("../img/owl-prev-icon.png");
+	background: url("/public/assets/img/owl-prev-icon.png");
 	background-repeat: no-repeat;
 	position: absolute;
 	height: 40px;
@@ -593,7 +593,7 @@ footer {
 
 .top-legal-owl .owl-nav .owl-next::after {
 	content: "";
-	background: url("../img/owl-next-icon.png");
+	background: url("/public/assets/img/owl-next-icon.png");
 	background-repeat: no-repeat;
 	position: absolute;
 	height: 40px;
@@ -615,7 +615,7 @@ footer {
 
 .work-gets-done-wrp {
 	padding: 100px 0px;
-	background: url("../img/how-work-bg.png");
+	background: url("/public/assets/img/how-work-bg.png");
 	background-size: cover;
 	background-position:center;
 	background-repeat:no-repeat;
@@ -867,7 +867,7 @@ footer {
 
 .client-feature-img {
 	margin-bottom: 15px;
-	background: url("../img/legal-expert-cbg.png");
+	background: url("/public/assets/img/legal-expert-cbg.png");
 	background-repeat: no-repeat;
 	background-size: 100px;
 	margin: 0 auto;
@@ -901,7 +901,7 @@ footer {
 
 .client-feature-owl .owl-nav .owl-prev::before {
 	content: "";
-	background: url("../img/owl-prev-icon.png");
+	background: url("/public/assets/img/owl-prev-icon.png");
 	background-repeat: no-repeat;
 	position: absolute;
 	height: 40px;
@@ -912,7 +912,7 @@ footer {
 
 .client-feature-owl .owl-nav .owl-next::after {
 	content: "";
-	background: url("../img/owl-next-icon.png");
+	background: url("/public/assets/img/owl-next-icon.png");
 	background-repeat: no-repeat;
 	position: absolute;
 	height: 40px;
@@ -946,7 +946,7 @@ footer {
 
 .newsletter-wrp {
 	padding: 75px 0px;
-	background:url("../img/newsletter-bg.png") no-repeat center;
+	background:url("/public/assets/img/newsletter-bg.png") no-repeat center;
 	background-size: cover;
 }
 
@@ -1377,7 +1377,7 @@ footer {
 }
 
 .breadcrumb-section {
-	background: url("../img/breadcrumb-bg.png");
+	background: url("/public/assets/img/breadcrumb-bg.png");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -1521,7 +1521,7 @@ footer {
 
 .pratice-area-owl .owl-nav .owl-prev::before {
 	content: "";
-	background: url("../img/owl-prev-icon.png");
+	background: url("/public/assets/img/owl-prev-icon.png");
 	background-repeat: no-repeat;
 	position: absolute;
 	height: 40px;
@@ -1531,7 +1531,7 @@ footer {
 
 .pratice-area-owl .owl-nav .owl-next::after {
 	content: "";
-	background: url("../img/owl-next-icon.png");
+	background: url("/public/assets/img/owl-next-icon.png");
 	background-repeat: no-repeat;
 	position: absolute;
 	height: 40px;
