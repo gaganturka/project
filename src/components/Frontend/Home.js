@@ -319,7 +319,7 @@ const Home = () => {
             <div className="item"
               //  key={index}
                >
-     <div className="pratice-area-box">
+     <div className="pratice-area-box legal-practice-area">
         <div className="col">
         <div className="">
         <div className="img-content">
