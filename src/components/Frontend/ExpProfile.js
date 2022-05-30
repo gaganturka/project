@@ -8,9 +8,9 @@ import 'react-calendar/dist/Calendar.css';
 import NewsletterSubscribed from './NewsletterSubscribed';
 import moment from "moment";
 import { isDisabled } from '@testing-library/user-event/dist/utils';
-import videopng from "../../img/video-call-icon.png";
-import audiopng from "../../img/audio-call-icon.png";
-import chatpng from "../../img/chat-icon.png";
+// import videopng from "/assets/img/video-call-icon.png";
+// import audiopng from "/assets/img/audio-call-icon.png";
+// import chatpng from "/assets/img/chat-icon.png";
 import appointmentAction from '../../actions/appointment.action';
 import categoriesAction from '../../actions/categories.action';
 
@@ -278,7 +278,7 @@ const handlemodal1=()=>{
                            </li>
                            <li>
                               <div className="exp-intro">
-                              <img src={videopng} className="img img-fluid" alt=""/>
+                              <img src='assets/img/video-call-icon.png' className="img img-fluid" alt=""/>
                                  </div>
                                  <div>
 
@@ -306,7 +306,7 @@ const handlemodal1=()=>{
                   }}>
                        
                        
-                       <img src={videopng} className="img img-fluid" alt=""/>
+                       <img src='assets/img/video-call-icon.png' className="img img-fluid" alt=""/>
                         Video Call</button>
                         </div>
                         <div>
@@ -316,7 +316,7 @@ const handlemodal1=()=>{
                   }}>
                        
                        
-                       <img src={audiopng} className="img img-fluid" alt=""/> Audio Call</button></div>
+                       <img src='/assets/img/audio-call-icon.png' className="img img-fluid" alt=""/> Audio Call</button></div>
                     <div>
                        <button className={`btn  ${ typeCall == 3 ? "bg-dark text-white" : ""  }`} type="button" onClick={e=>{
                           e.preventDefault();
@@ -324,7 +324,7 @@ const handlemodal1=()=>{
                           }}>
                        
                        
-                       <img src={chatpng} className="img img-fluid" alt=""/> Chat</button></div>
+                       <img src='/assets/img/chat-icon.png' className="img img-fluid" alt=""/> Chat</button></div>
                      </div>
                      <div className="continue-booking-btn">
                          <button className="btn" onClick={(e)=>{ e.preventDefault(); newHandle();
