@@ -310,8 +310,10 @@ try{
   let id = req.user.expertId;
   let payload=req.body;
   payload.expertId=id;
+
   // console.log(payload,"here is body ")
   let start=payload.startAppointmentTime,end= payload.endAppointmentTime,appointmentDate=payload.appointmentDate;
+
    start =new Date(appointmentDate+' '+start); 
   // console.log(localdate,"here is ");
   // console.log(moment.utc(moment(localdate)).format(),'start time 11')
