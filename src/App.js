@@ -37,6 +37,7 @@ function App() {
           if(err){
             console.log(err,"helllooo")
             setIsLoggedIn(false);
+            localStorage.removeItem('token')
             // localStorage.removeItem('token');
           }else{
           //   setGetCategories(res.data);
