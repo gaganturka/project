@@ -21,7 +21,7 @@ import { useContext, useEffect } from 'react';
 import homeAction from './actions/home.action';
 import CategoryAndPracticeContextProvider from './context/CategoryAndPracticeContext';
 import Room from './components/Frontend/ChatRoom';
-import './assets/css/bootstrap.min.css'
+import './assets/css/bootstrap.min.css';
 import "./assets/css/main.css";
 import "./assets/css/responsive.css";
 import VideoChat from './components/Frontend/VideoChat/VideoChat';
