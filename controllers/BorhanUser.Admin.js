@@ -44,7 +44,7 @@ module.exports = {
       }
       if (req.body.search) {
         let user = await borhanUser
-          .find({ role: APP_CONSTANTS.role.borhanuser })
+          .find()
           .populate({ path: "userId", match: filter })
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
@@ -57,7 +57,7 @@ module.exports = {
         count = userData.length;
       } else {
         userData = await borhanUser
-          .find({ role: APP_CONSTANTS.role.borhanuser })
+          .find()
           .populate({ path: "userId" })
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
