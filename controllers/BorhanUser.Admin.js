@@ -61,9 +61,8 @@ module.exports = {
           .populate({ path: "userId" })
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
-        count = await User.find({
-          role: APP_CONSTANTS.role.borhanuser,
-        }).countDocuments();
+        count = await borhanUser.find(
+         ).countDocuments();
       }
       if (userData === null) {
         throw Boom.badRequest("cannot find any user");
