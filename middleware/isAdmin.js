@@ -9,9 +9,10 @@ module.exports = {
     try {
       const token = req.header("auth-token")|| req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
       if (!token) {
-        res
-          .status(403)
-          .send({ error: "Please authenticate using valid token" });
+        // res
+        //   .status(403)
+        //   .send({ error: "Please authenticate using valid token" });
+        throw Boom.badRequest('Please Authenticate using valid token')
       }
       const data = jwt.verify(token, Config.jwtsecret);
       console.log(data, "jwttokenbyadmin");

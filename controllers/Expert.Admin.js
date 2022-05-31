@@ -17,6 +17,7 @@ const { isBuffer } = require("lodash");
 
 module.exports = {
   getExpertApprovedByAdmin: async (req, res) => {
+    try{
     const expert = await expertUser.findByIdAndUpdate(
       { _id: req.params._id },
       { isApprovedByAdmin: true }
@@ -33,8 +34,14 @@ module.exports = {
       },
       res
     );
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error,res);
+    }
   },
   getExpertRejectedByAdmin: async (req, res) => {
+    try{
     const expert = await expertUser.findByIdAndDelete({ _id: req.params._id });
     if (!expert) {
       throw Boom.badRequest("invalid id expert couldnt be deleted");
@@ -48,6 +55,11 @@ module.exports = {
       },
       res
     );
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error,res);
+    }
   },
   showExperts: async (req, res) => {
     try {
@@ -375,6 +387,7 @@ module.exports = {
     }
   },
   deleteExpertByAdmin: async (req, res) => {
+    try{
     const expert = await expertUser.findByIdAndDelete({ _id: req.params._id });
     if (!expert) {
       throw Boom.badRequest("invalid id expert couldnt be deleted");
@@ -393,6 +406,11 @@ module.exports = {
       },
       res
     );
+    }
+    catch(err)
+    {
+      universalFunctions.sendError(err,res);
+    }
   },
   
   getAdminDetails: async (req,res)=>{

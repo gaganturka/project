@@ -85,6 +85,7 @@ module.exports = {
     }
   },
   deleteBorhanUserByAdmin: async (req, res) => {
+    try{
     const borhan = await borhanUser.findByIdAndDelete({ _id: req.params._id });
     if (!borhan) {
       throw Boom.badRequest("invalid id user couldnt be deleted");
@@ -103,6 +104,11 @@ module.exports = {
       },
       res
     );
+    }
+    catch(err)
+    {
+      universalFunctions.sendError(err,res);
+    }
   },
   getUserDetails: async (req, res) => {
     try {
@@ -210,6 +216,7 @@ module.exports = {
     }
   },
   deleteQuesAndAns: async (req, res) => {
+    try{
     console.log(req.body)
     const QuesAndAns = await fqModel.findByIdAndDelete(req.body);
     if (!QuesAndAns) {
@@ -224,8 +231,14 @@ module.exports = {
       },
       res
     );
+    }
+    catch(err)
+    {
+      universalFunctions.sendError(err,res);
+    }
   },
   getQuesAndAnsById: async (req, res) => {
+    try{
     let id=req.body.id;
     console.log(req.body)
     const data = await fqModel.findOne({ _id: id });
@@ -243,5 +256,10 @@ module.exports = {
       },
       res
     );
+    }
+    catch(err)
+    {
+      universalFunctions.sendError(err,res);
+    }
   },
 };

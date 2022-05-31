@@ -72,6 +72,7 @@ module.exports = {
   },
 
   exportLogin: async (req, res) => {
+    try{
     const schema = Joi.object({
       mobileNo: Joi.number().required()    
     });
@@ -98,6 +99,11 @@ module.exports = {
       },
       res
     );
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error,res);
+    }
   },
   getExportUserDetail: async (req, res) => {
     try{
