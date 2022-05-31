@@ -1,3 +1,4 @@
+const createError=require("http-errors");
 const connectToMongo = require("./db");
 const express = require("express");
 var cors = require("cors");
@@ -59,7 +60,9 @@ app.use("/app", AppRoutes);
 app.get("/", (req, res) => {
   res.send("Hello Satyam");
 });
-
+app.use(function (req, res, next) {
+  next(createError(404));
+});
 //fixture user
 const { fixture } = require("./fixture/fixtureUser");
 fixture();

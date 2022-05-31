@@ -84,29 +84,29 @@ module.exports = {
       let user = await User.findOne({ mobileNo: req.body.mobileNo}).populate('userData.data');
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
-        if (user.role === APP_CONSTANTS.role.borhanuser) {
+        // if (user.role === APP_CONSTANTS.role.borhanuser) {
           throw Boom.badRequest(responseMessages.USER_EXISTS);
-        } else {
+        // } else {
           
-          let borhanuser = await borhanUser.create({
-            isSubscribed: false,
-            balance: 0,
-            userId: user._id,
-          });
-         const token=await jwtFunction.jwtGenerator(user._id);
+        //   let borhanuser = await borhanUser.create({
+        //     isSubscribed: false,
+        //     balance: 0,
+        //     userId: user._id,
+        //   });
+        //  const token=await jwtFunction.jwtGenerator(user._id);
          
-         await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:firebaseUid});
+        //  await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:firebaseUid});
 
-          universalFunctions.sendSuccess(
-            {
-              statusCode: 200,
-              message: "User created",
-              data: {token
-                }
-            },
-            res
-          );
-        }
+        //   universalFunctions.sendSuccess(
+        //     {
+        //       statusCode: 200,
+        //       message: "User created",
+        //       data: {token
+        //         }
+        //     },
+        //     res
+        //   );
+        // }
       }
       // let otpmodel = await otpModel.findOne({ mobileNo: req.body.mobileNo });
       // console.log(otpmodel?.otp,"adsfakweni   ",req.body.otp);
@@ -199,47 +199,47 @@ module.exports = {
       // console.log('The fetched user - ', user);
       // console.log('######################################################');
       if (user !== null) {
-        if (user.role === APP_CONSTANTS.role.expert) {
+        // if (user.role === APP_CONSTANTS.role.expert) {
           throw Boom.badRequest(responseMessages.USER_EXISTS);
-        } else {
+        // } else {
          
-          let expertUserr = await expertUser.create({
-            isSubscribed: false,
-            category: req.body.category,
-            practiceArea: req.body.practiceArea,
-            bio: req.body.bio,
-            audioFilePath: req.body.audioFilePath,
-            videoFilePath: req.body.videoFilePath,
-            document: [
-              {
-                fileName: req.body.document[0].fileName,
-                fileType: req.body.document[0].fileType,
-                link: req.body.document[0].path,
-                mimeType: req.body.document[0].mimeType,
-              },
-            ],
-            accountType: req.body.accountType,
-            rating: { noOfRating: 0, ratingCount: 0, avgRating: 0 },
-          });
-          await expertUser.findByIdAndUpdate(expertUserr._id, {
-            userId: user._id,
-          });
-          await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:req.body.firebaseUid});
-          // const token = jwt.sign(
-          //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-          //   Config.jwtsecret
-          // );
-          const token=await jwtFunction.jwtGenerator(user._id);
+          // let expertUserr = await expertUser.create({
+          //   isSubscribed: false,
+          //   category: req.body.category,
+          //   practiceArea: req.body.practiceArea,
+          //   bio: req.body.bio,
+          //   audioFilePath: req.body.audioFilePath,
+          //   videoFilePath: req.body.videoFilePath,
+          //   document: [
+          //     {
+          //       fileName: req.body.document[0].fileName,
+          //       fileType: req.body.document[0].fileType,
+          //       link: req.body.document[0].path,
+          //       mimeType: req.body.document[0].mimeType,
+          //     },
+          //   ],
+          //   accountType: req.body.accountType,
+          //   rating: { noOfRating: 0, ratingCount: 0, avgRating: 0 },
+          // });
+          // await expertUser.findByIdAndUpdate(expertUserr._id, {
+          //   userId: user._id,
+          // });
+          // await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:req.body.firebaseUid});
+          // // const token = jwt.sign(
+          // //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
+          // //   Config.jwtsecret
+          // // );
+          // const token=await jwtFunction.jwtGenerator(user._id);
           
-          universalFunctions.sendSuccess(
-            {
-              statusCode: 200,
-              message: "User created",
-              data: token,
-            },
-            res
-          );
-        }
+          // universalFunctions.sendSuccess(
+          //   {
+          //     statusCode: 200,
+          //     message: "User created",
+          //     data: token,
+          //   },
+          //   res
+          // );
+        // }
       }
       // console.log(req.body,"iaenienwieioafeniaaaaa")
       // console.log('######################################################');
