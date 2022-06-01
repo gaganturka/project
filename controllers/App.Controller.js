@@ -198,7 +198,7 @@ module.exports = {
   desktopPage: async (req, res) => {
     try {
       let expert;
-
+     let id=req
       expert = await expertUser
         .find({
           isApprovedByAdmin: true,
@@ -434,7 +434,8 @@ module.exports = {
     try {
       let id = req.user.id;
       let payload={
-          path: "expertlisting", match:{
+          path: "expertlisting",
+           match:{
            userId: id
           },
        }
@@ -528,6 +529,16 @@ module.exports = {
   },
   getActiveExportData: async (req, res) => {
     try {
+      
+      let id = req.user.id;
+      let payload={
+          path: "expertlisting",
+           match:{
+           userId: id
+          },
+       }
+    
+
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
@@ -555,6 +566,7 @@ module.exports = {
           .populate("practiceArea")
           .populate("category")
           .populate({ path: "userId", match: filter })
+          .populate(payload)
           .sort({ "rating.avgRating": -1 })
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
@@ -577,6 +589,7 @@ module.exports = {
           .populate("practiceArea")
           .populate("category")
           .populate("userId")
+          .populate(payload)
           .sort({ "rating.avgRating": -1 })
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
@@ -600,6 +613,12 @@ module.exports = {
         delete ele.userId.password;
         delete ele.userId.__v;
         delete ele.userId.userData;
+        if(ele.expertlisting.length>0&&ele.expertlisting)
+        ele.isFavorite=true;
+        else{
+          ele.isFavorite=false;
+        }
+        delete ele.expertlisting;
       });
 
       universalFunctions.sendSuccess(
