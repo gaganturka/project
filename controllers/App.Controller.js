@@ -1174,6 +1174,7 @@ module.exports = {
         {
           throw Boom.badRequest("Expert Is Not Found"); 
         }
+        
         universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1189,8 +1190,21 @@ module.exports = {
   },
   getFavouriteExpert: async (req, res) => {
     try {
+      const schema = Joi.object({
+        limit: Joi.string().required(),
+        page:Joi.string().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+     
+      let id = req.user.id;
+      let payload={
+          path: "expertlisting", match:{
+           userId: id
+          },
+       }
+     let {page,limit}=req.body;
       let favouriteExportData = await favouriteExport
-        .find()
+        .find({userId:id})
         .populate({ path: "userId", select: "firstName lastName profilePic" })
         // .populate({
         //   path: "borhanUserId",
@@ -1200,15 +1214,54 @@ module.exports = {
         //   },
         // })
         // .populate("expertUserId")
+        // .populate(payload)
         .populate({
           path: "expertId",
-          select: "firstName lastName profilePic",
-        });
+          populate: { path: "userId practiceArea category" },
+        })
+        
+        .skip(parseInt((page - 1) * limit))
+        .limit(parseInt(limit));
+        let count=await favouriteExport
+        .find({userId:id}).countDocuments();
+
+        let finalResult=[];
+        console.log('before',favouriteExportData);
+        let getfavExportData = JSON.parse(JSON.stringify(favouriteExportData));
+        console.log('after',getfavExportData);
+        getfavExportData.map((ele) => {
+        delete ele.__v;
+        // delete ele.category.__v;
+        if (ele && ele.userId && ele.userId != null) {
+          delete ele.userId
+          
+        }
+        const expertDetails = ele?.expertId;
+        if (ele && ele.expertId && ele.expertId.userId && ele.expertId.userId != null) {
+          delete ele.expertId.__v;
+          delete ele.expertId.category.__v;
+          delete ele.expertId.userId.isEmailVerified;
+          delete ele.expertId.userId.password;
+          delete ele.expertId.userId.__v;
+          delete ele.expertId.userId.userData;
+          delete ele.expertUserId;
+          delete ele.expertId;
+          // ele=structuredClone(ele.expertId);
+          // ele =ele.map((obj)=>({...obj}));
+          // ele={...ele,...expertDetails};
+        }
+        ele.isFavorite=true;
+          
+           const Result = {...ele, ...expertDetails};
+           finalResult=[...finalResult,Result,{isFavorite:true}];
+        // finalResult.isFavorite=true;
+      });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
-          data: favouriteExportData,
+          data: {list:finalResult,
+          total:count}
         },
         res
       );

@@ -9,7 +9,7 @@ const Joi = require("@hapi/joi");
 const APP_CONSTANTS = require("../appConstants");
 const responseMessages= require( "../resources/response.json");
 const { Config } = require("../config");
-
+const favExpertModel=require('../models/Fav_Expert');
 const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
 const { isBuffer } = require("lodash");
@@ -394,9 +394,16 @@ module.exports = {
     }
     console.log("deleted expert is", expert);
     const user = await User.findByIdAndDelete({ _id: expert.userId });
+
     if (!user) {
       throw Boom.badRequest("invalid id expert couldnt be deleted");
     }
+
+    const favExp=await favExpertModel.deleteMany({expertId: req.params._id})
+    // if (!favExp) {
+    //   throw Boom.badRequest("invalid id expert couldnt be deleted");
+    // }
+
     console.log("deleted user is", user);
 
     universalFunctions.sendSuccess(
