@@ -856,7 +856,7 @@ module.exports = {
         expert = await expertUser
           .find({
             isApprovedByAdmin: true,
-            s,
+            
           })
           .populate("practiceArea")
           .populate("category")
