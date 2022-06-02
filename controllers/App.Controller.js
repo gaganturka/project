@@ -199,7 +199,14 @@ module.exports = {
   desktopPage: async (req, res) => {
     try {
       let expert;
-     let id=req
+     let id=req.user.id;
+     let payload={
+      path: "expertlisting",
+       match:{
+       userId: id
+      },
+   }
+
       expert = await expertUser
         .find({
           isApprovedByAdmin: true,
@@ -210,6 +217,7 @@ module.exports = {
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
+        .populate(payload)
         .sort({ "rating.avgRating": -1 });
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
@@ -223,6 +231,13 @@ module.exports = {
         delete ele.userId.password;
         delete ele.userId.__v;
         delete ele.userId.userData;
+        if(ele.expertlisting.length>0&&ele.expertlisting!=null)
+        ele.isFavorite=true;
+        else
+        ele.isFavorite=false;
+        
+        
+        delete ele.expertlisting;
       });
       let topOnlineExperts = await expertUser
         .find({
@@ -232,6 +247,7 @@ module.exports = {
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
+        .populate(payload)
         .sort({ "rating.avgRating": -1 });
 
       if (!topOnlineExperts) {
@@ -245,6 +261,13 @@ module.exports = {
         delete ele.userId.password;
         delete ele.userId.__v;
         delete ele.userId.userData;
+        if(ele.expertlisting.length>0&&ele.expertlisting!=null)
+        ele.isFavorite=true;
+        else
+        ele.isFavorite=false;
+        
+        
+        delete ele.expertlisting;
       });
       let topOnlinePremiumExperts = await expertUser
         .find({
@@ -255,6 +278,7 @@ module.exports = {
         .populate("practiceArea")
         .populate("category")
         .populate("userId")
+        .populate(payload)
         .sort({ "rating.avgRating": -1 });
 
       if (!topOnlinePremiumExperts) {
@@ -270,6 +294,14 @@ module.exports = {
         delete ele.userId.password;
         delete ele.userId.__v;
         delete ele.userId.userData;
+
+        if(ele.expertlisting.length>0&&ele.expertlisting!=null)
+        ele.isFavorite=true;
+        else
+        ele.isFavorite=false;
+        
+        
+        delete ele.expertlisting;
       });
 
       let categoryData = await category.find();
@@ -1305,4 +1337,55 @@ module.exports = {
       universalFunctions.sendError(err, res);  
     }
     },
+    bookChatAppointment: async (req, res) => {
+      try {
+        let userId = req.user.id;
+        let payload = req.body;
+  
+        const schema = Joi.object({
+          expertId: Joi.string().length(24).required(),
+          question: Joi.string().allow("")
+        });
+        await universalFunctions.validateRequestPayload(req.body, res, schema);
+        payload.userId = userId;
+        let chats=await chatappointment.findOne({expertId:req.body.expertId,userId});
+        if(!chats)
+        {
+        let data =await chatappointment.create(payload);
+        if (!data) {
+          throw Boom.badRequest("something is wrong ");
+        }
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "Success send an request",
+            data: data,
+          },
+          res
+        );
+        }
+        else
+        {
+            
+              universalFunctions.sendSuccess(
+                {
+                  statusCode: 200,
+                  message: "You already have a chat room",
+                  data: chats,
+                },
+                res
+              );
+              
+            
+            
+           
+        }
+        
+  
+      } catch (error) {
+        console.log(error)
+        universalFunctions.sendError(error, res);
+      }
+    },
+  
 };
