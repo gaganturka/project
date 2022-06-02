@@ -25,6 +25,7 @@ const { Config } = require("../config");
 const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
 const { join, truncate, stubFalse } = require("lodash");
+const ChatAppointment = require("../models/ChatAppointment");
 // import universalFunctions from "../utils/universalFunctions";
 
 module.exports = {
@@ -1249,11 +1250,14 @@ module.exports = {
           // ele=structuredClone(ele.expertId);
           // ele =ele.map((obj)=>({...obj}));
           // ele={...ele,...expertDetails};
+          
+        // ele.isFavorite=true;
         }
-        ele.isFavorite=true;
           
            const Result = {...ele, ...expertDetails};
-           finalResult=[...finalResult,Result,{isFavorite:true}];
+          //  let isFav={isFavorite:true};
+           let intResult={...Result, isFavorite:true};
+           finalResult=[...finalResult,intResult];
         // finalResult.isFavorite=true;
       });
       universalFunctions.sendSuccess(
@@ -1269,4 +1273,36 @@ module.exports = {
       return universalFunctions.sendError(error, res);
     }
   },
+
+  getChatAppointmentUser:async (req,res)=>{
+    try{ 
+      let id = req.user.id;
+      let payload={
+        userId:id
+      }
+      const chatappointmentdata = await ChatAppointment.find(payload).populate({ path: "userId expertId userId" });
+      if (!chatappointmentdata) {
+        throw Boom.badRequest("invalid id or token");
+      }
+      let tempobj = JSON.parse(JSON.stringify(chatappointmentdata));
+      await universalFunctions.asyncForEach(tempobj,async ( e,index)=>{
+        
+        let expertData=await User.findOne({_id:e.expertId.userId});
+        e.expertData=expertData;
+    
+      })
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Successfull get appointment",
+          data: tempobj,
+        },
+        res
+      );
+    
+    }catch(err){
+      console.log(err)
+      universalFunctions.sendError(err, res);  
+    }
+    },
 };

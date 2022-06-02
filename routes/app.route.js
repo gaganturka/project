@@ -36,7 +36,8 @@ router
   router
     .route("/rescheduleAppointment")
     .post(checkAuth, appCreation.rescheduleAppointment);
- 
+    router.route("/getChatAppointmentUser").get(checkAuth,appCreation.getChatAppointmentUser);
+  
     
     
   
