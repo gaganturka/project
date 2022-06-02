@@ -37,8 +37,9 @@ router
     .route("/rescheduleAppointment")
     .post(checkAuth, appCreation.rescheduleAppointment);
     router.route("/getChatAppointmentUser").get(checkAuth,appCreation.getChatAppointmentUser);
-  
-    
+    router.route("/bookChatAppointment").post(checkAuth,appCreation.bookChatAppointment);        
+
+    router.route('/getExpertDetails').post(checkAuth,appCreation.getExpertDetails);
     
   
   

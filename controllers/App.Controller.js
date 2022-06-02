@@ -1297,6 +1297,7 @@ module.exports = {
           statusCode: 200,
           message: "Success",
           data: {list:finalResult,
+            currentPage:req.body.page,
           total:count}
         },
         res
@@ -1341,17 +1342,17 @@ module.exports = {
       try {
         let userId = req.user.id;
         let payload = req.body;
-  
+        payload={...payload,chatRoomId:""};
         const schema = Joi.object({
           expertId: Joi.string().length(24).required(),
           question: Joi.string().allow("")
         });
         await universalFunctions.validateRequestPayload(req.body, res, schema);
         payload.userId = userId;
-        let chats=await chatappointment.findOne({expertId:req.body.expertId,userId});
+        let chats=await ChatAppointment.findOne({expertId:req.body.expertId,userId});
         if(!chats)
         {
-        let data =await chatappointment.create(payload);
+        let data =await ChatAppointment.create(payload);
         if (!data) {
           throw Boom.badRequest("something is wrong ");
         }
@@ -1387,5 +1388,31 @@ module.exports = {
         universalFunctions.sendError(error, res);
       }
     },
-  
+    getExpertDetails: async (req,res)=>{
+      try{
+      // let userId
+      let payload=req.body;
+      
+      const expert=await expertUser.findOne({_id:payload.expertId}).populate('userId').populate('category').populate('practiceArea');
+      if(!expert)
+      {
+        throw Boom.badRequest('Expert not found');
+      }
+
+      universalFunctions.sendSuccess({
+
+        statusCode:200,
+        message:'Expert details fetched successfully',
+        data:{
+          expert
+        }
+
+      },
+      res)
+    }
+  catch(error)
+  {
+    universalFunctions.sendError(error,res);
+  }
+}
 };
