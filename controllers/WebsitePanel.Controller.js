@@ -1010,18 +1010,39 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       payload.userId = userId;
-      let data = chatappointment.create(payload);
+      let chats=await chatappointment.findOne({expertId:req.body.expertId,userId});
+      if(!chats)
+      {
+      let data =await chatappointment.create(payload);
       if (!data) {
         throw Boom.badRequest("something is wrong ");
       }
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
-          message: "Success",
+          message: "Success send an request",
           data: data,
         },
         res
       );
+      }
+      else
+      {
+          
+            universalFunctions.sendSuccess(
+              {
+                statusCode: 200,
+                message: "You already have a chat room",
+                data: chats,
+              },
+              res
+            );
+            
+          
+          
+         
+      }
+      
 
     } catch (error) {
       console.log(error)
