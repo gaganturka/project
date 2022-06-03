@@ -134,7 +134,7 @@ module.exports = {
 
   getExpertUser: async (req, res) => {
     try{
-    let id = req.user.id;
+    let id = req.expertId.id;
     const expert = await expertUser
       .findOne({ _id: id })
       .populate({ path: "category practiceArea" });
@@ -493,8 +493,8 @@ getChatAppointment:async (req,res)=>{
     getChatAppointmentById:async (req,res)=>{
       try{ 
         let id = req.query.id;
-        console.log(req.user ,'sscs')
-        console.log(req.query,'kjk');
+        // console.log(req.user ,'sscs');
+        // console.log(req.query,'kjk');
         const chatappointmentdata = await chatappointment.findOne({_id:id}).populate({ path: "userId expertId" });
         const expertProfileData=await User.findOne({_id:chatappointmentdata.expertId.userId});
         if (!chatappointmentdata) {
