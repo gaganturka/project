@@ -29,7 +29,7 @@ router
     .post(checkAuth, appCreation.createFavouriteExpert);
   router
     .route("/getFavouriteExpert")
-    .get(checkAuth, appCreation.getFavouriteExpert);
+    .post(checkAuth, appCreation.getFavouriteExpert);
   router
     .route("/appointmentCancel")
     .post(checkAuth, appCreation.appointmentCancel);
