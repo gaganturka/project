@@ -16,7 +16,7 @@ module.exports = {
   otpGeneration: async (req, res) => {
     try {
       const schema = Joi.object({
-        mobileNo: Joi.string().min(10).max(10).required(),
+        mobileNo: Joi.string().min(10).required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let refId = Math.floor(100000 + Math.random() * 900000) + "";
@@ -40,7 +40,7 @@ module.exports = {
   otpSenderToFrontend: async (req, res) => {
     try {
       const schema = Joi.object({
-        mobileNo: Joi.string().min(10).max(10).required(),
+        mobileNo: Joi.string().min(10).required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       // let refId = Math.floor(100000 + Math.random() * 900000);
@@ -68,7 +68,7 @@ module.exports = {
           minDomainSegments: 2,
           tlds: { allow: ["com", "net"] },
         }),
-        mobileNo: Joi.string().min(10).max(10).required(),
+        mobileNo: Joi.string().min(10).required(),
         profilePic: Joi.string().allow(""),
         firebaseUid:Joi.string(),
         // otp: Joi.string(),
@@ -167,7 +167,7 @@ module.exports = {
           minDomainSegments: 2,
           tlds: { allow: ["com", "net"] },
         }),
-        mobileNo: Joi.string().min(10).max(10).required(),
+        mobileNo: Joi.string().min(10).required(),
         profilePic: Joi.string().optional().allow(""),
         category: Joi.string(),
         practiceArea: Joi.string(),
@@ -296,7 +296,7 @@ module.exports = {
     try {
       //  console.log('thid odi bpody - ', req.file, req.files)
       const schema = Joi.object({
-        mobileNo: Joi.string().min(10).max(10).required(),
+        mobileNo: Joi.string().min(10).required(),
         deviceType:Joi.string(),
         deviceToken:Joi.string().allow(""),
         firebaseUid:Joi.string(),
@@ -394,7 +394,7 @@ module.exports = {
           minDomainSegments: 2,
           tlds: { allow: ["com", "net"] },
         }),
-        mobileNo: Joi.string().min(10).max(10).required(),
+        mobileNo: Joi.string().min(10).required(),
         profilePic: Joi.string().optional().allow(""),
         category: Joi.string(),
         practiceArea: Joi.string(),

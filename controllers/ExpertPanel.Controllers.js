@@ -22,7 +22,7 @@ module.exports = {
   sendOtpExpertUser: async (req, res) => {
     try {
       const schema = Joi.object({
-        mobileNo: Joi.string().required(),
+        mobileNo: Joi.string().min(10).required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let mobileNo = req.body.mobileNo;
@@ -82,17 +82,24 @@ module.exports = {
  
       // throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
     
-
-    let user = await User.findOne({ mobileNo: mobileNo });
-    if(user.userData.model!= APP_CONSTANTS.role.expert)
+    console.log('usesdf',mobileNo)
+    let users = await User.findOne({ mobileNo: mobileNo });
+    console.log(users,'sfae');
+    if(!users)
     {
+      throw Boom.badRequest('expert not found');
+    }
+    if(users!==null && users?.userData?.model !== APP_CONSTANTS.role.expert)
+    {
+      console.log(users?.userData?.model,'eddddd',mobileNo)
       throw Boom.badRequest('Invalid Credentials');
     }
+   
     // const token = jwt.sign({ user_id: userData._id }, Config.jwtsecret);
-    const token=await jwtFunction.jwtGenerator(userData._id);
+    const token=await jwtFunction.jwtGenerator(users._id);
     let userDetails = {
       token: token,
-      _id: user._id,
+      _id: users._id,
     };
 
     universalFunctions.sendSuccess(

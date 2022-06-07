@@ -113,7 +113,7 @@ module.exports = {
   getUserDetails: async (req, res) => {
     try {
       const schema = Joi.object({
-        mobileNo: Joi.string().min(10).max(10).required(),
+        mobileNo: Joi.string().min(10).required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 

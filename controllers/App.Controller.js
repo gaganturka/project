@@ -32,7 +32,7 @@ module.exports = {
   userLoginOtp: async (req, res) => {
     try {
       const schema = Joi.object({
-        mobileNo: Joi.string().min(10).max(10).required(),
+        mobileNo: Joi.string().min(10).required(),
         deviceType: Joi.string(),
         deviceToken: Joi.string().allow(""),
         firebaseUid: Joi.string(),
@@ -84,7 +84,7 @@ module.exports = {
           minDomainSegments: 2,
           tlds: { allow: ["com", "net"] },
         }),
-        mobileNo: Joi.string().min(10).max(10).required(),
+        mobileNo: Joi.string().min(10).required(),
         profilePic: Joi.string().allow(""),
         deviceType: Joi.string(),
         deviceToken: Joi.string().allow(""),
@@ -972,7 +972,7 @@ module.exports = {
           minDomainSegments: 2,
           tlds: { allow: ["com", "net"] },
         }),
-        mobileNo: Joi.string().min(10).max(10).required(),
+        mobileNo: Joi.string().min(10).required(),
         profilePic: Joi.string().allow(""),
         // firebaseUid:Joi.string(),
         // otp: Joi.string(),
