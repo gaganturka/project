@@ -83,15 +83,15 @@ module.exports = {
       // throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
     
     console.log('usesdf',mobileNo)
-    let users = await User.findOne({ mobileNo: mobileNo });
+    let users = await User.findOne({ mobileNo: mobileNo }).populate('userData.data');
     console.log(users,'sfae');
     if(!users)
     {
       throw Boom.badRequest('expert not found');
     }
-    if(users!==null && users?.userData?.model !== APP_CONSTANTS.role.expert)
+    if((users!==null && users?.userData?.model !== APP_CONSTANTS.role.expert )|| users?.userData?.data?.isApprovedByAdmin===false)
     {
-      console.log(users?.userData?.model,'eddddd',mobileNo)
+      // console.log(users?.userData?.model,'eddddd',mobileNo)
       throw Boom.badRequest('Invalid Credentials');
     }
    
