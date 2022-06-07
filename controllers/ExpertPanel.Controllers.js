@@ -74,7 +74,7 @@ module.exports = {
   exportLogin: async (req, res) => {
     try{
     const schema = Joi.object({
-      mobileNo: Joi.number().required()    
+      mobileNo: Joi.string().min(10).required()    
     });
     await universalFunctions.validateRequestPayload(req.body, res, schema);
     // let userLogin = await User.findOne({ mobile: req.body.mobileNo });
@@ -83,12 +83,16 @@ module.exports = {
       // throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
     
 
-    let userData = await User.findOne({ mobileNo: mobileNo });
+    let user = await User.findOne({ mobileNo: mobileNo });
+    if(user.userData.model!= APP_CONSTANTS.role.expert)
+    {
+      throw Boom.badRequest('Invalid Credentials');
+    }
     // const token = jwt.sign({ user_id: userData._id }, Config.jwtsecret);
     const token=await jwtFunction.jwtGenerator(userData._id);
     let userDetails = {
       token: token,
-      _id: userData._id,
+      _id: user._id,
     };
 
     universalFunctions.sendSuccess(
