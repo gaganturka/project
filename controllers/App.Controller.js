@@ -1393,19 +1393,48 @@ module.exports = {
       // let userId
       let payload=req.body;
       
-      const expert=await expertUser.findOne({_id:payload.expertId}).populate('userId').populate('category').populate('practiceArea');
+      let expPayload={
+        path: "expertlisting", match:{
+         userId: req.user.id
+        },
+     }
+      const expert=await expertUser.findOne({_id:payload.expertId}).populate('userId').populate('category').populate(expPayload).populate('practiceArea');
       if(!expert)
       {
         throw Boom.badRequest('Expert not found');
       }
+      let expertDetails = JSON.parse(JSON.stringify(expert));
+      // expertDetails.map((ele) => {
+      //   delete ele.__v;
+      //   delete ele.category.__v;
+      //   delete ele.userId.isEmailVerified;
+      //   delete ele.userId.password;
+      //   delete ele.userId.__v;
+      //   delete ele.userId.userData;
+      //   if(ele.expertlisting.length>0&&ele.expertlisting!=null)
+      //   ele.isFavorite=true;
+      //   else
+      //   ele.isFavorite=false;
+        
+        
+      //   delete ele.expertlisting;
+      // });
+console.log(expert,'eexxxppp')
+      if(expertDetails?.expertlisting.length>0)
+      expertDetails.isFavorite=true;
+      else 
+      expertDetails.isFavorite=false;
+      // expertDetails={...expertDetails,isFavorite:true};
+
+      delete expertDetails.expertlisting
 
       universalFunctions.sendSuccess({
 
         statusCode:200,
         message:'Expert details fetched successfully',
-        data:{
-          expert
-        }
+        data:
+          expertDetails
+        
 
       },
       res)
