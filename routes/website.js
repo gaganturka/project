@@ -42,7 +42,7 @@ router.route("/getFavExpert").get(authUser.checkAuth,WebsiteController.getFavExp
 router.route("/setFavExpert").post(authUser.checkAuth,WebsiteController.setFavExpert);
 router.route("/getUsersFavoriteExperts").get(authUser.checkAuth,WebsiteController.getUsersFavoriteExperts);
 router.route("/twlioVoiceCallUser").post(authUser.checkAuth,WebsiteController.twlioVoiceCallUser);
-router.route("/voiceTwilio").post(authUser.checkAuth,WebsiteController.twilioVoice);
+router.route("/voiceTwilio").post(WebsiteController.twilioVoice);
 
 
 
