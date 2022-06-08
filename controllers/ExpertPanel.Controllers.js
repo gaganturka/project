@@ -11,13 +11,24 @@ const Mongoose= require("mongoose");
 const jwtFunction = require('../utils/jwtFunction');
 const moment =require("moment");
 const APP_CONSTANTS = require("../appConstants");
+const AccessToken = require("twilio").jwt.AccessToken;
+const { Config } = require("../config");
+
+
+const VideoGrant = AccessToken.VideoGrant;
+const ChatGrant = AccessToken.ChatGrant;
+const accountSid = Config.twilioAccountSid;
+const authToken = Config.authToken;
+const twilio = require('twilio');
+const client = new twilio(accountSid, authToken);
+
 // const User = require("../models/User");
 const responseMessages=  require("../resources/response.json");
 const universalFunctions = require( "../utils/universalFunctions");
-const { Config } = require("../config");
 const chatappointment =require('../models/ChatAppointment');
 
 const Boom = require("boom");
+const Appointment = require("../models/Appointment");
 module.exports = {
   sendOtpExpertUser: async (req, res) => {
     try {
@@ -574,7 +585,7 @@ getChatAppointment:async (req,res)=>{
           
           });
           await universalFunctions.validateRequestPayload(req.body, res, schema);
-          let appointments = await appointment.findOne({ _id: req.body.appointmentId }).populate({path:'expertId',populate:{
+          let appointments = await Appointment.findOne({ _id: req.body.appointmentId }).populate({path:'expertId',populate:{
           path:"userId"
         }
       });
@@ -582,7 +593,7 @@ getChatAppointment:async (req,res)=>{
           if (!appointments.videoChatId) {
             let roomId = appointments.appointDateandTime + req.body.appointmentId;
            
-            appointments = await appointment.findByIdAndUpdate({ _id: req.body.appointmentId }, { videoChatId: roomId }, { new: true }).populate('expertId')
+            appointments = await Appointment.findByIdAndUpdate({ _id: req.body.appointmentId }, { videoChatId: roomId }, { new: true }).populate('expertId')
           }
           
          
@@ -613,7 +624,7 @@ getChatAppointment:async (req,res)=>{
           
           await client.conversations.conversations(convoId)
             .participants
-            .create({ identity: appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName })
+            .create({ identity:" "+ appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName+" " })
             .then(participant => { console.log(participant.sid); participantId = participant.sid; })
             .catch(error => { console.log(error); });
             const token = new AccessToken(
@@ -623,7 +634,7 @@ getChatAppointment:async (req,res)=>{
             );
           token.addGrant(videoGrant);
           token.addGrant(chatGrant);
-          token.identity = appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName;
+          token.identity =" "+appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName+" ";
        if(!token){
          throw Boom.badRequest("token not found")
         }
