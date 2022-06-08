@@ -18,6 +18,7 @@ router.route("/getChatAppointmentById").get(ExpertController.getChatAppointmentB
 router.route("/updateChatAppointment").post(isexpert.isExpert,ExpertController.updateChatAppointment);
 router.route("/setExpertStatus").post(isexpert.isExpert,ExpertController.setExpertStatus);
 
+router.route("/videoChatTokenExpert").post(isexpert.isExpert,ExpertController.twilioVideoChatTokenExpert);
 
 
 module.exports = router;

@@ -28,6 +28,12 @@ const twilio = require('twilio');
 const client = new twilio(accountSid, authToken);
 const favExpertModel = require("../models/Fav_Expert");
 const expertTimeAvailable = require("../models/ExpertTimeSlot");
+var admin = require("firebase-admin");
+var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  // databaseURL: Config.get("db.firebaseDatabaseUrl"),
+});
 module.exports = {
   showOnlineExperts: async (req, res) => {
     try {
@@ -1386,7 +1392,7 @@ module.exports = {
       : "client";
     dial[attr]({}, toNumberOrClientName);
   } else {
-    twiml.say("Thanks for calling!");
+    twiml.say("Thanks for calling! satyam");
   }
 
   return twiml.toString();
@@ -1394,6 +1400,69 @@ module.exports = {
     catch(error)
     {
       universalFunctions.sendError(error,res);
+    }
+  },
+ sendPushNotificationChatRequest : async (req, res) => {
+    try {
+      const schema = {
+        id: Joi.string().required(),
+        deviceToken: Joi.string().required(),
+        deviceType: Joi.string().required(),
+      };
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+      let message;
+      let propertyDetails = await models.Property.findOne({
+        _id: payload.id,
+      }).select({
+        userId: 1,
+        _id: 0,
+      });
+      let userDetails = await models.User.findOneAndUpdate(
+        { _id: propertyDetails.userId },
+        {}
+      );
+      console.log(userDetails);
+      if (payload.deviceType === "2") {
+        message = {
+          data: {
+            title: 'Expert accepted your chat request',
+            body: 'your request for chat room with our expert has been accepted',
+            type: "addProperty",
+            propertyId: payload.id,
+            sound: 'default',
+          },
+        };
+      } 
+      
+      else {
+        message = {
+          notification: {
+            title: 'Expert accepted your chat request',
+            body: 'your request for chat room with our expert has been accepted',
+            type: "addProperty",
+            propertyId: payload.id,
+            sound: 'default',
+            badge: "0",
+          },
+        };
+      }
+      var options = { priority: "high" };
+      const firebaseFunction = await admin
+        .messaging()
+        .sendToDevice([payload.deviceToken], message, options);
+      console.log("firebaseFunction", firebaseFunction);
+      return universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: responseMessages.en.SUCCESS,
+          data: firebaseFunction,
+        },
+        res
+      );
+    } catch (err) {
+      console.log("+++++++++++++", err);
+      return universalFunctions.sendError(err, res);
     }
   }
 };

@@ -564,6 +564,85 @@ getChatAppointment:async (req,res)=>{
          universalFunctions.sendError(error,res);
         }
       }
+      ,
+      twilioVideoChatTokenExpert: async (req, res) => {
+  
+
+        try {
+          const schema = Joi.object({
+            appointmentId: Joi.string().required(),
+          
+          });
+          await universalFunctions.validateRequestPayload(req.body, res, schema);
+          let appointments = await appointment.findOne({ _id: req.body.appointmentId }).populate({path:'expertId',populate:{
+          path:"userId"
+        }
+      });
+          
+          if (!appointments.videoChatId) {
+            let roomId = appointments.appointDateandTime + req.body.appointmentId;
+           
+            appointments = await appointment.findByIdAndUpdate({ _id: req.body.appointmentId }, { videoChatId: roomId }, { new: true }).populate('expertId')
+          }
+          
+         
+          await universalFunctions.validateRequestPayload(req.body, res, schema);
+      
+          let videoGrant, chatGrant;
+          videoGrant = new VideoGrant({room:appointments.videoChatId}  );
+          chatGrant = new ChatGrant({
+            serviceSid: Config.serviceSid,
+          })
+          let sid, participantId, convoId;
+     
+          const convo = await client.conversations.conversations.list();
+          convo.forEach(con => {
+            if (con.uniqueName == appointments.videoChatId)
+              sid = con.sid;
+          })
+          if (!sid) {
+            await client.conversations.v1.conversations.create({ friendlyName: appointments.videoChatId, uniqueName: appointments.videoChatId })
+              .then(conversation => { console.log(conversation.sid); sid = conversation.sid; })
+              .catch(error => { console.log(error, 'error') });
+            if (!sid) {
+              throw Boom.badRequest('Internal Server Error');
+            }
+          }
+       
+          convoId = sid;
+          
+          await client.conversations.conversations(convoId)
+            .participants
+            .create({ identity: appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName })
+            .then(participant => { console.log(participant.sid); participantId = participant.sid; })
+            .catch(error => { console.log(error); });
+            const token = new AccessToken(
+              Config.twilioAccountSid,
+              Config.twilioApiKey,
+              Config.twilioApiSecret,
+            );
+          token.addGrant(videoGrant);
+          token.addGrant(chatGrant);
+          token.identity = appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName;
+       if(!token){
+         throw Boom.badRequest("token not found")
+        }
+        
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "Room successfully joined",
+            data:{token:token.toJwt(),roomId:appointments.videoChatId,identity:appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName}
+          },
+          res
+        );
+    
+        }
+        catch (error) {
+          universalFunctions.sendError(error, res);
+        }
+      }, 
+    
 };
 
 
