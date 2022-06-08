@@ -1185,12 +1185,13 @@ module.exports = {
   createFavouriteExpert: async (req, res) => {
     try {
       let userId = req.user.id;
-      let {expertId,favourite } = req.body;
+      let {expertId,favourite,expertUserId } = req.body;
       let payload = {
         userId,
-        expertId,
+        expertId, 
+        expertUserId,
       };
-      if (favourite===APP_CONSTANTS.checkfavExpert) {
+      if (favourite==APP_CONSTANTS.checkfavExpert) {
         await favouriteExport.create(payload);
         universalFunctions.sendSuccess(
         {
@@ -1207,11 +1208,11 @@ module.exports = {
         {
           throw Boom.badRequest("Expert Is Not Found"); 
         }
-        
         universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Expert Remove To Favourite",
+          data:removeFavouriteExpert
         },
         res
       );

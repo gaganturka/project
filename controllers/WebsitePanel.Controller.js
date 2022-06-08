@@ -15,7 +15,11 @@ const { Config } = require("../config");
 const Testimony = require('../models/Testimony');
 const chatappointment = require('../models/ChatAppointment');
 const Boom = require("boom");
+const VoiceResponse = require("twilio").twiml.VoiceResponse;
+
 const AccessToken = require("twilio").jwt.AccessToken;
+const VoiceGrant = AccessToken.VoiceGrant;
+
 const VideoGrant = AccessToken.VideoGrant;
 const ChatGrant = AccessToken.ChatGrant;
 const accountSid = Config.twilioAccountSid;
@@ -1317,6 +1321,81 @@ module.exports = {
     }
   },
 
+  twlioVoiceCallUser: async (req,res)=>{
+    try{
+    let  identity = 
+    'calling';
+
+  const accessToken = new AccessToken(
+    accountSid,
+    Config.twilioApiKey,
+    Config.twilioApiSecret
+  );
+  accessToken.identity = identity;
+  const grant = new VoiceGrant({
+    outgoingApplicationSid: Config.twiMLSID,
+    incomingAllow: true,
+  });
+  accessToken.addGrant(grant);
+
+  // Include identity and token in a JSON response
+   universalFunctions.sendSuccess(
+     {
+         statusCode:200,
+         message:'success',
+         data:{
+          identity: identity,
+          token: accessToken.toJwt(),
+         }
+     },
+     res
+   )
+    
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error,res);
+    }
+  },
+  
+  twilioVoice:async(req,res)=>{
+
+    try{
+      const toNumberOrClientName = '918630377298';
+  const callerId = Config.callerId;
+  let twiml = new VoiceResponse();
+
+  // If the request to the /voice endpoint is TO your Twilio Number, 
+  // then it is an incoming call towards your Twilio.Device. 
+  if (toNumberOrClientName == callerId) {
+    let dial = twiml.dial();
+
+    // This will connect the caller with your Twilio.Device/client 
+    dial.client('identity');
+//identity
+  } else if ('918630377298') {
+    // This is an outgoing call
+
+    // set the callerId
+    let dial = twiml.dial({ callerId });
+
+    // Check if the 'To' parameter is a Phone Number or Client Name
+    // in order to use the appropriate TwiML noun 
+    const attr = isAValidPhoneNumber(toNumberOrClientName)
+      ? "number"
+      : "client";
+    dial[attr]({}, toNumberOrClientName);
+  } else {
+    twiml.say("Thanks for calling!");
+  }
+
+  return twiml.toString();
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error,res);
+    }
+  }
 };
 
 

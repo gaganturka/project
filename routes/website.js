@@ -41,6 +41,8 @@ router.route("/getChatAppointment").get(authUser.checkAuth,WebsiteController.get
 router.route("/getFavExpert").get(authUser.checkAuth,WebsiteController.getFavExpert);
 router.route("/setFavExpert").post(authUser.checkAuth,WebsiteController.setFavExpert);
 router.route("/getUsersFavoriteExperts").get(authUser.checkAuth,WebsiteController.getUsersFavoriteExperts);
+router.route("/twlioVoiceCallUser").post(authUser.checkAuth,WebsiteController.twlioVoiceCallUser);
+router.route("/voiceTwilio").post(authUser.checkAuth,WebsiteController.twilioVoice);
 
 
 
