@@ -33,9 +33,8 @@ router.route("/subscribeNewsletter").post(WebsiteController.subscribeNewsletter)
 router.route("/getAvailableTimeForUser").get( WebsiteController.getAvailableTimeForUser);
 router.route("/getAppointments").post(authUser.checkAuth,WebsiteController.getAppointments);
 router.route("/cancelAppointment/:id").delete(authUser.checkAuth,WebsiteController.cancelAppointment);
-router.route("/rescheduleAppointment/:id").put(authUser.checkAuth,WebsiteController.rescheduleAppointment);
+router.route("/rescheduleAnAppointment").post(authUser.checkAuth,WebsiteController.rescheduleAppointment);
 router.route("/videoChatTokenUser").post(authUser.checkAuth,WebsiteController.twilioVideoChatTokenUser);
-router.route("/videoChatTokenExpert").post(authUser.checkAuth,WebsiteController.twilioVideoChatTokenExpert);
 
 router.route("/getChatAppointment").get(authUser.checkAuth,WebsiteController.getChatAppointment);
 router.route("/getFavExpert").get(authUser.checkAuth,WebsiteController.getFavExpert);

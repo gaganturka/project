@@ -29,6 +29,12 @@ const chatappointment =require('../models/ChatAppointment');
 
 const Boom = require("boom");
 const Appointment = require("../models/Appointment");
+var admin = require("firebase-admin");
+var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  // databaseURL: Config.get("db.firebaseDatabaseUrl"),
+});
 module.exports = {
   sendOtpExpertUser: async (req, res) => {
     try {
@@ -653,7 +659,62 @@ getChatAppointment:async (req,res)=>{
           universalFunctions.sendError(error, res);
         }
       }, 
+      sendPushNotificationChatRequest : async (req, res) => {
+        try {
+          // const schema = {
+          // token:Joi.string(),
+          // };
+          // await universalFunctions.validateRequestPayload(req.body, res, schema);
+          // let payload = req.body;
+          let message;
+          req.body.token.map(async (obj,index)=>{
+            if(obj.deviceType== '2')
+            {
+              message = {
+                data: {
+                  title: 'Expert accepted your chat request',
+                  body: `your request for chat room with our expert has been ${req.body.messageType=='1'?'accepted':'rejected'}`,
+                  type: "addProperty",
+                  // propertyId: payload.id,
+                  sound: 'default',
+                },
+              };
+            }
+            else if(obj.deviceType=='3')
+            {
+              message = {
+                notification: {
+                  title: 'Expert accepted your chat request',
+                  body: `your request for chat room with our expert has been ${req.body.messageType=='1'?'accepted':'rejected'}`,
+                  type: "addProperty",
+                  // propertyId: payload.id,
+                  sound: 'default',
+                  badge: "0",
+                },
+              };
+            }
     
+             
+          var options = { priority: "high" };
+          const firebaseFunction = await admin
+            .messaging()
+            .sendToDevice([obj.deviceToken], message, options);
+          console.log("firebaseFunction", firebaseFunction);
+          })
+         
+          return universalFunctions.sendSuccess(
+            {
+              statusCode: 200,
+              message: `successfully send ${req.body.messageType=='1'?'admission':'rejection'} notification`,
+              // data: firebaseFunction,
+            },
+            res
+          );
+        } catch (err) {
+          console.log("+++++++++++++", err);
+          return universalFunctions.sendError(err, res);
+        }
+      }
 };
 
 

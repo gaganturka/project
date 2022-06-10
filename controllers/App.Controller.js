@@ -1123,11 +1123,14 @@ module.exports = {
   },
   rescheduleAppointment: async (req, res) => {
     try {
+      let userId = req.user.id;
+      // let userId = req.user.id;
+      let payload = req.body;
       const schema = Joi.object({
         timeSlotId: Joi.string().length(24).required(),
         expertId: Joi.string().length(24).required(),
         appointmentType: Joi.string().allow(""),
-        duration: Joi.string().allow(""),
+        duration: Joi.string().allow(""),  
         appointmentDate: Joi.date().required(),
         endAppointmentTime: Joi.date().required(),
         startAppointmentTime: Joi.date().required(),
@@ -1135,46 +1138,42 @@ module.exports = {
         appointDateandTime: Joi.date().required(),
         status: Joi.string().allow(""),
         practiceArea: Joi.string().length(24).required(),
+        appointmentId: Joi.string(),
       });
-      let {
-        id,
-        appointDateandTime,
-        appointmentDate,
-        appointmentTime,
-        appointmentType,
-        duration,
-        endAppointmentTime,
-        practiceArea,
-        startAppointmentTime,
-        timeSlotId,
-        status,
-      } = req.body;
-      let rescheduledAppointment = await appointment.findByIdAndUpdate(
-        { _id: id },
-        {
-          $set: {
-            appointDateandTime: appointDateandTime,
-            appointmentDate: appointmentDate,
-            appointmentTime: appointmentTime,
-            appointmentType: appointmentType,
-            duration: duration,
-            endAppointmentTime: endAppointmentTime,
-            practiceArea: practiceArea,
-            startAppointmentTime: startAppointmentTime,
-            timeSlotId: timeSlotId,
-            status: status,
-            isRescheduled: true,
-          },
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let start = req.body.startAppointmentTime, end = req.body.endAppointmentTime;
+      let data = await appointment.find({
+        startAppointmentTime: {
+          $gte: start,
+          $lt: end
         }
-      );
-      // console.log("this is update data", rescheduledAppointment);
+      })
+      payload.userId = userId;
+      
+      // let createAppointment = await appointment.create(payload);
+
+      // universalFunctions.sendSuccess(
+      //   {
+      //     statusCode: 200,
+      //     message: "Success",
+      //     data: createAppointment,
+      //   },
+      //   res
+      // );
+
+      // let data;
+      let expert;
+      let rescheduledAppointment = await appointment.findByIdAndUpdate(req.body.appointmentId, payload,{new:true} );
+ 
       if (!rescheduledAppointment) {
         throw Boom.badRequest("cannot find any appointment to reschedule");
+
       }
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
+          data: rescheduledAppointment,
         },
         res
       );

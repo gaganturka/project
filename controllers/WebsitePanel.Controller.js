@@ -28,12 +28,7 @@ const twilio = require('twilio');
 const client = new twilio(accountSid, authToken);
 const favExpertModel = require("../models/Fav_Expert");
 const expertTimeAvailable = require("../models/ExpertTimeSlot");
-var admin = require("firebase-admin");
-var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  // databaseURL: Config.get("db.firebaseDatabaseUrl"),
-});
+
 module.exports = {
   showOnlineExperts: async (req, res) => {
     try {
@@ -725,17 +720,28 @@ module.exports = {
         count = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).countDocuments()
       }
       else if (filterType == "Upcoming") {
-        data = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId')
+        let now =new Date();
+        data = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+          $gte: now.getTime()
+        } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit));
-        count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed }).countDocuments();
+        count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+          $gte: now.getTime()
+        } }).countDocuments();
       }
       else if (filterType == 'Reschedule') {
-        data = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.rescheduled }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        let now=new Date();
+        data = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+          $lt: now.getTime()
+        } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit));
         //  expert=await expert.find({_id:data.expertId._id});
-        count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.rescheduled }).countDocuments()
+        count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+          $lt: now.getTime()
+        }
+       }).countDocuments()
 
       }
       else if (filterType == "Completed") {
@@ -808,20 +814,56 @@ module.exports = {
   rescheduleAppointment: async (req, res) => {
     try {
       let userId = req.user.id;
-  
-      let data;
+      // let userId = req.user.id;
+      let payload = req.body;
+      const schema = Joi.object({
+        timeSlotId: Joi.string().length(24).required(),
+        expertId: Joi.string().length(24).required(),
+        appointmentType: Joi.string().allow(""),
+        duration: Joi.string().allow(""),  
+        appointmentDate: Joi.date().required(),
+        endAppointmentTime: Joi.date().required(),
+        startAppointmentTime: Joi.date().required(),
+        appointmentTime: Joi.string().allow(""),
+        appointDateandTime: Joi.date().required(),
+        status: Joi.string().allow(""),
+        practiceArea: Joi.string().length(24).required(),
+        appointmentId: Joi.string(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let start = req.body.startAppointmentTime, end = req.body.endAppointmentTime;
+      let data = await appointment.find({
+        startAppointmentTime: {
+          $gte: start,
+          $lt: end
+        }
+      })
+      payload.userId = userId;
+      
+      // let createAppointment = await appointment.create(payload);
+
+      // universalFunctions.sendSuccess(
+      //   {
+      //     statusCode: 200,
+      //     message: "Success",
+      //     data: createAppointment,
+      //   },
+      //   res
+      // );
+
+      // let data;
       let expert;
-      let rescheduledAppointment = await appointment.findByIdAndUpdate(req.params.id, { status: APP_CONSTANTS.appointmentStatus.rescheduled })
+      let rescheduledAppointment = await appointment.findByIdAndUpdate(req.body.appointmentId, payload,{new:true} );
  
       if (!rescheduledAppointment) {
-        throw Boom.badRequest("cannot find any appointment to delete");
+        throw Boom.badRequest("cannot find any appointment to reschedule");
 
       }
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
-          data: data,
+          data: rescheduledAppointment,
         },
         res
       );
@@ -1133,83 +1175,6 @@ module.exports = {
     }
   },
 
-  twilioVideoChatTokenExpert: async (req, res) => {
-  
-
-    try {
-      const schema = Joi.object({
-        appointmentId: Joi.string().required(),
-      
-      });
-      await universalFunctions.validateRequestPayload(req.body, res, schema);
-      let appointments = await appointment.findOne({ _id: req.body.appointmentId }).populate({path:'expertId',populate:{
-      path:"userId"
-    }
-  });
-      
-      if (!appointments.videoChatId) {
-        let roomId = appointments.appointDateandTime + req.body.appointmentId;
-       
-        appointments = await appointment.findByIdAndUpdate({ _id: req.body.appointmentId }, { videoChatId: roomId }, { new: true }).populate('expertId')
-      }
-      
-     
-      await universalFunctions.validateRequestPayload(req.body, res, schema);
-  
-      let videoGrant, chatGrant;
-      videoGrant = new VideoGrant({room:appointments.videoChatId}  );
-      chatGrant = new ChatGrant({
-        serviceSid: Config.serviceSid,
-      })
-      let sid, participantId, convoId;
- 
-      const convo = await client.conversations.conversations.list();
-      convo.forEach(con => {
-        if (con.uniqueName == appointments.videoChatId)
-          sid = con.sid;
-      })
-      if (!sid) {
-        await client.conversations.v1.conversations.create({ friendlyName: appointments.videoChatId, uniqueName: appointments.videoChatId })
-          .then(conversation => { console.log(conversation.sid); sid = conversation.sid; })
-          .catch(error => { console.log(error, 'error') });
-        if (!sid) {
-          throw Boom.badRequest('Internal Server Error');
-        }
-      }
-   
-      convoId = sid;
-      
-      await client.conversations.conversations(convoId)
-        .participants
-        .create({ identity: appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName })
-        .then(participant => { console.log(participant.sid); participantId = participant.sid; })
-        .catch(error => { console.log(error); });
-        const token = new AccessToken(
-          Config.twilioAccountSid,
-          Config.twilioApiKey,
-          Config.twilioApiSecret,
-        );
-      token.addGrant(videoGrant);
-      token.addGrant(chatGrant);
-      token.identity = appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName;
-   if(!token){
-     throw Boom.badRequest("token not found")
-    }
-    
-    universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Room successfully joined",
-        data:{token:token.toJwt(),roomId:appointments.videoChatId,identity:appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName}
-      },
-      res
-    );
-
-    }
-    catch (error) {
-      universalFunctions.sendError(error, res);
-    }
-  }, 
    getChatAppointment:async (req,res)=>{
     try{ 
       let id = req.user.id;
@@ -1402,69 +1367,7 @@ module.exports = {
       universalFunctions.sendError(error,res);
     }
   },
- sendPushNotificationChatRequest : async (req, res) => {
-    try {
-      const schema = {
-        id: Joi.string().required(),
-        deviceToken: Joi.string().required(),
-        deviceType: Joi.string().required(),
-      };
-      await universalFunctions.validateRequestPayload(req.body, res, schema);
-      let payload = req.body;
-      let message;
-      let propertyDetails = await models.Property.findOne({
-        _id: payload.id,
-      }).select({
-        userId: 1,
-        _id: 0,
-      });
-      let userDetails = await models.User.findOneAndUpdate(
-        { _id: propertyDetails.userId },
-        {}
-      );
-      console.log(userDetails);
-      if (payload.deviceType === "2") {
-        message = {
-          data: {
-            title: 'Expert accepted your chat request',
-            body: 'your request for chat room with our expert has been accepted',
-            type: "addProperty",
-            propertyId: payload.id,
-            sound: 'default',
-          },
-        };
-      } 
-      
-      else {
-        message = {
-          notification: {
-            title: 'Expert accepted your chat request',
-            body: 'your request for chat room with our expert has been accepted',
-            type: "addProperty",
-            propertyId: payload.id,
-            sound: 'default',
-            badge: "0",
-          },
-        };
-      }
-      var options = { priority: "high" };
-      const firebaseFunction = await admin
-        .messaging()
-        .sendToDevice([payload.deviceToken], message, options);
-      console.log("firebaseFunction", firebaseFunction);
-      return universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: responseMessages.en.SUCCESS,
-          data: firebaseFunction,
-        },
-        res
-      );
-    } catch (err) {
-      console.log("+++++++++++++", err);
-      return universalFunctions.sendError(err, res);
-    }
-  }
+ 
 };
 
 
