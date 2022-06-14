@@ -26,6 +26,8 @@ const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
 const { join, truncate, stubFalse } = require("lodash");
 const ChatAppointment = require("../models/ChatAppointment");
+const Testimony = require("../models/Testimony");
+const { tooManyRequests } = require("boom");
 // import universalFunctions from "../utils/universalFunctions";
 
 module.exports = {
@@ -1443,5 +1445,115 @@ console.log(expert,'eexxxppp')
   {
     universalFunctions.sendError(error,res);
   }
-}
+},
+createTestimony: async (req, res) => {
+  try {
+    const schema = Joi.object({
+
+      feedback: Joi.string(),
+      // name: Joi.string(),
+      // image: Joi.string().allow(""),
+    });
+    let id=req.user.id;
+    await universalFunctions.validateRequestPayload(req.body, res, schema);
+     const userDetails=await User.findOne({_id:id});
+     let name=userDetails.firstName+' '+userDetails.lastName;
+     let image=userDetails.profilePic;
+    let feedback = await Testimony.create({ feedback: req.body.feedback, name: name, image: image });
+    if (!feedback) {
+      throw Boom.badRequest("cannot create a testimony");
+    }
+    universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "Created testimony",
+        data: feedback,
+      },
+      res
+    );
+  } catch (error) {
+    universalFunctions.sendError(error, res);
+  }
+
+
+
+
+
+
+},
+getTestimonies: async (req, res) => {
+  try {
+    // const schema = Joi.object({
+    //   // limit: Joi.number(),
+    //   // page: Joi.number(),
+    //   // category: Joi.string().allow(""),
+    //   // practiceArea: Joi.string().allow(""),
+    //   // sortBy: Joi.string(),
+    //   feedback: Joi.string(),
+    //   name: Joi.string(),
+    //   image: Joi.string().allow(""),
+    // });
+    // await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+    let feedback = await Testimony.find();
+    if (!feedback) {
+      throw Boom.badRequest("cannot find any testimony");
+    }
+    universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "All testimonies are",
+        data: feedback,
+      },
+      res
+    );
+  } catch (error) {
+    universalFunctions.sendError(error, res);
+  }
+
+
+},
+giveExpertRating: async (req,res)=>{
+  try {
+    const schema = Joi.object({
+      rating:Joi.number(),
+      expertId:Joi.string()
+    });
+    // let id=req.user.id;
+    await universalFunctions.validateRequestPayload(req.body, res, schema);
+    const expert=await expertUser.findOne({_id:req.body.expertId});
+    let rating={
+      noOfRating:expert.rating.noOfRating+1,
+      ratingCount:expert.rating.ratingCount+req.body.rating,
+      avgRating:((expert.rating.ratingCount+req.body.rating) /( expert.rating.noOfRating+1))
+    };
+    if(!expert)
+    {
+      throw Boom.badRequest('Wrong credentials')
+    }
+
+     const expertDetails=await expertUser.findOneAndUpdate({_id:req.body.expertId},{$set:{rating:rating}},{new:true});
+    //  let name=userDetails.firstName+' '+userDetails.lastName;
+    //  let image=userDetails.profilePic;
+    // let feedback = await Testimony.create({ feedback: req.body.feedback, name: name, image: image });
+    // if (!feedback) {
+    //   throw Boom.badRequest("cannot create a testimony");
+    // }
+    if(!expertDetails)
+    {
+      throw Boom.badRequest('Could not update');
+    }
+    universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "thank you for rating",
+        data: expertDetails,
+      },
+      res
+    );
+  } catch (error) {
+    universalFunctions.sendError(error, res);
+  }
+
+},
 };

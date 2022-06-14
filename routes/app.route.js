@@ -41,7 +41,10 @@ router
 
     router.route('/getExpertDetails').post(checkAuth,appCreation.getExpertDetails);
     
-  
+    router.route("/getTestimonies").get(appCreation.getTestimonies);
+    router.route("/createTestimony").post(checkAuth,appCreation.createTestimony);
+    router.route("/giveExpertRating").post(checkAuth,appCreation.giveExpertRating);
+    
   
 
   
