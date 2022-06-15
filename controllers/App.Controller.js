@@ -1011,61 +1011,174 @@ module.exports = {
   },
   getAppointmentDetails: async (req, res) => {
     try {
+      // let userId = req.user.id;
+      // const schema = Joi.object({
+      //   limit: Joi.number(),
+      //   page: Joi.number(),
+      //   status: Joi.string().allow(""),
+      // });
+      // await universalFunctions.validateRequestPayload(req.query, res, schema);
+      // let appointmentData = {}
+      // if (req.body.status) {
+      //   appointmentData = await appointment
+      //     .find({
+      //       userId: userId,
+      //       status: req.body.status,
+      //     })
+      //     .populate({
+      //       path: "userId",
+      //       select: "firstName lastName profilePic role",
+      //     })
+      //     .populate({
+      //       path: "expertId",
+      //       populate: { path: "userId practiceArea" },
+      //     })
+      //     .skip(parseInt((req.body.page - 1) * req.body.limit))
+      //     .limit(parseInt(req.body.limit));
+      // } else {
+      //   appointmentData = await appointment
+      //     .find({
+      //       status: {
+      //         $nin: [APP_CONSTANTS.appointmentStatus.cancelled],
+      //       },
+      //       userId: userId,
+      //     })
+      //     .populate({
+      //       path: "userId",
+      //       select: "firstName lastName profilePic role",
+      //     })
+      //     .populate({
+      //       path: "expertId",
+      //       populate: { path: "userId practiceArea" },
+      //     })
+      //     .skip(parseInt((req.body.page - 1) * req.body.limit))
+      //     .limit(parseInt(req.body.limit));
+      // }
+
+      // if (!appointmentData) {
+      //   universalFunctions.sendSuccess(
+      //     {
+      //       statusCode: 200,
+      //       message: "Appointment Data Not Found",
+      //       data: [],
+      //     },
+      //     res
+      //   );
+      // }
+      // let appointmentAllData = JSON.parse(JSON.stringify(appointmentData));
+      // // console.log("this is all data ", appointmentAllData);
+      // appointmentAllData.map((ele) => {
+      //   if (ele && ele.expertId && ele.expertId.userId) {
+      //     delete ele.__v;
+      //     delete ele.expertId.__v;
+      //     delete ele.expertId.userId.userData;
+      //     delete ele.expertId.userId.isEmailVerified;
+      //     delete ele.expertId.userId.password;
+      //     delete ele.expertId.userId.mobileFirebaseUid;
+      //     delete ele.expertId.userId.token;
+      //     delete ele.expertId.userId.__v;
+      //     // delete ele.exportId.availableForVideo;
+      //     // delete ele.expertId.bankName;
+      //     // delete ele.exportId.bankAccountNo;
+      //     // delete ele.expertId.noOfHoursSessionDone;
+      //     // delete ele.expertId.noOfViews;
+      //     // delete ele.exportId.userId.mobileNo;
+      //     // delete ele.exportId &&
+      //     //   ele.expertId.userId &&
+      //     //   ele.expertId.userId.email;
+      //     // delete ele.exportId.userId.role;
+      //     // delete ele.userId.userData;
+      //   }
+      // });
+
+      // universalFunctions.sendSuccess(
+      //   {
+      //     statusCode: 200,
+      //     message: "Success",
+      //     data: appointmentAllData,
+      //   },
+      //   res
+      // );
+
+
+
+
       let userId = req.user.id;
+      let filterType = req.body.filterType;
       const schema = Joi.object({
+        filterType: Joi.string(),
         limit: Joi.number(),
         page: Joi.number(),
-        status: Joi.string().allow(""),
-      });
-      await universalFunctions.validateRequestPayload(req.query, res, schema);
-      let appointmentData = {}
-      if (req.body.status) {
-        appointmentData = await appointment
-          .find({
-            userId: userId,
-            status: req.body.status,
-          })
-          .populate({
-            path: "userId",
-            select: "firstName lastName profilePic role",
-          })
-          .populate({
-            path: "expertId",
-            populate: { path: "userId practiceArea" },
-          })
-          .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
-      } else {
-        appointmentData = await appointment
-          .find({
-            status: {
-              $nin: [APP_CONSTANTS.appointmentStatus.cancelled],
-            },
-            userId: userId,
-          })
-          .populate({
-            path: "userId",
-            select: "firstName lastName profilePic role",
-          })
-          .populate({
-            path: "expertId",
-            populate: { path: "userId practiceArea" },
-          })
-          .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
-      }
 
-      if (!appointmentData) {
-        universalFunctions.sendSuccess(
-          {
-            statusCode: 200,
-            message: "Appointment Data Not Found",
-            data: [],
-          },
-          res
-        );
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let data;
+      let count;
+      let expert;
+
+      // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
+      if (filterType == "All") {
+        data = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
+        //  expert=await expert.find({_id:data.expertId._id});
+        count = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).countDocuments()
       }
-      let appointmentAllData = JSON.parse(JSON.stringify(appointmentData));
+      else if (filterType == "Upcoming") {
+        let now =new Date();
+        data = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+          $gte: now.getTime()
+        } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId')
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+        count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+          $gte: now.getTime()
+        } }).countDocuments();
+      }
+      else if (filterType == 'Reschedule') {
+        let now=new Date();
+        data = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+          $lt: now.getTime()
+        } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+        //  expert=await expert.find({_id:data.expertId._id});
+        count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+          $lt: now.getTime()
+        }
+       }).countDocuments()
+
+      }
+      else if (filterType == "Completed") {
+        data = await appointment.find({
+          userId: userId,
+          status: APP_CONSTANTS.appointmentStatus.completed,
+
+        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+        count = await appointment.find({
+          userId: userId,
+          status: APP_CONSTANTS.appointmentStatus.completed,
+
+        }).countDocuments();
+      }
+      else if (filterType == "Cancelled") {
+        data = await appointment.find({
+          userId: userId, status: APP_CONSTANTS.appointmentStatus.cancelled,
+
+        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+
+        count = await appointment.find({
+          userId: userId,
+          status: APP_CONSTANTS.appointmentStatus.cancelled,
+
+        }).countDocuments()
+      }
+      let appointmentAllData = JSON.parse(JSON.stringify(data));
       // console.log("this is all data ", appointmentAllData);
       appointmentAllData.map((ele) => {
         if (ele && ele.expertId && ele.expertId.userId) {
@@ -1091,14 +1204,19 @@ module.exports = {
         }
       });
 
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
-          data: appointmentAllData,
+          data: { list: data, count: count,currentPage:req.body.page },
         },
         res
       );
+
+
+
+
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }

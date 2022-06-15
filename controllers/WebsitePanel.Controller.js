@@ -28,6 +28,7 @@ const twilio = require('twilio');
 const client = new twilio(accountSid, authToken);
 const favExpertModel = require("../models/Fav_Expert");
 const expertTimeAvailable = require("../models/ExpertTimeSlot");
+const { isAValidPhoneNumber } = require("../utils/twilioFunctions");
 
 module.exports = {
   showOnlineExperts: async (req, res) => {
@@ -715,7 +716,8 @@ module.exports = {
       if (filterType == "All") {
         data = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
         //  expert=await expert.find({_id:data.expertId._id});
         count = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).countDocuments()
       }
@@ -1294,8 +1296,11 @@ module.exports = {
 
   twlioVoiceCallUser: async (req,res)=>{
     try{
+      let id=req.user.id;
+      const user=await User.findOne({_id:id});
+
     let  identity = 
-    'calling';
+    user.firstName+user.lastName;
 
   const accessToken = new AccessToken(
     accountSid,
@@ -1329,10 +1334,10 @@ module.exports = {
     }
   },
   
-  twilioVoice:async(req,res)=>{
+  twilioVoiceResponse:async(req,res)=>{
 
     try{
-      const toNumberOrClientName = '+918630377298';
+      const toNumberOrClientName = req.body.clientName;
   const callerId = Config.callerId;
   let twiml = new VoiceResponse();
 
@@ -1359,8 +1364,9 @@ module.exports = {
   } else {
     twiml.say("Thanks for calling! satyam");
   }
-
-  return twiml.toString();
+  res.set("Content-Type", "text/xml");
+  res.send(twiml.toString());
+    
     }
     catch(error)
     {
