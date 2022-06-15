@@ -727,7 +727,8 @@ module.exports = {
           $gte: now.getTime()
         } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
         count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
           $gte: now.getTime()
         } }).countDocuments();
@@ -738,7 +739,8 @@ module.exports = {
           $lt: now.getTime()
         } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
         //  expert=await expert.find({_id:data.expertId._id});
         count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
           $lt: now.getTime()
@@ -753,7 +755,8 @@ module.exports = {
 
         }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
         count = await appointment.find({
           userId: userId,
           status: APP_CONSTANTS.appointmentStatus.completed,
@@ -766,7 +769,8 @@ module.exports = {
 
         }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
 
         count = await appointment.find({
           userId: userId,
