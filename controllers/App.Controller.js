@@ -1143,7 +1143,7 @@ module.exports = {
           $gte: now.getTime()
         } }).countDocuments();
       }
-      else if (filterType == 'Reschedule') {
+      else if (filterType == 'Rescheduled') {
         let now=new Date();
         data = await appointment.find({ userId: userId, isRescheduled:true }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
           .skip(parseInt((req.body.page - 1) * req.body.limit))

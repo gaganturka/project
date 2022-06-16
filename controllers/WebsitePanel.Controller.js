@@ -1310,7 +1310,8 @@ module.exports = {
 
     let  identity = 
     user.firstName+user.lastName;
-
+    let reqdAppointment=await appointment.findOne({_id:req.body.appointmentId}).populate({path:'expertId', populate: { path: "userId" }});
+    let expertIdentity= reqdAppointment.expertId.userId.firstName;
   const accessToken = new AccessToken(
     accountSid,
     Config.twilioApiKey,
@@ -1331,6 +1332,7 @@ module.exports = {
          data:{
           identity: identity,
           token: accessToken.toJwt(),
+          expertIdentity
          }
      },
      res
@@ -1358,7 +1360,7 @@ module.exports = {
     // This will connect the caller with your Twilio.Device/client 
     dial.client('identity');
 //identity
-  } else if ('+918630377298') {
+  } else if (req.body.To) {
     // This is an outgoing call
 
     // set the callerId
