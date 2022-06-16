@@ -70,6 +70,10 @@ const AppointmentSchema = new Schema({
   videoChatId:{
     type:String,
     default:"",
+  },
+  isRescheduled:{
+    type:Boolean,
+    default:false
   }
 });
 

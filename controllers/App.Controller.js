@@ -1101,8 +1101,6 @@ module.exports = {
       // );
 
 
-
-
       let userId = req.user.id;
       let filterType = req.body.filterType;
       const schema = Joi.object({
@@ -1114,8 +1112,16 @@ module.exports = {
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let data;
       let count;
+      let currentTime =new Date();
       let expert;
+        let pendingAppointment=await appointment.updateMany({userId:userId,status: APP_CONSTANTS.appointmentStatus.pending,endAppointmentTime: {
+          $lt: currentTime.getTime()
+        }},{status: APP_CONSTANTS.appointmentStatus.cancelled});
 
+        let confirmedAppointment=await appointment.updateMany({userId:userId,status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+          $lt: currentTime.getTime()
+        }},{status: APP_CONSTANTS.appointmentStatus.cancelled});
+        
       // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
       if (filterType == "All") {
         data = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
@@ -1131,22 +1137,20 @@ module.exports = {
           $gte: now.getTime()
         } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
         count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
           $gte: now.getTime()
         } }).countDocuments();
       }
       else if (filterType == 'Reschedule') {
         let now=new Date();
-        data = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
-          $lt: now.getTime()
-        } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        data = await appointment.find({ userId: userId, isRescheduled:true }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
         //  expert=await expert.find({_id:data.expertId._id});
-        count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
-          $lt: now.getTime()
-        }
+        count = await appointment.find({ userId: userId, isRescheduled:true
        }).countDocuments()
 
       }
@@ -1157,7 +1161,8 @@ module.exports = {
 
         }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
         count = await appointment.find({
           userId: userId,
           status: APP_CONSTANTS.appointmentStatus.completed,
@@ -1170,7 +1175,8 @@ module.exports = {
 
         }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
 
         count = await appointment.find({
           userId: userId,
@@ -1178,6 +1184,10 @@ module.exports = {
 
         }).countDocuments()
       }
+
+
+
+     
       let appointmentAllData = JSON.parse(JSON.stringify(data));
       // console.log("this is all data ", appointmentAllData);
       appointmentAllData.map((ele) => {
@@ -1190,6 +1200,14 @@ module.exports = {
           delete ele.expertId.userId.mobileFirebaseUid;
           delete ele.expertId.userId.token;
           delete ele.expertId.userId.__v;
+          delete ele.__v;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.mobileFirebaseUid;
+          delete ele.userId.token;
+          // delete ele.userId.__v;
           // delete ele.exportId.availableForVideo;
           // delete ele.expertId.bankName;
           // delete ele.exportId.bankAccountNo;
@@ -1204,12 +1222,12 @@ module.exports = {
         }
       });
 
-
+    console.log(appointmentAllData,'ssdsdfdsdsfdfd')
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
-          data: { list: data, count: count,currentPage:req.body.page },
+          data: { list: appointmentAllData, count: count,currentPage:req.body.page },
         },
         res
       );

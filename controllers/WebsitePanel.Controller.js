@@ -710,8 +710,16 @@ module.exports = {
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let data;
       let count;
+      let currentTime =new Date();
       let expert;
+        let pendingAppointment=await appointment.updateMany({userId:userId,status: APP_CONSTANTS.appointmentStatus.pending,endAppointmentTime: {
+          $lt: currentTime.getTime()
+        }},{status: APP_CONSTANTS.appointmentStatus.cancelled});
 
+        let confirmedAppointment=await appointment.updateMany({userId:userId,status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+          $lt: currentTime.getTime()
+        }},{status: APP_CONSTANTS.appointmentStatus.cancelled});
+        
       // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
       if (filterType == "All") {
         data = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
@@ -735,16 +743,12 @@ module.exports = {
       }
       else if (filterType == 'Reschedule') {
         let now=new Date();
-        data = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
-          $lt: now.getTime()
-        } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        data = await appointment.find({ userId: userId, isRescheduled:true }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
           .sort({'startAppointmentTime':-1});
         //  expert=await expert.find({_id:data.expertId._id});
-        count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
-          $lt: now.getTime()
-        }
+        count = await appointment.find({ userId: userId, isRescheduled:true
        }).countDocuments()
 
       }
@@ -835,6 +839,7 @@ module.exports = {
         status: Joi.string().allow(""),
         practiceArea: Joi.string().length(24).required(),
         appointmentId: Joi.string(),
+        isRescheduled: Joi.boolean(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let start = req.body.startAppointmentTime, end = req.body.endAppointmentTime;
