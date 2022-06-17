@@ -1349,32 +1349,33 @@ module.exports = {
 
     try{
       const toNumberOrClientName = req.body.To;
-  const callerId = Config.callerId;
-  let twiml = new VoiceResponse();
-
-  // If the request to the /voice endpoint is TO your Twilio Number, 
-  // then it is an incoming call towards your Twilio.Device. 
-  if (toNumberOrClientName == callerId) {
-    let dial = twiml.dial();
-
-    // This will connect the caller with your Twilio.Device/client 
-    dial.client(identity);
-//identity
-  } else if (req.body.To) {
-    // This is an outgoing call
-
-    // set the callerId
-    let dial = twiml.dial({ callerId });
-
-    // Check if the 'To' parameter is a Phone Number or Client Name
-    // in order to use the appropriate TwiML noun 
-    const attr = twilioFunctions.isAValidPhoneNumber(toNumberOrClientName)
-      ? "number"
-      : "client";
-    dial[attr]({}, toNumberOrClientName);
-  } else {
-    twiml.say(" Thanks for calling to borhan but unfortunately  your call was not forwarded to the expert. Sorry for the inconvenience . Please try later ");
-  }
+      const callerId = Config.callerId;
+      let twiml = new VoiceResponse();
+       console.log(req.body,'ssadfdsasdfasadfdsfa');
+      // If the request to the /voice endpoint is TO your Twilio Number, 
+      // then it is an incoming call towards your Twilio.Device.
+      if (toNumberOrClientName == callerId) {
+        let dial = twiml.dial();
+    
+        // This will connect the caller with your Twilio.Device/client 
+        dial.client(identity);
+    
+      } else if (req.body.To) {
+        // This is an outgoing call
+    
+        // set the callerId
+        let dial = twiml.dial({ callerId });
+    
+        // Check if the 'To' parameter is a Phone Number or Client Name
+        // in order to use the appropriate TwiML noun 
+        const attr = isAValidPhoneNumber(toNumberOrClientName)
+          ? "number"
+          : "client";
+        dial[attr]({}, toNumberOrClientName);
+      } else {
+        twiml.say("Thanks for calling!");
+      }
+    
   res.set("Content-Type", "text/xml");
   res.send(twiml.toString());
     
