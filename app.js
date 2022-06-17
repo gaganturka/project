@@ -1,6 +1,7 @@
 const createError=require("http-errors");
 const connectToMongo = require("./db");
 const express = require("express");
+const bodyParser=require('body-parser');
 var cors = require("cors");
 const {
   AUTH_ROUTES,
@@ -24,6 +25,9 @@ connectToMongo();
 const app = express();
 const port = process.env.PORT || 5000;
 app.use("/public", express.static("public"));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 // app.set('views', path.join(__dirname, 'views'));
 // app.use(cors());
 app.use(

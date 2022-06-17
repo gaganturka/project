@@ -1368,7 +1368,7 @@ module.exports = {
     
         // Check if the 'To' parameter is a Phone Number or Client Name
         // in order to use the appropriate TwiML noun 
-        const attr = isAValidPhoneNumber(toNumberOrClientName)
+        const attr = twilioFunctions.isAValidPhoneNumber(toNumberOrClientName)
           ? "number"
           : "client";
         dial[attr]({}, toNumberOrClientName);
