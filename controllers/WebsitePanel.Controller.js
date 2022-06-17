@@ -1373,7 +1373,7 @@ module.exports = {
       : "client";
     dial[attr]({}, toNumberOrClientName);
   } else {
-    twiml.say("Satyam Satyam Satyam Thanks for calling ! satyam");
+    twiml.say(" Thanks for calling to borhan but unfortunately  your call was not forwarded to the expert. Sorry for the inconvenience . Please try later ");
   }
   res.set("Content-Type", "text/xml");
   res.send(twiml.toString());
