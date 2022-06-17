@@ -1373,7 +1373,7 @@ module.exports = {
       : "client";
     dial[attr]({}, toNumberOrClientName);
   } else {
-    twiml.say("Thanks for calling! satyam");
+    twiml.say("Satyam Satyam Satyam Thanks for calling ! satyam");
   }
   res.set("Content-Type", "text/xml");
   res.send(twiml.toString());
