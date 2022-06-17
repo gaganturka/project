@@ -29,7 +29,7 @@ const client = new twilio(accountSid, authToken);
 const favExpertModel = require("../models/Fav_Expert");
 const expertTimeAvailable = require("../models/ExpertTimeSlot");
 const { isAValidPhoneNumber } = require("../utils/twilioFunctions");
-
+const twilioFunctions=require('../utils/twilioFunctions');
 module.exports = {
   showOnlineExperts: async (req, res) => {
     try {
@@ -1368,7 +1368,7 @@ module.exports = {
 
     // Check if the 'To' parameter is a Phone Number or Client Name
     // in order to use the appropriate TwiML noun 
-    const attr = isAValidPhoneNumber(toNumberOrClientName)
+    const attr = twilioFunctions.isAValidPhoneNumber(toNumberOrClientName)
       ? "number"
       : "client";
     dial[attr]({}, toNumberOrClientName);
