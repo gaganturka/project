@@ -267,7 +267,7 @@ module.exports = {
     let id = req.user.id;
     const expert = await User
       .findOne({ _id: id })
-      .populate({ path: "userData.data" });
+      .populate({ path: "userData.data" ,populate:{path :'category practiceArea'} });
     if (!expert) {
       throw Boom.badRequest("invalid id or token");
     }
@@ -290,10 +290,23 @@ catch(error)
 getExpertAppointment: async (req, res) => {
   try{
   let id = req.user.expertId;
-  console.log(req.user.expertId)
+  console.log(req.user.expertId);
+  let currentTime=new Date();
+  let pendingAppointment=await appointmentModel.updateMany({expertId:id,status: APP_CONSTANTS.appointmentStatus.pending,endAppointmentTime: {
+    $lt: currentTime.getTime()
+  }},{status: APP_CONSTANTS.appointmentStatus.cancelled});
+
+  let confirmedAppointment=await appointmentModel.updateMany({expertId:id,status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+    $lt: currentTime.getTime()
+  }},{status: APP_CONSTANTS.appointmentStatus.cancelled});
+ 
   const Appointment = await appointmentModel
     .find({expertId:id})
-    .populate({ path: "userId" }).sort({"appointmentDate": -1});
+    .populate({ path: "userId" })
+    .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
+          let count =await appointmentModel.find({expertId:id}).countDocuments();
   if (!Appointment) {
     throw Boom.badRequest("invalid id or token");
   }
@@ -301,10 +314,88 @@ getExpertAppointment: async (req, res) => {
     {
       statusCode: 200,
       message: "Appointment found",
-      data: Appointment,
+      data: {list:Appointment,count:count}
     },
     res
   );
+}
+catch(error)
+{
+    universalFunctions.sendError(error, res);   
+}
+},
+getExpertAppointmentByFilter: async (req, res) => {
+  try{
+  
+    let userId = req.user.id;
+    let expertId=req.user.expertId
+    let filterType = req.body.filterType;
+    const schema = Joi.object({
+      filterType: Joi.string(),
+      limit: Joi.number(),
+      page: Joi.number(),
+
+    });
+    await universalFunctions.validateRequestPayload(req.body, res, schema);
+    let data;
+    let count;
+    let currentTime =new Date();
+    let expert;
+      let pendingAppointment=await appointmentModel.updateMany({expertId,status: APP_CONSTANTS.appointmentStatus.pending,endAppointmentTime: {
+        $lt: currentTime.getTime()
+      }},{status: APP_CONSTANTS.appointmentStatus.cancelled});
+
+      let confirmedAppointment=await appointmentModel.updateMany({expertId,status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+        $lt: currentTime.getTime()
+      }},{status: APP_CONSTANTS.appointmentStatus.cancelled});
+      
+    // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
+    if (filterType == "Pending") {
+      data = await appointmentModel.find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit))
+        .sort({'startAppointmentTime':-1});
+      //  expert=await expert.find({_id:data.expertId._id});
+      count = await appointmentModel.find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).countDocuments()
+    }
+    else if (filterType == "Upcoming") {
+      let now =new Date();
+      data = await appointmentModel.find({ expertId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+        $gte: now.getTime()
+      } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId')
+        .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit))
+        .sort({'startAppointmentTime':-1});
+      count = await appointmentModel.find({ expertId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+        $gte: now.getTime()
+      } }).countDocuments();
+    }
+    else if (filterType == "Cancelled") {
+      data = await appointmentModel.find({
+        expertId, status: APP_CONSTANTS.appointmentStatus.cancelled,
+
+      }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit))
+        .sort({'startAppointmentTime':-1});
+
+      count = await appointmentModel.find({
+        expertId,
+        status: APP_CONSTANTS.appointmentStatus.cancelled,
+
+      }).countDocuments()
+    }
+
+    universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "Success",
+        data: { list: data, count: count },
+      },
+      res
+    );
+
+  
 }
 catch(error)
 {
@@ -630,7 +721,7 @@ getChatAppointment:async (req,res)=>{
           
           await client.conversations.conversations(convoId)
             .participants
-            .create({ identity:" "+ appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName+" " })
+            .create({ identity:"Expert "+ appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName+" " })
             .then(participant => { console.log(participant.sid); participantId = participant.sid; })
             .catch(error => { console.log(error); });
             const token = new AccessToken(
@@ -640,7 +731,7 @@ getChatAppointment:async (req,res)=>{
             );
           token.addGrant(videoGrant);
           token.addGrant(chatGrant);
-          token.identity =" "+appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName+" ";
+          token.identity ="Expert "+appointments?.expertId?.userId?.firstName+" "+appointments?.expertId?.userId?.lastName+" ";
        if(!token){
          throw Boom.badRequest("token not found")
         }

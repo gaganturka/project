@@ -1018,6 +1018,8 @@ module.exports = {
     try {
 
       let { expertId, appointmentDate, duration } = req.query;
+      let curentdate=new Date();
+    
       const expertTime = await expertTimeAvailable.find({
         $and: [
           {
@@ -1027,7 +1029,13 @@ module.exports = {
 
           }, {
             "duration": duration
+          },
+          {
+          startAppointmentTime: {
+            $gte: curentdate,
+            
           }
+        },
         ]
       });
 
@@ -1041,7 +1049,9 @@ module.exports = {
           expertId: expertId,
           appointmentDate: appointmentDate,
           timeSlotId: e._id ? e._id : "",
-        })
+          
+          
+        });
         if (data.length > 0) {
           e.avialble = false;
         } else {
@@ -1146,7 +1156,7 @@ module.exports = {
       })
       if (!sid) {
         await client.conversations.v1.conversations.create({ friendlyName: appointments.videoChatId, uniqueName: appointments.videoChatId })
-          .then(conversation => { console.log(conversation.sid); sid = conversation.sid; })
+          .then(conversation => { console.log(conversation.sid,'csid'); sid = conversation.sid; })
           .catch(error => { console.log(error, 'error') });
         if (!sid) {
           throw Boom.badRequest('Internal Server Error');
@@ -1157,7 +1167,7 @@ module.exports = {
       await client.conversations.conversations(convoId)
         .participants
         .create({ identity: appointments?.userId?.firstName+" "+appointments?.userId?.lastName})
-        .then(participant => { console.log(participant.sid); participantId = participant.sid; })
+        .then(participant => { console.log(participant.sid,'psid'); participantId = participant.sid; })
         .catch(error => { console.log(error); });
         const token = new AccessToken(
           Config.twilioAccountSid,
@@ -1388,7 +1398,16 @@ module.exports = {
       universalFunctions.sendError(error,res);
     }
   },
- 
+  twilioVideoCallback: async (req,res)=>{
+    try{
+     
+      console.log(req.body,'req.body from twilio Video');
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error,res);
+    }
+  }
 };
 
 

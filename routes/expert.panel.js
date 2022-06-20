@@ -10,13 +10,14 @@ router.route("/getExpertUser").get(isexpert.isExpert,ExpertController.getExpertU
 router.route("/getExportUserDetail").get(isexpert.isExpert,ExpertController.getExportUserDetail);
 router.route("/updateExpertUser").post(isexpert.isExpert,ExpertController.updateExpertUser);
 router.route("/getExpertUserInfo").get(isexpert.isExpert,ExpertController.getExpertUserInfoUsingUserModel);
-router.route("/getExpertAppointment").get(isexpert.isExpert,ExpertController.getExpertAppointment);
+router.route("/getExpertAppointment").post(isexpert.isExpert,ExpertController.getExpertAppointment);
 router.route("/updateAppointment").post(isexpert.isExpert,ExpertController.updateAppointment);
 router.route("/setAvailableByExpert").post(isexpert.isExpert,ExpertController.setAvailableByExpert);
 router.route("/getChatAppointment").get(isexpert.isExpert,ExpertController.getChatAppointment);
 router.route("/getChatAppointmentById").get(ExpertController.getChatAppointmentById);
 router.route("/updateChatAppointment").post(isexpert.isExpert,ExpertController.updateChatAppointment);
 router.route("/setExpertStatus").post(isexpert.isExpert,ExpertController.setExpertStatus);
+router.route("/getExpertAppointmentByFilter").post(isexpert.isExpert,ExpertController.getExpertAppointmentByFilter);
 
 router.route("/videoChatTokenExpert").post(isexpert.isExpert,ExpertController.twilioVideoChatTokenExpert);
 router.route("/sendPushNotificationChatRequest").post(isexpert.isExpert,ExpertController.sendPushNotificationChatRequest);
