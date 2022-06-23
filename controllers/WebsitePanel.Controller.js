@@ -1195,7 +1195,7 @@ module.exports = {
         statusCode: 200,
   
         message: "Room successfully joined",
-        data:{token:token.toJwt(),roomSid:sid,roomId:roomSid,identity:appointments?.userId?.firstName+" "+appointments?.userId?.lastName,expertId:appointments.expertId}
+        data:{token:token.toJwt(),roomSid:roomSid,roomId:appointments.videoChatId,identity:appointments?.userId?.firstName+" "+appointments?.userId?.lastName,expertId:appointments.expertId}
       },
       res
     );
@@ -1443,6 +1443,9 @@ let id=req.user.id;
       universalFunctions.sendError(error,res);
     }
   },
+  
+  
+
 };
 
 

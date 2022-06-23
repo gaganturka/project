@@ -854,7 +854,126 @@ getChatAppointment:async (req,res)=>{
           universalFunctions.sendError(error,res);
         }
       },
+
+      twilioVideoMarkComplete:async (req,res)=>{
+
+        try{
+
+          let appointments=await appointmentModel.findByIdAndUpdate({_id:req.body.appointmentId},{status: 
+              APP_CONSTANTS.appointmentStatus.completed,},{new:true}
+            );
+          
+            if(!appointments)
+            {
+              throw Boom.badRequest('could not complete')
+            }
+
+            universalFunctions.sendSuccess({
+              statusCode:200,
+              message:"success",
+              data:{
+                appointmentDetails:appointments
+              }
+            },
+            res)
+          
+      }
+      catch(error)
+      {
       
+        throw universalFunctions.sendError(error,res);
+      
+      }
+    },
+    twilioAudioMarkComplete:async (req,res)=>{
+      try{
+        let appointments=await appointmentModel.findOne({_id:req.body.appointmentId});
+      
+      }
+      catch(error)
+      {
+        throw universalFunctions.sendError(error,res);
+      }
+    },
+    getSingleAppointment:async (req,res)=>{
+
+      try{
+        let appointments=await appointmentModel.findOne({_id:req.body.appointmentId});
+    
+        if(!appointments)
+        {
+          throw Boom.badRequest('no such appointment');
+
+        }
+
+        universalFunctions.sendSuccess({
+          statusCode:200,
+          message:'success',
+          data:{
+            appointmentDetails:appointments
+          }
+        },res)
+      }
+      catch(error)
+      {
+        throw universalFunctions.sendError(error,res);
+      }
+    },
+
+    timeSlotsOfUserSingleDay: async (req, res) => {
+      try {
+  
+        let { expertId, appointmentDate, duration } = req.query;
+        let curentdate=new Date();
+      
+        const expertTime = await expertTimeAvailable.find({
+          $and: [
+            {
+              "expertId": expertId
+            }, {
+              "appointmentDate": appointmentDate,
+  
+            }, {
+              "duration": duration
+            },
+            
+          ]
+        });
+  
+  
+        if (!expertTime) {
+          throw Boom.badRequest("invalid id or token");
+        }
+        let tempobj = JSON.parse(JSON.stringify(expertTime));
+        await universalFunctions.asyncForEach(tempobj, async (e, index) => {
+          let data = await appointmentModel.find({
+            expertId: expertId,
+            appointmentDate: appointmentDate,
+            timeSlotId: e._id ? e._id : "",
+            
+            
+          });
+          if (data.length > 0) {
+            e.avialble = false;
+          } else {
+            e.avialble = true;
+          }
+        })
+  
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "expertTime found",
+            data: tempobj,
+          },
+          res
+        );
+  
+      } catch (error) {
+        console.log(error)
+        universalFunctions.sendError(error, res);
+      }
+    },
 };
 
 
