@@ -13,6 +13,10 @@ const moment =require("moment");
 const APP_CONSTANTS = require("../appConstants");
 const AccessToken = require("twilio").jwt.AccessToken;
 const { Config } = require("../config");
+const VoiceResponse = require("twilio").twiml.VoiceResponse;
+const { v4: uuidv4 } = require('uuid');
+
+const VoiceGrant = AccessToken.VoiceGrant;
 
 
 const VideoGrant = AccessToken.VideoGrant;
@@ -31,6 +35,7 @@ const Boom = require("boom");
 const Appointment = require("../models/Appointment");
 var admin = require("firebase-admin");
 var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
+const Expert_User = require("../models/Expert_User");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   // databaseURL: Config.get("db.firebaseDatabaseUrl"),
@@ -690,7 +695,7 @@ getChatAppointment:async (req,res)=>{
           if (!appointments.videoChatId) {
             let roomId = appointments.appointDateandTime + req.body.appointmentId;
            
-            appointments = await Appointment.findByIdAndUpdate({ _id: req.body.appointmentId }, { videoChatId: roomId }, { new: true }).populate('expertId')
+            appointments = await Appointment.findByIdAndUpdate({ _id: req.body.appointmentId }, { videoChatId: roomId }, { new: true }).populate({path:'expertId',populate:{path:'userId'}})
           }
           
          
@@ -805,7 +810,51 @@ getChatAppointment:async (req,res)=>{
           console.log("+++++++++++++", err);
           return universalFunctions.sendError(err, res);
         }
-      }
+      },
+
+      twlioVoiceCallExpert: async (req,res)=>{
+        try{
+          let id=req.user.expertId;
+          const expert=await Expert_User.findOne({_id:id}).populate({path:'userId'});
+    
+        let reqdAppointment=await appointmentModel.findOne({_id:req.body.appointmentId}).populate({path:'expertId', populate: { path: "userId" }}).populate('userId');
+        let userIdentity=req.body.appointmentId+ reqdAppointment.userId.firstName+reqdAppointment.userId.lastName+reqdAppointment.userId._id;
+        let identity=req.body.appointmentId+ reqdAppointment.expertId.userId.firstName +reqdAppointment.expertId.userId._id;
+
+      const accessToken = new AccessToken(
+        accountSid,
+        Config.twilioApiKey,
+        Config.twilioApiSecret
+      );
+      accessToken.identity = identity;
+      const grant = new VoiceGrant({
+        outgoingApplicationSid: Config.twiMLSID,
+        incomingAllow: true,
+      });
+      accessToken.addGrant(grant);
+    
+      // Include identity and token in a JSON response
+       universalFunctions.sendSuccess(
+         {
+             statusCode:200,
+             message:'success',
+             data:{
+              identity: identity,
+              token: accessToken.toJwt(),
+              userIdentity,
+              
+             }
+         },
+         res
+       )
+        
+        }
+        catch(error)
+        {
+          universalFunctions.sendError(error,res);
+        }
+      },
+      
 };
 
 

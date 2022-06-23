@@ -10,6 +10,7 @@ const favouriteExport = require("../models/Fav_Expert");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
+const Expert_Rating =require('../models/Expert_Rating');
 // const Mongoose = require("mongoose");
 const jwtFunction = require("../utils/jwtFunction");
 // import Mongoose from "mongoose";
@@ -382,7 +383,7 @@ module.exports = {
   getUserDetails: async (req, res) => {
     try {
       let id = req.user.id;
-      const userData = await User.findOne({ _id: id });
+      const userData = await User.findOne({ _id: id }).populate('userData.data');
       if (!userData) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
@@ -1651,12 +1652,18 @@ getTestimonies: async (req, res) => {
 },
 giveExpertRating: async (req,res)=>{
   try {
+    let id=req.user.id;
     const schema = Joi.object({
       rating:Joi.number(),
       expertId:Joi.string()
     });
     // let id=req.user.id;
     await universalFunctions.validateRequestPayload(req.body, res, schema);
+    const isRated=await Expert_Rating.findOne({userId:id,expertId:req.body.expertId})
+    if(!isRated)
+    {
+      throw Boom.badRequest('User has already rated the expert');
+    }
     const expert=await expertUser.findOne({_id:req.body.expertId});
     let rating={
       noOfRating:expert.rating.noOfRating+1,

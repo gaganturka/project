@@ -31,6 +31,7 @@ const favExpertModel = require("../models/Fav_Expert");
 const expertTimeAvailable = require("../models/ExpertTimeSlot");
 const { isAValidPhoneNumber } = require("../utils/twilioFunctions");
 const twilioFunctions=require('../utils/twilioFunctions');
+const Expert_Rating = require("../models/Expert_Rating");
 module.exports = {
   showOnlineExperts: async (req, res) => {
     try {
@@ -1138,6 +1139,7 @@ module.exports = {
     let     roomId = appointments.appointDateandTime + req.body.appointmentId;
       
         appointments = await appointment.findByIdAndUpdate({ _id: req.body.appointmentId }, { videoChatId: roomId }, { new: true }).populate('userId')
+        
       }
     
 
@@ -1146,13 +1148,20 @@ module.exports = {
       chatGrant = new ChatGrant({
         serviceSid: Config.serviceSid,
       })
+      let roomSid;
+      client.video.rooms(appointments.videoChatId)
+            .fetch()
+            .then(room =>{ console.log(room, 'videoroom');roomSid=room.sid});
+
       let sid, participantId, convoId;
       
       const convo = await client.conversations.conversations.list();
       
       convo.forEach(con => {
         if (con.uniqueName == appointments.videoChatId)
-          sid = con.sid;
+          {sid = con.sid;
+          // console.log('room sid',sid);
+          }
       })
       if (!sid) {
         await client.conversations.v1.conversations.create({ friendlyName: appointments.videoChatId, uniqueName: appointments.videoChatId })
@@ -1186,7 +1195,7 @@ module.exports = {
         statusCode: 200,
   
         message: "Room successfully joined",
-        data:{token:token.toJwt(),roomId:appointments.videoChatId,identity:appointments?.userId?.firstName+" "+appointments?.userId?.lastName}
+        data:{token:token.toJwt(),roomSid:sid,roomId:roomSid,identity:appointments?.userId?.firstName+" "+appointments?.userId?.lastName,expertId:appointments.expertId}
       },
       res
     );
@@ -1344,7 +1353,8 @@ module.exports = {
          data:{
           identity: identity,
           token: accessToken.toJwt(),
-          expertIdentity
+          expertIdentity,
+          expertId:reqdAppointment.expertId._id
          }
      },
      res
@@ -1407,7 +1417,32 @@ module.exports = {
     {
       universalFunctions.sendError(error,res);
     }
-  }
+  },
+  CheckExpertIsAlreadyRated:async (req,res)=>{
+    try{
+let id=req.user.id;
+     let rating= Expert_Rating.findOne({userId:id,expertId:req.body.expertId});
+     let isRated=false;
+     if(rating)
+     {
+       isRated=true;
+     }
+
+     universalFunctions.sendSuccess({
+      statusCode:200,
+      message:'success',
+      data:{
+       isRated:isRated
+      }
+  },
+  res
+     )
+    }
+    catch(error)
+    {
+      universalFunctions.sendError(error,res);
+    }
+  },
 };
 
 

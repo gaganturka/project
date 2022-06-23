@@ -43,7 +43,8 @@ router.route("/getUsersFavoriteExperts").get(authUser.checkAuth,WebsiteControlle
 router.route("/twlioVoiceCallUser").post(authUser.checkAuth,WebsiteController.twlioVoiceCallUser);
 router.route("/twilioVoiceResponse").post(WebsiteController.twilioVoiceResponse);
 router.route("/twilioVideoCallback").post(WebsiteController.twilioVideoCallback);
-
+  
+router.route("/isExpertRated").post(authUser.checkAuth,WebsiteController.CheckExpertIsAlreadyRated);
 
 
   module.exports = router;

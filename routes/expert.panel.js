@@ -21,6 +21,7 @@ router.route("/getExpertAppointmentByFilter").post(isexpert.isExpert,ExpertContr
 
 router.route("/videoChatTokenExpert").post(isexpert.isExpert,ExpertController.twilioVideoChatTokenExpert);
 router.route("/sendPushNotificationChatRequest").post(isexpert.isExpert,ExpertController.sendPushNotificationChatRequest);
+router.route("/twilioVoiceCallExpert").post(isexpert.isExpert,ExpertController.twlioVoiceCallExpert);
 
 
 module.exports = router;
