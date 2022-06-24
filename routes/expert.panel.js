@@ -23,8 +23,9 @@ router.route("/videoChatTokenExpert").post(isexpert.isExpert,ExpertController.tw
 router.route("/sendPushNotificationChatRequest").post(isexpert.isExpert,ExpertController.sendPushNotificationChatRequest);
 router.route("/twilioVoiceCallExpert").post(isexpert.isExpert,ExpertController.twlioVoiceCallExpert);
 
-router.route("/getSingleAppointment").post(isexpert.isExpert,ExpertController.getSingleAppointment);
+router.route("/getSingleAppointment").post(ExpertController.getSingleAppointment);
 router.route("/twilioVideoMarkComplete").post(isexpert.isExpert,ExpertController.twilioVideoMarkComplete);
+router.route("/twilioAudioMarkComplete").post(isexpert.isExpert,ExpertController.twilioAudioMarkComplete);
 
 router.route("/timeSlotsOfUserSingleDay").get(isexpert.isExpert, ExpertController.timeSlotsOfUserSingleDay);
 

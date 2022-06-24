@@ -887,8 +887,23 @@ getChatAppointment:async (req,res)=>{
     },
     twilioAudioMarkComplete:async (req,res)=>{
       try{
-        let appointments=await appointmentModel.findOne({_id:req.body.appointmentId});
+        let appointments=await appointmentModel.findByIdAndUpdate({_id:req.body.appointmentId},{status: 
+          APP_CONSTANTS.appointmentStatus.completed,},{new:true}
+        );
       
+        if(!appointments)
+        {
+          throw Boom.badRequest('could not complete')
+        }
+
+        universalFunctions.sendSuccess({
+          statusCode:200,
+          message:"success",
+          data:{
+            appointmentDetails:appointments
+          }
+        },
+        res)
       }
       catch(error)
       {
