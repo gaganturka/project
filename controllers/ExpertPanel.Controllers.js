@@ -444,12 +444,13 @@ try{
   // console.log(payload,"here is body ")
   let start=payload.startAppointmentTime,end= payload.endAppointmentTime,appointmentDate=payload.appointmentDate;
 
-   start =new Date(appointmentDate+' '+start); 
+  //  start =new Date(appointmentDate+' '+start); 
   // console.log(localdate,"here is ");
   // console.log(moment.utc(moment(localdate)).format(),'start time 11')
   // start=moment.utc(moment(localdate)).format();
 
-  end =new Date(appointmentDate+' '+end); 
+  // end =new Date(appointmentDate+' '+end); 
+  console.log(end,'endddd',start,'starrtttt');
   // console.log(localdate ,new Date(localdate),"here is ");
   // console.log(moment.utc(moment(localdate)).format(),'start time')
   // end=moment.utc(moment(localdate)).format();
