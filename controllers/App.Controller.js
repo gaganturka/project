@@ -1509,7 +1509,7 @@ module.exports = {
             
               universalFunctions.sendSuccess(
                 {
-                  statusCode: 200,
+                  statusCode: 400,
                   message: "You already have a chat room",
                   data: chats,
                 },
