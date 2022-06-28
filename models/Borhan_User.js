@@ -3,7 +3,8 @@ const { Schema } = mongoose;
 
 const BorhanUserSchema = new Schema({
   isSubscribed: {
-    type: String,
+    type: Boolean,
+    default:false
   },
   balance: {
     type: Number,
