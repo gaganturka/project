@@ -222,9 +222,9 @@ module.exports = {
         .populate("userId")
         .populate(payload)
         .sort({ "rating.avgRating": -1 });
-      if (!expert) {
-        throw Boom.badRequest("cannot find any expert");
-      }
+      // if (!expert) {
+      //   throw Boom.badRequest("cannot find any expert");
+      // }
       let expertData = JSON.parse(JSON.stringify(expert));
 
       expertData.map((ele) => {
@@ -253,9 +253,9 @@ module.exports = {
         .populate(payload)
         .sort({ "rating.avgRating": -1 });
 
-      if (!topOnlineExperts) {
-        throw Boom.badRequest("cannot find any online expert");
-      }
+      // if (!topOnlineExperts) {
+      //   throw Boom.badRequest("cannot find any online expert");
+      // }
       let topOnlineExpertsData = JSON.parse(JSON.stringify(topOnlineExperts));
       topOnlineExpertsData.map((ele) => {
         delete ele.__v;
@@ -284,9 +284,9 @@ module.exports = {
         .populate(payload)
         .sort({ "rating.avgRating": -1 });
 
-      if (!topOnlinePremiumExperts) {
-        throw Boom.badRequest("cannot find any premium online expert");
-      }
+      // if (!topOnlinePremiumExperts) {
+      //   throw Boom.badRequest("cannot find any premium online expert");
+      // }
       let topOnlinePremiumExpertsData = JSON.parse(
         JSON.stringify(topOnlinePremiumExperts)
       );
@@ -330,9 +330,10 @@ module.exports = {
         .populate("expertId.userId")
         .limit(parseInt(5));
       if (!upcomingAppointmentDatas) {
-        throw Boom.badRequest(responseMessages.APPOINTMENT_DATA_NOT_FOUND);
+        // throw Boom.badRequest(responseMessages.APPOINTMENT_DATA_NOT_FOUND);
       }
-      let upcomingAppointmentData = JSON.parse(
+      else{
+      var upcomingAppointmentData = JSON.parse(
         JSON.stringify(upcomingAppointmentDatas)
       );
       upcomingAppointmentData.map((ele) => {
@@ -350,21 +351,77 @@ module.exports = {
           delete ele.expertId.userId.userData;
         }
       });
+    }
       let topExpertsList = [],
         topOnlineExpertsList = [],
         topOnlinePremiumExpertsList = [];
 
       let i;
-      for (i = 0; i < 5; i++) {
-        topExpertsList.push(expertData[i]);
-        topOnlineExpertsList.push(topOnlineExpertsData[i]);
-        topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
+      // for (i = 0; i < 5; i++) {
+      //   topExpertsList.push(expertData[i]);
+      //   topOnlineExpertsList.push(topOnlineExpertsData[i]);
+      //   topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
+      // }
+      if(expertData.length<5)
+      {
+        for(i=0;i<expertData.length;i++)
+        {
+          topExpertsList.push(expertData[i]);
+        }
       }
-
+      else{
+        for(i=0;i<5;i++)
+        {
+          topExpertsList.push(expertData[i]);
+        }
+      }
+      if(topOnlineExpertsData.length<5)
+      {
+        for(i=0;i<topOnlineExpertsData.length;i++)
+        {
+          topOnlineExpertsList.push(topOnlineExpertsData[i]);
+        }
+      }
+      else{
+        for(i=0;i<5;i++)
+        {
+          topOnlineExpertsList.push(topOnlineExpertsData[i]);
+        }
+      }
+      if(topOnlinePremiumExpertsData.length<5)
+      {
+        for(i=0;i<topOnlinePremiumExpertsData.length;i++)
+        {
+          topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
+        }
+      }
+      else{
+        for(i=0;i<5;i++)
+        {
+          topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
+        }
+      }
+     if(!upcomingAppointmentDatas)
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
-          message: "All top experts ",
+          message: "Desktop page successfully fetched",
+          data: {
+            topExpertsList,
+            topOnlineExpertsList,
+            topOnlinePremiumExpertsList,
+            categoryList: categoryData,
+            practiceList: practiceData,
+            upcomingAppointmentList: upcomingAppointmentDatas,
+          },
+        },
+        res
+      );
+      else
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Desktop page successfully fetched",
           data: {
             topExpertsList,
             topOnlineExpertsList,
@@ -376,6 +433,7 @@ module.exports = {
         },
         res
       );
+
     } catch (error) {
       universalFunctions.sendError(error, res);
     }

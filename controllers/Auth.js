@@ -81,7 +81,7 @@ module.exports = {
 
       // checks whether the mobileno has already been created
 
-      let user = await User.findOne({ mobileNo: req.body.mobileNo}).populate('userData.data');
+      let user = await User.findOne({ mobileNo: req.body.mobileNo,email:req.body.email}).populate('userData.data');
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
         // if (user.role === APP_CONSTANTS.role.borhanuser) {
@@ -194,7 +194,7 @@ module.exports = {
 
       // checks whether the mobileno has already been created
 
-      let user = await User.findOne({ mobileNo: req.body.mobileNo });
+      let user = await User.findOne({ mobileNo: req.body.mobileNo,email:req.body.email });
 
       // console.log('The fetched user - ', user);
       // console.log('######################################################');
