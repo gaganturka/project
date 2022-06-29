@@ -685,7 +685,8 @@ module.exports = {
         appointmentDate:payload.appointmentDate
       })
       payload.userId = userId;
-      if(data)
+      console.log(data,'daaaaattaa')
+      if(data.length>0)
       {
         throw Boom.badRequest('already an appointment at this time');
       }
