@@ -421,7 +421,7 @@ module.exports = {
 
       // console.log('The fetched user - ', user);
       // console.log('######################################################');
-      if (user !== null) {
+      if (user ) {
         // if (user.role === APP_CONSTANTS.role.expert) {
           throw Boom.badRequest(responseMessages.USER_EXISTS);
         // } else {
@@ -490,7 +490,7 @@ module.exports = {
           model: APP_CONSTANTS.role.expert,
           data: expertUserr._id,
         },
-        otp: req.body.otp,
+        // otp: req.body.otp,
       });
       await expertUser.findByIdAndUpdate(expertUserr._id, { userId: user._id });
       // console.log(expertUserr,"eexxpperrttusseerr");
