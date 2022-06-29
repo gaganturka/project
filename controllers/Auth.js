@@ -476,7 +476,7 @@ module.exports = {
         isApprovedByAdmin: true,
       });
       // console.log('The created expert - ',expertUserr);
-      // console.log('######################################################');
+      console.log('######################################################');
 
       user = await User.create({
         firstName: req.body.firstName,
