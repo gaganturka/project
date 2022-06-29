@@ -422,41 +422,41 @@ module.exports = {
       // console.log('The fetched user - ', user);
       // console.log('######################################################');
       if (user !== null) {
-        if (user.role === APP_CONSTANTS.role.expert) {
+        // if (user.role === APP_CONSTANTS.role.expert) {
           throw Boom.badRequest(responseMessages.USER_EXISTS);
-        } else {
-          let expertUserr = await expertUser.create({
-            isSubscribed: false,
-            category: req.body.category,
-            practiceArea: req.body.practiceArea,
-            bio: req.body.bio,
-            audioFilePath: req.body.audioFilePath,
-            videoFilePath: req.body.videoFilePath,
-            document: [
-              {
-                fileName: req.body.document[0].fileName,
-                fileType: req.body.document[0].fileType,
-                link: req.body.document[0].path,
-                mimeType: req.body.document[0].mimeType,
-              },
-            ],
-            accountType: req.body.accountType,
-            rating: { noOfRating: 0, ratingCount: 0, avgRating: 0 },
-            experience: req.body.experience,
-            isApprovedByAdmin: true,
-          });
-          await expertUser.findByIdAndUpdate(expertUserr._id, {
-            userId: user._id,
-          });
+        // } else {
+        //   let expertUserr = await expertUser.create({
+        //     isSubscribed: false,
+        //     category: req.body.category,
+        //     practiceArea: req.body.practiceArea,
+        //     bio: req.body.bio,
+        //     audioFilePath: req.body.audioFilePath,
+        //     videoFilePath: req.body.videoFilePath,
+        //     document: [
+        //       {
+        //         fileName: req.body.document[0].fileName,
+        //         fileType: req.body.document[0].fileType,
+        //         link: req.body.document[0].path,
+        //         mimeType: req.body.document[0].mimeType,
+        //       },
+        //     ],
+        //     accountType: req.body.accountType,
+        //     rating: { noOfRating: 0, ratingCount: 0, avgRating: 0 },
+        //     experience: req.body.experience,
+        //     isApprovedByAdmin: true,
+        //   });
+        //   await expertUser.findByIdAndUpdate(expertUserr._id, {
+        //     userId: user._id,
+        //   });
 
-          universalFunctions.sendSuccess(
-            {
-              statusCode: 200,
-              message: "User created",
-            },
-            res
-          );
-        }
+        //   universalFunctions.sendSuccess(
+        //     {
+        //       statusCode: 200,
+        //       message: "User created",
+        //     },
+        //     res
+        //   );
+        // }
       }
       // console.log(req.body,"iaenienwieioafeniaaaaa")
       // console.log('######################################################');
