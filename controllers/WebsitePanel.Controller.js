@@ -679,11 +679,15 @@ module.exports = {
       let data = await appointment.find({
         startAppointmentTime: {
           $gte: start,
-          $lt: end
-        }
+          $lte: end
+        },
+        expertId:payload.expertId
       })
       payload.userId = userId;
-      
+      if(data)
+      {
+        throw Boom.badRequest('already an appointment at this time');
+      }
       let createAppointment = await appointment.create(payload);
 
       universalFunctions.sendSuccess(

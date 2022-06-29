@@ -1183,7 +1183,7 @@ module.exports = {
         
       // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
       if (filterType == "All") {
-        data = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        data = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
           .sort({'startAppointmentTime':-1});
@@ -1194,7 +1194,7 @@ module.exports = {
         let now =new Date();
         data = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
           $gte: now.getTime()
-        } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId')
+        } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId').populate('practiceArea')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
           .sort({'startAppointmentTime':-1});
@@ -1204,7 +1204,7 @@ module.exports = {
       }
       else if (filterType == 'Rescheduled') {
         let now=new Date();
-        data = await appointment.find({ userId: userId, isRescheduled:true }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        data = await appointment.find({ userId: userId, isRescheduled:true }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
           .sort({'startAppointmentTime':-1});
@@ -1218,7 +1218,7 @@ module.exports = {
           userId: userId,
           status: APP_CONSTANTS.appointmentStatus.completed,
 
-        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
           .sort({'startAppointmentTime':-1});
@@ -1232,7 +1232,7 @@ module.exports = {
         data = await appointment.find({
           userId: userId, status: APP_CONSTANTS.appointmentStatus.cancelled,
 
-        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
           .sort({'startAppointmentTime':-1});
@@ -1252,6 +1252,7 @@ module.exports = {
       appointmentAllData.map((ele) => {
         if (ele && ele.expertId && ele.expertId.userId) {
           delete ele.__v;
+          delete ele.practiceArea;
           delete ele.expertId.__v;
           delete ele.expertId.userId.userData;
           delete ele.expertId.userId.isEmailVerified;
