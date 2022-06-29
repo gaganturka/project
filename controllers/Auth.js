@@ -81,7 +81,9 @@ module.exports = {
 
       // checks whether the mobileno has already been created
 
-      let user = await User.findOne({ mobileNo: req.body.mobileNo,email:req.body.email}).populate('userData.data');
+      // let user = await User.findOne({ mobileNo: req.body.mobileNo,email:req.body.email}).populate('userData.data');
+      let user= await User.findOne({ $or: [ { mobileNo: req.body.mobileNo }, { email:req.body.email } ] }).populate('userData.data');
+      
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
         // if (user.role === APP_CONSTANTS.role.borhanuser) {
@@ -194,8 +196,9 @@ module.exports = {
 
       // checks whether the mobileno has already been created
 
-      let user = await User.findOne({ mobileNo: req.body.mobileNo,email:req.body.email });
-
+      // let user = await User.findOne({ mobileNo: req.body.mobileNo,email:req.body.email });
+      let user= await User.findOne({ $or: [ { mobileNo: req.body.mobileNo }, { email:req.body.email } ] });
+    
       // console.log('The fetched user - ', user);
       // console.log('######################################################');
       if (user !== null) {
@@ -417,13 +420,14 @@ module.exports = {
 
       // checks whether the mobileno has already been created
 
-      let user = await User.findOne({ mobileNo: req.body.mobileNo ,email:req.body.email});
+      let user= await User.findOne({ $or: [ { mobileNo: req.body.mobileNo }, { email:req.body.email } ] });
+      // let user2 = await User.findOne({ email: req.body.email });
 
-      // console.log('The fetched user - ', user);
+      console.log('The fetched user - ', user,'addf');
       // console.log('######################################################');
-      if (user ) {
+      if (user!==null ) {
         // if (user.role === APP_CONSTANTS.role.expert) {
-          throw Boom.badRequest(responseMessages.USER_EXISTS);
+          throw Boom.badRequest('already an expert');
         // } else {
         //   let expertUserr = await expertUser.create({
         //     isSubscribed: false,
