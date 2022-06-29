@@ -87,7 +87,7 @@ module.exports = {
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
         // if (user.role === APP_CONSTANTS.role.borhanuser) {
-          throw Boom.badRequest(responseMessages.USER_EXISTS);
+          throw Boom.badRequest('user already exists');
         // } else {
           
         //   let borhanuser = await borhanUser.create({
@@ -203,7 +203,7 @@ module.exports = {
       // console.log('######################################################');
       if (user !== null) {
         // if (user.role === APP_CONSTANTS.role.expert) {
-          throw Boom.badRequest(responseMessages.USER_EXISTS);
+          throw Boom.badRequest('expert already exists');
         // } else {
          
           // let expertUserr = await expertUser.create({
