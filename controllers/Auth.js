@@ -417,7 +417,7 @@ module.exports = {
 
       // checks whether the mobileno has already been created
 
-      let user = await User.findOne({ mobileNo: req.body.mobileNo });
+      let user = await User.findOne({ mobileNo: req.body.mobileNo ,email:req.body.email});
 
       // console.log('The fetched user - ', user);
       // console.log('######################################################');
