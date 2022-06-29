@@ -681,7 +681,8 @@ module.exports = {
           $gte: start,
           $lte: end
         },
-        expertId:payload.expertId
+        expertId:payload.expertId,
+        appointmentDate:payload.appointmentDate
       })
       payload.userId = userId;
       if(data)
