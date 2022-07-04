@@ -10,7 +10,8 @@ const favouriteExport = require("../models/Fav_Expert");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
-const Expert_Rating =require('../models/Expert_Rating');
+const Expert_Rating = require('../models/Expert_Rating');
+const moment = require("moment");
 // const Mongoose = require("mongoose");
 const jwtFunction = require("../utils/jwtFunction");
 // import Mongoose from "mongoose";
@@ -1249,7 +1250,11 @@ module.exports = {
      
       let appointmentAllData = JSON.parse(JSON.stringify(data));
       // console.log("this is all data ", appointmentAllData);
-      appointmentAllData.map((ele) => {
+        appointmentAllData.map((ele) => {
+
+            // console.log("thiss", ele)
+           
+            // console.log("this is local time", localTime)
         if (ele && ele.expertId && ele.expertId.userId) {
           delete ele.__v;
           delete ele.practiceArea;
@@ -1282,7 +1287,20 @@ module.exports = {
         }
       });
 
-    console.log(appointmentAllData,'ssdsdfdsdsfdfd')
+        console.log(appointmentAllData, 'ssdsdfdsdsfdfd')
+        var appointmentStartLocalTime, appointmentEndLocalTime, appointDateandTimeLocal;
+        appointmentAllData.map((ele) => {
+            appointmentStartLocalTime = moment.utc(ele.startAppointmentTime).toDate();
+            appointmentStartLocalTime = moment(appointmentStartLocalTime).format('YYYY-MM-DD HH:mm:ss');
+            appointmentEndLocalTime = moment.utc(ele.endAppointmentTime).toDate();
+            appointmentEndLocalTime = moment(appointmentEndLocalTime).format('YYYY-MM-DD HH:mm:ss');
+            appointDateandTimeLocal = moment.utc(ele.appointDateandTime).toDate();
+            appointDateandTimeLocal = moment(appointDateandTimeLocal).format('YYYY-MM-DD HH:mm:ss');
+            
+            return ele.startAppointmentTimeLocal = appointmentStartLocalTime, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
+            // return { ...ele, startAppointmentTimes : localTime}
+        })
+       
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
