@@ -1278,6 +1278,7 @@ module.exports = {
         status: Joi.string().allow(""),
         practiceArea: Joi.string().length(24).required(),
         appointmentId: Joi.string(),
+        timeZone:Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let start = req.body.startAppointmentTime, end = req.body.endAppointmentTime;
@@ -1288,19 +1289,6 @@ module.exports = {
         }
       })
       payload.userId = userId;
-      
-      // let createAppointment = await appointment.create(payload);
-
-      // universalFunctions.sendSuccess(
-      //   {
-      //     statusCode: 200,
-      //     message: "Success",
-      //     data: createAppointment,
-      //   },
-      //   res
-      // );
-
-      // let data;
       let expert;
       let rescheduledAppointment = await appointment.findByIdAndUpdate(req.body.appointmentId, payload,{new:true} );
  
@@ -1308,11 +1296,24 @@ module.exports = {
         throw Boom.badRequest("cannot find any appointment to reschedule");
 
       }
+      let timeZone=req.body.timeZone;
+      let rescheduledAppointments = JSON.parse(JSON.stringify(rescheduledAppointment))
+      //   let createAppointments=JSON.stringify(createAppointment)
+        let localTime = moment.tz(rescheduledAppointments.startAppointmentTime, timeZone);
+       let startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+        let endTime = moment.tz(rescheduledAppointments.endAppointmentTime, timeZone);
+      let   appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+         let dateAndTime = moment.tz(rescheduledAppointments.appointDateandTime, timeZone);
+       let  appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+       rescheduledAppointments.startAppointmentTimeLocal=startAppointmentTimeLocal;
+       rescheduledAppointments.appointmentEndLocalTime=appointmentEndLocalTime;
+       rescheduledAppointments.appointDateandTimeLocal=appointDateandTimeLocal;
+  
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
-          data: rescheduledAppointment,
+          data: rescheduledAppointments,
         },
         res
       );
