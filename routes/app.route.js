@@ -44,6 +44,11 @@ router
     router.route("/getTestimonies").get(appCreation.getTestimonies);
     router.route("/createTestimony").post(checkAuth,appCreation.createTestimony);
     router.route("/giveExpertRating").post(checkAuth,appCreation.giveExpertRating);
+    router.route("/getAvailableTimeForUser").get(appCreation.getAvailableTimeForUser);
+    // router.route("/bookAppointment").post(checkAuth,appCreation.bookAppointment);
+
+    
+
     
   
 

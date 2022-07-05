@@ -403,6 +403,8 @@ module.exports = {
           topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
         }
       }
+      let timeZone=req.query.timeZone;
+
      if(!upcomingAppointmentDatas)
       universalFunctions.sendSuccess(
         {
@@ -420,6 +422,19 @@ module.exports = {
         res
       );
       else
+      var startAppointmentTimeLocal, appointmentEndLocalTime, appointDateandTimeLocal;
+      upcomingAppointmentData.map((ele) => {
+          
+          let localTime = moment.tz(ele.startAppointmentTime, timeZone);
+          startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+          let endTime = moment.tz(ele.endAppointmentTime, timeZone);
+           appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+           let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
+           appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+
+          
+          return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
+      })
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1684,4 +1699,77 @@ giveExpertRating: async (req,res)=>{
   }
 
 },
+getAvailableTimeForUser: async (req, res) => {
+    try {
+
+      let { expertId, appointmentDate, duration,timeZone } = req.query;
+      let curentdate=new Date();
+    
+      const expertTime = await expertTimeAvailable.find({
+        $and: [
+          {
+            "expertId": expertId
+          }, {
+            "appointmentDate": appointmentDate,
+
+          }, {
+            "duration": duration
+          },
+          {
+          startAppointmentTime: {
+            $gte: curentdate,
+            
+          }
+        },
+        ]
+      });
+
+
+      if (!expertTime) {
+        throw Boom.badRequest("invalid id or token");
+      }
+      let tempobj = JSON.parse(JSON.stringify(expertTime));
+      await universalFunctions.asyncForEach(tempobj, async (e, index) => {
+        let data = await appointment.find({
+          expertId: expertId,
+          appointmentDate: appointmentDate,
+          timeSlotId: e._id ? e._id : "",
+          
+          
+        });
+        if (data.length > 0) {
+          e.avialble = false;
+        } else {
+          e.avialble = true;
+        }
+      })
+      var startAppointmentTimeLocal, appointmentEndLocalTime, appointDateandTimeLocal;
+      
+      tempobj.map((ele) => {
+          
+          let localTime = moment.tz(ele.startAppointmentTime, timeZone);
+          startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+          let endTime = moment.tz(ele.endAppointmentTime, timeZone);
+           appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+           let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
+           appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+
+          
+          return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
+      })
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "expertTime found",
+          data: tempobj,
+        },
+        res
+      );
+
+    } catch (error) {
+      console.log(error)
+      universalFunctions.sendError(error, res);
+    }
+  },
 };
