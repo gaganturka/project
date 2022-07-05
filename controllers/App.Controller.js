@@ -11,7 +11,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
 const Expert_Rating = require('../models/Expert_Rating');
-const moment = require("moment");
+// const moment = require("moment");
+var moment = require('moment-timezone');
 // const Mongoose = require("mongoose");
 const jwtFunction = require("../utils/jwtFunction");
 // import Mongoose from "mongoose";
@@ -1071,102 +1072,14 @@ module.exports = {
   },
   getAppointmentDetails: async (req, res) => {
     try {
-      // let userId = req.user.id;
-      // const schema = Joi.object({
-      //   limit: Joi.number(),
-      //   page: Joi.number(),
-      //   status: Joi.string().allow(""),
-      // });
-      // await universalFunctions.validateRequestPayload(req.query, res, schema);
-      // let appointmentData = {}
-      // if (req.body.status) {
-      //   appointmentData = await appointment
-      //     .find({
-      //       userId: userId,
-      //       status: req.body.status,
-      //     })
-      //     .populate({
-      //       path: "userId",
-      //       select: "firstName lastName profilePic role",
-      //     })
-      //     .populate({
-      //       path: "expertId",
-      //       populate: { path: "userId practiceArea" },
-      //     })
-      //     .skip(parseInt((req.body.page - 1) * req.body.limit))
-      //     .limit(parseInt(req.body.limit));
-      // } else {
-      //   appointmentData = await appointment
-      //     .find({
-      //       status: {
-      //         $nin: [APP_CONSTANTS.appointmentStatus.cancelled],
-      //       },
-      //       userId: userId,
-      //     })
-      //     .populate({
-      //       path: "userId",
-      //       select: "firstName lastName profilePic role",
-      //     })
-      //     .populate({
-      //       path: "expertId",
-      //       populate: { path: "userId practiceArea" },
-      //     })
-      //     .skip(parseInt((req.body.page - 1) * req.body.limit))
-      //     .limit(parseInt(req.body.limit));
-      // }
-
-      // if (!appointmentData) {
-      //   universalFunctions.sendSuccess(
-      //     {
-      //       statusCode: 200,
-      //       message: "Appointment Data Not Found",
-      //       data: [],
-      //     },
-      //     res
-      //   );
-      // }
-      // let appointmentAllData = JSON.parse(JSON.stringify(appointmentData));
-      // // console.log("this is all data ", appointmentAllData);
-      // appointmentAllData.map((ele) => {
-      //   if (ele && ele.expertId && ele.expertId.userId) {
-      //     delete ele.__v;
-      //     delete ele.expertId.__v;
-      //     delete ele.expertId.userId.userData;
-      //     delete ele.expertId.userId.isEmailVerified;
-      //     delete ele.expertId.userId.password;
-      //     delete ele.expertId.userId.mobileFirebaseUid;
-      //     delete ele.expertId.userId.token;
-      //     delete ele.expertId.userId.__v;
-      //     // delete ele.exportId.availableForVideo;
-      //     // delete ele.expertId.bankName;
-      //     // delete ele.exportId.bankAccountNo;
-      //     // delete ele.expertId.noOfHoursSessionDone;
-      //     // delete ele.expertId.noOfViews;
-      //     // delete ele.exportId.userId.mobileNo;
-      //     // delete ele.exportId &&
-      //     //   ele.expertId.userId &&
-      //     //   ele.expertId.userId.email;
-      //     // delete ele.exportId.userId.role;
-      //     // delete ele.userId.userData;
-      //   }
-      // });
-
-      // universalFunctions.sendSuccess(
-      //   {
-      //     statusCode: 200,
-      //     message: "Success",
-      //     data: appointmentAllData,
-      //   },
-      //   res
-      // );
-
-
+        let timeZone=req.body.timezone;
       let userId = req.user.id;
       let filterType = req.body.filterType;
       const schema = Joi.object({
         filterType: Joi.string(),
         limit: Joi.number(),
         page: Joi.number(),
+        timezone:Joi.string(),
 
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
@@ -1272,32 +1185,27 @@ module.exports = {
           delete ele.userId.password;
           delete ele.userId.mobileFirebaseUid;
           delete ele.userId.token;
-          // delete ele.userId.__v;
-          // delete ele.exportId.availableForVideo;
-          // delete ele.expertId.bankName;
-          // delete ele.exportId.bankAccountNo;
-          // delete ele.expertId.noOfHoursSessionDone;
-          // delete ele.expertId.noOfViews;
-          // delete ele.exportId.userId.mobileNo;
-          // delete ele.exportId &&
-          //   ele.expertId.userId &&
-          //   ele.expertId.userId.email;
-          // delete ele.exportId.userId.role;
-          // delete ele.userId.userData;
         }
       });
 
-        console.log(appointmentAllData, 'ssdsdfdsdsfdfd')
-        var appointmentStartLocalTime, appointmentEndLocalTime, appointDateandTimeLocal;
+        var startAppointmentTimeLocal, appointmentEndLocalTime, appointDateandTimeLocal;
         appointmentAllData.map((ele) => {
-            appointmentStartLocalTime = moment.utc(ele.startAppointmentTime).toDate();
-            appointmentStartLocalTime = moment(appointmentStartLocalTime).format('YYYY-MM-DD HH:mm:ss');
-            appointmentEndLocalTime = moment.utc(ele.endAppointmentTime).toDate();
-            appointmentEndLocalTime = moment(appointmentEndLocalTime).format('YYYY-MM-DD HH:mm:ss');
-            appointDateandTimeLocal = moment.utc(ele.appointDateandTime).toDate();
-            appointDateandTimeLocal = moment(appointDateandTimeLocal).format('YYYY-MM-DD HH:mm:ss');
+            // let timeFormate= moment(ele.startAppointmentTime).format('YYYY-MM-DD HH:mm')
+            // console.log("time" ,timeFormate )
+            let localTime = moment.tz(ele.startAppointmentTime, timeZone);
+            startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+            let endTime = moment.tz(ele.endAppointmentTime, timeZone);
+             appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+             let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
+             appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+
+
+            // appointmentEndLocalTime = moment.utc(ele.endAppointmentTime).toDate();
+            // appointmentEndLocalTime = moment(appointmentEndLocalTime).format('YYYY-MM-DD HH:mm:ss');
+            // appointDateandTimeLocal = moment.utc(ele.appointDateandTime).toDate();
+            // appointDateandTimeLocal = moment(appointDateandTimeLocal).format('YYYY-MM-DD HH:mm:ss');
             
-            return ele.startAppointmentTimeLocal = appointmentStartLocalTime, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
+            return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
             // return { ...ele, startAppointmentTimes : localTime}
         })
        
