@@ -1772,4 +1772,66 @@ getAvailableTimeForUser: async (req, res) => {
       universalFunctions.sendError(error, res);
     }
   },
+  bookAppointment: async (req, res) => {
+    try {
+      let userId = req.user.id;
+      let payload = req.body;
+      const schema = Joi.object({
+        timeSlotId: Joi.string().length(24).required(),
+        expertId: Joi.string().length(24).required(),
+        appointmentType: Joi.string().allow(""),
+        duration: Joi.string().allow(""),
+        appointmentDate: Joi.date().required(),
+        endAppointmentTime: Joi.date().required(),
+        startAppointmentTime: Joi.date().required(),
+        appointmentTime: Joi.string().allow(""),
+        appointDateandTime: Joi.date().required(),
+        status: Joi.string().allow(""),
+        practiceArea: Joi.string().length(24).required(),
+        timeZone:Joi.string(),
+
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let start = req.body.startAppointmentTime, end = req.body.endAppointmentTime;
+      let data = await appointment.find({
+        startAppointmentTime: {
+          $gte: start,
+          $lte: end
+        },
+        expertId:payload.expertId,
+        appointmentDate:payload.appointmentDate
+      })
+      payload.userId = userId;
+      console.log(data,'daaaaattaa')
+      if(data.length>0)
+      {
+        throw Boom.badRequest('already an appointment at this time');
+      }
+      let timeZone=req.body.timeZone;
+      let createAppointment = await appointment.create(payload);
+      let createAppointments = JSON.parse(JSON.stringify(createAppointment))
+    //   let createAppointments=JSON.stringify(createAppointment)
+      let localTime = moment.tz(createAppointments.startAppointmentTime, timeZone);
+     let startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+      let endTime = moment.tz(createAppointments.endAppointmentTime, timeZone);
+    let   appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+       let dateAndTime = moment.tz(createAppointments.appointDateandTime, timeZone);
+     let  appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+       createAppointments.startAppointmentTimeLocal=startAppointmentTimeLocal;
+       createAppointments.appointmentEndLocalTime=appointmentEndLocalTime;
+       createAppointments.appointDateandTimeLocal=appointDateandTimeLocal;
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: createAppointments,
+        },
+        res
+      );
+
+    } catch (error) {
+      return universalFunctions.sendError(error, res);
+    }
+  },
 };
