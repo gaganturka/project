@@ -1296,24 +1296,24 @@ module.exports = {
         throw Boom.badRequest("cannot find any appointment to reschedule");
 
       }
-      let timeZone=req.body.timeZone;
-      let rescheduledAppointments = JSON.parse(JSON.stringify(rescheduledAppointment))
-      //   let createAppointments=JSON.stringify(createAppointment)
-        let localTime = moment.tz(rescheduledAppointments.startAppointmentTime, timeZone);
-       let startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
-        let endTime = moment.tz(rescheduledAppointments.endAppointmentTime, timeZone);
-      let   appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
-         let dateAndTime = moment.tz(rescheduledAppointments.appointDateandTime, timeZone);
-       let  appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
-       rescheduledAppointments.startAppointmentTimeLocal=startAppointmentTimeLocal;
-       rescheduledAppointments.appointmentEndLocalTime=appointmentEndLocalTime;
-       rescheduledAppointments.appointDateandTimeLocal=appointDateandTimeLocal;
+    //   let timeZone=req.body.timeZone;
+    //   let rescheduledAppointments = JSON.parse(JSON.stringify(rescheduledAppointment))
+    //   //   let createAppointments=JSON.stringify(createAppointment)
+    //     let localTime = moment.tz(rescheduledAppointments.startAppointmentTime, timeZone);
+    //    let startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+    //     let endTime = moment.tz(rescheduledAppointments.endAppointmentTime, timeZone);
+    //   let   appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+    //      let dateAndTime = moment.tz(rescheduledAppointments.appointDateandTime, timeZone);
+    //    let  appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+    //    rescheduledAppointments.startAppointmentTimeLocal=startAppointmentTimeLocal;
+    //    rescheduledAppointments.appointmentEndLocalTime=appointmentEndLocalTime;
+    //    rescheduledAppointments.appointDateandTimeLocal=appointDateandTimeLocal;
   
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
-          data: rescheduledAppointments,
+          data: rescheduledAppointment,
         },
         res
       );
