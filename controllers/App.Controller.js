@@ -48,7 +48,10 @@ module.exports = {
       const exportUser = await User.findOne({ mobileNo: req.body.mobileNo, role:APP_CONSTANTS.role.expert}).populate("userData.data");
       if(exportUser)
       {
-        throw Boom.badRequest(responseMessages.MOBILE_NUMBER_REGISTERD_EXPERT_USER); 
+        return res.status(404).send({
+          message: responseMessages.MOBILE_NUMBER_REGISTERD_EXPERT_USER
+       });
+        // throw Boom.badRequest(responseMessages.MOBILE_NUMBER_REGISTERD_EXPERT_USER); 
       }
       const user = await User.findOne({ mobileNo: req.body.mobileNo, role:APP_CONSTANTS.role.borhanuser}).populate("userData.data");
       if (!user) {
