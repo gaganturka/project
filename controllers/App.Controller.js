@@ -45,9 +45,7 @@ module.exports = {
         // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      const user = await User.findOne({ mobileNo: req.body.mobileNo }).populate(
-        "userData.data"
-      );
+      const user = await User.findOne({ mobileNo: req.body.mobileNo, role:APP_CONSTANTS.role.borhanuser}).populate("userData.data");
       if (!user) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
@@ -56,10 +54,10 @@ module.exports = {
         { deviceType: req.body.deviceType, deviceToken: req.body.deviceToken },
       ];
       let finalUser = await User.findByIdAndUpdate(
-        { _id: user._id },
+        { _id: user._id,role:APP_CONSTANTS.role.borhanuser },
         { token: newToken, mobileFirebaseUid: req.body.firebaseUid }
       );
-      let updatedUser = await User.findOne({ _id: finalUser._id }).populate(
+      let updatedUser = await User.findOne({ _id: finalUser._id,role:APP_CONSTANTS.role.borhanuser }).populate(
         "userData.data"
       );
       const token = await jwtFunction.jwtGeneratorApp(
