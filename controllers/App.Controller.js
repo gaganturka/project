@@ -45,6 +45,11 @@ module.exports = {
         // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
+      const exportUser = await User.findOne({ mobileNo: req.body.mobileNo, role:APP_CONSTANTS.role.expert}).populate("userData.data");
+      if(exportUser)
+      {
+        throw Boom.badRequest(responseMessages.MOBILE_NUMBER_REGISTERD_EXPERT_USER); 
+      }
       const user = await User.findOne({ mobileNo: req.body.mobileNo, role:APP_CONSTANTS.role.borhanuser}).populate("userData.data");
       if (!user) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
