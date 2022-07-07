@@ -174,58 +174,35 @@ module.exports = {
         search:  Joi.string().allow("").optional(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-
-     
       let expert=[],total;
-      if (req.body.search) {
-        let filter={};
-        // let co= Mongoose.Types.ObjectId(req.body.search),
-        console.log("this is search")
+      let filter={};        
+      if (req.body.sortBy == "1") {
         if (req.body.search) {
-          filter["$or"] = [
-            { firstName: { $regex: req.body.search, $options: "i" } }
-          ];
-        }
-        let expertData = await expertUser
-          .find({
-            isApprovedByAdmin: true,
-            status: APP_CONSTANTS.activityStatus.active,
-          })
-          .populate("category")
+         
+            filter["$or"] = [
+              { firstName: { $regex: req.body.search, $options: "i" } }
+            ];
+        let allExportDatas = await expertUser
+          .find({ isApprovedByAdmin: true })
           .populate("practiceArea")
-          .populate({path:"userId",match: filter})
-          .populate(payload)
-          .sort({ noOfHoursOfSessionsDone: -1 })
-          .skip(parseInt((req.body.page - 1) * req.body.limit))
-          .limit(parseInt(req.body.limit));
-          total = await expertUser
-          .find({
-            practiceArea: req.body.practiceArea,
-            category: req.body.category,
-            isApprovedByAdmin: true,
-            status: APP_CONSTANTS.activityStatus.active,
+          .populate("category")
+          .populate({ path: "userId", match: filter })
+          .sort({ "rating.avgRating": -1 })
+          let expertArray=[];
+          allExportDatas.map((ele)=>{
+            if(ele.userId !==null)
+            {
+              expertArray.push(ele);
+            }
           })
-          .countDocuments();
-          let expertArray=[]
-        expertData.map((ele) => {
-          if(ele !=null)
-          {
-          if (ele.userId != null) {
-            expertArray.push(ele);
-          }
-        }
-        });
-        count = expertArray.length;
-        let i;
-      for(i=parseInt((page - 1) * limit);i<parseInt((page - 1) * limit)+limit;i++)
+      let i;
+      for(i=parseInt((req.body.page - 1) * req.body.limit);i<parseInt((req.body.page - 1) * req.body.limit)+req.body.limit;i++)
       {
         if(expertArray[i]!=null)
         expert.push(expertArray[i]);
       }
-        }
-        
-      if (req.body.sortBy == "1") {
-        if (req.body.category !== "" && req.body.practiceArea === "") {
+    }    
+    else if (req.body.category !== "" && req.body.practiceArea === "") {
       
           expert = await expertUser
             .find({
@@ -408,9 +385,11 @@ module.exports = {
         throw Boom.badRequest("cannot find any expert");
       }
       let tempobj = JSON.parse(JSON.stringify(expert));
+      // console.log("this is temp" , tempobj)
+
       if(id){
       tempobj.map((ele)=>{
-        if(ele.expertlisting.length>0&&ele.expertlisting){
+        if(ele.expertlisting && ele.expertlisting.length>0&&ele.expertlisting){
           ele.isFavorite=true;
         }else{
           ele.isFavorite=false;

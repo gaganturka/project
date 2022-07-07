@@ -29,8 +29,8 @@ router
   .route("/getPracticeAreaData")
   .get(categorieController.getPracticeAreaData);
   router
-  .route("/getPracticeAreaCategories")
-  .post(categorieController.getPracticeAreaCategories);
+  .route("/getPracticeAreaCategories/:id")
+  .get(categorieController.getPracticeAreaCategories);
   
 router
   .route("/getPracticeAreaDataPopulated")

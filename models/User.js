@@ -60,6 +60,16 @@ const UserSchema = new Schema({
       deviceToken:{type:String}
     }
   ]
+},
+{
+  toJSON: { virtuals: true }, toObject: { virtuals: true }
+
+});
+UserSchema.virtual("expertlisting", {
+  ref: "expert", //must be changed to the name you used for Comment model.
+  foreignField: "userId",
+  localField: "_id",
+  
 });
 
 module.exports = mongoose.model("user", UserSchema);

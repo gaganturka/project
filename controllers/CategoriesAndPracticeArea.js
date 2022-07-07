@@ -226,8 +226,8 @@ exports.getPracticeAreaData = async (req, res) => {
 exports.getPracticeAreaCategories = async (req, res) => {
   try {
     // let {categoryId}=req.query.params;
-    console.log("this is cate" , req.body)
-    let practiceAreaData = await models.practicearea.find({categoryId:req.query});
+    // console.log("this is cate" , req.params.id)
+    let practiceAreaData = await models.practicearea.find({categoryId:req.params.id});
     if (!practiceAreaData) {
       throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
     }
