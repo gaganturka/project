@@ -153,6 +153,7 @@ module.exports = {
   },
   getFilteredOnlineExperts: async (req, res) => {
     try {
+      console.log(req.body.search)
      let id = req.user.id;
      let payload={
       path: "userId"
@@ -170,11 +171,59 @@ module.exports = {
         category: Joi.string().allow(""),
         practiceArea: Joi.string().allow(""),
         sortBy: Joi.string(),
+        search:  Joi.string().allow("").optional(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
      
-      let expert,total;
+      let expert=[],total;
+      if (req.body.search) {
+        let filter={};
+        // let co= Mongoose.Types.ObjectId(req.body.search),
+        console.log("this is search")
+        if (req.body.search) {
+          filter["$or"] = [
+            { firstName: { $regex: req.body.search, $options: "i" } }
+          ];
+        }
+        let expertData = await expertUser
+          .find({
+            isApprovedByAdmin: true,
+            status: APP_CONSTANTS.activityStatus.active,
+          })
+          .populate("category")
+          .populate("practiceArea")
+          .populate({path:"userId",match: filter})
+          .populate(payload)
+          .sort({ noOfHoursOfSessionsDone: -1 })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit));
+          total = await expertUser
+          .find({
+            practiceArea: req.body.practiceArea,
+            category: req.body.category,
+            isApprovedByAdmin: true,
+            status: APP_CONSTANTS.activityStatus.active,
+          })
+          .countDocuments();
+          let expertArray=[]
+        expertData.map((ele) => {
+          if(ele !=null)
+          {
+          if (ele.userId != null) {
+            expertArray.push(ele);
+          }
+        }
+        });
+        count = expertArray.length;
+        let i;
+      for(i=parseInt((page - 1) * limit);i<parseInt((page - 1) * limit)+limit;i++)
+      {
+        if(expertArray[i]!=null)
+        expert.push(expertArray[i]);
+      }
+        }
+        
       if (req.body.sortBy == "1") {
         if (req.body.category !== "" && req.body.practiceArea === "") {
       
@@ -330,7 +379,10 @@ module.exports = {
               status: APP_CONSTANTS.activityStatus.active,
             })
             .countDocuments();
-        } else {
+          }
+      
+         else {
+          
           expert = await expertUser
             .find({
               isApprovedByAdmin: true,
@@ -338,7 +390,7 @@ module.exports = {
             })
             .populate("category")
             .populate("practiceArea")
-            .populate("userId")
+            .populate({path:"userId",match: filter})
             .populate(payload)
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))

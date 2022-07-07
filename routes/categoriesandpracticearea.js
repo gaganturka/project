@@ -28,6 +28,10 @@ router
 router
   .route("/getPracticeAreaData")
   .get(categorieController.getPracticeAreaData);
+  router
+  .route("/getPracticeAreaCategories")
+  .post(categorieController.getPracticeAreaCategories);
+  
 router
   .route("/getPracticeAreaDataPopulated")
   .get(categorieController.getPracticeAreaDataPopulated);

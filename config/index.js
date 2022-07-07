@@ -2,7 +2,7 @@ const Config = {
    jwtsecret:"seraphic",
    // BACKEND_URL:"http://localhost:5000",
 
-   BACKEND_URL:"https://borhanbackend.herokuapp.com",
+   BACKEND_URL:"https://borhanbackends.herokuapp.com",
    TWILIO_ACCOUNT_SID:'ACb8ce8200c7e4e4233128f9e8710b43f5',
 TWILIO_API_KEY_SID:'SK9ec54ddf7599c41e993d992e111cf178',
 TWILIO_API_KEY_SECRET:'rc6mpWjDZCAEx1insmaMKa4ZsTDDRget',  

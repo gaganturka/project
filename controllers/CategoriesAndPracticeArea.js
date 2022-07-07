@@ -205,7 +205,29 @@ exports.createPracticeArea = async (req, res) => {
 };
 exports.getPracticeAreaData = async (req, res) => {
   try {
+    // let {categoryId}=req.query.params;
+    // console.log("this is cate" , req.query)
     let practiceAreaData = await models.practicearea.find();
+    if (!practiceAreaData) {
+      throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
+    }
+    return universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "fetched practice areas are",
+        data: practiceAreaData,
+      },
+      res
+    );
+  } catch (err) {
+    return universalFunctions.sendError(err, res);
+  }
+};
+exports.getPracticeAreaCategories = async (req, res) => {
+  try {
+    // let {categoryId}=req.query.params;
+    console.log("this is cate" , req.body)
+    let practiceAreaData = await models.practicearea.find({categoryId:req.query});
     if (!practiceAreaData) {
       throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
     }
