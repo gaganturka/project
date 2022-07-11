@@ -64,10 +64,11 @@ module.exports = {
       const schema = Joi.object({
         firstName: Joi.string().alphanum().min(2).max(30).required(),
         lastName: Joi.string().alphanum().min(2).max(30).required(),
-        email: Joi.string().email({
-          minDomainSegments: 2,
-          tlds: { allow: ["com", "net"] },
-        }),
+        email: Joi.string().required(),
+        // .email({
+        //   minDomainSegments: 2,
+        //   tlds: { allow: ["com", "net"] },
+        // }),
         mobileNo: Joi.string().min(10).required(),
         profilePic: Joi.string().allow(""),
         firebaseUid:Joi.string().required(),
