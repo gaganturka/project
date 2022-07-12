@@ -206,8 +206,9 @@ exports.createPracticeArea = async (req, res) => {
 exports.getPracticeAreaData = async (req, res) => {
   try {
     // let {categoryId}=req.query.params;
-    // console.log("this is cate" , req.query)
-    let practiceAreaData = await models.practicearea.find();
+    // console.log("this is cate" , req.query.selectedCategory)
+    let categoryId= Mongoose.Types.ObjectId(req.query.selectedCategory)
+    let practiceAreaData = await models.practicearea.find({categoryId:categoryId});
     if (!practiceAreaData) {
       throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
     }

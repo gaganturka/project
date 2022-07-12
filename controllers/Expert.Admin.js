@@ -71,37 +71,58 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let filterType
-      if(req.body.filterType =='2')
-      {
-      filterType=APP_CONSTANTS.accountType.freelancer;
-      }
-      else if(req.body.filterType =='1')
-      {
-        filterType=APP_CONSTANTS.accountType.expert;
-      }
-      else{
-        throw Boom.badRequest(responseMessages.INVALID_CREDENTIALS);
-      }
+      let expert = [];
+      let count=0;
+      let finalExperts=[];
       let page = req.body.page;
       let limit = req.body.limit;
       let filter = {};
-      // console.log("searchhhhi", req.body.search, "search mai kya hai");
-      if (req.body.search) {
+      if(req.body.filterType=="1" && req.body.search=='')
+      {
+        finalExperts = await expertUser
+          .find({ isApprovedByAdmin: true })
+          .populate("userId")
+          .populate("practiceArea")
+          .populate("category")
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
+        count = await expertUser.find({ isApprovedByAdmin: true }).countDocuments();
+        // console.log("this is expoert" ,finalExperts )
+      }
+      else if(req.body.filterType =='3')
+      {
+        finalExperts = await expertUser
+          .find({ isApprovedByAdmin: true,accountType:APP_CONSTANTS.accountType.freelancer })
+          .populate("userId")
+          .populate("practiceArea")
+          .populate("category")
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
+        count = await expertUser.find({ isApprovedByAdmin: true,accountType:APP_CONSTANTS.accountType.freelancer }).countDocuments();
+      // filterType=APP_CONSTANTS.accountType.freelancer;
+      }
+      else if(req.body.filterType =='2')
+      {
+        finalExperts = await expertUser
+          .find({ isApprovedByAdmin: true,accountType:APP_CONSTANTS.accountType.expert })
+          .populate("userId")
+          .populate("practiceArea")
+          .populate("category")
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
+        count = await expertUser.find({ isApprovedByAdmin: true,accountType:APP_CONSTANTS.accountType.expert }).countDocuments();
+        
+      }
+      else if(req.body.search)
+      {
         filter["$or"] = [
           { firstName: { $regex: req.body.search, $options: "i" } },
           {
             email: { $regex: req.body.search, $options: "i" },
           },
         ];
-      }
-      let expert = [],
-
-        count;
-        let finalExperts=[];
-       
-      if (req.body.search) {
         let expertData = await expertUser
-          .find({ isApprovedByAdmin: true,accountType:filterType })
+          .find({ isApprovedByAdmin: true })
           .populate({ path: "userId", match: filter })
           .populate("practiceArea")
           .populate("category")
@@ -122,16 +143,79 @@ module.exports = {
           if(expert[i]!=null)
             finalExperts.push(expert[i]);
         }
-      } else {
-        finalExperts = await expertUser
-          .find({ isApprovedByAdmin: true,accountType:filterType })
-          .populate("userId")
-          .populate("practiceArea")
-          .populate("category")
-          .skip(parseInt((page - 1) * limit))
-          .limit(parseInt(limit));
-        count = await expertUser.find({ isApprovedByAdmin: true,accountType:filterType }).countDocuments();
+
       }
+      else{
+        throw Boom.badRequest(responseMessages.INVALID_CREDENTIALS);
+      }
+      
+      // console.log("searchhhhi", req.body.search, "search mai kya hai");
+      // if (req.body.search) {
+      //   filter["$or"] = [
+      //     { firstName: { $regex: req.body.search, $options: "i" } },
+      //     {
+      //       email: { $regex: req.body.search, $options: "i" },
+      //     },
+      //   ];
+      //   let expertData = await expertUser
+      //     .find({ isApprovedByAdmin: true })
+      //     .populate({ path: "userId", match: filter })
+      //     .populate("practiceArea")
+      //     .populate("category")
+      //     // .skip(parseInt((page - 1) * limit))
+      //     // .limit(parseInt(limit));
+      //   expertData.map((ele) => {
+      //     if(ele !=null)
+      //     {
+      //     if (ele.userId != null) {
+      //       expert.push(ele);
+      //     }
+      //   }
+      //   });
+      //   count = expert.length;
+      //   let i;
+      //   for(i=parseInt((page - 1) * limit);i<parseInt((page - 1) * limit)+limit;i++)
+      //   {
+      //     if(expert[i]!=null)
+      //       finalExperts.push(expert[i]);
+      //   }
+      // }
+     
+       
+      // if (req.body.search) {
+      //   let expertData = await expertUser
+      //     .find({ isApprovedByAdmin: true,accountType:filterType })
+      //     .populate({ path: "userId", match: filter })
+      //     .populate("practiceArea")
+      //     .populate("category")
+      //     // .skip(parseInt((page - 1) * limit))
+      //     // .limit(parseInt(limit));
+      //   expertData.map((ele) => {
+      //     if(ele !=null)
+      //     {
+      //     if (ele.userId != null) {
+      //       expert.push(ele);
+      //     }
+      //   }
+      //   });
+      //   count = expert.length;
+      //   let i;
+      //   for(i=parseInt((page - 1) * limit);i<parseInt((page - 1) * limit)+limit;i++)
+      //   {
+      //     if(expert[i]!=null)
+      //       finalExperts.push(expert[i]);
+      //   }
+      // }
+      // } else {
+      //   finalExperts = await expertUser
+      //     .find({ isApprovedByAdmin: true })
+      //     .populate("userId")
+      //     .populate("practiceArea")
+      //     .populate("category")
+      //     .skip(parseInt((page - 1) * limit))
+      //     .limit(parseInt(limit));
+      //   count = await expertUser.find({ isApprovedByAdmin: true }).countDocuments();
+      // }
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");
       }

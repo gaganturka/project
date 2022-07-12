@@ -99,11 +99,7 @@ module.exports = {
       mobileNo: Joi.string().min(10).required()    
     });
     await universalFunctions.validateRequestPayload(req.body, res, schema);
-    // let userLogin = await User.findOne({ mobile: req.body.mobileNo });
-    let {mobileNo } = req.body;
- 
-      // throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
-    
+    let {mobileNo } = req.body;    
     console.log('usesdf',mobileNo)
     let users = await User.findOne({ mobileNo: mobileNo }).populate('userData.data');
     console.log(users,'sfae');
@@ -112,13 +108,9 @@ module.exports = {
       throw Boom.badRequest('expert not found');
     }
     if((users!==null && users?.userData?.model !== APP_CONSTANTS.role.expert )|| users?.userData?.data?.isApprovedByAdmin===false)
-    // if((users!==null && users?.userData?.model !== APP_CONSTANTS.role.expert )||users?.userData?.data?.isApprovedByAdmin===false)
     {
-      // console.log(users?.userData?.model,'eddddd',mobileNo)
       throw Boom.badRequest('Invalid Credentials');
     }
-   
-    // const token = jwt.sign({ user_id: userData._id }, Config.jwtsecret);
     const token=await jwtFunction.jwtGenerator(users._id);
     let userDetails = {
       token: token,
