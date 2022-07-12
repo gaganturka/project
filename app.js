@@ -64,9 +64,9 @@ app.use("/app", AppRoutes);
 app.get("/", (req, res) => {
   res.send("Hello Satyam");
 });
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+// app.use(function (req, res, next) {
+//   next(createError(404));
+// });
 //fixture user
 const { fixture } = require("./fixture/fixtureUser");
 fixture();
