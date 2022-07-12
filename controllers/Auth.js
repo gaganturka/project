@@ -540,7 +540,7 @@ module.exports = {
         googleId:data.googleId,
         lastName:data.familyName,
         profilePic:data.imageUrl,
-        mobileNo:"9999999999",
+        mobileNo:data.mobileNo,
         isEmailVerified:true,
         role:APP_CONSTANTS.role.borhanuser,
         userData:{

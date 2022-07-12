@@ -111,7 +111,8 @@ module.exports = {
     {
       throw Boom.badRequest('expert not found');
     }
-    if((users!==null && users?.userData?.model !== APP_CONSTANTS.role.expert ))
+    if((users!==null && users?.userData?.model !== APP_CONSTANTS.role.expert )|| users?.userData?.data?.isApprovedByAdmin===false)
+    // if((users!==null && users?.userData?.model !== APP_CONSTANTS.role.expert )||users?.userData?.data?.isApprovedByAdmin===false)
     {
       // console.log(users?.userData?.model,'eddddd',mobileNo)
       throw Boom.badRequest('Invalid Credentials');
