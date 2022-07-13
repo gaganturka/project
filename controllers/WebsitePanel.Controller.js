@@ -177,12 +177,40 @@ module.exports = {
       let expert=[],total;
       let filter={};        
       if (req.body.sortBy == "1") {
-        if (req.body.search) {
+        if (req.body.practiceArea !== "") {
+      
+          expert = await expertUser
+            .find({
+              // category: req.body.category,
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+              practiceArea: req.body.practiceArea,
+
+            })
+            .populate("category")
+            .populate("practiceArea")
+            .populate("userId")
+            .populate(payload)
+            .sort({ noOfHoursOfSessionsDone: -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+            .limit(parseInt(req.body.limit));
+            total = await expertUser
+            .find({
+              category: req.body.practiceArea,
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+            })
+           .countDocuments();
+        } 
+        else
+        {   
+          if (req.body.search) {
          
             filter["$or"] = [
               { firstName: { $regex: req.body.search, $options: "i" } }
             ];
-        let allExportDatas = await expertUser
+           } 
+         let allExportDatas = await expertUser
           .find({ isApprovedByAdmin: true })
           .populate("practiceArea")
           .populate("category")
@@ -195,106 +223,26 @@ module.exports = {
               expertArray.push(ele);
             }
           })
-      let i;
-      for(i=parseInt((req.body.page - 1) * req.body.limit);i<parseInt((req.body.page - 1) * req.body.limit)+req.body.limit;i++)
-      {
-        if(expertArray[i]!=null)
-        expert.push(expertArray[i]);
-      }
-    }    
-    else if (req.body.category !== "" && req.body.practiceArea === "") {
+            let i;
+              for(i=parseInt((req.body.page - 1) * req.body.limit);i<parseInt((req.body.page - 1) * req.body.limit)+req.body.limit;i++)
+              {
+                if(expertArray[i]!=null)
+                expert.push(expertArray[i]);
+              }
+            }
+            
+      }     
+      else if (req.body.sortBy == "2") {
+        if (req.body.practiceArea !== "") {
       
           expert = await expertUser
             .find({
-              category: req.body.category,
+              // category: req.body.category,
               isApprovedByAdmin: true,
               status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .populate(payload)
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-            .limit(parseInt(req.body.limit));
-            total = await expertUser
-            .find({
-              category: req.body.category,
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea").countDocuments();
-        } else if (req.body.category === "" && req.body.practiceArea !== "") {
-      
-          expert = await expertUser
-            .find({
               practiceArea: req.body.practiceArea,
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .populate(payload)
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-            .limit(parseInt(req.body.limit));
-            total = await expertUser
-            .find({
-              practiceArea: req.body.practiceArea,
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            }).countDocuments();
-        } else if (req.body.category !== "" && req.body.practiceArea !== "") {
-      
-          expert = await expertUser
-            .find({
-              practiceArea: req.body.practiceArea,
-              category: req.body.category,
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .populate(payload)
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-            .limit(parseInt(req.body.limit));
-            total = await expertUser
-            .find({
-              practiceArea: req.body.practiceArea,
-              category: req.body.category,
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            }).countDocuments();
-        } else {
-          expert = await expertUser
-            .find({
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("practiceArea")
-            .populate("category")
-            .populate("userId")
-            .populate(payload)
-            .sort({ "rating.avgRating": -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-            .limit(parseInt(req.body.limit));
-            total = await expertUser
-            .find({
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            }).countDocuments();
-        }
-      } else if (req.body.sortBy == "2") {
-        if (req.body.category !== "" && req.body.practiceArea === "") {
-      
-          expert = await expertUser
-            .find({
-              category: req.body.category,
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
+              // category:req.body.category,
+
             })
             .populate("category")
             .populate("practiceArea")
@@ -305,59 +253,12 @@ module.exports = {
             .limit(parseInt(req.body.limit));
             total = await expertUser
             .find({
-              category: req.body.category,
+              category: req.body.practiceArea,
               isApprovedByAdmin: true,
               status: APP_CONSTANTS.activityStatus.active,
             })
            .countDocuments();
-        } else if (req.body.category === "" && req.body.practiceArea !== "") {
-      
-          expert = await expertUser
-            .find({
-              practiceArea: req.body.practiceArea,
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("category")
-            .populate("practiceArea")
-            .populate("userId")
-            .populate(payload)
-            .sort({ noOfHoursOfSessionsDone: -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-            .limit(parseInt(req.body.limit));
-            total = await expertUser
-            .find({
-              practiceArea: req.body.practiceArea,
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            })
-            .countDocuments();
-        } else if (req.body.category !== "" && req.body.practiceArea !== "") {
-      
-          expert = await expertUser
-            .find({
-              practiceArea: req.body.practiceArea,
-              category: req.body.category,
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            })
-            .populate("category")
-            .populate("practiceArea")
-            .populate("userId")
-            .populate(payload)
-            .sort({ noOfHoursOfSessionsDone: -1 })
-            .skip(parseInt((req.body.page - 1) * req.body.limit))
-            .limit(parseInt(req.body.limit));
-            total = await expertUser
-            .find({
-              practiceArea: req.body.practiceArea,
-              category: req.body.category,
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            })
-            .countDocuments();
-          }
-      
+        }     
          else {
           
           expert = await expertUser
@@ -429,6 +330,7 @@ module.exports = {
       if (!practiceAreaData) {
         throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
       }
+      console.log("this is practice area" , practiceAreaData)
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,

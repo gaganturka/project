@@ -208,8 +208,8 @@ exports.getPracticeAreaData = async (req, res) => {
   try {
     // let {categoryId}=req.query.params;
     // console.log("this is cate" , req.query.selectedCategory)
-    let categoryId= Mongoose.Types.ObjectId(req.query.selectedCategory)
-    let practiceAreaData = await models.practicearea.find({categoryId:categoryId});
+    // let categoryId= Mongoose.Types.ObjectId(req.query.selectedCategory)
+    let practiceAreaData = await models.practicearea.find();
     if (!practiceAreaData) {
       throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
     }
@@ -229,6 +229,8 @@ exports.getPracticeAreaCategories = async (req, res) => {
   try {
     // let {categoryId}=req.query.params;
     // console.log("this is cate" , req.params.id)
+    // let categoryId= Mongoose.Types.ObjectId(req.query.selectedCategory)
+
     let practiceAreaData = await models.practicearea.find({categoryId:req.params.id});
     if (!practiceAreaData) {
       throw Boom.badRequest(responseMessages.CATEGORY_NOT_FOUND);
