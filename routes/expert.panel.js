@@ -28,5 +28,9 @@ router.route("/twilioVideoMarkComplete").post(isexpert.isExpert,ExpertController
 router.route("/twilioAudioMarkComplete").post(isexpert.isExpert,ExpertController.twilioAudioMarkComplete);
 
 router.route("/timeSlotsOfUserSingleDay").get(isexpert.isExpert, ExpertController.timeSlotsOfUserSingleDay);
+router.route("/cancelAppointmentByExpert").post(isexpert.isExpert, ExpertController.cancelAppointmentByExpert);
+router.route("/deleteTimeSlot").post(isexpert.isExpert, ExpertController.deleteTimeSlot);
+
+
 
 module.exports = router;

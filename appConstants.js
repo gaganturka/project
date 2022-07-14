@@ -25,6 +25,7 @@ const appointmentStatus = {
   pending: "pending",
   rescheduled:"rescheduled",
   completed:"completed",
+  rejected:"rejected"
 };
 
 const chatRoomStatus = {

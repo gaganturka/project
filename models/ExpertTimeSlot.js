@@ -12,12 +12,7 @@ const AppointmentSchema = new Schema({
   duration: {
     type: Number,
   },
-//   appointmentDate: {
-//     type: Date,
-//   },
-//   appointmentTime: {
-//     type: String,
-//   },
+
   startAppointmentTime: {
     type: Date,
   },
@@ -35,6 +30,10 @@ const AppointmentSchema = new Schema({
     ],
     default:APP_CONSTANTS.appointmentStatus.pending
   },
+  isAvailable:{
+    type:Boolean,
+    default:true
+  }
 //   practiceArea: {
 //     type: Schema.Types.ObjectId,
 //     ref: "practicearea",

@@ -46,6 +46,7 @@ const AppointmentSchema = new Schema({
       APP_CONSTANTS.appointmentStatus.pending,
       APP_CONSTANTS.appointmentStatus.rescheduled,
       APP_CONSTANTS.appointmentStatus.completed,
+      APP_CONSTANTS.appointmentStatus.rejected,
     ],
   },
   practiceArea: {
@@ -61,6 +62,10 @@ const AppointmentSchema = new Schema({
     default: false,
   },
   isRejectedByUser: {
+    type: Boolean,
+    default: false,
+  },
+  isRejectedByExpert: {
     type: Boolean,
     default: false,
   },

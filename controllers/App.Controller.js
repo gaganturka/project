@@ -1741,8 +1741,6 @@ getAvailableTimeForUser: async (req, res) => {
           expertId: expertId,
           appointmentDate: appointmentDate,
           timeSlotId: e._id ? e._id : "",
-          
-          
         });
         if (data.length > 0) {
           e.avialble = false;

@@ -4,6 +4,7 @@ const Newsletter = require('../models/NewsletterSubscribed')
 const expertUser = require("../models/Expert_User");
 const practiceArea = require("../models/Practice_Area");
 const appointment = require("../models/Appointment")
+// const expertTimeAvailable=require("../models/ExpertTimeSlot");
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -214,6 +215,7 @@ module.exports = {
           .find({ isApprovedByAdmin: true })
           .populate("practiceArea")
           .populate("category")
+          .populate(payload)
           .populate({ path: "userId", match: filter })
           .sort({ "rating.avgRating": -1 })
           let expertArray=[];
@@ -610,6 +612,7 @@ module.exports = {
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let start = req.body.startAppointmentTime, end = req.body.endAppointmentTime;
       let data = await appointment.find({
+        status:{$nin:[ APP_CONSTANTS.appointmentStatus.rejected, APP_CONSTANTS.appointmentStatus.cancelled]},
         startAppointmentTime: {
           $gte: start,
           $lte: end
@@ -617,13 +620,19 @@ module.exports = {
         expertId:payload.expertId,
         appointmentDate:payload.appointmentDate
       })
+    
+    
       payload.userId = userId;
-      console.log(data,'daaaaattaa')
+      // console.log(data,'daaaaattaa')
       if(data.length>0)
       {
         throw Boom.badRequest('already an appointment at this time');
       }
       let createAppointment = await appointment.create(payload);
+      // console.log("this is id" ,req.body.timeSlotId )
+      
+      // let updateData= await expertTimeAvailable.findByIdAndUpdate({_id:req.body.timeSlotId},{$set:{isAvailable:false}})
+        //  console.log("this is update data" , updateData)
 
       universalFunctions.sendSuccess(
         {
@@ -743,11 +752,9 @@ module.exports = {
 
       let data;
       let expert;
-      let deletedAppointment = await appointment.findByIdAndUpdate(req.params.id, { status: APP_CONSTANTS.appointmentStatus.cancelled })
-  
+      let deletedAppointment = await appointment.findByIdAndUpdate(req.params.id, { status: APP_CONSTANTS.appointmentStatus.cancelled ,isRejectedByUser:true})
       if (!deletedAppointment) {
         throw Boom.badRequest("cannot find any appointment to delete");
-
       }
       universalFunctions.sendSuccess(
         {
@@ -992,11 +999,11 @@ module.exports = {
           
           
         });
-        if (data.length > 0) {
-          e.avialble = false;
-        } else {
-          e.avialble = true;
-        }
+        // if (data.length > 0) {
+        //   e.avialble = false;
+        // } else {
+        //   e.avialble = true;
+        // }
       })
 
       universalFunctions.sendSuccess(
@@ -1209,7 +1216,16 @@ module.exports = {
         expertUserId,
       };
       if (favourite===APP_CONSTANTS.checkfavExpert) {
+     let isExist= await favExpertModel.findOne({userId:userId,expertId:expertId})
+     if(isExist)
+     {
+      await favExpertModel.deleteOne({userId:userId,expertId:expertId}) 
+     }
+    else
+     {
         await favExpertModel.create(payload);
+         
+     }
         universalFunctions.sendSuccess(
         {
           statusCode: 200,

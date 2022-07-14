@@ -383,6 +383,22 @@ getExpertAppointmentByFilter: async (req, res) => {
 
       }).countDocuments()
     }
+    else if(filterType == "rejected")
+    {
+      data = await appointmentModel.find({
+        expertId, status: APP_CONSTANTS.appointmentStatus.rejected,
+
+      }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        .skip(parseInt((req.body.page - 1) * req.body.limit))
+        .limit(parseInt(req.body.limit))
+        .sort({'startAppointmentTime':-1});
+
+      count = await appointmentModel.find({
+        expertId,
+        status: APP_CONSTANTS.appointmentStatus.rejected,
+
+      }).countDocuments()
+    }
 
     universalFunctions.sendSuccess(
       {
@@ -404,12 +420,52 @@ updateAppointment:async (req, res) => {
   try{
     let appointmentId=req.body.id
     let payload=req.body.payload;
-    console.log(payload,"here is body ")
     const Appointment = await appointmentModel.findByIdAndUpdate(
       { _id:appointmentId },
      { $set:payload},
     { new: true }
     );
+    if(payload.status=="confirmed")
+    {
+      await expertTimeAvailable.findOneAndUpdate({_id:Appointment.timeSlotId},{isAvailable:false})
+    }
+    else
+    {
+      await expertTimeAvailable.findOneAndUpdate({_id:Appointment.timeSlotId},{isAvailable:true})
+
+    }
+    if (!Appointment) {
+      throw Boom.badRequest("invalid id or token");
+    }
+    universalFunctions.sendSuccess(
+      {
+        statusCode: 200,
+        message: "Appointment found",
+        data: Appointment,
+      },
+      res
+    );
+  }
+  catch(error)
+  {
+    console.log(error)
+      universalFunctions.sendError(error, res);   
+  }
+},
+cancelAppointmentByExpert:async (req, res) => {
+  try{
+    let appointmentId=req.body.id
+    let payload=req.body.payload;
+    const Appointment = await appointmentModel.findByIdAndUpdate(
+      { _id:appointmentId },
+    {$set:{status:payload.status,isRejectedByExpert:true}},
+    { new: true }
+    );
+    if(payload.status=="cancelled")
+    {
+      await expertTimeAvailable.findOneAndUpdate({_id:Appointment.timeSlotId},{isAvailable:true})
+    }
+    
     if (!Appointment) {
       throw Boom.badRequest("invalid id or token");
     }
@@ -983,6 +1039,23 @@ getChatAppointment:async (req,res)=>{
         universalFunctions.sendError(error, res);
       }
     },
+    deleteTimeSlot: async (req, res) => {
+      try {
+        // console.log("this is id"  , req.body.payload)
+       let deleteTmeSlot=await expertTimeAvailable.deleteOne({_id:req.body.id})
+        return universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "Delete Time Slot Success",
+            data: deleteTmeSlot,
+          },
+          res
+        );
+      } catch (err) {
+        return universalFunctions.sendError(err, res);
+      }
+    },
+
 };
 
 
