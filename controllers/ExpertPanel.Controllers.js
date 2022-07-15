@@ -15,7 +15,7 @@ const AccessToken = require("twilio").jwt.AccessToken;
 const { Config } = require("../config");
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const { v4: uuidv4 } = require('uuid');
-
+// const { admin } =require("../utils/pushNotification");
 const VoiceGrant = AccessToken.VoiceGrant;
 
 
@@ -347,13 +347,11 @@ getExpertAppointmentByFilter: async (req, res) => {
         $lt: currentTime.getTime()
       }},{status: APP_CONSTANTS.appointmentStatus.cancelled});
       
-    // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
     if (filterType == "Pending") {
       data = await appointmentModel.find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
         .skip(parseInt((req.body.page - 1) * req.body.limit))
         .limit(parseInt(req.body.limit))
         .sort({'startAppointmentTime':-1});
-      //  expert=await expert.find({_id:data.expertId._id});
       count = await appointmentModel.find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).countDocuments()
     }
     else if (filterType == "Upcoming") {
@@ -408,8 +406,6 @@ getExpertAppointmentByFilter: async (req, res) => {
       },
       res
     );
-
-  
 }
 catch(error)
 {
@@ -425,26 +421,52 @@ updateAppointment:async (req, res) => {
      { $set:payload},
     { new: true }
     );
+    let userDetails = await User.findOne({ _id: Appointment.userId });
+  let message;
     if(payload.status=="confirmed")
     {
-      await expertTimeAvailable.findOneAndUpdate({_id:Appointment.timeSlotId},{isAvailable:false})
+      await expertTimeAvailable.findOneAndUpdate({_id:Appointment.timeSlotId},{isAvailable:false});
+       message = {
+        data: {
+          title:  APP_CONSTANTS.pushNotificationMessage.title,
+          body: APP_CONSTANTS.pushNotificationMessage.bookAppointementsMessage,
+        },
+      }
     }
     else
     {
+       message = {
+        data: {
+          title:  APP_CONSTANTS.pushNotificationMessage.title,
+          body: APP_CONSTANTS.pushNotificationMessage.expertRejetedAppointment,
+        
+        },
+      }; 
       await expertTimeAvailable.findOneAndUpdate({_id:Appointment.timeSlotId},{isAvailable:true})
+    }
+    let registrationTokens = [];
+    userDetails &&
+      userDetails.token &&
+      userDetails.token.map((val1) => {
 
-    }
-    if (!Appointment) {
-      throw Boom.badRequest("invalid id or token");
-    }
-    universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Appointment found",
-        data: Appointment,
-      },
-      res
-    );
+        registrationTokens.push(val1.deviceToken);
+      });
+      admin
+        .messaging()
+        .sendToDevice(registrationTokens[1], message)
+        .then((response) => {
+          return universalFunctions.sendSuccess(
+            {
+              statusCode: 200,
+              message: responseMessages.SUCCESS,
+              data: response,
+            },
+            res
+          );
+        })
+        .catch((error) => {
+          console.log("Error sending message:", error);
+        });
   }
   catch(error)
   {
@@ -463,20 +485,50 @@ cancelAppointmentByExpert:async (req, res) => {
     );
     if(payload.status=="cancelled")
     {
+      let userDetails = await User.findOne({ _id: Appointment.userId });
+    let registrationTokens = [];
+    userDetails &&
+      userDetails.token &&
+      userDetails.token.map((val1) => {
+        registrationTokens.push(val1.deviceToken);
+      });
+      const message = {
+        data: {
+          title: "Send From Borhan",
+          body: APP_CONSTANTS.pushNotificationMessage.expertCancelAppointment,
+        
+        },
+      };
+      admin
+        .messaging()
+        .sendToDevice(registrationTokens[1], message)
+        .then((response) => {
+          return universalFunctions.sendSuccess(
+            {
+              statusCode: 200,
+              message: responseMessages.SUCCESS,
+              data: response,
+            },
+            res
+          );
+        })
+        .catch((error) => {
+          console.log("Error sending message:", error);
+        });
       await expertTimeAvailable.findOneAndUpdate({_id:Appointment.timeSlotId},{isAvailable:true})
     }
     
-    if (!Appointment) {
-      throw Boom.badRequest("invalid id or token");
-    }
-    universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Appointment found",
-        data: Appointment,
-      },
-      res
-    );
+    // if (!Appointment) {
+    //   throw Boom.badRequest("invalid id or token");
+    // }
+    // universalFunctions.sendSuccess(
+    //   {
+    //     statusCode: 200,
+    //     message: "Appointment found",
+    //     data: Appointment,
+    //   },
+    //   res
+    // );
   }
   catch(error)
   {

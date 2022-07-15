@@ -620,8 +620,6 @@ module.exports = {
         expertId:payload.expertId,
         appointmentDate:payload.appointmentDate
       })
-    
-    
       payload.userId = userId;
       // console.log(data,'daaaaattaa')
       if(data.length>0)
@@ -629,19 +627,45 @@ module.exports = {
         throw Boom.badRequest('already an appointment at this time');
       }
       let createAppointment = await appointment.create(payload);
-      // console.log("this is id" ,req.body.timeSlotId )
-      
-      // let updateData= await expertTimeAvailable.findByIdAndUpdate({_id:req.body.timeSlotId},{$set:{isAvailable:false}})
-        //  console.log("this is update data" , updateData)
+       let expertDetail=await  expertUser.findOne({_id:expertId})    
+            let  message = {
+              data: {
+                title:  APP_CONSTANTS.pushNotificationMessage.title,
+                body: APP_CONSTANTS.pushNotificationMessage.bookAppointmentByUser,
+              
+              }
+            }
+       let registrationTokens = [];
+       expertDetail &&
+       expertDetail.token &&
+       expertDetail.token.map((val1) => {
+           registrationTokens.push(val1.deviceToken);
+         });
+         admin
+           .messaging()
+           .sendToDevice(registrationTokens[1], message)
+           .then((response) => {
+             return universalFunctions.sendSuccess(
+               {
+                 statusCode: 200,
+                 message: responseMessages.SUCCESS,
+                 data: response,
+               },
+               res
+             );
+           })
+           .catch((error) => {
+             console.log("Error sending message:", error);
+           });
 
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "Success",
-          data: createAppointment,
-        },
-        res
-      );
+      // universalFunctions.sendSuccess(
+      //   {
+      //     statusCode: 200,
+      //     message: "Success",
+      //     data: createAppointment,
+      //   },
+      //   res
+      // );
 
     } catch (error) {
       return universalFunctions.sendError(error, res);
