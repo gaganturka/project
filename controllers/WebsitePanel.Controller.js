@@ -732,6 +732,22 @@ module.exports = {
 
         }).countDocuments()
       }
+      else if (filterType == "rejected") {
+        data = await appointment.find({
+          userId: userId, status: APP_CONSTANTS.appointmentStatus.rejected,
+
+        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+          .skip(parseInt((req.body.page - 1) * req.body.limit))
+          .limit(parseInt(req.body.limit))
+          .sort({'startAppointmentTime':-1});
+
+        count = await appointment.find({
+          userId: userId,
+          status: APP_CONSTANTS.appointmentStatus.rejected,
+
+        }).countDocuments()
+      }
+
 
       universalFunctions.sendSuccess(
         {
