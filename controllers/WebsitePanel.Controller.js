@@ -18,7 +18,7 @@ const chatappointment = require('../models/ChatAppointment');
 const Boom = require("boom");
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const { v4: uuidv4 } = require('uuid');
-
+const webpush = require('web-push');
 const AccessToken = require("twilio").jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
 
@@ -33,7 +33,47 @@ const expertTimeAvailable = require("../models/ExpertTimeSlot");
 const { isAValidPhoneNumber } = require("../utils/twilioFunctions");
 const twilioFunctions=require('../utils/twilioFunctions');
 const Expert_Rating = require("../models/Expert_Rating");
+const publicVapidKey = 'BKjkBjs0NF8cLaPAYNKFWiGSBcau-q3poapqeXZhbPUfBacozebEplWJBFIes8FioqhMbdpIzYmUzxTdgdrLxXk';
+const privateVapidKey = '_7Xt1bP-K_ckzykka6TX536RB6pX0v8i0SeaLO7W-iw';
+// const {admin}=require("../config");
+var admin = require("firebase-admin");
+var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
+const Expert_User = require("../models/Expert_User");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  // databaseURL: Config.get("db.firebaseDatabaseUrl"),
+});
+// var admin = require("firebase-admin");
+// var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
+// const Expert_User = require("../models/Expert_User");
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   // databaseURL: Config.get("db.firebaseDatabaseUrl"),
+// });
+// const privateVapidKey = ;
+
+// Replace with your email
+webpush.setVapidDetails('mailto:test.seraphic15@gmail.com', publicVapidKey,privateVapidKey);
 module.exports = {
+  sendNotificaton:async (req, res) => {
+    const subscription = await registration.pushManager.
+    subscribe({
+      userVisibleOnly: true,
+      // The `urlBase64ToUint8Array()` function is the same as in
+      // https://www.npmjs.com/package/web-push#using-vapid-key-for-applicationserverkey
+      applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
+    });
+  //  const subscription = "hello";
+    res.status(201).json({});
+    // const payload = JSON.stringify({ title: 'test' });
+    const payload="Test";
+    // console.log(subscription);
+  
+    webpush.sendNotification(subscription, payload).catch(error => {
+      console.error(error.stack);
+    });
+  },
+  
   showOnlineExperts: async (req, res) => {
     try {
       const schema = Joi.object({
@@ -627,24 +667,33 @@ module.exports = {
         throw Boom.badRequest('already an appointment at this time');
       }
       let createAppointment = await appointment.create(payload);
-       let expertDetail=await  expertUser.findOne({_id:expertId})    
-            let  message = {
-              data: {
-                title:  APP_CONSTANTS.pushNotificationMessage.title,
-                body: APP_CONSTANTS.pushNotificationMessage.bookAppointmentByUser,
-              
-              }
-            }
+      console.log("this is appoint" ,createAppointment )
+      await expertTimeAvailable.findOneAndUpdate({_id:createAppointment.timeSlotId},{isAvailable:false});
+
+       let expertDetail=await  expertUser.findOne({_id:req.body.expertId}).populate("userId") 
+       
+       console.log("this i export details" , expertDetail)
+     let  message = {
+        data: {
+          title:  APP_CONSTANTS.pushNotificationMessage.title,
+          body: APP_CONSTANTS.pushNotificationMessage.bookAppointementsMessage,
+        },
+      }
        let registrationTokens = [];
-       expertDetail &&
-       expertDetail.token &&
-       expertDetail.token.map((val1) => {
+       expertDetail &&expertDetail.userId&&
+       expertDetail.userId.token &&
+       expertDetail.userId.token.map((val1) => {
+        console.log("this is tokenss" , val1)
            registrationTokens.push(val1.deviceToken);
          });
-         admin
+         console.log("this is token" , registrationTokens)
+         registrationTokens.map((token)=>{
+         
+          admin
            .messaging()
-           .sendToDevice(registrationTokens[1], message)
+           .sendToDevice(token, message)
            .then((response) => {
+            console.log("this is response" , response)
              return universalFunctions.sendSuccess(
                {
                  statusCode: 200,
@@ -657,6 +706,9 @@ module.exports = {
            .catch((error) => {
              console.log("Error sending message:", error);
            });
+         })
+
+         
 
       // universalFunctions.sendSuccess(
       //   {
@@ -871,9 +923,9 @@ module.exports = {
       return universalFunctions.sendError(error, res);
     }
   },
-  updateAppointment: async (req, res) => {
+  // updateAppointment: async (req, res) => {
 
-  },
+  // },
   getTopExperts: async (req, res) => {
     try {
       let expert;

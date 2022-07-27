@@ -33,13 +33,14 @@ const chatappointment =require('../models/ChatAppointment');
 
 const Boom = require("boom");
 const Appointment = require("../models/Appointment");
-var admin = require("firebase-admin");
-var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
-const Expert_User = require("../models/Expert_User");
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  // databaseURL: Config.get("db.firebaseDatabaseUrl"),
-});
+const {admin}=require("../config");
+// var admin = require("firebase-admin");
+// var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
+// const Expert_User = require("../models/Expert_User");
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   // databaseURL: Config.get("db.firebaseDatabaseUrl"),
+// });
 module.exports = {
   sendOtpExpertUser: async (req, res) => {
     try {
@@ -107,7 +108,7 @@ module.exports = {
     {
       throw Boom.badRequest('expert not found');
     }
-    if((users!==null && users?.userData?.model !== APP_CONSTANTS.role.expert )|| users?.userData?.data?.isApprovedByAdmin===false)
+    if((users!==null && users?.userData?.model !== APP_CONSTANTS.role.expert ))
     {
       throw Boom.badRequest('Invalid Credentials');
     }

@@ -11,7 +11,9 @@ const responseMessages=  require("../resources/response.json");
 const jwtFunction = require('../utils/jwtFunction');
 const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
-
+// initializeApp({
+//   serviceAccountId: 'my-client-id@my-project-id.iam.gserviceaccount.com',
+// });
 module.exports = {
   otpGeneration: async (req, res) => {
     try {
@@ -187,6 +189,8 @@ module.exports = {
         bankName: Joi.string(),
         accountType: Joi.string(),
         firebaseUid:Joi.string(),
+        firebaseToken:Joi.string(),
+        deviceType:Joi.string(),
         // otp: Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
@@ -205,49 +209,9 @@ module.exports = {
       if (user !== null) {
         // if (user.role === APP_CONSTANTS.role.expert) {
           throw Boom.badRequest('expert already exists');
-        // } else {
-         
-          // let expertUserr = await expertUser.create({
-          //   isSubscribed: false,
-          //   category: req.body.category,
-          //   practiceArea: req.body.practiceArea,
-          //   bio: req.body.bio,
-          //   audioFilePath: req.body.audioFilePath,
-          //   videoFilePath: req.body.videoFilePath,
-          //   document: [
-          //     {
-          //       fileName: req.body.document[0].fileName,
-          //       fileType: req.body.document[0].fileType,
-          //       link: req.body.document[0].path,
-          //       mimeType: req.body.document[0].mimeType,
-          //     },
-          //   ],
-          //   accountType: req.body.accountType,
-          //   rating: { noOfRating: 0, ratingCount: 0, avgRating: 0 },
-          // });
-          // await expertUser.findByIdAndUpdate(expertUserr._id, {
-          //   userId: user._id,
-          // });
-          // await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:req.body.firebaseUid});
-          // // const token = jwt.sign(
-          // //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-          // //   Config.jwtsecret
-          // // );
-          // const token=await jwtFunction.jwtGenerator(user._id);
-          
-          // universalFunctions.sendSuccess(
-          //   {
-          //     statusCode: 200,
-          //     message: "User created",
-          //     data: token,
-          //   },
-          //   res
-          // );
-        // }
+       
       }
-      // console.log(req.body,"iaenienwieioafeniaaaaa")
-      // console.log('######################################################');
-      // console.log(req.body.document,"adklgjnaeionianeiondiarrrrrrrrrr");
+    
       
       let expertUserr = await expertUser.create({
         isSubscribed: false,
@@ -258,11 +222,12 @@ module.exports = {
         videoFilePath: req.body.videoFilePath,
         document: req.body.document,
         accountType: req.body.accountType,
+
         rating: { noOfRating: 0, ratingCount: 0, avgRating: 0 },
       });
       // console.log('The created expert - ',expertUserr);
       // console.log('######################################################');
-
+     console.log("this is req" , req.body);
       user = await User.create({
         firstName: req.body.firstName,
         email: req.body.email,
@@ -275,7 +240,13 @@ module.exports = {
           model: APP_CONSTANTS.role.expert,
           data: expertUserr._id,
         },
-        mobileFirebaseUid:req.body.firebaseUid
+        mobileFirebaseUid:req.body.firebaseUid,
+        token: [
+          {
+            deviceType: req.body.deviceType,
+            deviceToken: req.body.firebaseToken,
+          }]
+        // firebaseToken:req.body.firebaseToken
       });
       await expertUser.findByIdAndUpdate(expertUserr._id, { userId: user._id });
       // console.log(expertUserr,"eexxpperrttusseerr");

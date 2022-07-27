@@ -45,6 +45,9 @@ router.route("/twilioVoiceResponse").post(WebsiteController.twilioVoiceResponse)
 router.route("/twilioVideoCallback").post(WebsiteController.twilioVideoCallback);
   
 router.route("/isExpertRated").post(authUser.checkAuth,WebsiteController.CheckExpertIsAlreadyRated);
+router.route("/sendNotificaton").post(
+  // authUser.checkAuth,
+  WebsiteController.sendNotificaton);
 
 
   module.exports = router;
