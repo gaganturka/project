@@ -53,7 +53,7 @@ admin.initializeApp({
 // const privateVapidKey = ;
 
 // Replace with your email
-webpush.setVapidDetails('mailto:test.seraphic15@gmail.com', publicVapidKey,privateVapidKey);
+// webpush.setVapidDetails('mailto:test.seraphic15@gmail.com', publicVapidKey,privateVapidKey);
 module.exports = {
   sendNotificaton:async (req, res) => {
     const subscription = await registration.pushManager.
