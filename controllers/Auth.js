@@ -189,7 +189,7 @@ module.exports = {
         bankName: Joi.string(),
         accountType: Joi.string(),
         firebaseUid:Joi.string(),
-        firebaseToken:Joi.string(),
+        firebaseToken:Joi.string().allow(""),
         deviceType:Joi.string(),
         // otp: Joi.string(),
       });

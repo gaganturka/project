@@ -18,7 +18,7 @@ const chatappointment = require('../models/ChatAppointment');
 const Boom = require("boom");
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const { v4: uuidv4 } = require('uuid');
-const webpush = require('web-push');
+// const webpush = require('web-push');
 const AccessToken = require("twilio").jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
 
@@ -691,7 +691,7 @@ module.exports = {
          
           admin
            .messaging()
-           .sendToDevice(token, message)
+           .sendToDevice('f52eIq4wkYisJtU0qby-lL:APA91bFSa9oeSlzEVno2vcdLXDnLWK4EiT_Bmkir9MnC1EML1Zk5MBzRutdFlPo2nCDUhq2UM2YoLfeQhCNJrBCTabewNTDLOliMwnq0YWutTzsAYp8G8l5xhtMg8IRZguKbQ2GuAoDH', message)
            .then((response) => {
             console.log("this is response" , response)
              return universalFunctions.sendSuccess(
