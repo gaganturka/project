@@ -53,7 +53,7 @@ admin.initializeApp({
 // const privateVapidKey = ;
 
 // Replace with your email
-webpush.setVapidDetails('mailto:test.seraphic15@gmail.com', 'BKjkBjs0NF8cLaPAYNKFWiGSBcau-q3poapqeXZhbPUfBacozebEplWJBFIes8FioqhMbdpIzYmUzxTdgdrLxXk','_7Xt1bP-K_ckzykka6TX536RB6pX0v8i0SeaLO7W-iw');
+// webpush.setVapidDetails('mailto:test.seraphic15@gmail.com', 'BKjkBjs0NF8cLaPAYNKFWiGSBcau-q3poapqeXZhbPUfBacozebEplWJBFIes8FioqhMbdpIzYmUzxTdgdrLxXk','_7Xt1bP-K_ckzykka6TX536RB6pX0v8i0SeaLO7W-iw');
 module.exports = {
   sendNotificaton:async (req, res) => {
     const subscription = await registration.pushManager.
