@@ -18,7 +18,7 @@ const chatappointment = require('../models/ChatAppointment');
 const Boom = require("boom");
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const { v4: uuidv4 } = require('uuid');
-// const webpush = require('web-push');
+const webpush = require('web-push');
 const AccessToken = require("twilio").jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
 
@@ -53,7 +53,7 @@ admin.initializeApp({
 // const privateVapidKey = ;
 
 // Replace with your email
-// webpush.setVapidDetails('mailto:test.seraphic15@gmail.com', publicVapidKey,privateVapidKey);
+webpush.setVapidDetails('mailto:test.seraphic15@gmail.com', 'BKjkBjs0NF8cLaPAYNKFWiGSBcau-q3poapqeXZhbPUfBacozebEplWJBFIes8FioqhMbdpIzYmUzxTdgdrLxXk','_7Xt1bP-K_ckzykka6TX536RB6pX0v8i0SeaLO7W-iw');
 module.exports = {
   sendNotificaton:async (req, res) => {
     const subscription = await registration.pushManager.
@@ -667,12 +667,8 @@ module.exports = {
         throw Boom.badRequest('already an appointment at this time');
       }
       let createAppointment = await appointment.create(payload);
-      console.log("this is appoint" ,createAppointment )
       await expertTimeAvailable.findOneAndUpdate({_id:createAppointment.timeSlotId},{isAvailable:false});
-
        let expertDetail=await  expertUser.findOne({_id:req.body.expertId}).populate("userId") 
-       
-       console.log("this i export details" , expertDetail)
      let  message = {
         data: {
           title:  APP_CONSTANTS.pushNotificationMessage.title,
@@ -683,15 +679,11 @@ module.exports = {
        expertDetail &&expertDetail.userId&&
        expertDetail.userId.token &&
        expertDetail.userId.token.map((val1) => {
-        console.log("this is tokenss" , val1)
            registrationTokens.push(val1.deviceToken);
          });
-         console.log("this is token" , registrationTokens)
-        //  registrationTokens.map((token)=>{
-         
           admin
            .messaging()
-           .sendToDevice('fWu5rLsraPhZ5G3g4JD3YV:APA91bFHsJiftxuLadtpK79x-H0QyCg1dOH11o2-u_nATlMDtibhvA2iDN8w0NECfbcjsnN5VwaSdyqcf0rXUlmhx4pPSn6EQO4yfGCG_dGsv5NJCbQi4g5nL0DtTqmaqJqnmq_C00WM', message)
+           .sendToDevice(registrationTokens, message)
            .then((response) => {
             console.log("this is response" , response)
              return universalFunctions.sendSuccess(
@@ -706,19 +698,6 @@ module.exports = {
            .catch((error) => {
              console.log("Error sending message:", error);
            });
-        //  })
-
-         
-
-      // universalFunctions.sendSuccess(
-      //   {
-      //     statusCode: 200,
-      //     message: "Success",
-      //     data: createAppointment,
-      //   },
-      //   res
-      // );
-
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }

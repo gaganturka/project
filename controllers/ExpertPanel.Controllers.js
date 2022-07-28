@@ -33,7 +33,7 @@ const chatappointment =require('../models/ChatAppointment');
 
 const Boom = require("boom");
 const Appointment = require("../models/Appointment");
-const {admin}=require("../config");
+// const {admin}=require("../config");
 // var admin = require("firebase-admin");
 // var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
 // const Expert_User = require("../models/Expert_User");
@@ -452,22 +452,30 @@ updateAppointment:async (req, res) => {
 
         registrationTokens.push(val1.deviceToken);
       });
-      admin
-        .messaging()
-        .sendToDevice(registrationTokens[1], message)
-        .then((response) => {
-          return universalFunctions.sendSuccess(
-            {
-              statusCode: 200,
-              message: responseMessages.SUCCESS,
-              data: response,
-            },
-            res
-          );
-        })
-        .catch((error) => {
-          console.log("Error sending message:", error);
-        });
+      // admin
+      //   .messaging()
+      //   .sendToDevice(registrationTokens[1], message)
+      //   .then((response) => {
+      //     return universalFunctions.sendSuccess(
+      //       {
+      //         statusCode: 200,
+      //         message: responseMessages.SUCCESS,
+      //         data: response,
+      //       },
+      //       res
+      //     );
+      //   })
+      //   .catch((error) => {
+      //     console.log("Error sending message:", error);
+      //   });
+      return universalFunctions.sendSuccess(
+              {
+                statusCode: 200,
+                message: responseMessages.SUCCESS,
+                // data: response,
+              },
+              res
+            );
   }
   catch(error)
   {
