@@ -691,7 +691,7 @@ module.exports = {
          
           admin
            .messaging()
-           .sendToDevice(registrationTokens, message)
+           .sendToDevice('ejgWus5UT9AywBRWpYfyAx:APA91bFbbMfOXbqtypWWCsrHgdMtC3aY45HWB-VPANymKQs5HVqjxVvFVnAsMYOFV6UD_oyCIesfryavCtnBYAdMd6ynBECOsTwa2kwGWceeDohs2OkRUk5-ugYC3V3I4dF5gh9Qm6Lk', message)
            .then((response) => {
             console.log("this is response" , response)
              return universalFunctions.sendSuccess(
