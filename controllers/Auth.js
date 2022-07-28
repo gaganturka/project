@@ -168,10 +168,7 @@ module.exports = {
       const schema = Joi.object({
         firstName: Joi.string().alphanum().min(2).max(30).required(),
         lastName: Joi.string().alphanum().min(2).max(30).required(),
-        email: Joi.string().email({
-          minDomainSegments: 2,
-          tlds: { allow: ["com", "net"] },
-        }),
+        email: Joi.string().email(),
         mobileNo: Joi.string().min(10).required(),
         profilePic: Joi.string().optional().allow(""),
         category: Joi.string(),
@@ -248,6 +245,8 @@ module.exports = {
           }]
         // firebaseToken:req.body.firebaseToken
       });
+
+
       await expertUser.findByIdAndUpdate(expertUserr._id, { userId: user._id });
       // console.log(expertUserr,"eexxpperrttusseerr");
       // console.log('Namaste - ',user);
