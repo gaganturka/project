@@ -691,7 +691,7 @@ module.exports = {
          
           admin
            .messaging()
-           .sendToDevice('ejgWus5UT9AywBRWpYfyAx:APA91bFbbMfOXbqtypWWCsrHgdMtC3aY45HWB-VPANymKQs5HVqjxVvFVnAsMYOFV6UD_oyCIesfryavCtnBYAdMd6ynBECOsTwa2kwGWceeDohs2OkRUk5-ugYC3V3I4dF5gh9Qm6Lk', message)
+           .sendToDevice('fWu5rLsraPhZ5G3g4JD3YV:APA91bFHsJiftxuLadtpK79x-H0QyCg1dOH11o2-u_nATlMDtibhvA2iDN8w0NECfbcjsnN5VwaSdyqcf0rXUlmhx4pPSn6EQO4yfGCG_dGsv5NJCbQi4g5nL0DtTqmaqJqnmq_C00WM', message)
            .then((response) => {
             console.log("this is response" , response)
              return universalFunctions.sendSuccess(
