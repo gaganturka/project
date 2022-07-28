@@ -687,11 +687,11 @@ module.exports = {
            registrationTokens.push(val1.deviceToken);
          });
          console.log("this is token" , registrationTokens)
-         registrationTokens.map((token)=>{
+        //  registrationTokens.map((token)=>{
          
           admin
            .messaging()
-           .sendToDevice('f52eIq4wkYisJtU0qby-lL:APA91bFSa9oeSlzEVno2vcdLXDnLWK4EiT_Bmkir9MnC1EML1Zk5MBzRutdFlPo2nCDUhq2UM2YoLfeQhCNJrBCTabewNTDLOliMwnq0YWutTzsAYp8G8l5xhtMg8IRZguKbQ2GuAoDH', message)
+           .sendToDevice(registrationTokens, message)
            .then((response) => {
             console.log("this is response" , response)
              return universalFunctions.sendSuccess(
@@ -706,7 +706,7 @@ module.exports = {
            .catch((error) => {
              console.log("Error sending message:", error);
            });
-         })
+        //  })
 
          
 
