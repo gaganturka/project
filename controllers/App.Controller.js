@@ -87,7 +87,6 @@ module.exports = {
   },
   createBorhanUser: async (req, res) => {
     try {
-      //  console.log('thid odi bpody - ', req.file, req.files)
       const schema = Joi.object({
         firstName: Joi.string().alphanum().min(2).max(30).required(),
         lastName: Joi.string().alphanum().min(2).max(30).required(),
@@ -101,11 +100,8 @@ module.exports = {
         deviceToken: Joi.string().allow(""),
         firebaseUid: Joi.string(),
 
-        // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      // const result=await schema.validateAsync(req.body);
-      // console.log(req.body, "hello", req.file);
       let success = false;
 
       // checks whether the mobileno has already been created
@@ -153,7 +149,6 @@ module.exports = {
         isSubscribed: false,
         balance: 0,
       });
-      // console.log(borhanuser);
 
       user = await User.create({
         firstName: req.body.firstName,
@@ -175,11 +170,7 @@ module.exports = {
         ],
         mobileFirebaseUid: req.body.firebaseUid,
       });
-      await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
-      // const finalUser=await User.findOne({_id:user._id})
-      // let newToken=[...user.token,]
-      // let finalUser= await User.findByIdAndUpdate({_id:user._id},{token:newToken,mobileFirebaseUid:firebaseUid}).populate('userData.data');
-
+      await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id })
       console.log(user);
       // console.log(res.json, "jwttoken");
       let finalUser = await User.findOne({ _id: user._id }).populate(
@@ -234,14 +225,17 @@ module.exports = {
       //   throw Boom.badRequest("cannot find any expert");
       // }
       let expertData = JSON.parse(JSON.stringify(expert));
+      // console.log("this is expertData" , expertData)
 
       expertData.map((ele) => {
-        delete ele.__v;
-        delete ele.category.__v;
-        delete ele.userId.isEmailVerified;
-        delete ele.userId.password;
-        delete ele.userId.__v;
-        delete ele.userId.userData;
+        console.log("ele" , ele)
+        // delete ele.__v;
+        // delete ele.category.__v;
+        // if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
+        // delete ele.userId.isEmailVerified;
+        // delete ele.userId.password;
+        // delete ele.userId.__v;
+        // delete ele.userId.userData;
         if(ele.expertlisting.length>0&&ele.expertlisting!=null)
         ele.isFavorite=true;
         else
@@ -266,12 +260,12 @@ module.exports = {
       // }
       let topOnlineExpertsData = JSON.parse(JSON.stringify(topOnlineExperts));
       topOnlineExpertsData.map((ele) => {
-        delete ele.__v;
-        delete ele.category.__v;
-        delete ele.userId.isEmailVerified;
-        delete ele.userId.password;
-        delete ele.userId.__v;
-        delete ele.userId.userData;
+        // delete ele.__v;
+        // delete ele.category.__v;
+        // delete ele.userId.isEmailVerified;
+        // delete ele.userId.password;
+        // delete ele.userId.__v;
+        // delete ele.userId.userData;
         if(ele.expertlisting.length>0&&ele.expertlisting!=null)
         ele.isFavorite=true;
         else
@@ -344,6 +338,7 @@ module.exports = {
       var upcomingAppointmentData = JSON.parse(
         JSON.stringify(upcomingAppointmentDatas)
       );
+      console.log("this is upcoming appointmet",upcomingAppointmentData)
       upcomingAppointmentData.map((ele) => {
         delete ele.__v;
         if (ele && ele.userId) {

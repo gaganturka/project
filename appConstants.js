@@ -34,11 +34,13 @@ const chatRoomStatus = {
   pending: "pending",
 };
 const pushNotificationMessage={
-  title:"Send From Borhan",
+  title:"Send Notification From Borhan",
   bookAppointmentByUser:"Your request to book an appointment has successfully been sent to the expert.",
-  bookAppointementsMessage:"SUCCESSFUL!! Expert has accepted your request. Click and see the details.",
-  expertCancelAppointment:"CANCELLED!! Appointment has been cancelled by the Expert.",
+  bookAppointementsMessage:"Expert has accepted your request. Click and see the details.",
+  expertCancelAppointment:"Appointment has been cancelled by the Expert.",
   expertRejetedAppointment:" Expert has rejected your request to book an appointment. Please try another slot or expert.",
+  WhenUserCancelsAnAppointment:"Appointment has been cancelled by the user.",
+  WhenUserRequestsToRescheduleAnAppointment:"Your request has been successfully sent to reschedule an appointment"
 }
 
 module.exports = {
