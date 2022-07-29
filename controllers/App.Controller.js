@@ -229,13 +229,15 @@ module.exports = {
 
       expertData.map((ele) => {
         console.log("ele" , ele)
-        // delete ele.__v;
-        // delete ele.category.__v;
-        // if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
-        // delete ele.userId.isEmailVerified;
-        // delete ele.userId.password;
-        // delete ele.userId.__v;
-        // delete ele.userId.userData;
+        delete ele.__v;
+        delete ele.category.__v;
+        if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
+        {
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+        }
         if(ele.expertlisting.length>0&&ele.expertlisting!=null)
         ele.isFavorite=true;
         else
@@ -260,12 +262,15 @@ module.exports = {
       // }
       let topOnlineExpertsData = JSON.parse(JSON.stringify(topOnlineExperts));
       topOnlineExpertsData.map((ele) => {
-        // delete ele.__v;
-        // delete ele.category.__v;
-        // delete ele.userId.isEmailVerified;
-        // delete ele.userId.password;
-        // delete ele.userId.__v;
-        // delete ele.userId.userData;
+        delete ele.__v;
+        delete ele.category.__v;
+        if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
+      {
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+      }
         if(ele.expertlisting.length>0&&ele.expertlisting!=null)
         ele.isFavorite=true;
         else
@@ -295,11 +300,13 @@ module.exports = {
       topOnlinePremiumExpertsData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
+        if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
+       {
         delete ele.userId.isEmailVerified;
         delete ele.userId.password;
         delete ele.userId.__v;
         delete ele.userId.userData;
-
+       }
         if(ele.expertlisting.length>0&&ele.expertlisting!=null)
         ele.isFavorite=true;
         else
@@ -611,10 +618,13 @@ module.exports = {
       getAllExportData.map((ele) => {
         delete ele.__v;
         // delete ele.category.__v;
+        if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
+       {
         delete ele.userId.isEmailVerified;
         delete ele.userId.password;
         delete ele.userId.__v;
         delete ele.userId.userData;
+       }
         if(ele.expertlisting.length>0&&ele.expertlisting){
           ele.isFavorite=true;
           delete ele.expertlisting;
@@ -649,8 +659,6 @@ module.exports = {
            userId: id
           },
        }
-    
-
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
@@ -721,10 +729,13 @@ module.exports = {
       getActiveExportData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
+        if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
+        {
         delete ele.userId.isEmailVerified;
         delete ele.userId.password;
         delete ele.userId.__v;
         delete ele.userId.userData;
+        }
         if(ele.expertlisting.length>0&&ele.expertlisting)
         ele.isFavorite=true;
         else{
