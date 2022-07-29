@@ -45,15 +45,14 @@ module.exports = {
         // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      const exportUser = await User.findOne({ mobileNo: req.body.mobileNo, role:APP_CONSTANTS.role.expert}).populate("userData.data");
-      if(exportUser)
-      {
+      const exportUser = await User.findOne({ mobileNo: req.body.mobileNo, role: APP_CONSTANTS.role.expert }).populate("userData.data");
+      if (exportUser) {
         return res.status(404).send({
           message: responseMessages.MOBILE_NUMBER_REGISTERD_EXPERT_USER
-       });
+        });
         // throw Boom.badRequest(responseMessages.MOBILE_NUMBER_REGISTERD_EXPERT_USER); 
       }
-      const user = await User.findOne({ mobileNo: req.body.mobileNo, role:APP_CONSTANTS.role.borhanuser}).populate("userData.data");
+      const user = await User.findOne({ mobileNo: req.body.mobileNo, role: APP_CONSTANTS.role.borhanuser }).populate("userData.data");
       if (!user) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
@@ -62,10 +61,10 @@ module.exports = {
         { deviceType: req.body.deviceType, deviceToken: req.body.deviceToken },
       ];
       let finalUser = await User.findByIdAndUpdate(
-        { _id: user._id,role:APP_CONSTANTS.role.borhanuser },
+        { _id: user._id, role: APP_CONSTANTS.role.borhanuser },
         { token: newToken, mobileFirebaseUid: req.body.firebaseUid }
       );
-      let updatedUser = await User.findOne({ _id: finalUser._id,role:APP_CONSTANTS.role.borhanuser }).populate(
+      let updatedUser = await User.findOne({ _id: finalUser._id, role: APP_CONSTANTS.role.borhanuser }).populate(
         "userData.data"
       );
       const token = await jwtFunction.jwtGeneratorApp(
@@ -103,11 +102,7 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let success = false;
-
-      // checks whether the mobileno has already been created
-
       let user = await User.findOne({ mobileNo: req.body.mobileNo });
-      // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
         if (user.role === APP_CONSTANTS.role.borhanuser) {
           throw Boom.badRequest(responseMessages.USER_EXISTS);
@@ -143,8 +138,6 @@ module.exports = {
           );
         }
       }
-      console.log("phone number   ", req.body.mobileNo);
-
       let borhanuser = await borhanUser.create({
         isSubscribed: false,
         balance: 0,
@@ -171,15 +164,9 @@ module.exports = {
         mobileFirebaseUid: req.body.firebaseUid,
       });
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id })
-      console.log(user);
-      // console.log(res.json, "jwttoken");
       let finalUser = await User.findOne({ _id: user._id }).populate(
         "userData.data"
       );
-      // const token = jwt.sign(
-      //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-      //   Config.jwtsecret
-      // );
       const token = await jwtFunction.jwtGeneratorApp(
         user._id,
         req.body.deviceType,
@@ -201,19 +188,18 @@ module.exports = {
   desktopPage: async (req, res) => {
     try {
       let expert;
-     let id=req.user.id;
-     let payload={
-      path: "expertlisting",
-       match:{
-       userId: id
-      },
-   }
+      let id = req.user.id;
+      let payload = {
+        path: "expertlisting",
+        match: {
+          userId: id
+        },
+      }
 
       expert = await expertUser
         .find({
           isApprovedByAdmin: true,
           // isSubscribed: true,
-
           // status: APP_CONSTANTS.activityStatus.active,
         })
         .populate("practiceArea")
@@ -221,29 +207,26 @@ module.exports = {
         .populate("userId")
         .populate(payload)
         .sort({ "rating.avgRating": -1 });
-      // if (!expert) {
-      //   throw Boom.badRequest("cannot find any expert");
-      // }
+     
       let expertData = JSON.parse(JSON.stringify(expert));
       // console.log("this is expertData" , expertData)
 
       expertData.map((ele) => {
-        console.log("ele" , ele)
+        console.log("ele", ele)
         delete ele.__v;
         delete ele.category.__v;
-        if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
-        {
-        delete ele.userId.isEmailVerified;
-        delete ele.userId.password;
-        delete ele.userId.__v;
-        delete ele.userId.userData;
+        if (ele && ele.userId && ele.userId.isEmailVerified && ele.userId.password && ele.userId.__v && ele.userId.userData) {
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
         }
-        if(ele.expertlisting.length>0&&ele.expertlisting!=null)
-        ele.isFavorite=true;
+        if (ele.expertlisting.length > 0 && ele.expertlisting != null)
+          ele.isFavorite = true;
         else
-        ele.isFavorite=false;
-        
-        
+          ele.isFavorite = false;
+
+
         delete ele.expertlisting;
       });
       let topOnlineExperts = await expertUser
@@ -264,19 +247,18 @@ module.exports = {
       topOnlineExpertsData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
-        if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
-      {
-        delete ele.userId.isEmailVerified;
-        delete ele.userId.password;
-        delete ele.userId.__v;
-        delete ele.userId.userData;
-      }
-        if(ele.expertlisting.length>0&&ele.expertlisting!=null)
-        ele.isFavorite=true;
+        if (ele && ele.userId && ele.userId.isEmailVerified && ele.userId.password && ele.userId.__v && ele.userId.userData) {
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
+        }
+        if (ele.expertlisting.length > 0 && ele.expertlisting != null)
+          ele.isFavorite = true;
         else
-        ele.isFavorite=false;
-        
-        
+          ele.isFavorite = false;
+
+
         delete ele.expertlisting;
       });
       let topOnlinePremiumExperts = await expertUser
@@ -290,29 +272,24 @@ module.exports = {
         .populate("userId")
         .populate(payload)
         .sort({ "rating.avgRating": -1 });
-
-      // if (!topOnlinePremiumExperts) {
-      //   throw Boom.badRequest("cannot find any premium online expert");
-      // }
       let topOnlinePremiumExpertsData = JSON.parse(
         JSON.stringify(topOnlinePremiumExperts)
       );
       topOnlinePremiumExpertsData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
-        if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
-       {
-        delete ele.userId.isEmailVerified;
-        delete ele.userId.password;
-        delete ele.userId.__v;
-        delete ele.userId.userData;
-       }
-        if(ele.expertlisting.length>0&&ele.expertlisting!=null)
-        ele.isFavorite=true;
+        if (ele && ele.userId && ele.userId.isEmailVerified && ele.userId.password && ele.userId.__v && ele.userId.userData) {
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
+        }
+        if (ele.expertlisting.length > 0 && ele.expertlisting != null)
+          ele.isFavorite = true;
         else
-        ele.isFavorite=false;
-        
-        
+          ele.isFavorite = false;
+
+
         delete ele.expertlisting;
       });
 
@@ -341,107 +318,93 @@ module.exports = {
       if (!upcomingAppointmentDatas) {
         // throw Boom.badRequest(responseMessages.APPOINTMENT_DATA_NOT_FOUND);
       }
-      else{
-      var upcomingAppointmentData = JSON.parse(
-        JSON.stringify(upcomingAppointmentDatas)
-      );
-      console.log("this is upcoming appointmet",upcomingAppointmentData)
-      upcomingAppointmentData.map((ele) => {
-        delete ele.__v;
-        if (ele && ele.userId) {
-          delete ele.userId.isEmailVerified;
-          delete ele.userId.password;
-          delete ele.userId.__v;
-          delete ele.userId.userData;
-        }
-        if (ele && ele.expertId && ele.expertId.userId) {
-          delete ele.expertId.userId.isEmailVerified;
-          delete ele.expertId.userId.password;
-          delete ele.expertId.userId.__v;
-          delete ele.expertId.userId.userData;
-        }
-      });
-    }
+      else {
+        var upcomingAppointmentData = JSON.parse(
+          JSON.stringify(upcomingAppointmentDatas)
+        );
+        console.log("this is upcoming appointmet", upcomingAppointmentData)
+        upcomingAppointmentData.map((ele) => {
+          delete ele.__v;
+          if (ele && ele.userId) {
+            delete ele.userId.isEmailVerified;
+            delete ele.userId.password;
+            delete ele.userId.__v;
+            delete ele.userId.userData;
+          }
+          if (ele && ele.expertId && ele.expertId.userId) {
+            delete ele.expertId.userId.isEmailVerified;
+            delete ele.expertId.userId.password;
+            delete ele.expertId.userId.__v;
+            delete ele.expertId.userId.userData;
+          }
+        });
+      }
       let topExpertsList = [],
         topOnlineExpertsList = [],
         topOnlinePremiumExpertsList = [];
 
       let i;
-      // for (i = 0; i < 5; i++) {
-      //   topExpertsList.push(expertData[i]);
-      //   topOnlineExpertsList.push(topOnlineExpertsData[i]);
-      //   topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
-      // }
-      if(expertData.length<5)
-      {
-        for(i=0;i<expertData.length;i++)
-        {
+      if (expertData.length < 5) {
+        for (i = 0; i < expertData.length; i++) {
           topExpertsList.push(expertData[i]);
         }
       }
-      else{
-        for(i=0;i<5;i++)
-        {
+      else {
+        for (i = 0; i < 5; i++) {
           topExpertsList.push(expertData[i]);
         }
       }
-      if(topOnlineExpertsData.length<5)
-      {
-        for(i=0;i<topOnlineExpertsData.length;i++)
-        {
+      if (topOnlineExpertsData.length < 5) {
+        for (i = 0; i < topOnlineExpertsData.length; i++) {
           topOnlineExpertsList.push(topOnlineExpertsData[i]);
         }
       }
-      else{
-        for(i=0;i<5;i++)
-        {
+      else {
+        for (i = 0; i < 5; i++) {
           topOnlineExpertsList.push(topOnlineExpertsData[i]);
         }
       }
-      if(topOnlinePremiumExpertsData.length<5)
-      {
-        for(i=0;i<topOnlinePremiumExpertsData.length;i++)
-        {
+      if (topOnlinePremiumExpertsData.length < 5) {
+        for (i = 0; i < topOnlinePremiumExpertsData.length; i++) {
           topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
         }
       }
-      else{
-        for(i=0;i<5;i++)
-        {
+      else {
+        for (i = 0; i < 5; i++) {
           topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
         }
       }
-      let timeZone=req.query.timeZone;
+      let timeZone = req.query.timeZone;
 
-     if(!upcomingAppointmentDatas)
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "Desktop page successfully fetched",
-          data: {
-            topExpertsList,
-            topOnlineExpertsList,
-            topOnlinePremiumExpertsList,
-            categoryList: categoryData,
-            practiceList: practiceData,
-            upcomingAppointmentList: upcomingAppointmentDatas,
+      if (!upcomingAppointmentDatas)
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "Desktop page successfully fetched",
+            data: {
+              topExpertsList,
+              topOnlineExpertsList,
+              topOnlinePremiumExpertsList,
+              categoryList: categoryData,
+              practiceList: practiceData,
+              upcomingAppointmentList: upcomingAppointmentDatas,
+            },
           },
-        },
-        res
-      );
+          res
+        );
       else
-      var startAppointmentTimeLocal, appointmentEndLocalTime, appointDateandTimeLocal;
+        var startAppointmentTimeLocal, appointmentEndLocalTime, appointDateandTimeLocal;
       upcomingAppointmentData.map((ele) => {
-          
-          let localTime = moment.tz(ele.startAppointmentTime, timeZone);
-          startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
-          let endTime = moment.tz(ele.endAppointmentTime, timeZone);
-           appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
-           let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
-           appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
 
-          
-          return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
+        let localTime = moment.tz(ele.startAppointmentTime, timeZone);
+        startAppointmentTimeLocal = moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+        let endTime = moment.tz(ele.endAppointmentTime, timeZone);
+        appointmentEndLocalTime = moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+        let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
+        appointDateandTimeLocal = moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+
+
+        return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
       })
       universalFunctions.sendSuccess(
         {
@@ -552,13 +515,13 @@ module.exports = {
   getAllExpertData: async (req, res) => {
     try {
       let id = req.user.id;
-      let payload={
-          path: "expertlisting",
-           match:{
-           userId: id
-          },
-       }
-    
+      let payload = {
+        path: "expertlisting",
+        match: {
+          userId: id
+        },
+      }
+
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
@@ -618,18 +581,17 @@ module.exports = {
       getAllExportData.map((ele) => {
         delete ele.__v;
         // delete ele.category.__v;
-        if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
-       {
-        delete ele.userId.isEmailVerified;
-        delete ele.userId.password;
-        delete ele.userId.__v;
-        delete ele.userId.userData;
-       }
-        if(ele.expertlisting.length>0&&ele.expertlisting){
-          ele.isFavorite=true;
+        if (ele && ele.userId && ele.userId.isEmailVerified && ele.userId.password && ele.userId.__v && ele.userId.userData) {
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
+        }
+        if (ele.expertlisting.length > 0 && ele.expertlisting) {
+          ele.isFavorite = true;
           delete ele.expertlisting;
-        }else{
-          ele.isFavorite=false;
+        } else {
+          ele.isFavorite = false;
           delete ele.expertlisting;
         }
       });
@@ -651,14 +613,14 @@ module.exports = {
   },
   getActiveExportData: async (req, res) => {
     try {
-      
+
       let id = req.user.id;
-      let payload={
-          path: "expertlisting",
-           match:{
-           userId: id
-          },
-       }
+      let payload = {
+        path: "expertlisting",
+        match: {
+          userId: id
+        },
+      }
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
@@ -729,17 +691,16 @@ module.exports = {
       getActiveExportData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
-        if(ele  && ele.userId && ele.userId.isEmailVerified && ele.userId.password  && ele.userId.__v && ele.userId.userData)
-        {
-        delete ele.userId.isEmailVerified;
-        delete ele.userId.password;
-        delete ele.userId.__v;
-        delete ele.userId.userData;
+        if (ele && ele.userId && ele.userId.isEmailVerified && ele.userId.password && ele.userId.__v && ele.userId.userData) {
+          delete ele.userId.isEmailVerified;
+          delete ele.userId.password;
+          delete ele.userId.__v;
+          delete ele.userId.userData;
         }
-        if(ele.expertlisting.length>0&&ele.expertlisting)
-        ele.isFavorite=true;
-        else{
-          ele.isFavorite=false;
+        if (ele.expertlisting.length > 0 && ele.expertlisting)
+          ele.isFavorite = true;
+        else {
+          ele.isFavorite = false;
         }
         delete ele.expertlisting;
       });
@@ -763,18 +724,17 @@ module.exports = {
   getAllOnlinePremiumExpertsData: async (req, res) => {
     try {
       let id = req.user.id;
-      let payload={
-          path: "expertlisting", match:{
-           userId: id
-          },
-       }
-    
+      let payload = {
+        path: "expertlisting", match: {
+          userId: id
+        },
+      }
+
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-
       let page = req.body.page;
       let limit = req.body.limit;
       let activeExportData = await expertUser
@@ -803,15 +763,15 @@ module.exports = {
           delete ele.userId.__v;
           delete ele.userId.userData;
         }
-        if(ele.expertlisting.length>0&&ele.expertlisting){
-          ele.isFavorite=true;
+        if (ele.expertlisting.length > 0 && ele.expertlisting) {
+          ele.isFavorite = true;
           delete ele.expertlisting;
-        }else{
-          ele.isFavorite=false;
+        } else {
+          ele.isFavorite = false;
           delete ele.expertlisting;
         }
       });
-     
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -883,13 +843,12 @@ module.exports = {
   getFilteredExperts: async (req, res) => {
     try {
       let id = req.user.id;
-      let payload={
-          path: "expertlisting",
-           match:{
-           userId: id
-          },
-       }
-    
+      let payload = {
+        path: "expertlisting",
+        match: {
+          userId: id
+        },
+      }
       const schema = Joi.object({
         category: Joi.string().allow(""),
         practiceArea: Joi.string().allow(""),
@@ -927,7 +886,7 @@ module.exports = {
           .find({ category: req.body.category, isApprovedByAdmin: true })
           .countDocuments();
       } else if (req.body.category === "" && req.body.practiceArea !== "") {
-     
+
         expert = await expertUser
           .find({
             practiceArea: req.body.practiceArea,
@@ -998,7 +957,7 @@ module.exports = {
         expert = await expertUser
           .find({
             isApprovedByAdmin: true,
-            
+
           })
           .populate("practiceArea")
           .populate("category")
@@ -1027,11 +986,11 @@ module.exports = {
           delete ele.userId.__v;
           delete ele.userId.userData;
         }
-        if(ele.expertlisting.length>0&&ele.expertlisting){
-          ele.isFavorite=true;
+        if (ele.expertlisting.length > 0 && ele.expertlisting) {
+          ele.isFavorite = true;
           delete ele.expertlisting;
-        }else{
-          ele.isFavorite=false;
+        } else {
+          ele.isFavorite = false;
           delete ele.expertlisting;
         }
       });
@@ -1064,9 +1023,6 @@ module.exports = {
         }),
         mobileNo: Joi.string().min(10).required(),
         profilePic: Joi.string().allow(""),
-        // firebaseUid:Joi.string(),
-        // otp: Joi.string(),
-        // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
@@ -1099,59 +1055,67 @@ module.exports = {
   },
   getAppointmentDetails: async (req, res) => {
     try {
-        let timeZone=req.body.timezone;
+      let timeZone = req.body.timezone;
       let userId = req.user.id;
       let filterType = req.body.filterType;
       const schema = Joi.object({
         filterType: Joi.string(),
         limit: Joi.number(),
         page: Joi.number(),
-        timezone:Joi.string(),
+        timezone: Joi.string(),
 
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let data;
       let count;
-      let currentTime =new Date();
+      let currentTime = new Date();
       let expert;
-        let pendingAppointment=await appointment.updateMany({userId:userId,status: APP_CONSTANTS.appointmentStatus.pending,endAppointmentTime: {
+      let pendingAppointment = await appointment.updateMany({
+        userId: userId, status: APP_CONSTANTS.appointmentStatus.pending, endAppointmentTime: {
           $lt: currentTime.getTime()
-        }},{status: APP_CONSTANTS.appointmentStatus.cancelled});
+        }
+      }, { status: APP_CONSTANTS.appointmentStatus.cancelled });
 
-        let confirmedAppointment=await appointment.updateMany({userId:userId,status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
+      let confirmedAppointment = await appointment.updateMany({
+        userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed, endAppointmentTime: {
           $lt: currentTime.getTime()
-        }},{status: APP_CONSTANTS.appointmentStatus.cancelled});
-        
-      // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
+        }
+      }, { status: APP_CONSTANTS.appointmentStatus.cancelled });
+
       if (filterType == "All") {
         data = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({'startAppointmentTime':-1});
+          .sort({ 'startAppointmentTime': -1 });
         //  expert=await expert.find({_id:data.expertId._id});
         count = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).countDocuments()
       }
       else if (filterType == "Upcoming") {
-        let now =new Date();
-        data = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
-          $gte: now.getTime()
-        } }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId').populate('practiceArea')
+        let now = new Date();
+        data = await appointment.find({
+          userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed, endAppointmentTime: {
+            $gte: now.getTime()
+          }
+        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId').populate('practiceArea')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({'startAppointmentTime':-1});
-        count = await appointment.find({ userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed,endAppointmentTime: {
-          $gte: now.getTime()
-        } }).countDocuments();
+          .sort({ 'startAppointmentTime': -1 });
+        count = await appointment.find({
+          userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed, endAppointmentTime: {
+            $gte: now.getTime()
+          }
+        }).countDocuments();
       }
       else if (filterType == 'Rescheduled') {
-        let now=new Date();
-        data = await appointment.find({ userId: userId, isRescheduled:true }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
+        let now = new Date();
+        data = await appointment.find({ userId: userId, isRescheduled: true }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({'startAppointmentTime':-1});
+          .sort({ 'startAppointmentTime': -1 });
         //  expert=await expert.find({_id:data.expertId._id});
-        count = await appointment.find({ userId: userId, isRescheduled:true
-       }).countDocuments()
+        count = await appointment.find({
+          userId: userId, isRescheduled: true
+        }).countDocuments()
 
       }
       else if (filterType == "Completed") {
@@ -1162,7 +1126,7 @@ module.exports = {
         }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({'startAppointmentTime':-1});
+          .sort({ 'startAppointmentTime': -1 });
         count = await appointment.find({
           userId: userId,
           status: APP_CONSTANTS.appointmentStatus.completed,
@@ -1176,25 +1140,15 @@ module.exports = {
         }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({'startAppointmentTime':-1});
-
+          .sort({ 'startAppointmentTime': -1 });
         count = await appointment.find({
           userId: userId,
           status: APP_CONSTANTS.appointmentStatus.cancelled,
 
         }).countDocuments()
       }
-
-
-
-     
       let appointmentAllData = JSON.parse(JSON.stringify(data));
-      // console.log("this is all data ", appointmentAllData);
-        appointmentAllData.map((ele) => {
-
-            // console.log("thiss", ele)
-           
-            // console.log("this is local time", localTime)
+      appointmentAllData.map((ele) => {
         if (ele && ele.expertId && ele.expertId.userId) {
           delete ele.__v;
           delete ele.practiceArea;
@@ -1215,39 +1169,33 @@ module.exports = {
         }
       });
 
-        var startAppointmentTimeLocal, appointmentEndLocalTime, appointDateandTimeLocal;
-        appointmentAllData.map((ele) => {
-            // let timeFormate= moment(ele.startAppointmentTime).format('YYYY-MM-DD HH:mm')
-            // console.log("time" ,timeFormate )
-            let localTime = moment.tz(ele.startAppointmentTime, timeZone);
-            startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
-            let endTime = moment.tz(ele.endAppointmentTime, timeZone);
-             appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
-             let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
-             appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+      var startAppointmentTimeLocal, appointmentEndLocalTime, appointDateandTimeLocal;
+      appointmentAllData.map((ele) => {
+        let localTime = moment.tz(ele.startAppointmentTime, timeZone);
+        startAppointmentTimeLocal = moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+        let endTime = moment.tz(ele.endAppointmentTime, timeZone);
+        appointmentEndLocalTime = moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+        let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
+        appointDateandTimeLocal = moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
 
 
-            // appointmentEndLocalTime = moment.utc(ele.endAppointmentTime).toDate();
-            // appointmentEndLocalTime = moment(appointmentEndLocalTime).format('YYYY-MM-DD HH:mm:ss');
-            // appointDateandTimeLocal = moment.utc(ele.appointDateandTime).toDate();
-            // appointDateandTimeLocal = moment(appointDateandTimeLocal).format('YYYY-MM-DD HH:mm:ss');
-            
-            return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
-            // return { ...ele, startAppointmentTimes : localTime}
-        })
-       
+        // appointmentEndLocalTime = moment.utc(ele.endAppointmentTime).toDate();
+        // appointmentEndLocalTime = moment(appointmentEndLocalTime).format('YYYY-MM-DD HH:mm:ss');
+        // appointDateandTimeLocal = moment.utc(ele.appointDateandTime).toDate();
+        // appointDateandTimeLocal = moment(appointDateandTimeLocal).format('YYYY-MM-DD HH:mm:ss');
+
+        return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
+        // return { ...ele, startAppointmentTimes : localTime}
+      })
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
-          data: { list: appointmentAllData, count: count,currentPage:req.body.page },
+          data: { list: appointmentAllData, count: count, currentPage: req.body.page },
         },
         res
-      );
-
-
-
-
+      )
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }
@@ -1272,16 +1220,17 @@ module.exports = {
       return universalFunctions.sendError(error, res);
     }
   },
+
+  
   rescheduleAppointment: async (req, res) => {
     try {
       let userId = req.user.id;
-      // let userId = req.user.id;
       let payload = req.body;
       const schema = Joi.object({
         timeSlotId: Joi.string().length(24).required(),
         expertId: Joi.string().length(24).required(),
         appointmentType: Joi.string().allow(""),
-        duration: Joi.string().allow(""),  
+        duration: Joi.string().allow(""),
         appointmentDate: Joi.date().required(),
         endAppointmentTime: Joi.date().required(),
         startAppointmentTime: Joi.date().required(),
@@ -1290,7 +1239,7 @@ module.exports = {
         status: Joi.string().allow(""),
         practiceArea: Joi.string().length(24).required(),
         appointmentId: Joi.string(),
-        timeZone:Joi.string(),
+        timeZone: Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let start = req.body.startAppointmentTime, end = req.body.endAppointmentTime;
@@ -1302,25 +1251,25 @@ module.exports = {
       })
       payload.userId = userId;
       let expert;
-      let rescheduledAppointment = await appointment.findByIdAndUpdate(req.body.appointmentId, payload,{new:true} );
- 
+      let rescheduledAppointment = await appointment.findByIdAndUpdate(req.body.appointmentId, payload, { new: true });
+
       if (!rescheduledAppointment) {
         throw Boom.badRequest("cannot find any appointment to reschedule");
 
       }
-    //   let timeZone=req.body.timeZone;
-    //   let rescheduledAppointments = JSON.parse(JSON.stringify(rescheduledAppointment))
-    //   //   let createAppointments=JSON.stringify(createAppointment)
-    //     let localTime = moment.tz(rescheduledAppointments.startAppointmentTime, timeZone);
-    //    let startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
-    //     let endTime = moment.tz(rescheduledAppointments.endAppointmentTime, timeZone);
-    //   let   appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
-    //      let dateAndTime = moment.tz(rescheduledAppointments.appointDateandTime, timeZone);
-    //    let  appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
-    //    rescheduledAppointments.startAppointmentTimeLocal=startAppointmentTimeLocal;
-    //    rescheduledAppointments.appointmentEndLocalTime=appointmentEndLocalTime;
-    //    rescheduledAppointments.appointDateandTimeLocal=appointDateandTimeLocal;
-  
+      //   let timeZone=req.body.timeZone;
+      //   let rescheduledAppointments = JSON.parse(JSON.stringify(rescheduledAppointment))
+      //   //   let createAppointments=JSON.stringify(createAppointment)
+      //     let localTime = moment.tz(rescheduledAppointments.startAppointmentTime, timeZone);
+      //    let startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+      //     let endTime = moment.tz(rescheduledAppointments.endAppointmentTime, timeZone);
+      //   let   appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+      //      let dateAndTime = moment.tz(rescheduledAppointments.appointDateandTime, timeZone);
+      //    let  appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+      //    rescheduledAppointments.startAppointmentTimeLocal=startAppointmentTimeLocal;
+      //    rescheduledAppointments.appointmentEndLocalTime=appointmentEndLocalTime;
+      //    rescheduledAppointments.appointDateandTimeLocal=appointDateandTimeLocal;
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1336,39 +1285,37 @@ module.exports = {
   createFavouriteExpert: async (req, res) => {
     try {
       let userId = req.user.id;
-      let {expertId,favourite,expertUserId } = req.body;
+      let { expertId, favourite, expertUserId } = req.body;
       let payload = {
         userId,
-        expertId, 
+        expertId,
         expertUserId,
       };
-      if (favourite==APP_CONSTANTS.checkfavExpert) {
+      if (favourite == APP_CONSTANTS.checkfavExpert) {
         await favouriteExport.create(payload);
         universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "Expert Added To Favourite",
-        },
-        res
-      );
+          {
+            statusCode: 200,
+            message: "Expert Added To Favourite",
+          },
+          res
+        );
       }
-      else
-      {
-       let removeFavouriteExpert= await favouriteExport.deleteOne(payload)
-        if (!removeFavouriteExpert)
-        {
-          throw Boom.badRequest("Expert Is Not Found"); 
+      else {
+        let removeFavouriteExpert = await favouriteExport.deleteOne(payload)
+        if (!removeFavouriteExpert) {
+          throw Boom.badRequest("Expert Is Not Found");
         }
         universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "Expert Remove To Favourite",
-          data:removeFavouriteExpert
-        },
-        res
-      );
+          {
+            statusCode: 200,
+            message: "Expert Remove To Favourite",
+            data: removeFavouriteExpert
+          },
+          res
+        );
       }
-     
+
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }
@@ -1377,49 +1324,39 @@ module.exports = {
     try {
       const schema = Joi.object({
         limit: Joi.string().required(),
-        page:Joi.string().required(),
+        page: Joi.string().required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-     
+
       let id = req.user.id;
-      let payload={
-          path: "expertlisting", match:{
-           userId: id
-          },
-       }
-     let {page,limit}=req.body;
+      let payload = {
+        path: "expertlisting", match: {
+          userId: id
+        },
+      }
+      let { page, limit } = req.body;
       let favouriteExportData = await favouriteExport
-        .find({userId:id})
+        .find({ userId: id })
         .populate({ path: "userId", select: "firstName lastName profilePic" })
-        // .populate({
-        //   path: "borhanUserId",
-        //   populate: {
-        //     path: "userId",
-        //     select: "firstName lastName profilePic",
-        //   },
-        // })
-        // .populate("expertUserId")
-        // .populate(payload)
         .populate({
           path: "expertId",
           populate: { path: "userId practiceArea category" },
         })
-        
+
         .skip(parseInt((page - 1) * limit))
         .limit(parseInt(limit));
-        let count=await favouriteExport
-        .find({userId:id}).countDocuments();
+      let count = await favouriteExport
+        .find({ userId: id }).countDocuments();
 
-        let finalResult=[];
-        console.log('before',favouriteExportData);
-        let getfavExportData = JSON.parse(JSON.stringify(favouriteExportData));
-        console.log('after',getfavExportData);
-        getfavExportData.map((ele) => {
+      let finalResult = [];
+      console.log('before', favouriteExportData);
+      let getfavExportData = JSON.parse(JSON.stringify(favouriteExportData));
+      console.log('after', getfavExportData);
+      getfavExportData.map((ele) => {
         delete ele.__v;
-        // delete ele.category.__v;
         if (ele && ele.userId && ele.userId != null) {
           delete ele.userId
-          
+
         }
         const expertDetails = ele?.expertId;
         if (ele && ele.expertId && ele.expertId.userId && ele.expertId.userId != null) {
@@ -1431,26 +1368,20 @@ module.exports = {
           delete ele.expertId.userId.userData;
           delete ele.expertUserId;
           delete ele.expertId;
-          // ele=structuredClone(ele.expertId);
-          // ele =ele.map((obj)=>({...obj}));
-          // ele={...ele,...expertDetails};
-          
-        // ele.isFavorite=true;
         }
-          
-           const Result = {...ele, ...expertDetails};
-          //  let isFav={isFavorite:true};
-           let intResult={...Result, isFavorite:true};
-           finalResult=[...finalResult,intResult];
-        // finalResult.isFavorite=true;
+        const Result = { ...ele, ...expertDetails };
+        let intResult = { ...Result, isFavorite: true };
+        finalResult = [...finalResult, intResult];
       });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
-          data: {list:finalResult,
-            currentPage:req.body.page,
-          total:count}
+          data: {
+            list: finalResult,
+            currentPage: req.body.page,
+            total: count
+          }
         },
         res
       );
@@ -1459,22 +1390,22 @@ module.exports = {
     }
   },
 
-  getChatAppointmentUser:async (req,res)=>{
-    try{ 
+  getChatAppointmentUser: async (req, res) => {
+    try {
       let id = req.user.id;
-      let payload={
-        userId:id
+      let payload = {
+        userId: id
       }
-      const chatappointmentdata = await ChatAppointment.find(payload).populate({ path: "userId",populate:{path:'userData.data'} }).populate({path:'expertId',populate:{path:'userId practiceArea category'}});
+      const chatappointmentdata = await ChatAppointment.find(payload).populate({ path: "userId", populate: { path: 'userData.data' } }).populate({ path: 'expertId', populate: { path: 'userId practiceArea category' } });
       if (!chatappointmentdata) {
         throw Boom.badRequest("invalid id or token");
       }
       let tempobj = JSON.parse(JSON.stringify(chatappointmentdata));
-      await universalFunctions.asyncForEach(tempobj,async ( e,index)=>{
-        
-        let expertData=await User.findOne({_id:e.expertId.userId});
-        e.expertData=expertData;
-    
+      await universalFunctions.asyncForEach(tempobj, async (e, index) => {
+
+        let expertData = await User.findOne({ _id: e.expertId.userId });
+        e.expertData = expertData;
+
       })
       universalFunctions.sendSuccess(
         {
@@ -1484,27 +1415,26 @@ module.exports = {
         },
         res
       );
-    
-    }catch(err){
+
+    } catch (err) {
       console.log(err)
-      universalFunctions.sendError(err, res);  
+      universalFunctions.sendError(err, res);
     }
-    },
-    bookChatAppointment: async (req, res) => {
-      try {
-        let userId = req.user.id;
-        let payload = req.body;
-        payload={...payload,chatRoomId:""};
-        const schema = Joi.object({
-          expertId: Joi.string().length(24).required(),
-          question: Joi.string().allow("")
-        });
-        await universalFunctions.validateRequestPayload(req.body, res, schema);
-        payload.userId = userId;
-        let chats=await ChatAppointment.findOne({expertId:req.body.expertId,userId});
-        if(!chats)
-        {
-        let data =await ChatAppointment.create(payload);
+  },
+  bookChatAppointment: async (req, res) => {
+    try {
+      let userId = req.user.id;
+      let payload = req.body;
+      payload = { ...payload, chatRoomId: "" };
+      const schema = Joi.object({
+        expertId: Joi.string().length(24).required(),
+        question: Joi.string().allow("")
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      payload.userId = userId;
+      let chats = await ChatAppointment.findOne({ expertId: req.body.expertId, userId });
+      if (!chats) {
+        let data = await ChatAppointment.create(payload);
         if (!data) {
           throw Boom.badRequest("something is wrong ");
         }
@@ -1516,208 +1446,149 @@ module.exports = {
           },
           res
         );
-        }
-        else
-        {
-            
-              universalFunctions.sendSuccess(
-                {
-                  statusCode: 400,
-                  message: "You already have a chat room",
-                  data: chats,
-                },
-                res
-              );
-              
-            
-            
-           
-        }
-        
-  
-      } catch (error) {
-        console.log(error)
-        universalFunctions.sendError(error, res);
       }
-    },
-    getExpertDetails: async (req,res)=>{
-      try{
+      else {
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 400,
+            message: "You already have a chat room",
+            data: chats,
+          },
+          res
+        )
+      }
+    } catch (error) {
+      console.log(error)
+      universalFunctions.sendError(error, res);
+    }
+  },
+  getExpertDetails: async (req, res) => {
+    try {
       // let userId
-      let payload=req.body;
-      
-      let expPayload={
-        path: "expertlisting", match:{
-         userId: req.user.id
+      let payload = req.body;
+
+      let expPayload = {
+        path: "expertlisting", match: {
+          userId: req.user.id
         },
-     }
-      const expert=await expertUser.findOne({_id:payload.expertId}).populate('userId').populate('category').populate(expPayload).populate('practiceArea');
-      if(!expert)
-      {
+      }
+      const expert = await expertUser.findOne({ _id: payload.expertId }).populate('userId').populate('category').populate(expPayload).populate('practiceArea');
+      if (!expert) {
         throw Boom.badRequest('Expert not found');
       }
       let expertDetails = JSON.parse(JSON.stringify(expert));
-      // expertDetails.map((ele) => {
-      //   delete ele.__v;
-      //   delete ele.category.__v;
-      //   delete ele.userId.isEmailVerified;
-      //   delete ele.userId.password;
-      //   delete ele.userId.__v;
-      //   delete ele.userId.userData;
-      //   if(ele.expertlisting.length>0&&ele.expertlisting!=null)
-      //   ele.isFavorite=true;
-      //   else
-      //   ele.isFavorite=false;
-        
-        
-      //   delete ele.expertlisting;
-      // });
-console.log(expert,'eexxxppp')
-      if(expertDetails?.expertlisting.length>0)
-      expertDetails.isFavorite=true;
-      else 
-      expertDetails.isFavorite=false;
-      // expertDetails={...expertDetails,isFavorite:true};
-
-      delete expertDetails.expertlisting
-
+      if (expertDetails?.expertlisting.length > 0)
+        expertDetails.isFavorite = true;
+      else
+        expertDetails.isFavorite = false;
+        delete expertDetails.expertlisting
       universalFunctions.sendSuccess({
-
-        statusCode:200,
-        message:'Expert details fetched successfully',
+        statusCode: 200,
+        message: 'Expert details fetched successfully',
         data:
           expertDetails
-        
+
 
       },
-      res)
+        res)
     }
-  catch(error)
-  {
-    universalFunctions.sendError(error,res);
-  }
-},
-createTestimony: async (req, res) => {
-  try {
-    const schema = Joi.object({
-
-      feedback: Joi.string(),
-      // name: Joi.string(),
-      // image: Joi.string().allow(""),
-    });
-    let id=req.user.id;
-    await universalFunctions.validateRequestPayload(req.body, res, schema);
-     const userDetails=await User.findOne({_id:id});
-     let name=userDetails.firstName+' '+userDetails.lastName;
-     let image=userDetails.profilePic;
-    let feedback = await Testimony.create({ feedback: req.body.feedback, name: name, image: image });
-    if (!feedback) {
-      throw Boom.badRequest("cannot create a testimony");
+    catch (error) {
+      universalFunctions.sendError(error, res);
     }
-    universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Created testimony",
-        data: feedback,
-      },
-      res
-    );
-  } catch (error) {
-    universalFunctions.sendError(error, res);
-  }
-
-
-
-
-
-
-},
-getTestimonies: async (req, res) => {
-  try {
-    // const schema = Joi.object({
-    //   // limit: Joi.number(),
-    //   // page: Joi.number(),
-    //   // category: Joi.string().allow(""),
-    //   // practiceArea: Joi.string().allow(""),
-    //   // sortBy: Joi.string(),
-    //   feedback: Joi.string(),
-    //   name: Joi.string(),
-    //   image: Joi.string().allow(""),
-    // });
-    // await universalFunctions.validateRequestPayload(req.body, res, schema);
-
-    let feedback = await Testimony.find();
-    if (!feedback) {
-      throw Boom.badRequest("cannot find any testimony");
-    }
-    universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "All testimonies are",
-        data: feedback,
-      },
-      res
-    );
-  } catch (error) {
-    universalFunctions.sendError(error, res);
-  }
-
-
-},
-giveExpertRating: async (req,res)=>{
-  try {
-    let id=req.user.id;
-    const schema = Joi.object({
-      rating:Joi.number(),
-      expertId:Joi.string()
-    });
-    // let id=req.user.id;
-    await universalFunctions.validateRequestPayload(req.body, res, schema);
-    const isRated=await Expert_Rating.findOne({userId:id,expertId:req.body.expertId})
-    if(!isRated)
-    {
-      throw Boom.badRequest('User has already rated the expert');
-    }
-    const expert=await expertUser.findOne({_id:req.body.expertId});
-    let rating={
-      noOfRating:expert.rating.noOfRating+1,
-      ratingCount:expert.rating.ratingCount+req.body.rating,
-      avgRating:((expert.rating.ratingCount+req.body.rating) /( expert.rating.noOfRating+1))
-    };
-    if(!expert)
-    {
-      throw Boom.badRequest('Wrong credentials')
+  },
+  createTestimony: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        feedback: Joi.string(),
+      });
+      let id = req.user.id;
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      const userDetails = await User.findOne({ _id: id });
+      let name = userDetails.firstName + ' ' + userDetails.lastName;
+      let image = userDetails.profilePic;
+      let feedback = await Testimony.create({ feedback: req.body.feedback, name: name, image: image });
+      if (!feedback) {
+        throw Boom.badRequest("cannot create a testimony");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Created testimony",
+          data: feedback,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
     }
 
-     const expertDetails=await expertUser.findOneAndUpdate({_id:req.body.expertId},{$set:{rating:rating}},{new:true});
-    //  let name=userDetails.firstName+' '+userDetails.lastName;
-    //  let image=userDetails.profilePic;
-    // let feedback = await Testimony.create({ feedback: req.body.feedback, name: name, image: image });
-    // if (!feedback) {
-    //   throw Boom.badRequest("cannot create a testimony");
-    // }
-    if(!expertDetails)
-    {
-      throw Boom.badRequest('Could not update');
+  },
+  getTestimonies: async (req, res) => {
+    try {
+      let feedback = await Testimony.find();
+      if (!feedback) {
+        throw Boom.badRequest("cannot find any testimony");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "All testimonies are",
+          data: feedback,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
     }
-    universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "thank you for rating",
-        data: expertDetails,
-      },
-      res
-    );
-  } catch (error) {
-    universalFunctions.sendError(error, res);
-  }
 
-},
-getAvailableTimeForUser: async (req, res) => {
+
+  },
+  giveExpertRating: async (req, res) => {
+    try {
+      let id = req.user.id;
+      const schema = Joi.object({
+        rating: Joi.number(),
+        expertId: Joi.string()
+      });
+      // let id=req.user.id;
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      const isRated = await Expert_Rating.findOne({ userId: id, expertId: req.body.expertId })
+      if (!isRated) {
+        throw Boom.badRequest('User has already rated the expert');
+      }
+      const expert = await expertUser.findOne({ _id: req.body.expertId });
+      let rating = {
+        noOfRating: expert.rating.noOfRating + 1,
+        ratingCount: expert.rating.ratingCount + req.body.rating,
+        avgRating: ((expert.rating.ratingCount + req.body.rating) / (expert.rating.noOfRating + 1))
+      };
+      if (!expert) {
+        throw Boom.badRequest('Wrong credentials')
+      }
+
+      const expertDetails = await expertUser.findOneAndUpdate({ _id: req.body.expertId }, { $set: { rating: rating } }, { new: true });
+      if (!expertDetails) {
+        throw Boom.badRequest('Could not update');
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "thank you for rating",
+          data: expertDetails,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+
+  },
+  getAvailableTimeForUser: async (req, res) => {
     try {
 
-      let { expertId, appointmentDate, duration,timeZone } = req.query;
-      let curentdate=new Date();
-    
+      let { expertId, appointmentDate, duration, timeZone } = req.query;
+      let curentdate = new Date();
+
       const expertTime = await expertTimeAvailable.find({
         $and: [
           {
@@ -1729,11 +1600,11 @@ getAvailableTimeForUser: async (req, res) => {
             "duration": duration
           },
           {
-          startAppointmentTime: {
-            $gte: curentdate,
-            
-          }
-        },
+            startAppointmentTime: {
+              $gte: curentdate,
+
+            }
+          },
         ]
       });
 
@@ -1755,18 +1626,15 @@ getAvailableTimeForUser: async (req, res) => {
         }
       })
       var startAppointmentTimeLocal, appointmentEndLocalTime, appointDateandTimeLocal;
-      
-      tempobj.map((ele) => {
-          
-          let localTime = moment.tz(ele.startAppointmentTime, timeZone);
-          startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
-          let endTime = moment.tz(ele.endAppointmentTime, timeZone);
-           appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
-           let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
-           appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
 
-          
-          return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
+      tempobj.map((ele) => {
+        let localTime = moment.tz(ele.startAppointmentTime, timeZone);
+        startAppointmentTimeLocal = moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+        let endTime = moment.tz(ele.endAppointmentTime, timeZone);
+        appointmentEndLocalTime = moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+        let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
+        appointDateandTimeLocal = moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+        return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
       })
 
       universalFunctions.sendSuccess(
@@ -1799,7 +1667,7 @@ getAvailableTimeForUser: async (req, res) => {
         appointDateandTime: Joi.date().required(),
         status: Joi.string().allow(""),
         practiceArea: Joi.string().length(24).required(),
-        timeZone:Joi.string(),
+        timeZone: Joi.string(),
 
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
@@ -1809,28 +1677,27 @@ getAvailableTimeForUser: async (req, res) => {
           $gte: start,
           $lte: end
         },
-        expertId:payload.expertId,
-        appointmentDate:payload.appointmentDate
+        expertId: payload.expertId,
+        appointmentDate: payload.appointmentDate
       })
       payload.userId = userId;
-      console.log(data,'daaaaattaa')
-      if(data.length>0)
-      {
+      console.log(data, 'daaaaattaa')
+      if (data.length > 0) {
         throw Boom.badRequest('already an appointment at this time');
       }
-      let timeZone=req.body.timeZone;
+      let timeZone = req.body.timeZone;
       let createAppointment = await appointment.create(payload);
       let createAppointments = JSON.parse(JSON.stringify(createAppointment))
-    //   let createAppointments=JSON.stringify(createAppointment)
+      //   let createAppointments=JSON.stringify(createAppointment)
       let localTime = moment.tz(createAppointments.startAppointmentTime, timeZone);
-     let startAppointmentTimeLocal= moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+      let startAppointmentTimeLocal = moment(localTime).format('YYYY-MM-DD HH:mm:ss')
       let endTime = moment.tz(createAppointments.endAppointmentTime, timeZone);
-    let   appointmentEndLocalTime= moment(endTime).format('YYYY-MM-DD HH:mm:ss')
-       let dateAndTime = moment.tz(createAppointments.appointDateandTime, timeZone);
-     let  appointDateandTimeLocal= moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
-       createAppointments.startAppointmentTimeLocal=startAppointmentTimeLocal;
-       createAppointments.appointmentEndLocalTime=appointmentEndLocalTime;
-       createAppointments.appointDateandTimeLocal=appointDateandTimeLocal;
+      let appointmentEndLocalTime = moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+      let dateAndTime = moment.tz(createAppointments.appointDateandTime, timeZone);
+      let appointDateandTimeLocal = moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+      createAppointments.startAppointmentTimeLocal = startAppointmentTimeLocal;
+      createAppointments.appointmentEndLocalTime = appointmentEndLocalTime;
+      createAppointments.appointDateandTimeLocal = appointDateandTimeLocal;
 
       universalFunctions.sendSuccess(
         {

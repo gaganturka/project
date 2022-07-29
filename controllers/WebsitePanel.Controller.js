@@ -35,14 +35,15 @@ const twilioFunctions=require('../utils/twilioFunctions');
 const Expert_Rating = require("../models/Expert_Rating");
 const publicVapidKey = 'BKjkBjs0NF8cLaPAYNKFWiGSBcau-q3poapqeXZhbPUfBacozebEplWJBFIes8FioqhMbdpIzYmUzxTdgdrLxXk';
 const privateVapidKey = '_7Xt1bP-K_ckzykka6TX536RB6pX0v8i0SeaLO7W-iw';
+const {admin}=require("../utils/pushNotificationFirebase")
 // const {admin}=require("../config");
-var admin = require("firebase-admin");
-var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
+// var admin = require("firebase-admin");
+// var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
 const Expert_User = require("../models/Expert_User");
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  // databaseURL: Config.get("db.firebaseDatabaseUrl"),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   // databaseURL: Config.get("db.firebaseDatabaseUrl"),
+// });
 // var admin = require("firebase-admin");
 // var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
 // const Expert_User = require("../models/Expert_User");

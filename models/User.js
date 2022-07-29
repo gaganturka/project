@@ -59,7 +59,10 @@ const UserSchema = new Schema({
       deviceType:{type:String,enum:["1","2","3"]},
       deviceToken:{type:String}
     }
-  ]
+  ],
+  fireBaseToken:{
+     type:String,
+  }
 },
 {
   toJSON: { virtuals: true }, toObject: { virtuals: true }

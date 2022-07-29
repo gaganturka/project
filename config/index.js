@@ -1,4 +1,3 @@
-var admin = require("firebase-admin");
 
 const Config = {
    jwtsecret:"seraphic",
@@ -18,12 +17,6 @@ twiMLSID:'AP0f3e16aa5ca7da2ef6105a93bcf6fa51',
 callerId:'+18124975102',
 
   }
-// var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
-// const Expert_User = require("../models/Expert_User");
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   // databaseURL: Config.get("db.firebaseDatabaseUrl"),
-// });
-// module.exports={admin};
+
 
   module.exports ={Config}

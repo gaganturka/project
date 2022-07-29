@@ -74,6 +74,7 @@ module.exports = {
         mobileNo: Joi.string().min(10).required(),
         profilePic: Joi.string().allow(""),
         firebaseUid:Joi.string().required(),
+        fireBaseToken:Joi.string().allow(),
         // otp: Joi.string(),
         // .allow("")
       });
@@ -136,8 +137,8 @@ module.exports = {
           data: borhanuser._id,
         },
         otp: "",
-        mobileFirebaseUid:req.body.firebaseUid
-        ,
+        mobileFirebaseUid:req.body.firebaseUid,
+        fireBaseToken:req.body.fireBaseToken,
       });
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
 

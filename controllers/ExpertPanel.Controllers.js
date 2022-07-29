@@ -33,10 +33,11 @@ const chatappointment =require('../models/ChatAppointment');
 
 const Boom = require("boom");
 const Appointment = require("../models/Appointment");
+const {admin}=require("../utils/pushNotificationFirebase")
 // const {admin}=require("../config");
 // var admin = require("firebase-admin");
 // var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
-// const Expert_User = require("../models/Expert_User");
+// // const Expert_User = require("../models/Expert_User");
 // admin.initializeApp({
 //   credential: admin.credential.cert(serviceAccount),
 //   // databaseURL: Config.get("db.firebaseDatabaseUrl"),
@@ -449,33 +450,26 @@ updateAppointment:async (req, res) => {
     userDetails &&
       userDetails.token &&
       userDetails.token.map((val1) => {
-
         registrationTokens.push(val1.deviceToken);
       });
-      // admin
-      //   .messaging()
-      //   .sendToDevice(registrationTokens[1], message)
-      //   .then((response) => {
-      //     return universalFunctions.sendSuccess(
-      //       {
-      //         statusCode: 200,
-      //         message: responseMessages.SUCCESS,
-      //         data: response,
-      //       },
-      //       res
-      //     );
-      //   })
-      //   .catch((error) => {
-      //     console.log("Error sending message:", error);
-      //   });
-      return universalFunctions.sendSuccess(
-              {
-                statusCode: 200,
-                message: responseMessages.SUCCESS,
-                // data: response,
-              },
-              res
-            );
+      // console.log("this is token" , registrationTokens)
+      admin
+        .messaging()
+        .sendToDevice(registrationTokens, message)
+        .then((response) => {
+          console.log("this is respnse" , response)
+          return universalFunctions.sendSuccess(
+            {
+              statusCode: 200,
+              message: responseMessages.SUCCESS,
+              data: response,
+            },
+            res
+          );
+        })
+        .catch((error) => {
+          console.log("Error sending message:", error);
+        });
   }
   catch(error)
   {
@@ -503,14 +497,14 @@ cancelAppointmentByExpert:async (req, res) => {
       });
       const message = {
         data: {
-          title: "Send From Borhan",
+          title:APP_CONSTANTS.pushNotificationMessage.title,
           body: APP_CONSTANTS.pushNotificationMessage.expertCancelAppointment,
         
         },
       };
       admin
         .messaging()
-        .sendToDevice(registrationTokens[1], message)
+        .sendToDevice(registrationTokens, message)
         .then((response) => {
           return universalFunctions.sendSuccess(
             {
@@ -526,18 +520,6 @@ cancelAppointmentByExpert:async (req, res) => {
         });
       await expertTimeAvailable.findOneAndUpdate({_id:Appointment.timeSlotId},{isAvailable:true})
     }
-    
-    // if (!Appointment) {
-    //   throw Boom.badRequest("invalid id or token");
-    // }
-    // universalFunctions.sendSuccess(
-    //   {
-    //     statusCode: 200,
-    //     message: "Appointment found",
-    //     data: Appointment,
-    //   },
-    //   res
-    // );
   }
   catch(error)
   {
@@ -560,7 +542,7 @@ try{
   // start=moment.utc(moment(localdate)).format();
 
   // end =new Date(appointmentDate+' '+end); 
-  console.log(end,'endddd',start,'starrtttt');
+  // console.log(end,'endddd',start,'starrtttt');
   // console.log(localdate ,new Date(localdate),"here is ");
   // console.log(moment.utc(moment(localdate)).format(),'start time')
   // end=moment.utc(moment(localdate)).format();
@@ -954,7 +936,7 @@ getChatAppointment:async (req,res)=>{
               token: accessToken.toJwt(),
               userIdentity,
               
-             }
+           }
          },
          res
        )
