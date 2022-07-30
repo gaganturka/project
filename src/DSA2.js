@@ -147,70 +147,103 @@
 
 ////////////////////////.........................Find the largest substring with k distinct charactor......./
 
-function isCurrentWindowValid(count, k){
+// function isCurrentWindowValid(count, k){
     
-    let curr_u_c = 0
-    for(let i=0; i<count.length; i++){
-        if(count[i]>0){
-            curr_u_c++
-        }
-    }
-    return k>=curr_u_c
-}
+//     let curr_u_c = 0
+//     for(let i=0; i<count.length; i++){
+//         if(count[i]>0){
+//             curr_u_c++
+//         }
+//     }
+//     return k>=curr_u_c
+// }
 
-function findKthLargestSubString(str, k){
-    let u_c_count =0
-    let count = []
+// function findKthLargestSubString(str, k){
+//     let u_c_count =0
+//     let count = []
 
-    for(let i=0; i<26; i++){
-        count.push(0)
-    }
+//     for(let i=0; i<26; i++){
+//         count.push(0)
+//     }
 
-    for(let i=0; i<str.length; i++){
-        if(count[str[i].charCodeAt(0) - 'a'.charCodeAt(0)] === 0){
-            u_c_count++
-        }
-        count[str[i].charCodeAt(0) - 'a'.charCodeAt(0)]++
-    }  
-    //   console.log(str)
+//     for(let i=0; i<str.length; i++){
+//         if(count[str[i].charCodeAt(0) - 'a'.charCodeAt(0)] === 0){
+//             u_c_count++
+//         }
+//         count[str[i].charCodeAt(0) - 'a'.charCodeAt(0)]++
+//     }  
+//     //   console.log(str)
 
-    // console.log(k)
-    // console.log(u_c_count)
-    // console.log(count)
-    if(k>u_c_count){
-        console.log('subString cannot formed')
-        return
-    }
+//     // console.log(k)
+//     // console.log(u_c_count)
+//     // console.log(count)
+//     if(k>u_c_count){
+//         console.log('subString cannot formed')
+//         return
+//     }
 
-    for(let i=0; i<26; i++){
-        count[i] =0
-    }
+//     for(let i=0; i<26; i++){
+//         count[i] =0
+//     }
 
-    let start = 0
-    let end = 0
+//     let start = 0
+//     let end = 0
 
-    let max_window_size = 1
-    let max_window_start = 0
-    count[str[0].charCodeAt(0) - 'a'.charCodeAt]++
+//     let max_window_size = 1
+//     let max_window_start = 0
+//     count[str[0].charCodeAt(0) - 'a'.charCodeAt]++
 
-    for(let i=1; i<str.length; i++){
-        count[str[i].charCodeAt(0)- 'a'.charCodeAt]++
-        end++
-    }
-    while(!isCurrentWindowValid(count,k)){
-        count[str[i].charCodeAt(0)- 'a'.charCodeAt]--
-        start++
-    }
+//     for(let i=1; i<str.length; i++){
+//         count[str[i].charCodeAt(0)- 'a'.charCodeAt]++
+//         end++
+//     }
+//     while(!isCurrentWindowValid(count,k)){
+//         count[str[i].charCodeAt(0)- 'a'.charCodeAt]--
+//         start++
+//     }
 
-    if(end-start+1 > max_window_size){
-        max_window_size =end-start+1
-        max_window_start = start
-    }
+//     if(end-start+1 > max_window_size){
+//         max_window_size =end-start+1
+//         max_window_start = start
+//     }
 
-    return [max_window_size,max_window_start]
-}
+//     return [max_window_size,max_window_start]
+// }
 
-console.log(findKthLargestSubString('aabacbebebe', 3))
+// console.log(findKthLargestSubString('aabacbebebe', 3))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -243,7 +276,6 @@ console.log(findKthLargestSubString('aabacbebebe', 3))
 // }
 
 //..............RECURSON................//
-// const arr = [12,24,5,6,7,8,34,3,6,675675,78,14]
 
 // function isEleDivBy7 (arr){
 //     if(arr.length == 0){
@@ -263,6 +295,7 @@ console.log(findKthLargestSubString('aabacbebebe', 3))
 
 // sum of array by recurn 
 
+
 // n=5
 // total = 0
 // for(i=1; i<=n ; i++){
@@ -272,17 +305,33 @@ console.log(findKthLargestSubString('aabacbebebe', 3))
 // console.log(total)
 // let total =0
 // function sum(num){
-    // if(num == 0){
-    //     console.log(total)
-    //     return 'Yes'
-    // }
-    // total += num
+//     if(num == 0){
+//         console.log(total)
+//         return 'Yes'
+//     }
+//     total += num
 
-    // num--
+//     num--
 
-    // sum(num)
-    // if(num === 1) return 1
-    // return num + sum(num-1)
+//     sum(num)
+//     // if(num === 1) return 1
+//     // return num + sum(num-1)
 //     console.log(num + sum(num-1))
 // }
+// sum(5)
+
+
+// let total = 0
+
+// function sum(num){
+//     if(num == 0){
+//         console.log(total)
+//         return
+//     }
+
+//     total += num
+//     num--
+//     sum(num)
+// }
+
 // sum(5)

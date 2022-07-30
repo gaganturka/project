@@ -3,17 +3,17 @@
 // const funct = function(n){
 
 //     if(n>5){
-//         // for(let n=6; n<10; n++){
+//         for(let n=6; n<10; n++){
 //             console.log(n)
-//         // }
+//         }
 
 //     }else{
-//         // for(let n=0; n<6; n++){
+//         for(let n=0; n<6; n++){
 //             console.log(n)
 //         }
 
 //     }
-
+// }
 //     const result = funct(10)
 //     console.log(result)
 // //
@@ -22,7 +22,7 @@
 
 
 
-//..............................................maximun occurenence of element in array......
+//..............................................maximun occurenence of element in array...... DONE(000000000000000000000)
 
 //we have to find which element repeat(occure) in array most
 
@@ -109,7 +109,7 @@
 // console.log(max_occ , "&&&&&&&&&&&&&&&&&&&&&&", max_char_occ)
 
 
-//..................not sort but we convert them arraynow sort array
+//..................not sort but we convert them array new sort array
 
 
 
@@ -118,18 +118,18 @@
 // const arr = str.split(' ')
 
 
-const arr = [4,5,6,5,-1,4,3]
+// const arr = [4,5,6,5,-1,4,3]
 
-let count = {}
-for(let i = 0; i<arr.length; i++){
-if(count[arr[i]]){
-    count[arr[i]] += 1
+// let count = {}
+// for(let i = 0; i<arr.length; i++){
+// if(count[arr[i]]){
+//     count[arr[i]] += 1
 
-}else{
-    count[arr[i]] = 1
-}
-}
-console.log(count)
+// }else{
+//     count[arr[i]] = 1
+// }
+// }
+// console.log(count)
 // let hi = arr.sort()
 
 // // console.log(hi)
@@ -188,7 +188,7 @@ console.log(count)
 //         freq[arr[i]] = 1
 //     }
 // }
-
+                                      //////////////  (((((((((((((((((())))))))))))))))))
 // const alpha = 'abcdefghijklmnopqrstuvwxyz'
 // let final = ''
 // for(let i=0; i<alpha.length; i++ ){
@@ -200,9 +200,6 @@ console.log(count)
 // console.log(final)
 
 ///////////////////////////////////////////////////....................MUTIple POINTER METHOD(we are taking sorted array)....................////////////
-
-
-
 
 
 //                 find the sum // find that numbers that sum is equal to sum variable 
@@ -218,6 +215,7 @@ console.log(count)
 //         }
 //     }
 // }
+
 
 
 ////..............                find that 2 number whose sum equal to given number
@@ -286,6 +284,7 @@ console.log(count)
 
 
 
+
 // ////////////                           find the number that is closest to sum X
 // const arr = [-6,-2,-3,0,1,2,3,4,5]
 
@@ -318,7 +317,7 @@ console.log(count)
 
 // ......................sort to string ..............
 
-// let str = 'bbbbvvvvvvvmmmmmmwwwwwwwsjksdjfksfksf'
+// let str = 'bbbbvvvvvvvmmmmmmwwwwwwwsjksdjfksfaksfa'
 
 // let obj ={}
 
@@ -330,6 +329,9 @@ console.log(count)
 //  }
 // }
 // console.log(obj)
+
+
+
 
 // let alpha = 'abcdefghijklmnopqrstuvwxyz'
 
@@ -362,12 +364,7 @@ console.log(count)
 
 
 
-
-
-
-
-
-
+// 
 // const arr =[1,2,3,4]
 
 // const arrr = arr.splice(1,2,5,4,'dweddw')
@@ -376,6 +373,8 @@ console.log(count)
   
 // result = 1
 // function sum(arr){
+//     console.log(arr)
+
 //     if(arr.length == 0){
 //         console.log(result)
 //         return result
@@ -383,7 +382,6 @@ console.log(count)
 //     let ele = arr.pop()
 //     console.log(ele)
 //      result = result*ele
-
 //     sum(arr)
 // }
 

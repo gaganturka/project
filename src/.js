@@ -3,8 +3,11 @@
 //     return function(b){
 //         return a*b
 
-const { execFile } = require("child_process")
-const { request } = require("http")
+const { type } = require("os");
+const { stringify } = require("querystring");
+
+// const { execFile } = require("child_process")
+// const { request } = require("http")
 
 //     }
 
@@ -82,4 +85,94 @@ const { request } = require("http")
 
 
 
+
+
+
+
+
+// forEack
+// const hi = [{name: "jg"},{name: "gjfhgf"},{name: "jgjghfjg"},{name: "jgjghfjg"},{name: "jgjghfjg"}]
+
+// hi.forEach(function(hi){
+// console.log(hi.name);
+// })
+
+
+
+//map
+// const number = [ 1,2,3,4,5,6,7,8]
+// const square = function(Number){
+//     return Number*Number
+// }
+// console.log(number.map(square));
+//   or
+// const square = number.map(num =>{
+//     return num*num
+// })
+// console.log(square);
+
+
+
+
+//Filter 
+// const number = [1,2,3,4,5,6,7,8,9,10]
+
+// const isOdd = function(number){
+//     return number%2!= 0
+// }
+// console.log(number.filter(isOdd));
+
+// const isOdd = number.filter(num => {
+//     return num%2 ==0 
+// })
+// console.log(isOdd);
+
+
+
+// reduce
+// const sum = number.reduce((acc,cur) => {
+//     return acc+cur
+// },100)
+
+// console.log(sum);
+
+
+// sort
+// it mutate orignal array
+// const number = [1,12,63,74,5,4566,7,889,9,99999999910]
+
+// console.log(number.sort(function(a,b){
+//     return b-a
+// }));
+// console.log(number);
+
+
+//find
+// const str = ["hi", "gagan" , "i", "love", " you"]
+
+// console.log(str.find((str1) => {
+//    return str1.length == 4
+// }));
+
+
+// fill
+// let arr = new Array(10).fill(123)
+// console.log(arr);
+
+// arr.fill(0,5)
+// console.log(arr);
+ 
+//call
+// const user1 = {
+//     name : "gagan",
+//     about : function(){
+//         console.log(this.name)
+//     }
+    
+// }
+// const user2 = {
+//     name : "Arman",
+    
+// }
+// user1.about.call(user2,"trrthrtf")
 

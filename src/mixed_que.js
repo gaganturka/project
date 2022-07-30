@@ -252,8 +252,8 @@ const { version } = require("punycode")
 /////////////////................... Swap 2 strings.....REMAINING.......///////////
 
 // let a ='somekj', b='Good1234'
-///// join string with concat
-//// remove strings with slice /
+// /// join string with concat
+// // remove strings with slice /
 // len = a.length
 
 // a = a.concat(b)
