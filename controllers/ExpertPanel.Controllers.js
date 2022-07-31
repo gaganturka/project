@@ -452,12 +452,12 @@ updateAppointment:async (req, res) => {
       userDetails.token.map((val1) => {
         registrationTokens.push(val1.deviceToken);
       });
-      // console.log("this is token" , registrationTokens)
+      console.log("this is token" , registrationTokens)
       admin
         .messaging()
         .sendToDevice(registrationTokens, message)
         .then((response) => {
-          // console.log("this is respnse" , response)
+          console.log("this is respnse" , response)
           return universalFunctions.sendSuccess(
             {
               statusCode: 200,
