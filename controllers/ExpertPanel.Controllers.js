@@ -457,7 +457,7 @@ updateAppointment:async (req, res) => {
         .messaging()
         .sendToDevice(registrationTokens, message)
         .then((response) => {
-          console.log("this is respnse" , response)
+          // console.log("this is respnse" , response)
           return universalFunctions.sendSuccess(
             {
               statusCode: 200,
