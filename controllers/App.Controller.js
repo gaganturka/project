@@ -10,9 +10,9 @@ const favouriteExport = require("../models/Fav_Expert");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
-const Expert_Rating = require('../models/Expert_Rating');
+const Expert_Rating = require("../models/Expert_Rating");
 // const moment = require("moment");
-var moment = require('moment-timezone');
+var moment = require("moment-timezone");
 // const Mongoose = require("mongoose");
 const jwtFunction = require("../utils/jwtFunction");
 // import Mongoose from "mongoose";
@@ -45,14 +45,20 @@ module.exports = {
         // .allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      const exportUser = await User.findOne({ mobileNo: req.body.mobileNo, role: APP_CONSTANTS.role.expert }).populate("userData.data");
+      const exportUser = await User.findOne({
+        mobileNo: req.body.mobileNo,
+        role: APP_CONSTANTS.role.expert,
+      }).populate("userData.data");
       if (exportUser) {
         return res.status(404).send({
-          message: responseMessages.MOBILE_NUMBER_REGISTERD_EXPERT_USER
+          message: responseMessages.MOBILE_NUMBER_REGISTERD_EXPERT_USER,
         });
-        // throw Boom.badRequest(responseMessages.MOBILE_NUMBER_REGISTERD_EXPERT_USER); 
+        // throw Boom.badRequest(responseMessages.MOBILE_NUMBER_REGISTERD_EXPERT_USER);
       }
-      const user = await User.findOne({ mobileNo: req.body.mobileNo, role: APP_CONSTANTS.role.borhanuser }).populate("userData.data");
+      const user = await User.findOne({
+        mobileNo: req.body.mobileNo,
+        role: APP_CONSTANTS.role.borhanuser,
+      }).populate("userData.data");
       if (!user) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
@@ -64,9 +70,10 @@ module.exports = {
         { _id: user._id, role: APP_CONSTANTS.role.borhanuser },
         { token: newToken, mobileFirebaseUid: req.body.firebaseUid }
       );
-      let updatedUser = await User.findOne({ _id: finalUser._id, role: APP_CONSTANTS.role.borhanuser }).populate(
-        "userData.data"
-      );
+      let updatedUser = await User.findOne({
+        _id: finalUser._id,
+        role: APP_CONSTANTS.role.borhanuser,
+      }).populate("userData.data");
       const token = await jwtFunction.jwtGeneratorApp(
         user._id,
         req.body.deviceType,
@@ -98,7 +105,6 @@ module.exports = {
         deviceType: Joi.string(),
         deviceToken: Joi.string().allow(""),
         firebaseUid: Joi.string(),
-
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let success = false;
@@ -163,7 +169,7 @@ module.exports = {
         ],
         mobileFirebaseUid: req.body.firebaseUid,
       });
-      await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id })
+      await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
       let finalUser = await User.findOne({ _id: user._id }).populate(
         "userData.data"
       );
@@ -192,9 +198,9 @@ module.exports = {
       let payload = {
         path: "expertlisting",
         match: {
-          userId: id
+          userId: id,
         },
-      }
+      };
 
       expert = await expertUser
         .find({
@@ -207,15 +213,22 @@ module.exports = {
         .populate("userId")
         .populate(payload)
         .sort({ "rating.avgRating": -1 });
-     
+
       let expertData = JSON.parse(JSON.stringify(expert));
       // console.log("this is expertData" , expertData)
 
       expertData.map((ele) => {
-        console.log("ele", ele)
+        console.log("ele", ele);
         delete ele.__v;
         delete ele.category.__v;
-        if (ele && ele.userId && ele.userId.isEmailVerified && ele.userId.password && ele.userId.__v && ele.userId.userData) {
+        if (
+          ele &&
+          ele.userId &&
+          ele.userId.isEmailVerified &&
+          ele.userId.password &&
+          ele.userId.__v &&
+          ele.userId.userData
+        ) {
           delete ele.userId.isEmailVerified;
           delete ele.userId.password;
           delete ele.userId.__v;
@@ -223,9 +236,7 @@ module.exports = {
         }
         if (ele.expertlisting.length > 0 && ele.expertlisting != null)
           ele.isFavorite = true;
-        else
-          ele.isFavorite = false;
-
+        else ele.isFavorite = false;
 
         delete ele.expertlisting;
       });
@@ -247,7 +258,14 @@ module.exports = {
       topOnlineExpertsData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
-        if (ele && ele.userId && ele.userId.isEmailVerified && ele.userId.password && ele.userId.__v && ele.userId.userData) {
+        if (
+          ele &&
+          ele.userId &&
+          ele.userId.isEmailVerified &&
+          ele.userId.password &&
+          ele.userId.__v &&
+          ele.userId.userData
+        ) {
           delete ele.userId.isEmailVerified;
           delete ele.userId.password;
           delete ele.userId.__v;
@@ -255,9 +273,7 @@ module.exports = {
         }
         if (ele.expertlisting.length > 0 && ele.expertlisting != null)
           ele.isFavorite = true;
-        else
-          ele.isFavorite = false;
-
+        else ele.isFavorite = false;
 
         delete ele.expertlisting;
       });
@@ -278,7 +294,14 @@ module.exports = {
       topOnlinePremiumExpertsData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
-        if (ele && ele.userId && ele.userId.isEmailVerified && ele.userId.password && ele.userId.__v && ele.userId.userData) {
+        if (
+          ele &&
+          ele.userId &&
+          ele.userId.isEmailVerified &&
+          ele.userId.password &&
+          ele.userId.__v &&
+          ele.userId.userData
+        ) {
           delete ele.userId.isEmailVerified;
           delete ele.userId.password;
           delete ele.userId.__v;
@@ -286,9 +309,7 @@ module.exports = {
         }
         if (ele.expertlisting.length > 0 && ele.expertlisting != null)
           ele.isFavorite = true;
-        else
-          ele.isFavorite = false;
-
+        else ele.isFavorite = false;
 
         delete ele.expertlisting;
       });
@@ -317,12 +338,11 @@ module.exports = {
         .limit(parseInt(5));
       if (!upcomingAppointmentDatas) {
         // throw Boom.badRequest(responseMessages.APPOINTMENT_DATA_NOT_FOUND);
-      }
-      else {
+      } else {
         var upcomingAppointmentData = JSON.parse(
           JSON.stringify(upcomingAppointmentDatas)
         );
-        console.log("this is upcoming appointmet", upcomingAppointmentData)
+        console.log("this is upcoming appointmet", upcomingAppointmentData);
         upcomingAppointmentData.map((ele) => {
           delete ele.__v;
           if (ele && ele.userId) {
@@ -348,8 +368,7 @@ module.exports = {
         for (i = 0; i < expertData.length; i++) {
           topExpertsList.push(expertData[i]);
         }
-      }
-      else {
+      } else {
         for (i = 0; i < 5; i++) {
           topExpertsList.push(expertData[i]);
         }
@@ -358,8 +377,7 @@ module.exports = {
         for (i = 0; i < topOnlineExpertsData.length; i++) {
           topOnlineExpertsList.push(topOnlineExpertsData[i]);
         }
-      }
-      else {
+      } else {
         for (i = 0; i < 5; i++) {
           topOnlineExpertsList.push(topOnlineExpertsData[i]);
         }
@@ -368,8 +386,7 @@ module.exports = {
         for (i = 0; i < topOnlinePremiumExpertsData.length; i++) {
           topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
         }
-      }
-      else {
+      } else {
         for (i = 0; i < 5; i++) {
           topOnlinePremiumExpertsList.push(topOnlinePremiumExpertsData[i]);
         }
@@ -393,19 +410,27 @@ module.exports = {
           res
         );
       else
-        var startAppointmentTimeLocal, appointmentEndLocalTime, appointDateandTimeLocal;
+        var startAppointmentTimeLocal,
+          appointmentEndLocalTime,
+          appointDateandTimeLocal;
       upcomingAppointmentData.map((ele) => {
-
         let localTime = moment.tz(ele.startAppointmentTime, timeZone);
-        startAppointmentTimeLocal = moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+        startAppointmentTimeLocal = moment(localTime).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
         let endTime = moment.tz(ele.endAppointmentTime, timeZone);
-        appointmentEndLocalTime = moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+        appointmentEndLocalTime = moment(endTime).format("YYYY-MM-DD HH:mm:ss");
         let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
-        appointDateandTimeLocal = moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+        appointDateandTimeLocal = moment(dateAndTime).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
 
-
-        return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
-      })
+        return (
+          (ele.startAppointmentTimeLocal = startAppointmentTimeLocal),
+          (ele.endAppointmentTimeLocal = appointmentEndLocalTime),
+          (ele.appointDateandTimeLocal = appointDateandTimeLocal)
+        );
+      });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -421,7 +446,6 @@ module.exports = {
         },
         res
       );
-
     } catch (error) {
       universalFunctions.sendError(error, res);
     }
@@ -429,7 +453,9 @@ module.exports = {
   getUserDetails: async (req, res) => {
     try {
       let id = req.user.id;
-      const userData = await User.findOne({ _id: id }).populate('userData.data');
+      const userData = await User.findOne({ _id: id }).populate(
+        "userData.data"
+      );
       if (!userData) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
@@ -518,9 +544,9 @@ module.exports = {
       let payload = {
         path: "expertlisting",
         match: {
-          userId: id
+          userId: id,
         },
-      }
+      };
 
       const schema = Joi.object({
         limit: Joi.number(),
@@ -581,7 +607,14 @@ module.exports = {
       getAllExportData.map((ele) => {
         delete ele.__v;
         // delete ele.category.__v;
-        if (ele && ele.userId && ele.userId.isEmailVerified && ele.userId.password && ele.userId.__v && ele.userId.userData) {
+        if (
+          ele &&
+          ele.userId &&
+          ele.userId.isEmailVerified &&
+          ele.userId.password &&
+          ele.userId.__v &&
+          ele.userId.userData
+        ) {
           delete ele.userId.isEmailVerified;
           delete ele.userId.password;
           delete ele.userId.__v;
@@ -613,14 +646,13 @@ module.exports = {
   },
   getActiveExportData: async (req, res) => {
     try {
-
       let id = req.user.id;
       let payload = {
         path: "expertlisting",
         match: {
-          userId: id
+          userId: id,
         },
-      }
+      };
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
@@ -691,7 +723,14 @@ module.exports = {
       getActiveExportData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
-        if (ele && ele.userId && ele.userId.isEmailVerified && ele.userId.password && ele.userId.__v && ele.userId.userData) {
+        if (
+          ele &&
+          ele.userId &&
+          ele.userId.isEmailVerified &&
+          ele.userId.password &&
+          ele.userId.__v &&
+          ele.userId.userData
+        ) {
           delete ele.userId.isEmailVerified;
           delete ele.userId.password;
           delete ele.userId.__v;
@@ -725,10 +764,11 @@ module.exports = {
     try {
       let id = req.user.id;
       let payload = {
-        path: "expertlisting", match: {
-          userId: id
+        path: "expertlisting",
+        match: {
+          userId: id,
         },
-      }
+      };
 
       const schema = Joi.object({
         limit: Joi.number(),
@@ -803,7 +843,7 @@ module.exports = {
       if (token) {
         const decoded = jwt.verify(token, Config.jwtsecret);
         let user = await User.findOne({ _id: decoded.user_id });
-        console.log("this is logout Token" , user)
+        console.log("this is logout Token", user);
         if (!user) {
           throw Boom.badRequest(responseMessages.INVALID_TOKEN);
         }
@@ -847,9 +887,9 @@ module.exports = {
       let payload = {
         path: "expertlisting",
         match: {
-          userId: id
+          userId: id,
         },
-      }
+      };
       const schema = Joi.object({
         category: Joi.string().allow(""),
         practiceArea: Joi.string().allow(""),
@@ -870,7 +910,6 @@ module.exports = {
       let expert = [],
         total;
       if (req.body.category !== "" && req.body.practiceArea === "") {
-
         expert = await expertUser
           .find({
             category: req.body.category,
@@ -887,7 +926,6 @@ module.exports = {
           .find({ category: req.body.category, isApprovedByAdmin: true })
           .countDocuments();
       } else if (req.body.category === "" && req.body.practiceArea !== "") {
-
         expert = await expertUser
           .find({
             practiceArea: req.body.practiceArea,
@@ -958,7 +996,6 @@ module.exports = {
         expert = await expertUser
           .find({
             isApprovedByAdmin: true,
-
           })
           .populate("practiceArea")
           .populate("category")
@@ -976,7 +1013,6 @@ module.exports = {
         throw Boom.badRequest("cannot find any expert");
       }
       let expertData = JSON.parse(JSON.stringify(expert));
-
 
       expertData.map((ele) => {
         if (ele && ele.userId && ele.userId != null) {
@@ -1064,89 +1100,146 @@ module.exports = {
         limit: Joi.number(),
         page: Joi.number(),
         timezone: Joi.string(),
-
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let data;
       let count;
       let currentTime = new Date();
       let expert;
-      let pendingAppointment = await appointment.updateMany({
-        userId: userId, status: APP_CONSTANTS.appointmentStatus.pending, endAppointmentTime: {
-          $lt: currentTime.getTime()
-        }
-      }, { status: APP_CONSTANTS.appointmentStatus.cancelled });
+      let pendingAppointment = await appointment.updateMany(
+        {
+          userId: userId,
+          status: APP_CONSTANTS.appointmentStatus.pending,
+          endAppointmentTime: {
+            $lt: currentTime.getTime(),
+          },
+        },
+        { status: APP_CONSTANTS.appointmentStatus.cancelled }
+      );
 
-      let confirmedAppointment = await appointment.updateMany({
-        userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed, endAppointmentTime: {
-          $lt: currentTime.getTime()
-        }
-      }, { status: APP_CONSTANTS.appointmentStatus.cancelled });
+      let confirmedAppointment = await appointment.updateMany(
+        {
+          userId: userId,
+          status: APP_CONSTANTS.appointmentStatus.confirmed,
+          endAppointmentTime: {
+            $lt: currentTime.getTime(),
+          },
+        },
+        { status: APP_CONSTANTS.appointmentStatus.cancelled }
+      );
 
       if (filterType == "All") {
-        data = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
+        data = await appointment
+          .find({ userId: userId })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
+          .populate("practiceArea")
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({ 'startAppointmentTime': -1 });
+          .sort({ startAppointmentTime: -1 });
         //  expert=await expert.find({_id:data.expertId._id});
-        count = await appointment.find({ userId: userId }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).countDocuments()
-      }
-      else if (filterType == "Upcoming") {
+        count = await appointment
+          .find({ userId: userId })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
+          .countDocuments();
+      } else if (filterType == "Upcoming") {
         let now = new Date();
-        data = await appointment.find({
-          userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed, endAppointmentTime: {
-            $gte: now.getTime()
-          }
-        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId').populate('practiceArea')
+        data = await appointment
+          .find({
+            userId: userId,
+            status: APP_CONSTANTS.appointmentStatus.confirmed,
+            endAppointmentTime: {
+              $gte: now.getTime(),
+            },
+          })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
+          .populate("expertId.userId")
+          .populate("practiceArea")
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({ 'startAppointmentTime': -1 });
-        count = await appointment.find({
-          userId: userId, status: APP_CONSTANTS.appointmentStatus.confirmed, endAppointmentTime: {
-            $gte: now.getTime()
-          }
-        }).countDocuments();
-      }
-      else if (filterType == 'Rescheduled') {
+          .sort({ startAppointmentTime: -1 });
+        count = await appointment
+          .find({
+            userId: userId,
+            status: APP_CONSTANTS.appointmentStatus.confirmed,
+            endAppointmentTime: {
+              $gte: now.getTime(),
+            },
+          })
+          .countDocuments();
+      } else if (filterType == "Rescheduled") {
         let now = new Date();
-        data = await appointment.find({ userId: userId, isRescheduled: true }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
+        data = await appointment
+          .find({ userId: userId, isRescheduled: true })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
+          .populate("practiceArea")
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({ 'startAppointmentTime': -1 });
+          .sort({ startAppointmentTime: -1 });
         //  expert=await expert.find({_id:data.expertId._id});
-        count = await appointment.find({
-          userId: userId, isRescheduled: true
-        }).countDocuments()
-
-      }
-      else if (filterType == "Completed") {
-        data = await appointment.find({
-          userId: userId,
-          status: APP_CONSTANTS.appointmentStatus.completed,
-
-        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
+        count = await appointment
+          .find({
+            userId: userId,
+            isRescheduled: true,
+          })
+          .countDocuments();
+      } else if (filterType == "Completed") {
+        data = await appointment
+          .find({
+            userId: userId,
+            status: APP_CONSTANTS.appointmentStatus.completed,
+          })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
+          .populate("practiceArea")
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({ 'startAppointmentTime': -1 });
-        count = await appointment.find({
-          userId: userId,
-          status: APP_CONSTANTS.appointmentStatus.completed,
-
-        }).countDocuments();
-      }
-      else if (filterType == "Cancelled") {
-        data = await appointment.find({
-          userId: userId, status: APP_CONSTANTS.appointmentStatus.cancelled,
-
-        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('practiceArea')
+          .sort({ startAppointmentTime: -1 });
+        count = await appointment
+          .find({
+            userId: userId,
+            status: APP_CONSTANTS.appointmentStatus.completed,
+          })
+          .countDocuments();
+      } else if (filterType == "Cancelled") {
+        data = await appointment
+          .find({
+            userId: userId,
+            status: APP_CONSTANTS.appointmentStatus.cancelled,
+          })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
+          .populate("practiceArea")
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({ 'startAppointmentTime': -1 });
-        count = await appointment.find({
-          userId: userId,
-          status: APP_CONSTANTS.appointmentStatus.cancelled,
-
-        }).countDocuments()
+          .sort({ startAppointmentTime: -1 });
+        count = await appointment
+          .find({
+            userId: userId,
+            status: APP_CONSTANTS.appointmentStatus.cancelled,
+          })
+          .countDocuments();
       }
       let appointmentAllData = JSON.parse(JSON.stringify(data));
       appointmentAllData.map((ele) => {
@@ -1170,33 +1263,46 @@ module.exports = {
         }
       });
 
-      var startAppointmentTimeLocal, appointmentEndLocalTime, appointDateandTimeLocal;
+      var startAppointmentTimeLocal,
+        appointmentEndLocalTime,
+        appointDateandTimeLocal;
       appointmentAllData.map((ele) => {
         let localTime = moment.tz(ele.startAppointmentTime, timeZone);
-        startAppointmentTimeLocal = moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+        startAppointmentTimeLocal = moment(localTime).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
         let endTime = moment.tz(ele.endAppointmentTime, timeZone);
-        appointmentEndLocalTime = moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+        appointmentEndLocalTime = moment(endTime).format("YYYY-MM-DD HH:mm:ss");
         let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
-        appointDateandTimeLocal = moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
-
+        appointDateandTimeLocal = moment(dateAndTime).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
 
         // appointmentEndLocalTime = moment.utc(ele.endAppointmentTime).toDate();
         // appointmentEndLocalTime = moment(appointmentEndLocalTime).format('YYYY-MM-DD HH:mm:ss');
         // appointDateandTimeLocal = moment.utc(ele.appointDateandTime).toDate();
         // appointDateandTimeLocal = moment(appointDateandTimeLocal).format('YYYY-MM-DD HH:mm:ss');
 
-        return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
+        return (
+          (ele.startAppointmentTimeLocal = startAppointmentTimeLocal),
+          (ele.endAppointmentTimeLocal = appointmentEndLocalTime),
+          (ele.appointDateandTimeLocal = appointDateandTimeLocal)
+        );
         // return { ...ele, startAppointmentTimes : localTime}
-      })
+      });
 
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
-          data: { list: appointmentAllData, count: count, currentPage: req.body.page },
+          data: {
+            list: appointmentAllData,
+            count: count,
+            currentPage: req.body.page,
+          },
         },
         res
-      )
+      );
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }
@@ -1222,7 +1328,6 @@ module.exports = {
     }
   },
 
-  
   rescheduleAppointment: async (req, res) => {
     try {
       let userId = req.user.id;
@@ -1243,20 +1348,24 @@ module.exports = {
         timeZone: Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      let start = req.body.startAppointmentTime, end = req.body.endAppointmentTime;
+      let start = req.body.startAppointmentTime,
+        end = req.body.endAppointmentTime;
       let data = await appointment.find({
         startAppointmentTime: {
           $gte: start,
-          $lt: end
-        }
-      })
+          $lt: end,
+        },
+      });
       payload.userId = userId;
       let expert;
-      let rescheduledAppointment = await appointment.findByIdAndUpdate(req.body.appointmentId, payload, { new: true });
+      let rescheduledAppointment = await appointment.findByIdAndUpdate(
+        req.body.appointmentId,
+        payload,
+        { new: true }
+      );
 
       if (!rescheduledAppointment) {
         throw Boom.badRequest("cannot find any appointment to reschedule");
-
       }
       //   let timeZone=req.body.timeZone;
       //   let rescheduledAppointments = JSON.parse(JSON.stringify(rescheduledAppointment))
@@ -1301,9 +1410,8 @@ module.exports = {
           },
           res
         );
-      }
-      else {
-        let removeFavouriteExpert = await favouriteExport.deleteOne(payload)
+      } else {
+        let removeFavouriteExpert = await favouriteExport.deleteOne(payload);
         if (!removeFavouriteExpert) {
           throw Boom.badRequest("Expert Is Not Found");
         }
@@ -1311,12 +1419,11 @@ module.exports = {
           {
             statusCode: 200,
             message: "Expert Remove To Favourite",
-            data: removeFavouriteExpert
+            data: removeFavouriteExpert,
           },
           res
         );
       }
-
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }
@@ -1331,10 +1438,11 @@ module.exports = {
 
       let id = req.user.id;
       let payload = {
-        path: "expertlisting", match: {
-          userId: id
+        path: "expertlisting",
+        match: {
+          userId: id,
         },
-      }
+      };
       let { page, limit } = req.body;
       let favouriteExportData = await favouriteExport
         .find({ userId: id })
@@ -1346,21 +1454,24 @@ module.exports = {
 
         .skip(parseInt((page - 1) * limit))
         .limit(parseInt(limit));
-      let count = await favouriteExport
-        .find({ userId: id }).countDocuments();
+      let count = await favouriteExport.find({ userId: id }).countDocuments();
 
       let finalResult = [];
-      console.log('before', favouriteExportData);
+      console.log("before", favouriteExportData);
       let getfavExportData = JSON.parse(JSON.stringify(favouriteExportData));
-      console.log('after', getfavExportData);
+      console.log("after", getfavExportData);
       getfavExportData.map((ele) => {
         delete ele.__v;
         if (ele && ele.userId && ele.userId != null) {
-          delete ele.userId
-
+          delete ele.userId;
         }
         const expertDetails = ele?.expertId;
-        if (ele && ele.expertId && ele.expertId.userId && ele.expertId.userId != null) {
+        if (
+          ele &&
+          ele.expertId &&
+          ele.expertId.userId &&
+          ele.expertId.userId != null
+        ) {
           delete ele.expertId.__v;
           delete ele.expertId.category.__v;
           delete ele.expertId.userId.isEmailVerified;
@@ -1381,8 +1492,8 @@ module.exports = {
           data: {
             list: finalResult,
             currentPage: req.body.page,
-            total: count
-          }
+            total: count,
+          },
         },
         res
       );
@@ -1395,19 +1506,22 @@ module.exports = {
     try {
       let id = req.user.id;
       let payload = {
-        userId: id
-      }
-      const chatappointmentdata = await ChatAppointment.find(payload).populate({ path: "userId", populate: { path: 'userData.data' } }).populate({ path: 'expertId', populate: { path: 'userId practiceArea category' } });
+        userId: id,
+      };
+      const chatappointmentdata = await ChatAppointment.find(payload)
+        .populate({ path: "userId", populate: { path: "userData.data" } })
+        .populate({
+          path: "expertId",
+          populate: { path: "userId practiceArea category" },
+        });
       if (!chatappointmentdata) {
         throw Boom.badRequest("invalid id or token");
       }
       let tempobj = JSON.parse(JSON.stringify(chatappointmentdata));
       await universalFunctions.asyncForEach(tempobj, async (e, index) => {
-
         let expertData = await User.findOne({ _id: e.expertId.userId });
         e.expertData = expertData;
-
-      })
+      });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1416,9 +1530,8 @@ module.exports = {
         },
         res
       );
-
     } catch (err) {
-      console.log(err)
+      console.log(err);
       universalFunctions.sendError(err, res);
     }
   },
@@ -1429,11 +1542,14 @@ module.exports = {
       payload = { ...payload, chatRoomId: "" };
       const schema = Joi.object({
         expertId: Joi.string().length(24).required(),
-        question: Joi.string().allow("")
+        question: Joi.string().allow(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       payload.userId = userId;
-      let chats = await ChatAppointment.findOne({ expertId: req.body.expertId, userId });
+      let chats = await ChatAppointment.findOne({
+        expertId: req.body.expertId,
+        userId,
+      });
       if (!chats) {
         let data = await ChatAppointment.create(payload);
         if (!data) {
@@ -1447,8 +1563,7 @@ module.exports = {
           },
           res
         );
-      }
-      else {
+      } else {
         universalFunctions.sendSuccess(
           {
             statusCode: 400,
@@ -1456,10 +1571,10 @@ module.exports = {
             data: chats,
           },
           res
-        )
+        );
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       universalFunctions.sendError(error, res);
     }
   },
@@ -1469,31 +1584,34 @@ module.exports = {
       let payload = req.body;
 
       let expPayload = {
-        path: "expertlisting", match: {
-          userId: req.user.id
+        path: "expertlisting",
+        match: {
+          userId: req.user.id,
         },
-      }
-      const expert = await expertUser.findOne({ _id: payload.expertId }).populate('userId').populate('category').populate(expPayload).populate('practiceArea');
+      };
+      const expert = await expertUser
+        .findOne({ _id: payload.expertId })
+        .populate("userId")
+        .populate("category")
+        .populate(expPayload)
+        .populate("practiceArea");
       if (!expert) {
-        throw Boom.badRequest('Expert not found');
+        throw Boom.badRequest("Expert not found");
       }
       let expertDetails = JSON.parse(JSON.stringify(expert));
       if (expertDetails?.expertlisting.length > 0)
         expertDetails.isFavorite = true;
-      else
-        expertDetails.isFavorite = false;
-        delete expertDetails.expertlisting
-      universalFunctions.sendSuccess({
-        statusCode: 200,
-        message: 'Expert details fetched successfully',
-        data:
-          expertDetails
-
-
-      },
-        res)
-    }
-    catch (error) {
+      else expertDetails.isFavorite = false;
+      delete expertDetails.expertlisting;
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Expert details fetched successfully",
+          data: expertDetails,
+        },
+        res
+      );
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
@@ -1505,9 +1623,13 @@ module.exports = {
       let id = req.user.id;
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       const userDetails = await User.findOne({ _id: id });
-      let name = userDetails.firstName + ' ' + userDetails.lastName;
+      let name = userDetails.firstName + " " + userDetails.lastName;
       let image = userDetails.profilePic;
-      let feedback = await Testimony.create({ feedback: req.body.feedback, name: name, image: image });
+      let feedback = await Testimony.create({
+        feedback: req.body.feedback,
+        name: name,
+        image: image,
+      });
       if (!feedback) {
         throw Boom.badRequest("cannot create a testimony");
       }
@@ -1522,18 +1644,45 @@ module.exports = {
     } catch (error) {
       universalFunctions.sendError(error, res);
     }
-
   },
+
   getTestimonies: async (req, res) => {
     try {
-      let feedback = await Testimony.find();
-      if (!feedback) {
-        throw Boom.badRequest("cannot find any testimony");
-      }
+      let { skip, limit = 10 } = req.query;
+      let feedback = await Testimony.find()
+        .select({ feedback: 1, name: 1 })
+        .sort({ createdAt: -1 })
+        .skip(parseInt(skip))
+        .limit(parseInt(limit));
+      let count = await Testimony.count();
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "All testimonies are",
+          data: {
+            feedback,
+            pages: count ? Math.ceil(count / parseInt(limit)) : 0,
+          },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  getTestimonyByIdForAdmin: async (req, res) => {
+    try {
+      let { id } = req.query;
+      let feedback = await Testimony.findOne({ _id: id });
+
+      if(!feedback){
+        throw Boom.notFound(responseMessages.TESTIMONY_NOT_FOUND);
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: responseMessages.SUCCESS,
           data: feedback,
         },
         res
@@ -1541,35 +1690,42 @@ module.exports = {
     } catch (error) {
       universalFunctions.sendError(error, res);
     }
-
-
   },
   giveExpertRating: async (req, res) => {
     try {
       let id = req.user.id;
       const schema = Joi.object({
         rating: Joi.number(),
-        expertId: Joi.string()
+        expertId: Joi.string(),
       });
       // let id=req.user.id;
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      const isRated = await Expert_Rating.findOne({ userId: id, expertId: req.body.expertId })
+      const isRated = await Expert_Rating.findOne({
+        userId: id,
+        expertId: req.body.expertId,
+      });
       if (!isRated) {
-        throw Boom.badRequest('User has already rated the expert');
+        throw Boom.badRequest("User has already rated the expert");
       }
       const expert = await expertUser.findOne({ _id: req.body.expertId });
       let rating = {
         noOfRating: expert.rating.noOfRating + 1,
         ratingCount: expert.rating.ratingCount + req.body.rating,
-        avgRating: ((expert.rating.ratingCount + req.body.rating) / (expert.rating.noOfRating + 1))
+        avgRating:
+          (expert.rating.ratingCount + req.body.rating) /
+          (expert.rating.noOfRating + 1),
       };
       if (!expert) {
-        throw Boom.badRequest('Wrong credentials')
+        throw Boom.badRequest("Wrong credentials");
       }
 
-      const expertDetails = await expertUser.findOneAndUpdate({ _id: req.body.expertId }, { $set: { rating: rating } }, { new: true });
+      const expertDetails = await expertUser.findOneAndUpdate(
+        { _id: req.body.expertId },
+        { $set: { rating: rating } },
+        { new: true }
+      );
       if (!expertDetails) {
-        throw Boom.badRequest('Could not update');
+        throw Boom.badRequest("Could not update");
       }
       universalFunctions.sendSuccess(
         {
@@ -1582,33 +1738,30 @@ module.exports = {
     } catch (error) {
       universalFunctions.sendError(error, res);
     }
-
   },
   getAvailableTimeForUser: async (req, res) => {
     try {
-
       let { expertId, appointmentDate, duration, timeZone } = req.query;
       let curentdate = new Date();
 
       const expertTime = await expertTimeAvailable.find({
         $and: [
           {
-            "expertId": expertId
-          }, {
-            "appointmentDate": appointmentDate,
-
-          }, {
-            "duration": duration
+            expertId: expertId,
+          },
+          {
+            appointmentDate: appointmentDate,
+          },
+          {
+            duration: duration,
           },
           {
             startAppointmentTime: {
               $gte: curentdate,
-
-            }
+            },
           },
-        ]
+        ],
       });
-
 
       if (!expertTime) {
         throw Boom.badRequest("invalid id or token");
@@ -1625,18 +1778,28 @@ module.exports = {
         } else {
           e.avialble = true;
         }
-      })
-      var startAppointmentTimeLocal, appointmentEndLocalTime, appointDateandTimeLocal;
+      });
+      var startAppointmentTimeLocal,
+        appointmentEndLocalTime,
+        appointDateandTimeLocal;
 
       tempobj.map((ele) => {
         let localTime = moment.tz(ele.startAppointmentTime, timeZone);
-        startAppointmentTimeLocal = moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+        startAppointmentTimeLocal = moment(localTime).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
         let endTime = moment.tz(ele.endAppointmentTime, timeZone);
-        appointmentEndLocalTime = moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+        appointmentEndLocalTime = moment(endTime).format("YYYY-MM-DD HH:mm:ss");
         let dateAndTime = moment.tz(ele.appointDateandTime, timeZone);
-        appointDateandTimeLocal = moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
-        return ele.startAppointmentTimeLocal = startAppointmentTimeLocal, ele.endAppointmentTimeLocal = appointmentEndLocalTime, ele.appointDateandTimeLocal = appointDateandTimeLocal;
-      })
+        appointDateandTimeLocal = moment(dateAndTime).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        return (
+          (ele.startAppointmentTimeLocal = startAppointmentTimeLocal),
+          (ele.endAppointmentTimeLocal = appointmentEndLocalTime),
+          (ele.appointDateandTimeLocal = appointDateandTimeLocal)
+        );
+      });
 
       universalFunctions.sendSuccess(
         {
@@ -1646,9 +1809,8 @@ module.exports = {
         },
         res
       );
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
       universalFunctions.sendError(error, res);
     }
   },
@@ -1669,33 +1831,45 @@ module.exports = {
         status: Joi.string().allow(""),
         practiceArea: Joi.string().length(24).required(),
         timeZone: Joi.string(),
-
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      let start = req.body.startAppointmentTime, end = req.body.endAppointmentTime;
+      let start = req.body.startAppointmentTime,
+        end = req.body.endAppointmentTime;
       let data = await appointment.find({
         startAppointmentTime: {
           $gte: start,
-          $lte: end
+          $lte: end,
         },
         expertId: payload.expertId,
-        appointmentDate: payload.appointmentDate
-      })
+        appointmentDate: payload.appointmentDate,
+      });
       payload.userId = userId;
-      console.log(data, 'daaaaattaa')
+      console.log(data, "daaaaattaa");
       if (data.length > 0) {
-        throw Boom.badRequest('already an appointment at this time');
+        throw Boom.badRequest("already an appointment at this time");
       }
       let timeZone = req.body.timeZone;
       let createAppointment = await appointment.create(payload);
-      let createAppointments = JSON.parse(JSON.stringify(createAppointment))
+      let createAppointments = JSON.parse(JSON.stringify(createAppointment));
       //   let createAppointments=JSON.stringify(createAppointment)
-      let localTime = moment.tz(createAppointments.startAppointmentTime, timeZone);
-      let startAppointmentTimeLocal = moment(localTime).format('YYYY-MM-DD HH:mm:ss')
+      let localTime = moment.tz(
+        createAppointments.startAppointmentTime,
+        timeZone
+      );
+      let startAppointmentTimeLocal = moment(localTime).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
       let endTime = moment.tz(createAppointments.endAppointmentTime, timeZone);
-      let appointmentEndLocalTime = moment(endTime).format('YYYY-MM-DD HH:mm:ss')
-      let dateAndTime = moment.tz(createAppointments.appointDateandTime, timeZone);
-      let appointDateandTimeLocal = moment(dateAndTime).format('YYYY-MM-DD HH:mm:ss')
+      let appointmentEndLocalTime = moment(endTime).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      let dateAndTime = moment.tz(
+        createAppointments.appointDateandTime,
+        timeZone
+      );
+      let appointDateandTimeLocal = moment(dateAndTime).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
       createAppointments.startAppointmentTimeLocal = startAppointmentTimeLocal;
       createAppointments.appointmentEndLocalTime = appointmentEndLocalTime;
       createAppointments.appointDateandTimeLocal = appointDateandTimeLocal;
@@ -1708,7 +1882,6 @@ module.exports = {
         },
         res
       );
-
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }
