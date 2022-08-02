@@ -297,10 +297,10 @@ module.exports = {
           const token=await jwtFunction.jwtGenerator(user._id);
           console.log("token borhan usser",token)
          
-          // let newToken=[{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}]
+          let newToken=[{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}]
           // console.log(newToken,"token new");
           await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:req.body.firebaseUid})
-          // await User.findByIdAndUpdate({_id:user._id},{ $push: { token: newToken } },)
+          await User.findByIdAndUpdate({_id:user._id},{ $push: { token: newToken } },)
           universalFunctions.sendSuccess(
             {
               statusCode: 200,
