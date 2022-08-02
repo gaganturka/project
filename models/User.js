@@ -56,8 +56,8 @@ const UserSchema = new Schema({
   },
   token:[
     {
-      deviceType:{type:String,enum:["1","2","3"]},
-      deviceToken:{type:String}
+      deviceType:[{type:String,enum:["1","2","3"]}],
+      deviceToken:[{type:String}]
     }
   ],
   fireBaseToken:{

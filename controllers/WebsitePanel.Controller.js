@@ -669,36 +669,46 @@ module.exports = {
       }
       let createAppointment = await appointment.create(payload);
       await expertTimeAvailable.findOneAndUpdate({_id:createAppointment.timeSlotId},{isAvailable:false});
-       let expertDetail=await  expertUser.findOne({_id:req.body.expertId}).populate("userId") 
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: responseMessages.SUCCESS,
+          data: createAppointment,
+        },
+        res
+      );
+
+      // Send Push Notification
+       let expertDetail = await  expertUser.findOne({_id:req.body.expertId}).populate("userId") 
+
      let  message = {
-      notification: {
+        notification: {
           title:  APP_CONSTANTS.pushNotificationMessage.title,
-          body: APP_CONSTANTS.pushNotificationMessage.bookAppointementsMessage,
+          body: APP_CONSTANTS.pushNotificationMessage.bookAppointmentByUser,
         },
       }
        let registrationTokens = [];
-       expertDetail &&expertDetail.userId&&
+       expertDetail && expertDetail.userId&&
        expertDetail.userId.token &&
        expertDetail.userId.token.map((val1) => {
-           registrationTokens.push(val1.deviceToken);
+        val1.deviceToken.map((ele)=>{
+          registrationTokens.push(ele)
+        })
+          ;
          });
+         console.log("this is export token",registrationTokens)
           admin
            .messaging()
            .sendToDevice(registrationTokens, message)
            .then((response) => {
-            console.log("this is response" , response)
-             return universalFunctions.sendSuccess(
-               {
-                 statusCode: 200,
-                 message: responseMessages.SUCCESS,
-                 data: response,
-               },
-               res
-             );
+            console.log("Send Notification Response:" , response)
+            return null;
            })
            .catch((error) => {
              console.log("Error sending message:", error);
            });
+             
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }
@@ -821,55 +831,44 @@ module.exports = {
   cancelAppointment: async (req, res) => {
     try {
       let userId = req.user.id;
-
-      let data;
-      let expert;
       let deletedAppointment = await appointment.findByIdAndUpdate(req.params.id, { status: APP_CONSTANTS.appointmentStatus.cancelled ,isRejectedByUser:true})
       if (!deletedAppointment) {
         throw Boom.badRequest("cannot find any appointment to delete");
       }
-    //  console.log("this is delete appoi" ,deletedAppointment )
-     let expertDetail=await  expertUser.findOne({_id:deletedAppointment.expertId}).populate("userId") 
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: deletedAppointment,
+        },
+        res
+      );
+     let expertDetail=await  expertUser.findOne({_id:deletedAppointment.expertId}).populate("userId") ;
      let  message = {
       notification: {
           title:  APP_CONSTANTS.pushNotificationMessage.title,
           body: APP_CONSTANTS.pushNotificationMessage.WhenUserCancelsAnAppointment,
         },
       }
-      // console.log("this is cancel appoints" ,message )
-       let registrationTokens = [];
-       expertDetail &&expertDetail.userId&&
-       expertDetail.userId.token &&
-       expertDetail.userId.token.map((val1) => {
-           registrationTokens.push(val1.deviceToken);
-         });
-          admin
-           .messaging()
-           .sendToDevice(registrationTokens, message)
-           .then((response) => {
-            console.log("this is response" , response)
-             return universalFunctions.sendSuccess(
-               {
-                 statusCode: 200,
-                 message: responseMessages.SUCCESS,
-                 data: response,
-               },
-               res
-             );
-           })
-           .catch((error) => {
-             console.log("Error sending message:", error);
-           });
-
-      // universalFunctions.sendSuccess(
-      //   {
-      //     statusCode: 200,
-      //     message: "Success",
-      //     data: data,
-      //   },
-      //   res
-      // );
-
+      let registrationTokens = [];
+      expertDetail &&expertDetail.userId&&
+      expertDetail.userId.token &&
+      expertDetail.userId.token.map((val1) => {
+       val1.deviceToken.map((ele)=>{
+         registrationTokens.push(ele)
+       })
+         ;
+        });
+         admin
+          .messaging()
+          .sendToDevice(registrationTokens, message)
+          .then((response) => {
+           console.log("Send Notification Success" , response)
+           
+          })
+          .catch((error) => {
+            console.log("Error sending message:", error);
+          });
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }
@@ -909,6 +908,14 @@ module.exports = {
       if (!rescheduledAppointment) {
         throw Boom.badRequest("cannot find any appointment to reschedule");
       }
+       universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: rescheduledAppointment,
+        },
+        res
+      );
       let expertDetail=await  expertUser.findOne({_id:req.body.expertId}).populate("userId") 
      let  message = {
       notification: {
@@ -926,29 +933,15 @@ module.exports = {
            .messaging()
            .sendToDevice(registrationTokens, message)
            .then((response) => {
-            console.log("this is response" , response)
-             return universalFunctions.sendSuccess(
-               {
-                 statusCode: 200,
-                 message: responseMessages.SUCCESS,
-                 data: response,
-               },
-               res
-             );
+            console.log("Send Notification" , response)
+            
            })
            .catch((error) => {
              console.log("Error sending message:", error);
            });
 
 
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "Success",
-          data: rescheduledAppointment,
-        },
-        res
-      );
+     
 
     } catch (error) {
       return universalFunctions.sendError(error, res);

@@ -75,6 +75,7 @@ module.exports = {
         profilePic: Joi.string().allow(""),
         firebaseUid:Joi.string().required(),
         fireBaseToken:Joi.string().allow(),
+        deviceType:Joi.string().allow(""),
         // otp: Joi.string(),
         // .allow("")
       });
@@ -138,8 +139,14 @@ module.exports = {
         },
         otp: "",
         mobileFirebaseUid:req.body.firebaseUid,
-        fireBaseToken:req.body.fireBaseToken,
+        token: [
+          {
+             deviceType:[req.body.deviceType],
+             deviceToken:[req.body.fireBaseToken]
+          }]
+        // fireBaseToken:req.body.fireBaseToken,
       });
+      console.log("this is user" , user)
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
 
       console.log(user);
@@ -281,6 +288,7 @@ module.exports = {
       // checks whether the mobileno has already been created
 
       let user = await User.findOne({ mobileNo: req.body.mobileNo });
+      console.log("this is payload" , req.body)
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
         
@@ -289,9 +297,10 @@ module.exports = {
           const token=await jwtFunction.jwtGenerator(user._id);
           console.log("token borhan usser",token)
          
-          // let newToken=[...user.token,{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}]
+          // let newToken=[{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}]
           // console.log(newToken,"token new");
           await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:req.body.firebaseUid})
+          // await User.findByIdAndUpdate({_id:user._id},{ $push: { token: newToken } },)
           universalFunctions.sendSuccess(
             {
               statusCode: 200,

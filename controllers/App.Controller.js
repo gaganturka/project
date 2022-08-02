@@ -803,6 +803,7 @@ module.exports = {
       if (token) {
         const decoded = jwt.verify(token, Config.jwtsecret);
         let user = await User.findOne({ _id: decoded.user_id });
+        console.log("this is logout Token" , user)
         if (!user) {
           throw Boom.badRequest(responseMessages.INVALID_TOKEN);
         }
@@ -1021,7 +1022,7 @@ module.exports = {
           minDomainSegments: 2,
           tlds: { allow: ["com", "net"] },
         }),
-        mobileNo: Joi.string().min(10).required(),
+        mobileNo: Joi.string().min(10),
         profilePic: Joi.string().allow(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
