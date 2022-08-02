@@ -100,7 +100,7 @@ module.exports = {
     try {
       const schema = Joi.object({
         mobileNo: Joi.string().min(10).required(),
-        token:Joi.string().allow(),
+        token:Joi.string().allow(""),
         deviceType:Joi.string().allow()
 
       });
