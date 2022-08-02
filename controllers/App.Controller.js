@@ -1021,7 +1021,7 @@ module.exports = {
           minDomainSegments: 2,
           tlds: { allow: ["com", "net"] },
         }),
-        mobileNo: Joi.string().min(10).required(),
+        mobileNo: Joi.string().min(10),
         profilePic: Joi.string().allow(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
