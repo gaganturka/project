@@ -115,8 +115,8 @@ module.exports = {
       if ((users !== null && users?.userData?.model !== APP_CONSTANTS.role.expert)) {
         throw Boom.badRequest('Invalid Credentials');
       }
-      // let newToken=[{deviceType:req.body.deviceType,deviceToken:req.body.token}]
-      // await User.findByIdAndUpdate({_id:users._id},{ $push: { token: newToken } },)
+      let newToken=[{deviceType:req.body.deviceType,deviceToken:req.body.token}]
+      await User.findByIdAndUpdate({_id:users._id},{ $push: { token: newToken } },)
 
       const token = await jwtFunction.jwtGenerator(users._id);
       let userDetails = {
