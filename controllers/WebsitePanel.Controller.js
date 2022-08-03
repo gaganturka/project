@@ -1090,7 +1090,10 @@ module.exports = {
   },
   getTestimonies: async (req, res) => {
     try {
-      let feedback = await Testimony.find({ isDeleted: false });
+      let feedback = await Testimony.aggregate([
+        { $match: { isDeleted: false } },
+        { $sample: { size: 10 } },
+      ]);
 
       universalFunctions.sendSuccess(
         {
