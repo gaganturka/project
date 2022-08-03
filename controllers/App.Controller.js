@@ -7,6 +7,7 @@ const category = require("../models/Categories");
 const appointment = require("../models/Appointment");
 const practiceModel = require("../models/Practice_Area");
 const favouriteExport = require("../models/Fav_Expert");
+const UserRequest = require("../models/UserRequests");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
@@ -1629,6 +1630,7 @@ module.exports = {
         feedback: req.body.feedback,
         name: name,
         image: image,
+        isDeleted: false,
       });
       if (!feedback) {
         throw Boom.badRequest("cannot create a testimony");
@@ -1969,6 +1971,146 @@ module.exports = {
       );
     } catch (error) {
       return universalFunctions.sendError(error, res);
+    }
+  },
+  addUserRequest: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        firstName: Joi.string().required(),
+        lastName: Joi.string().allow(""),
+        email: Joi.string().email().required(),
+        firmName: Joi.string().allow(""),
+        phoneNo: Joi.string().min(10).required(),
+      });
+
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      req.body.isDeleted = false;
+      req.body.isContacted = false;
+
+      let submittedRequest = await UserRequest.create(req.body);
+      if (!submittedRequest) {
+        throw Boom.badRequest("Cannot Submit Your Request");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success! Acknowledgement Sent To Submitted EmailId",
+          data: {},
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  editUserRequestByAdmin: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        isContacted: Joi.boolean().required(),
+        id: Joi.string().required(),
+      });
+
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let submittedRequest = await UserRequest.findOneAndUpdate(
+        { _id: req.body.id, isDeleted: false },
+        { isContacted: req.body.isContacted }
+      );
+      if (!submittedRequest) {
+        throw Boom.badRequest("Cannot Edit Request");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Request Edited Successfully",
+          data: {},
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  deleteUserRequestByAdmin: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let submittedRequest = await UserRequest.findOneAndUpdate(
+        { _id: req.body.id, isDeleted: false },
+        { isDeleted: true }
+      );
+      if (!submittedRequest) {
+        throw Boom.badRequest("Cannot Delete Request");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Request Deleted Successfully",
+          data: {},
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  getAllUserRequestsForAdmin: async (req, res) => {
+    try {
+      let { skip, limit = 10, option } = req.query;
+
+      let filter = { isDeleted: false };
+      if (option === "contacted") {
+        filter.isContacted = true;
+      } else if (option === "unContacted") {
+        filter.isContacted = false;
+      }
+
+      let submittedRequestData = await UserRequest.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(parseInt(skip))
+        .limit(parseInt(limit));
+      let count = await UserRequest.count(filter);
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Request Deleted Successfully",
+          data: {
+            submittedRequestData,
+            pages: count ? Math.ceil(count / parseInt(limit)) : 0,
+          },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  getUserRequestById: async (req, res) => {
+    try {
+      let { id } = req.query;
+
+      let submittedRequestData = await UserRequest.findOne({
+        _id: id,
+        isDeleted: false,
+      });
+      if (!submittedRequestData) {
+        throw Boom.badRequest("Cannot Find Request");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: submittedRequestData,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
     }
   },
 };

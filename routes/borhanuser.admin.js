@@ -29,6 +29,24 @@ router
   .post(isAdmin.isAdmin, AppController.deleteTestimonyByAdmin);
 
 // testimonies routes ended
+// user request routes started
+router
+  .route("/editUserRequestByAdmin")
+  .post(isAdmin.isAdmin, AppController.editUserRequestByAdmin);
+
+router
+  .route("/deleteUserRequestByAdmin")
+  .post(isAdmin.isAdmin, AppController.deleteUserRequestByAdmin);
+
+router
+  .route("/getAllUserRequestsForAdmin")
+  .get(isAdmin.isAdmin, AppController.getAllUserRequestsForAdmin);
+
+router
+  .route("/getUserRequestById")
+  .get(isAdmin.isAdmin, AppController.getUserRequestById);
+
+// user request routes ended
 router
   .route("/deleteBorhanUserByAdmin/:_id")
   .delete(isAdmin.isAdmin, BorhanController.deleteBorhanUserByAdmin);
