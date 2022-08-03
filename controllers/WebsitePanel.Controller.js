@@ -33,6 +33,7 @@ const expertTimeAvailable = require("../models/ExpertTimeSlot");
 const { isAValidPhoneNumber } = require("../utils/twilioFunctions");
 const twilioFunctions = require("../utils/twilioFunctions");
 const Expert_Rating = require("../models/Expert_Rating");
+const moment = require("moment");
 const publicVapidKey =
   "BKjkBjs0NF8cLaPAYNKFWiGSBcau-q3poapqeXZhbPUfBacozebEplWJBFIes8FioqhMbdpIzYmUzxTdgdrLxXk";
 const privateVapidKey = "_7Xt1bP-K_ckzykka6TX536RB6pX0v8i0SeaLO7W-iw";
@@ -1115,8 +1116,8 @@ module.exports = {
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let subscribed = await Newsletter.findOneAndUpdate(
         { email: req.body.email },
-        { $set: { email: req.body.email } },
-        { upsert: true }
+        { email: req.body.email, subscribedAt: moment.utc().format() },
+        { upsert: true, new: true }
       );
       if (!subscribed) {
         throw Boom.badRequest("cannot subscribe to newsletter");
