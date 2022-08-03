@@ -7,13 +7,28 @@ const AppController = require("../controllers/App.Controller");
 router
   .route("/getBorhanUsers")
   .post(isAdmin.isAdmin, BorhanController.showBorhanUsers);
-
+// testimonies routes started
 router
   .route("/getTestimonies")
   .get(isAdmin.isAdmin, AppController.getTestimonies);
+
 router
   .route("/getTestimonyByIdForAdmin")
   .get(isAdmin.isAdmin, AppController.getTestimonyByIdForAdmin);
+
+router
+  .route("/addTestimonyByAdmin")
+  .post(isAdmin.isAdmin, AppController.addTestimonyByAdmin);
+
+router
+  .route("/editTestimonyByAdmin")
+  .post(isAdmin.isAdmin, AppController.editTestimonyByAdmin);
+
+router
+  .route("/deleteTestimonyByAdmin")
+  .post(isAdmin.isAdmin, AppController.deleteTestimonyByAdmin);
+
+// testimonies routes ended
 router
   .route("/deleteBorhanUserByAdmin/:_id")
   .delete(isAdmin.isAdmin, BorhanController.deleteBorhanUserByAdmin);

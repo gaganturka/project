@@ -1646,15 +1646,100 @@ module.exports = {
     }
   },
 
+  addTestimonyByAdmin: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        feedback: Joi.string().required(),
+        name: Joi.string().allow(""),
+        image: Joi.string().allow(""),
+      });
+
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      req.body.isDeleted = false;
+      let feedback = await Testimony.create(req.body);
+      if (!feedback) {
+        throw Boom.badRequest("cannot create a testimony");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Created testimony",
+          data: {},
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  editTestimonyByAdmin: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+        feedback: Joi.string().required(),
+        name: Joi.string().allow(""),
+        image: Joi.string().allow(""),
+      });
+
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let feedback = await Testimony.findOneAndUpdate(
+        { _id: req.body.id, isDeleted: false },
+        req.body
+      );
+      if (!feedback) {
+        throw Boom.badRequest("Cannot edit a Testimony");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Testimony Edited Successfully",
+          data: {},
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  deleteTestimonyByAdmin: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let feedback = await Testimony.findOneAndUpdate(
+        { _id: req.body.id, isDeleted: false },
+        { isDeleted: true }
+      );
+      if (!feedback) {
+        throw Boom.badRequest("Cannot delete testimony");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Testimony Deleted Successfully",
+          data: {},
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
   getTestimonies: async (req, res) => {
     try {
       let { skip, limit = 10 } = req.query;
-      let feedback = await Testimony.find()
+      let feedback = await Testimony.find({ isDeleted: false })
         .select({ feedback: 1, name: 1 })
         .sort({ createdAt: -1 })
         .skip(parseInt(skip))
         .limit(parseInt(limit));
-      let count = await Testimony.count();
+      let count = await Testimony.count({ isDeleted: false });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1676,7 +1761,7 @@ module.exports = {
       let { id } = req.query;
       let feedback = await Testimony.findOne({ _id: id });
 
-      if(!feedback){
+      if (!feedback) {
         throw Boom.notFound(responseMessages.TESTIMONY_NOT_FOUND);
       }
       universalFunctions.sendSuccess(
