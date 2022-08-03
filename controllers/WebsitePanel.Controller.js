@@ -1125,7 +1125,7 @@ module.exports = {
         {
           statusCode: 200,
           message: "Success! Acknowledgement Sent To Submitted Email",
-          data: subscribed,
+          data: {},
         },
         res
       );
