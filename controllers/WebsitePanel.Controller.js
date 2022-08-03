@@ -1110,10 +1110,7 @@ module.exports = {
   subscribeNewsletter: async (req, res) => {
     try {
       const schema = Joi.object({
-        email: Joi.string().email({
-          minDomainSegments: 2,
-          tlds: { allow: ["com", "net"] },
-        }),
+        email: Joi.string().email(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let subscribed = await Newsletter.findOneAndUpdate(
@@ -1127,7 +1124,7 @@ module.exports = {
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
-          message: "newsletter subscribed",
+          message: "Success! Acknowledgement Sent To Submitted Email",
           data: subscribed,
         },
         res
