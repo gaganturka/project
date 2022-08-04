@@ -1064,6 +1064,7 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
+     const token = req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
       console.log(payload, "payload");
       let userId = req.user.id;
       console.log("userId", userId);
@@ -1072,18 +1073,18 @@ module.exports = {
         { ...payload },
         { new: true }
       );
+
       console.log(user, "updatedUser");
       if (!user) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
-
+      let userData = JSON.parse(JSON.stringify(user));
+      delete userData.token;
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "updated User",
-          data: {
-            user,
-          },
+          data: { token: token, user: userData },
         },
         res
       );
