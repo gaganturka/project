@@ -307,20 +307,20 @@ module.exports = {
       topOnlinePremiumExpertsData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
-        if (
-          ele &&
-          ele.userId &&
-          ele.userId.isEmailVerified &&
-          ele.userId.password &&
-          ele.userId.__v &&
-          ele.userId.userData
-        ) {
+        // if (
+        //   ele &&
+        //   ele.userId &&
+        //   ele.userId.isEmailVerified &&
+        //   ele.userId.password &&
+        //   ele.userId.__v &&
+        //   ele.userId.userData
+        // ) {
           delete ele.userId.isEmailVerified;
           delete ele.userId.password;
           delete ele.userId.__v;
           delete ele.userId.userData;
-          // delete ele.userId.token;
-        }
+          delete ele.userId.token;
+        // }
         if (ele.expertlisting.length > 0 && ele.expertlisting != null)
           ele.isFavorite = true;
         else ele.isFavorite = false;
@@ -364,12 +364,17 @@ module.exports = {
             delete ele.userId.password;
             delete ele.userId.__v;
             delete ele.userId.userData;
+            delete ele.userId.token;
+
+
           }
           if (ele && ele.expertId && ele.expertId.userId) {
             delete ele.expertId.userId.isEmailVerified;
             delete ele.expertId.userId.password;
             delete ele.expertId.userId.__v;
-            delete ele.expertId.userId.userData;
+            // delete ele.expertId.userId.userData;
+            delete ele.expertId.userId.token;
+
           }
         });
       }
