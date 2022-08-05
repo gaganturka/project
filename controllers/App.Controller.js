@@ -2040,10 +2040,10 @@ module.exports = {
         <body>
             <div style="width:100%;text-align:center;">
                 <div>
-                    <img src="${BackendUrl}/public/assets/img/main-logo.png" style="height:100px;width:100px;object-fit:contain;" />
+                    <img src="https://borhanbackends.herokuapp.com/public/assets/img/main-logo.png" style="height:100px;width:100px;object-fit:contain;" />
                 </div>
                 <div>
-                    <img src="../public/assets/img/2-artwork.png" style="height:300px;object-fit:contain;" alt="">
+                    <img src="https://borhanbackends.herokuapp.com/public/assets/img/2-artwork.png" style="height:300px;object-fit:contain;" alt="">
                 </div>
                 <div>
                     <h1 style="color:#000;font-size:26px;margin-bottom: 5px;font-weight: 600;">Thank you for contacting us</h1>
