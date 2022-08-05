@@ -15,6 +15,7 @@ const universalFunctions = require("../utils/universalFunctions");
 const { Config } = require("../config");
 const Testimony = require("../models/Testimony");
 const chatappointment = require("../models/ChatAppointment");
+const Mongoose = require("mongoose");
 const Boom = require("boom");
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const { v4: uuidv4 } = require("uuid");
@@ -335,6 +336,7 @@ module.exports = {
           }
         });
       }
+      console.log("this is filter data" ,tempobj )
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -963,6 +965,7 @@ module.exports = {
         practiceArea: Joi.string().length(24).required(),
         appointmentId: Joi.string(),
         isRescheduled: Joi.boolean(),
+        previousTimeSlot:Joi.string().allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let start = req.body.startAppointmentTime,
@@ -974,16 +977,20 @@ module.exports = {
         },
       });
       payload.userId = userId;
+      const timeSlot=  await expertTimeAvailable.findOneAndUpdate({ _id: req.body.previousTimeSlot },{$set: { isAvailable: true }})
+      console.log("this is data" , timeSlot)
       let expert;
       let rescheduledAppointment = await appointment.findByIdAndUpdate(
         req.body.appointmentId,
         payload,
         { new: true }
       );
-
+      console.log("this is appointment id" , rescheduledAppointment.timeSlotId)
       if (!rescheduledAppointment) {
         throw Boom.badRequest("cannot find any appointment to reschedule");
       }
+      await expertTimeAvailable.findByIdAndUpdate({ _id: payload.timeSlotId }, { isAvailable: false })
+  
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1007,7 +1014,11 @@ module.exports = {
         expertDetail.userId &&
         expertDetail.userId.token &&
         expertDetail.userId.token.map((val1) => {
-          registrationTokens.push(val1.deviceToken);
+          val1.deviceToken.map((ele)=>{
+            registrationTokens.push(ele);
+          })
+
+          // registrationTokens.push(val1.deviceToken);
         });
       admin
         .messaging()
