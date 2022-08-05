@@ -84,11 +84,15 @@ module.exports = {
         req.body.deviceType,
         req.body.deviceToken
       );
+      console.log("this is login ",updatedUser)
+      let userData = JSON.parse(JSON.stringify(updatedUser));
+      delete userData.token;
+      
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: responseMessages.SUCCESS,
-          data: { token, user: updatedUser },
+          data: { token, user: userData },
         },
         res
       );
@@ -226,19 +230,21 @@ module.exports = {
         console.log("ele", ele);
         delete ele.__v;
         delete ele.category.__v;
-        if (
-          ele &&
-          ele.userId &&
-          ele.userId.isEmailVerified &&
-          ele.userId.password &&
-          ele.userId.__v &&
-          ele.userId.userData
-        ) {
+        // if (
+        //   ele &&
+        //   ele.userId &&
+        //   ele.userId.isEmailVerified &&
+        //   ele.userId.password &&
+        //   ele.userId.__v &&
+        //   ele.userId.userData &&
+        //   ele.userId.token
+        // ) {
           delete ele.userId.isEmailVerified;
           delete ele.userId.password;
           delete ele.userId.__v;
           delete ele.userId.userData;
-        }
+          delete ele.userId.token;
+        // }
         if (ele.expertlisting.length > 0 && ele.expertlisting != null)
           ele.isFavorite = true;
         else ele.isFavorite = false;
@@ -263,19 +269,25 @@ module.exports = {
       topOnlineExpertsData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
-        if (
-          ele &&
-          ele.userId &&
-          ele.userId.isEmailVerified &&
-          ele.userId.password &&
-          ele.userId.__v &&
-          ele.userId.userData
-        ) {
-          delete ele.userId.isEmailVerified;
+        delete ele.userId.isEmailVerified;
           delete ele.userId.password;
           delete ele.userId.__v;
           delete ele.userId.userData;
-        }
+          delete ele.userId.token;
+        // if (
+        //   ele &&
+        //   ele.userId &&
+        //   ele.userId.isEmailVerified &&
+        //   ele.userId.password &&
+        //   ele.userId.__v &&
+        //   ele.userId.userData
+        // ) {
+        //   delete ele.userId.isEmailVerified;
+        //   delete ele.userId.password;
+        //   delete ele.userId.__v;
+        //   delete ele.userId.userData;
+        //   delete ele.userId.token;
+        // }
         if (ele.expertlisting.length > 0 && ele.expertlisting != null)
           ele.isFavorite = true;
         else ele.isFavorite = false;
@@ -299,19 +311,20 @@ module.exports = {
       topOnlinePremiumExpertsData.map((ele) => {
         delete ele.__v;
         delete ele.category.__v;
-        if (
-          ele &&
-          ele.userId &&
-          ele.userId.isEmailVerified &&
-          ele.userId.password &&
-          ele.userId.__v &&
-          ele.userId.userData
-        ) {
+        // if (
+        //   ele &&
+        //   ele.userId &&
+        //   ele.userId.isEmailVerified &&
+        //   ele.userId.password &&
+        //   ele.userId.__v &&
+        //   ele.userId.userData
+        // ) {
           delete ele.userId.isEmailVerified;
           delete ele.userId.password;
           delete ele.userId.__v;
           delete ele.userId.userData;
-        }
+          delete ele.userId.token;
+        // }
         if (ele.expertlisting.length > 0 && ele.expertlisting != null)
           ele.isFavorite = true;
         else ele.isFavorite = false;
@@ -355,12 +368,17 @@ module.exports = {
             delete ele.userId.password;
             delete ele.userId.__v;
             delete ele.userId.userData;
+            delete ele.userId.token;
+
+
           }
           if (ele && ele.expertId && ele.expertId.userId) {
             delete ele.expertId.userId.isEmailVerified;
             delete ele.expertId.userId.password;
             delete ele.expertId.userId.__v;
-            delete ele.expertId.userId.userData;
+            // delete ele.expertId.userId.userData;
+            delete ele.expertId.userId.token;
+
           }
         });
       }
@@ -513,12 +531,15 @@ module.exports = {
           delete ele.userId.password;
           delete ele.userId.__v;
           delete ele.userId.userData;
+          delete ele.userId.token;
+
         }
         if (ele && ele.expertId && ele.expertId.userId) {
           delete ele.expertId.userId.isEmailVerified;
           delete ele.expertId.userId.password;
           delete ele.expertId.userId.__v;
           delete ele.expertId.userId.userData;
+          delete ele.expertId.userId.token;
         }
       });
 
@@ -1068,6 +1089,7 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
+     const token = req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
       console.log(payload, "payload");
       let userId = req.user.id;
       console.log("userId", userId);
@@ -1076,18 +1098,18 @@ module.exports = {
         { ...payload },
         { new: true }
       );
+
       console.log(user, "updatedUser");
       if (!user) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
-
+      let userData = JSON.parse(JSON.stringify(user));
+      delete userData.token;
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "updated User",
-          data: {
-            user,
-          },
+          data: { token: token, user: userData },
         },
         res
       );
