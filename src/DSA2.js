@@ -1,7 +1,9 @@
 // // ///////////.......................................SLLIDING WINDOW......................../
 // // in this que we have to find maximun number in window that will move from left to rigth window define no. of array that
 // // contain w no of elements
+
 // const arr = [1,3,2,4,5,7,9,8,5,]
+
 // const w= 3
 // result = []
 
@@ -27,6 +29,40 @@
 
 // const arr = [1,3,2,4,5,7,9,8,5]
 // const arr = [1,3,-1,-3,5,3,6,7]
+
+// let w =3
+// let result = []
+// let deque = []
+
+// for(let i=0; i<w; i++){
+//     while(deque.length > 0 && arr[i] >= arr[deque[deque.length-1]]){
+//         deque.pop()
+//     }
+//     deque.push(i)
+// }
+
+// for(let i=w; i<arr.length; i++){
+//     result.push(arr[deque[0]])
+
+//     while(deque.length>0 && arr[i] >= arr[deque[deque.length-1]]){
+//         deque.pop()
+//     }
+
+//     deque.push(i)
+
+    
+// }
+ 
+// console.log(result);
+
+
+
+
+
+
+
+
+
 // const w= 3
 // result = []
 
@@ -38,7 +74,7 @@
 //         deque.pop()
 //     }
 //     // console.log(cel)
-    // deque.push(cel) // pushing index of array
+//     deque.push(cel) // pushing index of array
 // }
 // console.log(deque)
 
@@ -54,10 +90,13 @@
 //         deque.shift()
 //     }
 //     deque.push(cel)
+//     console.log(deque);
 // }
 
 // result.push(arr[deque[0]])
 // console.log(result)
+
+
 
 // const arr = [1,2,3,4,5,6,7,8,9]
 // const w = 3
@@ -93,7 +132,6 @@
 
 //.................sliding window
 
-// const arr = [1,3,4,2,6,7887,545,645,57734,6,6645,0]
 
 // const w =3
 // const result =[]
@@ -106,7 +144,6 @@
 //     }
 //     deque.push(i)
 // }
-// console.log(deque)
 
 // for(let i=w; i<arr.length; i++){
 //     result.push(arr[deque[0]])
@@ -115,6 +152,7 @@
 //     }
     
 //     while(deque.length > 0 && i-w >= deque[0]){
+   
 //         deque.shift()
 //     }
 //     deque.push(i)

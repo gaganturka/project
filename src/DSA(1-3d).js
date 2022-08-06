@@ -82,7 +82,8 @@
 
 
 
-// const str = 'g a  g a a g a  g  jnwdkjdnwdnwjw dwdjdnwkdjn wd kwjdbwjekd we xwjhed jw xwjnd kjw xjw xwjn xjwg a a aga '
+// let str = 'g a  g a a g a  g  jnwdkjdnwdnwjw dwdjdnwkdjn wd kwjdbwjekd we xwjhed jw xwjnd kjw xjw xwjn xjwg a a aga '
+
 
 // const arr = str.split(' ')
 
@@ -118,7 +119,7 @@
 // const arr = str.split(' ')
 
 
-// const arr = [4,5,6,5,-1,4,3]
+// // const arr = [4,5,6,5,-1,4,3]
 
 // let count = {}
 // for(let i = 0; i<arr.length; i++){
@@ -130,9 +131,9 @@
 // }
 // }
 // console.log(count)
-// let hi = arr.sort()
+//let hi = arr.sort()
 
-// // console.log(hi)
+// console.log(hi)
 // let sortt = []
 // for(let key in count){
 //     // console.log(count[key])
@@ -140,7 +141,7 @@
 //     sortt = [...sortt, ...temp]
 //     // console.log(temp)
 // }
-// // console.log(sortt)
+// console.log(sortt)
 
 
 // .................. Sorted array ........../
@@ -177,7 +178,10 @@
 
 //..............................sort string ................//
 
-// const str = 'asafdfdfxdgvxcbcbjxnlsnkdjfngjfnzxn jzddn kcdnvnncbjvfkjcjbxbbxkvjxkjnkxjbckxf'
+// let str = 'asafdfdfxdgvxcbcbjxnlsnkdjfngjfnzxn jzddn kcdnvnncbjvfkjcjbxbbxkvjxkjnkxjbckxf'
+
+// str = str.split('')
+
 // const arr = str.split('')
 // const freq= {}
 
@@ -192,7 +196,7 @@
 // const alpha = 'abcdefghijklmnopqrstuvwxyz'
 // let final = ''
 // for(let i=0; i<alpha.length; i++ ){
-//    while(freq[alpha[i]] > 0){
+//    while(freq[alpha[i]] > 0){ //// if we using if here it will remove to dublicate elements
 //        final += alpha[i]
 //        freq[alpha[i]]--
 //    }
@@ -203,7 +207,8 @@
 
 
 //                 find the sum // find that numbers that sum is equal to sum variable 
-// const arr = [-6,-2,-3,0,1,2,3,4,5]
+//const arr = [-6,-2,-3,0,1,2,3,4,5]
+
 // // console.log(arr)
 // let sum = 4
 
@@ -262,26 +267,25 @@
 
 //..................................   find the number that is closest to sum X
 // const arr = [1,2,5,8,9,14]
-// let i = 0
-// let j = arr.length-1
-// const sum = 12
-// let distance = Infinity
-// let resullt = []
 
+// let i = 0
+// let j = arr.length -1 
+// let result = []
+// let distance = Infinity
+// let sum = 18
+// console.log(arr[i]);
 // while(i < j){
-//     if((arr[i] + arr[j] - sum )< distance ){
-//         distance = Math.floor(arr[i] + arr[j] - sum)
-//         resullt = [arr[i],arr[j]]
-//     } else if(arr[i] + arr[j] > sum){
+//     if((Math.abs((arr[i] + arr[j])- sum )<  distance)){
+//         result = [arr[i] , arr[j]]
+//         distance =Math.abs((arr[i] + arr[j]) - sum)
+//     } else if((arr[i] + arr[j]) > sum){
 //         j--
-//     }else{
+//     } else{
 //         i++
 //     }
 // }
-// ////
-// console.log(resullt)
 
-
+// console.log(result);
 
 
 
@@ -295,8 +299,8 @@
 // result =[]
 
 // while(i<j){
-//     if(Math.abs(arr[i]+arr[j] - 12) < distance){
-//         distance =  Math.abs((arr[i]+arr[j])- 12)
+//     if(Math.abs(arr[i]+arr[j] - num) < distance){
+//         distance =  Math.abs((arr[i]+arr[j])- num)
 //         result = arr[i],arr[j]
         
 //     } else if(arr[i] + arr[j] > num){
@@ -387,3 +391,81 @@
 
 // sum([1,2,3,4])
 
+
+// function smallCalculator(num1 , operator, num2){
+   
+//     if(isNaN(num1 || num2) == true){
+//         return "please Enter Valid Number"
+//     }else if(operator == '+' ){
+//         return num1 + num2
+//     } else if(operator == '-'){
+//         return num1 - num2
+//     } else if (operator == '*'){
+//         return num1*num2
+//     } else if(operator == '/'){
+//         return num1/num2
+//     } else{
+//         return 'Please Enter valid number or operator'
+//     }
+// }
+// console.log(smallCalculator('2' ,  '-' , 4 ));
+
+
+
+
+
+
+// function seriesOfOdd(number){
+
+//     result = []
+
+
+// const maxNumber = Math.pow(10, 1000); // 
+// for(let i =1; i<= maxNumber; i++ ){
+//     result.push(i)
+//     if(i == number*2){
+//         break
+//     }
+// }
+// return result.filter(num => num %2 != 0)
+// }
+
+// console.log(seriesOfOdd(4));
+
+
+// function seriesOfOdd(number){
+
+//     result = []
+//     if(number %2 == 0){
+//         number -= 1 
+//     }
+
+
+// const maxNumber = Math.pow(10, 1000); // 
+// for(let i =1; i<= maxNumber; i++ ){
+//     result.push(i)
+//     if(i == number*2){
+//         break
+//     }
+// }
+// return result.filter(num => num %2 != 0)
+// }
+
+// console.log(seriesOfOdd(2));
+
+
+
+// let arr = [1,2,8,9,12,46,76,82,15,20,30]
+
+// let newArr = arr.join('').split('')
+// let result = {}
+
+// for(let i=0; i<newArr.length; i++){
+//     if(result.hasOwnProperty(newArr[i])){
+//         result[newArr[i]] += 1
+//     } else{
+//         result[newArr[i]] = 1
+//     }
+
+// }
+// console.log(result);
