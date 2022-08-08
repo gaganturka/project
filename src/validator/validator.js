@@ -36,8 +36,14 @@ const isValidTime = (value) => {
 return /^([0]\d|[1][0-2]):([0-5]\d)\s?(?:AM|PM)$/.test(value)
 }
 
+const isValidPW = (value) => {
+    return /^[a-zA-Z0-9'@&#.\s]{8,15}$/.test(value.trim())
+}
+
+
 module.exports.isValid = isValid
 module.exports.queryParam = queryParam
 module.exports.isValidString = isValidString
 module.exports.isValidObject = isValidObject
 module.exports.isValidTime = isValidTime
+module.exports.isValidPW = isValidPW

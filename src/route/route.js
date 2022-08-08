@@ -1,5 +1,6 @@
 const express = require("express")
 const sleepController = require('../controllers/sleepControllers')
+const signUpController = require('../controllers/signUpController')
 
 const router = express.Router()
 
@@ -11,7 +12,6 @@ router.get("/test-me", (req,res) => {
 })
 
 router.post("/wysa", sleepController.controller)
-
-
+router.post('/signUp', signUpController.register )
 
 module.exports = router
