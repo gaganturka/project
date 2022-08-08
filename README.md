@@ -41,5 +41,3 @@ Start the server
 ## Lessons Learned
 
 I realized that sleep is very important part of our life and if you feel any problem with your sleep then you should have to take consult like there are also many online platform like wysa sleep app
-
-During project i faced problem in validate to time to solve that problem i used regex
