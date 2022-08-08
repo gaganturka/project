@@ -32,6 +32,10 @@ const { join, truncate, stubFalse } = require("lodash");
 const ChatAppointment = require("../models/ChatAppointment");
 const Testimony = require("../models/Testimony");
 const { tooManyRequests } = require("boom");
+const nodemailer = require("nodemailer");
+const transporter = nodemailer.createTransport(APP_CONSTANTS.nodemailerAuth);
+
+const BackendUrl=Config.BACKEND_URL;
 // import universalFunctions from "../utils/universalFunctions";
 
 module.exports = {
@@ -2013,6 +2017,73 @@ module.exports = {
       if (!submittedRequest) {
         throw Boom.badRequest("Cannot Submit Your Request");
       }
+      var mailOptions = {
+        from: APP_CONSTANTS.emailFrom,
+        to: req.body.email,
+        subject: APP_CONSTANTS.contactUs.subject,
+        html: `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Congratulations!!!!</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+        </head>
+        <style>
+            body{
+                font-family: 'Poppins', sans-serif;
+            }
+        </style>
+        <body>
+            <div style="width:100%;text-align:center;">
+                <div>
+                    <img src="https://borhanbackends.herokuapp.com/public/assets/img/main-logo.png" style="height:100px;width:100px;object-fit:contain;" />
+                </div>
+                <div>
+                    <img src="https://borhanbackends.herokuapp.com/public/assets/img/2-artwork.png" style="height:300px;object-fit:contain;" alt="">
+                </div>
+                <div>
+                    <h1 style="color:#000;font-size:26px;margin-bottom: 5px;font-weight: 600;">Thank you for contacting us</h1>
+                    <p style="color:#7F7F7F;font-size:16px;margin-bottom: 25px;font-weight: 500;">We'll get back to you soon </p>
+                </div>
+                <div style="background: linear-gradient(236deg, rgba(43,254,214,1) 0%, rgba(9,94,82,1) 100%);padding:25px;">
+                    <ul style="list-style:none;">
+                        <li style="display:inline-block;">
+                            <p style="color:#fff;font-size:18px;margin-bottom:0px;margin-top:0;padding-right: 10px;position: relative;top:-8px;">Reach us at</p>
+                        </li>
+                        <li style="display:inline-block;">
+                            <a href="javascript:;"><img style="height:30px;object-fit: contain;" src="./twitter.png" alt=""></a>
+                        </li>
+                        <li style="display:inline-block;">
+                            <a href="javascript:;"><img style="height:30px;object-fit: contain;" src="./instagram.png" alt=""></a>
+                        </li>
+                        <li style="display:inline-block;">
+                            <a href="javascript:;"><img style="height:30px;object-fit: contain;" src="./facebook.png" alt=""></a>
+                        </li>
+                        <li style="display:inline-block;">
+                            <a href="javascript:;"><img style="height:30px;object-fit: contain;" src="./linkdin.png" alt=""></a>
+                        </li>
+                        <li style="display:inline-block;">
+                            <a href="javascript:;"><img style="height:30px;object-fit: contain;" src="./web.png" alt=""></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </body>
+        </html>`,
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log("Error sending emails", error);
+        } else {
+          console.log("Email sent successfully: " + info.response);
+        }
+      });
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,

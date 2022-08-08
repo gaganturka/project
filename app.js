@@ -1,7 +1,7 @@
-const createError=require("http-errors");
+const createError = require("http-errors");
 const connectToMongo = require("./db");
 const express = require("express");
-const bodyParser=require('body-parser');
+const bodyParser = require("body-parser");
 var cors = require("cors");
 const {
   AUTH_ROUTES,
@@ -11,6 +11,7 @@ const {
   BorhanUserAdminRoutes,
   ExpertPanelRoutes,
   AppRoutes,
+  ThwaniRoutes,
 } = require("./routes");
 const cookieSession = require("cookie-session");
 const passportSetup = require("./config/passport");
@@ -61,6 +62,7 @@ app.use("/admin", BorhanUserAdminRoutes);
 app.use("/expert", ExpertPanelRoutes);
 app.use("/auth", authRoute);
 app.use("/app", AppRoutes);
+app.use("/payment", ThwaniRoutes);
 app.get("/", (req, res) => {
   res.send("Hello Satyam");
 });
