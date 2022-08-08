@@ -28,16 +28,16 @@ const controller = async (req, res) => {
         }
 
         if (validator.isValid(struggleTime)) {
-            // if(['Less than 2 weeks', '2 to 8 weeks', 'More than 8 weeks'].indexOf(struggleTime) = -1){
-            //     return res.status(400).send({status : false, message : 'StruggleTime should be  ["Less than 2 weeks"/ "2 to 8 weeks"/ "More than 8 weeks"]'})
-            // }
+            if('Less than 2 weeks, 2 to 8 weeks, More than 8 weeks'.indexOf(struggleTime.trim()) == -1){
+                return res.status(400).send({status : false, message : 'StruggleTime should be  ["Less than 2 weeks"/ "2 to 8 weeks"/ "More than 8 weeks"]'})
+            }
         }
         else {
             return res.status(400).send({ status: false, message: 'How long have you been struggling with your sleep' })
         }
 
         if (!validator.isValid(bedTime)) {
-            return res.status(400).send({ status: false, message: 'ok' })
+            return res.status(400).send({ status: false, message: 'What time do ypu go to bed for sleep' })
         }
 
         // we can also take time in 24 hours formate and vlidate with the help of moment in bedTime and wakeUpTime
@@ -50,7 +50,7 @@ const controller = async (req, res) => {
         }
 
         if (!validator.isValid(wakeUpTime)) {
-            return res.status(400).send({ status: false, message: 'ok' })
+            return res.status(400).send({ status: false, message: 'What time do you get out of bed to start your day?' })
         }
 
         if (!validator.isValidTime(wakeUpTime)) {
@@ -59,7 +59,7 @@ const controller = async (req, res) => {
 
 
         if (!validator.isValid(sleepHours)) {
-            return res.status(400).send({ status: false, message: 'sleeping hours' })
+            return res.status(400).send({ status: false, message: 'how many hours sleep do you get in typical night?' })
         }
 
         if (!(sleepHours > 0 || sleepHours <= 10)) {
@@ -69,15 +69,15 @@ const controller = async (req, res) => {
         let message = ''
         if (sleepHours) {
             if (sleepHours < 4) {
-                message = 'you should take our membership'
+                message = 'you seem to have a VERY LOW sleep efficiency , we will get this up to maximum'
             }
 
-            if (sleepHours < 8) {
-                message = 'you need some tips for sleep'
+            if (sleepHours <= 6) {
+                message = 'you seem to have a LOW sleep efficiency , we will get this up to maximum'
             }
 
-            if (sleepHours >= 8) {
-                message = 'you are good sleeper'
+            if (sleepHours >= 7) {
+                message = 'you seem to have A GOOD sleep efficiency , we will get this up to maximum '
             }
         }
 
@@ -94,10 +94,10 @@ const controller = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error);
         return res.status(500).send({ status: false, message: error.message })
     }
 }
 
 
 module.exports.controller = controller
+
