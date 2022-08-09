@@ -46,11 +46,17 @@ I realized that sleep is very important part of our life and if you feel any pro
 ## Example
 
 your request should be in this manner
+
 {
+
 nickName : "Gagan",
+
 struggleTime : "2 to 8 weeks",
+
 bedTime : "11:00AM",
+
 wakeUpTime : "02:00PM",
+
 sleepHours : 7
 }
 
