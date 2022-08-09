@@ -56,10 +56,10 @@ sleepHours : 7
 }
 
 
-you got response like tjis -
+you got response should be like this -
 
 {
-    "status": true,
+    "status": true,    
     "messag": "you seem to have A GOOD sleep efficiency , we will get this up to maximum "
 }
 
