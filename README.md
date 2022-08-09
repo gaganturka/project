@@ -41,3 +41,24 @@ Start the server
 ## Lessons Learned
 
 I realized that sleep is very important part of our life and if you feel any problem with your sleep then you should have to take consult like there are also many online platform like wysa sleep app
+
+
+## Example
+
+your request should be in this manner
+{
+nickName : "Gagan",
+struggleTime : "2 to 8 weeks",
+bedTime : "11:00AM",
+wakeUpTime : "02:00PM",
+sleepHours : 7
+}
+
+
+you got response like tjis -
+
+{
+    "status": true,
+    "messag": "you seem to have A GOOD sleep efficiency , we will get this up to maximum "
+}
+
