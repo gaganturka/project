@@ -4,6 +4,7 @@ const Newsletter = require("../models/NewsletterSubscribed");
 const expertUser = require("../models/Expert_User");
 const practiceArea = require("../models/Practice_Area");
 const appointment = require("../models/Appointment");
+const newLatter=require("../models/NewsletterSubscribed")
 // const expertTimeAvailable=require("../models/ExpertTimeSlot");
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
@@ -1099,10 +1100,9 @@ module.exports = {
   },
   getTestimonies: async (req, res) => {
     try {
-      let feedback = await Testimony.aggregate([
-        { $match: { isDeleted: false } },
-        { $sample: { size: 10 } },
-      ]);
+      let feedback = await Testimony.find(
+       { isDeleted: false } 
+      ).limit(10);
 
       universalFunctions.sendSuccess(
         {
@@ -1587,6 +1587,24 @@ module.exports = {
           data: {
             isRated: isRated,
           },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  getNewsLetter: async (req, res) => {
+    try {
+      let newLetterData = await newLatter.find(
+       { isDeleted: false } 
+      )
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "All newLetterData ",
+          data: newLetterData,
         },
         res
       );

@@ -98,5 +98,9 @@ router.route("/sendNotificaton").post(
   // authUser.checkAuth,
   WebsiteController.sendNotificaton
 );
+router.route("/getNewsLetter").get(
+  // authUser.checkAuth,
+  WebsiteController.getNewsLetter
+);
 
 module.exports = router;
