@@ -1451,6 +1451,13 @@ asynckit@^0.4.0:
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
   integrity sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==
 
+axios@^0.21.1:
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
+  integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
+  dependencies:
+    follow-redirects "^1.14.0"
+
 axios@^0.26.1:
   version "0.26.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.26.1.tgz#1ede41c51fcf51bbbd6fd43669caaa4f0495aaa9"
@@ -2148,7 +2155,7 @@ firebase-admin@^10.2.0:
     "@google-cloud/firestore" "^4.15.1"
     "@google-cloud/storage" "^5.18.3"
 
-follow-redirects@^1.14.8, follow-redirects@^1.14.9:
+follow-redirects@^1.14.0, follow-redirects@^1.14.8, follow-redirects@^1.14.9:
   version "1.15.1"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.1.tgz#0ca6a452306c9b276e4d3127483e29575e207ad5"
   integrity sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==
@@ -3701,6 +3708,13 @@ text-decoding@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/text-decoding/-/text-decoding-1.0.0.tgz#38a5692d23b5c2b12942d6e245599cb58b1bc52f"
   integrity sha512-/0TJD42KDnVwKmDK6jj3xP7E2MG7SHAOG4tyTgyUCRPdHwvkquYNLEQltmdMa3owq3TkddCVcTsoctJI8VQNKA==
+
+thawani-node@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/thawani-node/-/thawani-node-1.2.0.tgz#f2607a9a671bc025a74ee9809da60dde58603825"
+  integrity sha512-TkLXrewyyMJQKiIHNc0INCP8xrrtJdLHTKUQd0wxpO+CpfNlFnighsnNrqqDktcFaBEae07in01SRwFUJRJs7g==
+  dependencies:
+    axios "^0.21.1"
 
 thirty-two@^1.0.2:
   version "1.0.2"
