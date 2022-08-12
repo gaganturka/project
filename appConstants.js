@@ -89,6 +89,18 @@ let emailFrom = "manpreetgoga2000@gmail.com";
 
 let contactUs = { subject: "Thanks For Contacting Us" };
 
+let callType = {
+  audio: { display: "Audio Call", value: "audio" },
+  video: { display: "Video Call", value: "video" },
+  chat: { display: "Chat", value: "chat" },
+};
+
+let callTimings = {
+  quarterHour: { display: "15 Minutes", value: "15minutes" },
+  halfHour: { display: "30 Minutes", value: "30minutes" },
+  fullHour: { display: "1 Hour", value: "60minutes" },
+};
+
 module.exports = {
   role,
   activityStatus,
@@ -105,5 +117,7 @@ module.exports = {
   paymentStatus,
   nodemailerAuth,
   emailFrom,
-  contactUs
+  contactUs,
+  callType,
+  callTimings
 };

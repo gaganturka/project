@@ -7,10 +7,17 @@ const jwt = require("jsonwebtoken");
 const { Config } = require("../config");
 const Joi = require("@hapi/joi");
 const APP_CONSTANTS = require("../appConstants");
-const responseMessages=  require("../resources/response.json");
-const jwtFunction = require('../utils/jwtFunction');
+const responseMessages = require("../resources/response.json");
+const jwtFunction = require("../utils/jwtFunction");
 const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
+const ThawaniClient = require("thawani-node");
+
+const api = new ThawaniClient({
+  secretKey: APP_CONSTANTS.thwani.testing_secret_key,
+  publishableKey: APP_CONSTANTS.thwani.testing_publishable_key,
+  dev: true,
+});
 // initializeApp({
 //   serviceAccountId: 'my-client-id@my-project-id.iam.gserviceaccount.com',
 // });
@@ -66,64 +73,33 @@ module.exports = {
       const schema = Joi.object({
         firstName: Joi.string().alphanum().min(2).max(30).required(),
         lastName: Joi.string().alphanum().min(2).max(30).required(),
-        email: Joi.string().required(),
-        // .email({
-        //   minDomainSegments: 2,
-        //   tlds: { allow: ["com", "net"] },
-        // }),
+        email: Joi.string().email().required(),
+
         mobileNo: Joi.string().min(10).required(),
         profilePic: Joi.string().allow(""),
-        firebaseUid:Joi.string().required(),
-        fireBaseToken:Joi.string().allow(),
-        deviceType:Joi.string().allow(""),
-        // otp: Joi.string(),
-        // .allow("")
+        firebaseUid: Joi.string().required(),
+        fireBaseToken: Joi.string().allow(),
+        deviceType: Joi.string().allow(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      // const result=await schema.validateAsync(req.body);
+
       console.log(req.body, "hello", req.file);
       let success = false;
 
-      // checks whether the mobileno has already been created
+      let user = await User.findOne({
+        $or: [{ mobileNo: req.body.mobileNo }, { email: req.body.email }],
+      }).populate("userData.data");
 
-      // let user = await User.findOne({ mobileNo: req.body.mobileNo,email:req.body.email}).populate('userData.data');
-      let user= await User.findOne({ $or: [ { mobileNo: req.body.mobileNo }, { email:req.body.email } ] }).populate('userData.data');
-      
-      // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
-        // if (user.role === APP_CONSTANTS.role.borhanuser) {
-          throw Boom.badRequest('user already exists');
-        // } else {
-          
-        //   let borhanuser = await borhanUser.create({
-        //     isSubscribed: false,
-        //     balance: 0,
-        //     userId: user._id,
-        //   });
-        //  const token=await jwtFunction.jwtGenerator(user._id);
-         
-        //  await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:firebaseUid});
-
-        //   universalFunctions.sendSuccess(
-        //     {
-        //       statusCode: 200,
-        //       message: "User created",
-        //       data: {token
-        //         }
-        //     },
-        //     res
-        //   );
-        // }
+        throw Boom.badRequest("user already exists");
       }
-      // let otpmodel = await otpModel.findOne({ mobileNo: req.body.mobileNo });
-      // console.log(otpmodel?.otp,"adsfakweni   ",req.body.otp);
+
       console.log("phone numder   ", req.body.mobileNo);
-      
+
       let borhanuser = await borhanUser.create({
         isSubscribed: false,
         balance: 0,
       });
-      // console.log(borhanuser);
 
       user = await User.create({
         firstName: req.body.firstName,
@@ -138,26 +114,26 @@ module.exports = {
           data: borhanuser._id,
         },
         otp: "",
-        mobileFirebaseUid:req.body.firebaseUid,
+        mobileFirebaseUid: req.body.firebaseUid,
         token: [
           {
-             deviceType:[req.body.deviceType],
-             deviceToken:[req.body.fireBaseToken]
-          }]
-        // fireBaseToken:req.body.fireBaseToken,
+            deviceType: [req.body.deviceType],
+            deviceToken: [req.body.fireBaseToken],
+          },
+        ],
       });
-      console.log("this is user" , user)
+
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
 
-      console.log(user);
-      console.log(res.json, "jwttoken");
+      const thawaniCustomer = await api.customer.create(user._id);
 
-      // const token = jwt.sign(
-      //   { user_id: user._id, email: user.email, mobileNo: user.mobileNo },
-      //   Config.jwtsecret
-      // );
-      const token=await jwtFunction.jwtGenerator(user._id);
-          
+      await User.findOneAndUpdate(
+        { _id: user._id },
+        { customerId: thawaniCustomer.data.id }
+      );
+
+      const token = await jwtFunction.jwtGenerator(user._id);
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -172,7 +148,6 @@ module.exports = {
   },
   createExpertUser: async (req, res) => {
     try {
-      //  console.log('thid odi bpody - ', req.file, req.files)
       const schema = Joi.object({
         firstName: Joi.string().alphanum().min(2).max(30).required(),
         lastName: Joi.string().alphanum().min(2).max(30).required(),
@@ -193,31 +168,20 @@ module.exports = {
         }),
         bankName: Joi.string(),
         accountType: Joi.string(),
-        firebaseUid:Joi.string(),
-        firebaseToken:Joi.string().allow(""),
-        deviceType:Joi.string(),
-        // otp: Joi.string(),
+        firebaseUid: Joi.string(),
+        firebaseToken: Joi.string().allow(""),
+        deviceType: Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-      // const result=await schema.validateAsync(req.body);
-      // console.log(req.body,"hello",req.file);
-      // let success = false;
+      let user = await User.findOne({
+        $or: [{ mobileNo: req.body.mobileNo }, { email: req.body.email }],
+      });
 
-      // checks whether the mobileno has already been created
-
-      // let user = await User.findOne({ mobileNo: req.body.mobileNo,email:req.body.email });
-      let user= await User.findOne({ $or: [ { mobileNo: req.body.mobileNo }, { email:req.body.email } ] });
-    
-      // console.log('The fetched user - ', user);
-      // console.log('######################################################');
       if (user !== null) {
-        // if (user.role === APP_CONSTANTS.role.expert) {
-          throw Boom.badRequest('expert already exists');
-       
+        throw Boom.badRequest("expert already exists");
       }
-    
-      
+
       let expertUserr = await expertUser.create({
         isSubscribed: false,
         category: req.body.category,
@@ -230,9 +194,7 @@ module.exports = {
 
         rating: { noOfRating: 0, ratingCount: 0, avgRating: 0 },
       });
-      // console.log('The created expert - ',expertUserr);
-      // console.log('######################################################');
-     console.log("this is req" , req.body);
+
       user = await User.create({
         firstName: req.body.firstName,
         email: req.body.email,
@@ -245,23 +207,26 @@ module.exports = {
           model: APP_CONSTANTS.role.expert,
           data: expertUserr._id,
         },
-        mobileFirebaseUid:req.body.firebaseUid,
+        mobileFirebaseUid: req.body.firebaseUid,
         token: [
           {
             deviceType: req.body.deviceType,
             deviceToken: req.body.firebaseToken,
-          }]
+          },
+        ],
         // firebaseToken:req.body.firebaseToken
       });
 
-
       await expertUser.findByIdAndUpdate(expertUserr._id, { userId: user._id });
-      // console.log(expertUserr,"eexxpperrttusseerr");
-      // console.log('Namaste - ',user);
-      // console.log('######################################################');
-      
-      const token=await jwtFunction.jwtGenerator(user._id);
-          
+      const thawaniCustomer = await api.customer.create(user._id);
+
+      await User.findOneAndUpdate(
+        { _id: user._id },
+        { customerId: thawaniCustomer.data.id }
+      );
+
+      const token = await jwtFunction.jwtGenerator(user._id);
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -279,28 +244,49 @@ module.exports = {
       //  console.log('thid odi bpody - ', req.file, req.files)
       const schema = Joi.object({
         mobileNo: Joi.string().min(10).required(),
-        deviceType:Joi.string(),
-        deviceToken:Joi.string().allow(""),
-        firebaseUid:Joi.string(),
+        deviceType: Joi.string(),
+        deviceToken: Joi.string().allow(""),
+        firebaseUid: Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-      // checks whether the mobileno has already been created
-
       let user = await User.findOne({ mobileNo: req.body.mobileNo });
-      console.log("this is payload" , req.body)
-      // console.log(user,APP_CONSTANTS.role.borhanuser,us)
+
       if (user !== null) {
-        
-          
         if (user.role === APP_CONSTANTS.role.borhanuser) {
-          const token=await jwtFunction.jwtGenerator(user._id);
-          console.log("token borhan usser",token)
-         
-          let newToken=[{deviceType:req.body.deviceType,deviceToken:req.body.deviceToken}]
+          const token = await jwtFunction.jwtGenerator(user._id);
+          let borhanUserData = await borhanUser
+            .findOne({ userId: user._id })
+            .select({ customerId: 1 });
+
+          if (
+            !user.customerId ||
+            user.customerId === "" ||
+            user.customerId === null
+          ) {
+            const thawaniCustomer = await api.customer.create(user._id);
+
+            await User.findOneAndUpdate(
+              { _id: user._id },
+              { customerId: thawaniCustomer.data.id }
+            );
+          }
+
+          let newToken = [
+            {
+              deviceType: req.body.deviceType,
+              deviceToken: req.body.deviceToken,
+            },
+          ];
           // console.log(newToken,"token new");
-          await User.findByIdAndUpdate({_id:user._id},{mobileFirebaseUid:req.body.firebaseUid})
-          await User.findByIdAndUpdate({_id:user._id},{ $push: { token: newToken } },)
+          await User.findByIdAndUpdate(
+            { _id: user._id },
+            { mobileFirebaseUid: req.body.firebaseUid }
+          );
+          await User.findByIdAndUpdate(
+            { _id: user._id },
+            { $push: { token: newToken } }
+          );
           universalFunctions.sendSuccess(
             {
               statusCode: 200,
@@ -309,16 +295,13 @@ module.exports = {
             },
             res
           );
+        } else {
+          throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
         }
-       else {
+      } else {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
-    }
-    else
-    {
-      throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
-    }
-    }catch(error) {
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
@@ -342,8 +325,8 @@ module.exports = {
       //   { user_id: user._id, email: req.body.email, mobileNo: user.mobileNo },
       //   Config.jwtsecret
       // );
-      const token=await jwtFunction.jwtGenerator(user._id);
-          
+      const token = await jwtFunction.jwtGenerator(user._id);
+
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
         if (
@@ -370,15 +353,11 @@ module.exports = {
   },
   createExpertUserByAdmin: async (req, res) => {
     try {
-      //  console.log('thid odi bpody - ', req.file, req.files)
       const schema = Joi.object({
         firstName: Joi.string().alphanum().min(2).max(30).required(),
         lastName: Joi.string().alphanum().min(2).max(30).required(),
-        email: Joi.string(),
-        // .email({
-        //   minDomainSegments: 2,
-        //   // tlds: { allow: ["com", "net"] },
-        // }),
+        email: Joi.string().email(),
+
         mobileNo: Joi.string().min(10).required(),
         profilePic: Joi.string().optional().allow(""),
         category: Joi.string(),
@@ -400,53 +379,13 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-      // checks whether the mobileno has already been created
+      let user = await User.findOne({
+        $or: [{ mobileNo: req.body.mobileNo }, { email: req.body.email }],
+      });
 
-      let user= await User.findOne({ $or: [ { mobileNo: req.body.mobileNo }, { email:req.body.email } ] });
-      // let user2 = await User.findOne({ email: req.body.email });
-
-      console.log('The fetched user - ', user,'addf');
-      // console.log('######################################################');
-      if (user!==null ) {
-        // if (user.role === APP_CONSTANTS.role.expert) {
-          throw Boom.badRequest('already an expert');
-        // } else {
-        //   let expertUserr = await expertUser.create({
-        //     isSubscribed: false,
-        //     category: req.body.category,
-        //     practiceArea: req.body.practiceArea,
-        //     bio: req.body.bio,
-        //     audioFilePath: req.body.audioFilePath,
-        //     videoFilePath: req.body.videoFilePath,
-        //     document: [
-        //       {
-        //         fileName: req.body.document[0].fileName,
-        //         fileType: req.body.document[0].fileType,
-        //         link: req.body.document[0].path,
-        //         mimeType: req.body.document[0].mimeType,
-        //       },
-        //     ],
-        //     accountType: req.body.accountType,
-        //     rating: { noOfRating: 0, ratingCount: 0, avgRating: 0 },
-        //     experience: req.body.experience,
-        //     isApprovedByAdmin: true,
-        //   });
-        //   await expertUser.findByIdAndUpdate(expertUserr._id, {
-        //     userId: user._id,
-        //   });
-
-        //   universalFunctions.sendSuccess(
-        //     {
-        //       statusCode: 200,
-        //       message: "User created",
-        //     },
-        //     res
-        //   );
-        // }
+      if (user !== null) {
+        throw Boom.badRequest("already an expert");
       }
-      // console.log(req.body,"iaenienwieioafeniaaaaa")
-      // console.log('######################################################');
-      // console.log(req.body.document,"adklgjnaeionianeiondiarrrrrrrrrr");
 
       let expertUserr = await expertUser.create({
         isSubscribed: false,
@@ -461,8 +400,6 @@ module.exports = {
         experience: req.body.experience,
         isApprovedByAdmin: true,
       });
-      // console.log('The created expert - ',expertUserr);
-      console.log('######################################################');
 
       user = await User.create({
         firstName: req.body.firstName,
@@ -476,13 +413,16 @@ module.exports = {
           model: APP_CONSTANTS.role.expert,
           data: expertUserr._id,
         },
-        // otp: req.body.otp,
+        
       });
       await expertUser.findByIdAndUpdate(expertUserr._id, { userId: user._id });
-      // console.log(expertUserr,"eexxpperrttusseerr");
-      // console.log('Namaste - ',user);
-      // console.log('######################################################');
 
+      const thawaniCustomer = await api.customer.create(user._id);
+
+      await User.findOneAndUpdate(
+        { _id: user._id },
+        { customerId: thawaniCustomer.data.id }
+      );
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -496,147 +436,143 @@ module.exports = {
   },
   googleLoginSignup: async (req, res) => {
     try {
-       console.log(req.body)
-      let data=req.body;
-      let filter={
-        
-          $or: [
-           { googleId: data.googleId },    { email: data.email },
-          ],
-       
+      console.log(req.body);
+      let data = req.body;
+      let filter = {
+        $or: [{ googleId: data.googleId }, { email: data.email }],
+      };
+      let isexit = await User.findOne(filter);
+      console.log(isexit, "dhcbshjcbjsbcdbsdjcbj");
+      console.log(data.email, isexit, "jdvnjsndv");
+      if (!isexit) {
+        let borhanuser = await borhanUser.create({
+          isSubscribed: false,
+          balance: 0,
+        });
+
+        let createData = {
+          email: data.email,
+          firstName: data.givenName,
+          googleId: data.googleId,
+          lastName: data.familyName,
+          profilePic: data.imageUrl,
+          mobileNo: data.mobileNo,
+          isEmailVerified: true,
+          role: APP_CONSTANTS.role.borhanuser,
+          userData: {
+            model: APP_CONSTANTS.role.borhanuser,
+            data: borhanuser._id,
+          },
+        };
+
+        let newUser = await User.create(createData);
+        console.log(newUser, "jhsvdcsdc");
+        await borhanUser.findByIdAndUpdate(borhanuser._id, {
+          userId: newUser._id,
+        });
+
+        // const token = jwt.sign(
+        //   { user_id: newUser._id, email: data.email, mobileNo: "" },
+        //   Config.jwtsecret
+        // );
+        const token = await jwtFunction.jwtGenerator(newUser._id);
+
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "User created",
+            data: { token },
+          },
+          res
+        );
+      } else {
+        // const token = jwt.sign(
+        //   { user_id: isexit._id, email: isexit.email, mobileNo:isexit.mobileNo },
+        //   Config.jwtsecret
+        // );
+        const token = await jwtFunction.jwtGenerator(isexit._id);
+
+        console.log(isexit, "heree is user");
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "login user ",
+            data: { token, isexit },
+          },
+          res
+        );
       }
-    let isexit= await User.findOne(filter);
-    console.log(isexit,"dhcbshjcbjsbcdbsdjcbj")
-    console.log(data.email,isexit,"jdvnjsndv")
-    if(!isexit){
-      let borhanuser = await borhanUser.create({
-        isSubscribed: false,
-        balance: 0,
-      });
-
-      let createData={
-        email:data.email,
-        firstName:data.givenName,
-        googleId:data.googleId,
-        lastName:data.familyName,
-        profilePic:data.imageUrl,
-        mobileNo:data.mobileNo,
-        isEmailVerified:true,
-        role:APP_CONSTANTS.role.borhanuser,
-        userData:{
-          model: APP_CONSTANTS.role.borhanuser,
-          data: borhanuser._id,
-         }
-      }
-
-
-      let newUser=await await User.create(createData);
-      console.log(newUser,"jhsvdcsdc");
-      await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: newUser._id });
-    
-      // const token = jwt.sign(
-      //   { user_id: newUser._id, email: data.email, mobileNo: "" },
-      //   Config.jwtsecret
-      // );
-      const token=await jwtFunction.jwtGenerator(newUser._id);
-        
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "User created",
-          data: {token},
-        },
-        res
-      );
-    }else{
-      
-      // const token = jwt.sign(
-      //   { user_id: isexit._id, email: isexit.email, mobileNo:isexit.mobileNo },
-      //   Config.jwtsecret
-      // );
-      const token=await jwtFunction.jwtGenerator(isexit._id);
-        
-      console.log(isexit,"heree is user")
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "login user ",
-          data: {token,isexit},
-        },
-        res
-      );
-    } 
-  }catch (error) {
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
-  }
-  ,
+  },
   facebookLoginSignup: async (req, res) => {
     try {
-       console.log(req.body)
-      let data=req.body;
-      let filter={
-        
-          $or: [
-           { facebookId: data.facebookId },    { email: data.email },{mobileNo:data.mobileNo},
-          ],
-       
-      }
-    let isexit= await User.findOne(filter);
-    console.log(isexit,"dhcbshjcbjsbcdbsdjcbj")
-    if(!isexit){
-      let borhanuser = await borhanUser.create({
-        isSubscribed: false,
-        balance: 0,
-      });
+      console.log(req.body);
+      let data = req.body;
+      let filter = {
+        $or: [
+          { facebookId: data.facebookId },
+          { email: data.email },
+          { mobileNo: data.mobileNo },
+        ],
+      };
+      let isexit = await User.findOne(filter);
+      console.log(isexit, "dhcbshjcbjsbcdbsdjcbj");
+      if (!isexit) {
+        let borhanuser = await borhanUser.create({
+          isSubscribed: false,
+          balance: 0,
+        });
 
-      let createData={
-        ...data,
-        role:APP_CONSTANTS.role.borhanuser,
-        userData:{
-          model: APP_CONSTANTS.role.borhanuser,
-          data: borhanuser._id,
-         }
-      }
+        let createData = {
+          ...data,
+          role: APP_CONSTANTS.role.borhanuser,
+          userData: {
+            model: APP_CONSTANTS.role.borhanuser,
+            data: borhanuser._id,
+          },
+        };
 
-console.log(createData,"hsdhjbsdchjcdshjbhjbschbjshbjschbj");
-      let newUser=await await User.create(createData);
-      console.log(newUser,"jhsvdcsdc");
-      await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: newUser._id });
-    
-      // const token = jwt.sign(
-      //   { user_id: newUser._id},
-      //   Config.jwtsecret
-      // );
-      const token=await jwtFunction.jwtGenerator(newUser._id);
-        
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "User created",
-          data: {token},
-        },
-        res
-      );
-    }else{
-      
-      // const token = jwt.sign(
-      //   { user_id: isexit._id},
-      //   Config.jwtsecret
-      // );
-      const token=await jwtFunction.jwtGenerator(isexit._id);
-        
-      console.log(isexit,"heree is user")
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "login user ",
-          data: {token,isexit},
-        },
-        res
-      );
-    } 
-  }catch (error) {
+        console.log(createData, "hsdhjbsdchjcdshjbhjbschbjshbjschbj");
+        let newUser = await User.create(createData);
+        console.log(newUser, "jhsvdcsdc");
+        await borhanUser.findByIdAndUpdate(borhanuser._id, {
+          userId: newUser._id,
+        });
+
+        // const token = jwt.sign(
+        //   { user_id: newUser._id},
+        //   Config.jwtsecret
+        // );
+        const token = await jwtFunction.jwtGenerator(newUser._id);
+
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "User created",
+            data: { token },
+          },
+          res
+        );
+      } else {
+        // const token = jwt.sign(
+        //   { user_id: isexit._id},
+        //   Config.jwtsecret
+        // );
+        const token = await jwtFunction.jwtGenerator(isexit._id);
+
+        console.log(isexit, "heree is user");
+        universalFunctions.sendSuccess(
+          {
+            statusCode: 200,
+            message: "login user ",
+            data: { token, isexit },
+          },
+          res
+        );
+      }
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },

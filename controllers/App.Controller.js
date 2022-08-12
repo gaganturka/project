@@ -35,7 +35,7 @@ const { tooManyRequests } = require("boom");
 const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport(APP_CONSTANTS.nodemailerAuth);
 
-const BackendUrl=Config.BACKEND_URL;
+const BackendUrl = Config.BACKEND_URL;
 // import universalFunctions from "../utils/universalFunctions";
 
 module.exports = {
@@ -84,10 +84,10 @@ module.exports = {
         req.body.deviceType,
         req.body.deviceToken
       );
-      console.log("this is login ",updatedUser)
+      console.log("this is login ", updatedUser);
       let userData = JSON.parse(JSON.stringify(updatedUser));
       delete userData.token;
-      
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -239,11 +239,11 @@ module.exports = {
         //   ele.userId.userData &&
         //   ele.userId.token
         // ) {
-          delete ele.userId.isEmailVerified;
-          delete ele.userId.password;
-          delete ele.userId.__v;
-          delete ele.userId.userData;
-          delete ele.userId.token;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+        delete ele.userId.token;
         // }
         if (ele.expertlisting.length > 0 && ele.expertlisting != null)
           ele.isFavorite = true;
@@ -270,10 +270,10 @@ module.exports = {
         delete ele.__v;
         delete ele.category.__v;
         delete ele.userId.isEmailVerified;
-          delete ele.userId.password;
-          delete ele.userId.__v;
-          delete ele.userId.userData;
-          delete ele.userId.token;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+        delete ele.userId.token;
         // if (
         //   ele &&
         //   ele.userId &&
@@ -319,11 +319,11 @@ module.exports = {
         //   ele.userId.__v &&
         //   ele.userId.userData
         // ) {
-          delete ele.userId.isEmailVerified;
-          delete ele.userId.password;
-          delete ele.userId.__v;
-          delete ele.userId.userData;
-          delete ele.userId.token;
+        delete ele.userId.isEmailVerified;
+        delete ele.userId.password;
+        delete ele.userId.__v;
+        delete ele.userId.userData;
+        delete ele.userId.token;
         // }
         if (ele.expertlisting.length > 0 && ele.expertlisting != null)
           ele.isFavorite = true;
@@ -369,8 +369,6 @@ module.exports = {
             delete ele.userId.__v;
             delete ele.userId.userData;
             delete ele.userId.token;
-
-
           }
           if (ele && ele.expertId && ele.expertId.userId) {
             delete ele.expertId.userId.isEmailVerified;
@@ -378,7 +376,6 @@ module.exports = {
             delete ele.expertId.userId.__v;
             // delete ele.expertId.userId.userData;
             delete ele.expertId.userId.token;
-
           }
         });
       }
@@ -532,7 +529,6 @@ module.exports = {
           delete ele.userId.__v;
           delete ele.userId.userData;
           delete ele.userId.token;
-
         }
         if (ele && ele.expertId && ele.expertId.userId) {
           delete ele.expertId.userId.isEmailVerified;
@@ -1089,7 +1085,10 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
-     const token = req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
+      const token =
+        req.headers["x-access-token"] ||
+        req.query["x-access-token"] ||
+        req.headers["authorization"];
       console.log(payload, "payload");
       let userId = req.user.id;
       console.log("userId", userId);
@@ -2204,6 +2203,45 @@ module.exports = {
       );
     } catch (error) {
       universalFunctions.sendError(error, res);
+    }
+  },
+  getExpertPricingDetailsByCallTypeAndDuration: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        expertId: Joi.string().required(),
+        callType: Joi.string().required(),
+        duration: Joi.number().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let expertData = await expertUser
+        .findOne({ _id: req.body.expertId })
+        .select({ priceDetails: 1, _id: 0 });
+
+      if (!expertData) {
+        throw Boom.notFound("Expert Not Found");
+      }
+
+      let totalPrice = 0;
+      if (expertData.priceDetails && expertData.priceDetails.length > 0) {
+        let callData = expertData.priceDetails.find((a) => {
+          return a.callType === req.body.callType;
+        });
+        let price = req.body.duration * callData.pricePerMinuteOrSms;
+        let discountedPrice =
+          req.body.duration * callData.discountPerMinuteOrSms;
+        totalPrice = price - discountedPrice;
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "completely deleted user",
+          data: totalPrice,
+        },
+        res
+      );
+    } catch (err) {
+      universalFunctions.sendError(err, res);
     }
   },
 };

@@ -8,41 +8,40 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
 const Mongoose = require("mongoose");
-const jwtFunction = require('../utils/jwtFunction');
+const jwtFunction = require("../utils/jwtFunction");
 const moment = require("moment");
 const APP_CONSTANTS = require("../appConstants");
 const AccessToken = require("twilio").jwt.AccessToken;
 const { Config } = require("../config");
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 // const { admin } =require("../utils/pushNotification");
 const VoiceGrant = AccessToken.VoiceGrant;
+const ThawaniClient = require("thawani-node");
 
+const api = new ThawaniClient({
+  secretKey: APP_CONSTANTS.thwani.testing_secret_key,
+  publishableKey: APP_CONSTANTS.thwani.testing_publishable_key,
+  dev: true,
+});
 
 const VideoGrant = AccessToken.VideoGrant;
 const ChatGrant = AccessToken.ChatGrant;
 const accountSid = Config.twilioAccountSid;
 const authToken = Config.authToken;
-const twilio = require('twilio');
+const twilio = require("twilio");
 const client = new twilio(accountSid, authToken);
 
 // const User = require("../models/User");
 const responseMessages = require("../resources/response.json");
 const universalFunctions = require("../utils/universalFunctions");
-const chatappointment = require('../models/ChatAppointment');
+const chatappointment = require("../models/ChatAppointment");
 
 const Boom = require("boom");
 const Appointment = require("../models/Appointment");
-const { admin } = require("../utils/pushNotificationFirebase")
-const {sendNotification}=require("../utils/sendNotification")
-// const {admin}=require("../config");
-// var admin = require("firebase-admin");
-// var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
-// // const Expert_User = require("../models/Expert_User");
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   // databaseURL: Config.get("db.firebaseDatabaseUrl"),
-// });
+const { admin } = require("../utils/pushNotificationFirebase");
+const { sendNotification } = require("../utils/sendNotification");
+
 module.exports = {
   sendOtpExpertUser: async (req, res) => {
     try {
@@ -100,23 +99,46 @@ module.exports = {
     try {
       const schema = Joi.object({
         mobileNo: Joi.string().min(10).required(),
-        token:Joi.string().allow(""),
-        deviceType:Joi.string().allow()
-
+        token: Joi.string().allow(""),
+        deviceType: Joi.string().allow(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let { mobileNo } = req.body;
-      console.log('usesdf', mobileNo)
-      let users = await User.findOne({ mobileNo: mobileNo }).populate('userData.data');
-      console.log(users, 'sfae');
+
+      let users = await User.findOne({ mobileNo: mobileNo }).populate(
+        "userData.data"
+      );
+
       if (!users) {
-        throw Boom.badRequest('expert not found');
+        throw Boom.badRequest("expert not found");
       }
-      if ((users !== null && users?.userData?.model !== APP_CONSTANTS.role.expert)) {
-        throw Boom.badRequest('Invalid Credentials');
+      if (
+        users !== null &&
+        users?.userData?.model !== APP_CONSTANTS.role.expert
+      ) {
+        throw Boom.badRequest("Invalid Credentials");
       }
-      let newToken=[{deviceType:req.body.deviceType,deviceToken:req.body.token}]
-      await User.findByIdAndUpdate({_id:users._id},{ $push: { token: newToken } },)
+      let newToken = [
+        { deviceType: req.body.deviceType, deviceToken: req.body.token },
+      ];
+
+      if (
+        !users.customerId ||
+        users.customerId === "" ||
+        users.customerId === null
+      ) {
+        const thawaniCustomer = await api.customer.create(users._id);
+
+        await User.findOneAndUpdate(
+          { _id: users._id },
+          { customerId: thawaniCustomer.data.id }
+        );
+      }
+
+      await User.findByIdAndUpdate(
+        { _id: users._id },
+        { $push: { token: newToken } }
+      );
 
       const token = await jwtFunction.jwtGenerator(users._id);
       let userDetails = {
@@ -132,8 +154,7 @@ module.exports = {
         },
         res
       );
-    }
-    catch (error) {
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
@@ -157,8 +178,7 @@ module.exports = {
         },
         res
       );
-    }
-    catch (error) {
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
@@ -181,16 +201,14 @@ module.exports = {
         },
         res
       );
-    }
-    catch (error) {
+    } catch (error) {
       universalFunctions.sendError(error, res);
-
     }
   },
   updateExpertUser: async (req, res) => {
     try {
-      console.log(req.user)
-      let expertId = req.user.expertId
+      console.log(req.user);
+      let expertId = req.user.expertId;
       let {
         firstName,
         lastName,
@@ -198,7 +216,7 @@ module.exports = {
         bio,
         getAudioFilePath,
         getVideoFilePath,
-        profilePic
+        profilePic,
       } = req.body;
       const schema = Joi.object({
         firstName: Joi.string(),
@@ -209,9 +227,9 @@ module.exports = {
         }),
         expertId: Joi.string(),
         bio: Joi.string(),
-        getAudioFilePath: Joi.string().allow(''),
-        getVideoFilePath: Joi.string().allow(''),
-        profilePic: Joi.string().allow('')
+        getAudioFilePath: Joi.string().allow(""),
+        getVideoFilePath: Joi.string().allow(""),
+        profilePic: Joi.string().allow(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
@@ -220,7 +238,7 @@ module.exports = {
         firstName,
         lastName,
         email,
-        profilePic
+        profilePic,
       };
 
       const expert = await User.findOneAndUpdate(
@@ -247,7 +265,6 @@ module.exports = {
         {
           new: true,
         }
-
       );
       universalFunctions.sendSuccess(
         {
@@ -257,18 +274,17 @@ module.exports = {
         },
         res
       );
-    }
-    catch (error) {
+    } catch (error) {
       universalFunctions.sendError(error, res);
-
     }
   },
   getExpertUserInfoUsingUserModel: async (req, res) => {
     try {
       let id = req.user.id;
-      const expert = await User
-        .findOne({ _id: id })
-        .populate({ path: "userData.data", populate: { path: 'category practiceArea' } });
+      const expert = await User.findOne({ _id: id }).populate({
+        path: "userData.data",
+        populate: { path: "category practiceArea" },
+      });
       if (!expert) {
         throw Boom.badRequest("invalid id or token");
       }
@@ -281,9 +297,7 @@ module.exports = {
         },
         res
       );
-
-    }
-    catch (error) {
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
@@ -292,25 +306,37 @@ module.exports = {
       let id = req.user.expertId;
       console.log(req.user.expertId);
       let currentTime = new Date();
-      let pendingAppointment = await appointmentModel.updateMany({
-        expertId: id, status: APP_CONSTANTS.appointmentStatus.pending, endAppointmentTime: {
-          $lt: currentTime.getTime()
-        }
-      }, { status: APP_CONSTANTS.appointmentStatus.cancelled });
+      let pendingAppointment = await appointmentModel.updateMany(
+        {
+          expertId: id,
+          status: APP_CONSTANTS.appointmentStatus.pending,
+          endAppointmentTime: {
+            $lt: currentTime.getTime(),
+          },
+        },
+        { status: APP_CONSTANTS.appointmentStatus.cancelled }
+      );
 
-      let confirmedAppointment = await appointmentModel.updateMany({
-        expertId: id, status: APP_CONSTANTS.appointmentStatus.confirmed, endAppointmentTime: {
-          $lt: currentTime.getTime()
-        }
-      }, { status: APP_CONSTANTS.appointmentStatus.cancelled });
+      let confirmedAppointment = await appointmentModel.updateMany(
+        {
+          expertId: id,
+          status: APP_CONSTANTS.appointmentStatus.confirmed,
+          endAppointmentTime: {
+            $lt: currentTime.getTime(),
+          },
+        },
+        { status: APP_CONSTANTS.appointmentStatus.cancelled }
+      );
 
       const Appointment = await appointmentModel
         .find({ expertId: id })
         .populate({ path: "userId" })
         .skip(parseInt((req.body.page - 1) * req.body.limit))
         .limit(parseInt(req.body.limit))
-        .sort({ 'startAppointmentTime': -1 });
-      let count = await appointmentModel.find({ expertId: id }).countDocuments();
+        .sort({ startAppointmentTime: -1 });
+      let count = await appointmentModel
+        .find({ expertId: id })
+        .countDocuments();
       if (!Appointment) {
         throw Boom.badRequest("invalid id or token");
       }
@@ -318,96 +344,140 @@ module.exports = {
         {
           statusCode: 200,
           message: "Appointment found",
-          data: { list: Appointment, count: count }
+          data: { list: Appointment, count: count },
         },
         res
       );
-    }
-    catch (error) {
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
   getExpertAppointmentByFilter: async (req, res) => {
     try {
-
       let userId = req.user.id;
-      let expertId = req.user.expertId
+      let expertId = req.user.expertId;
       let filterType = req.body.filterType;
       const schema = Joi.object({
         filterType: Joi.string(),
         limit: Joi.number(),
         page: Joi.number(),
-
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let data;
       let count;
       let currentTime = new Date();
       let expert;
-      let pendingAppointment = await appointmentModel.updateMany({
-        expertId, status: APP_CONSTANTS.appointmentStatus.pending, endAppointmentTime: {
-          $lt: currentTime.getTime()
-        }
-      }, { status: APP_CONSTANTS.appointmentStatus.cancelled });
+      let pendingAppointment = await appointmentModel.updateMany(
+        {
+          expertId,
+          status: APP_CONSTANTS.appointmentStatus.pending,
+          endAppointmentTime: {
+            $lt: currentTime.getTime(),
+          },
+        },
+        { status: APP_CONSTANTS.appointmentStatus.cancelled }
+      );
 
-      let confirmedAppointment = await appointmentModel.updateMany({
-        expertId, status: APP_CONSTANTS.appointmentStatus.confirmed, endAppointmentTime: {
-          $lt: currentTime.getTime()
-        }
-      }, { status: APP_CONSTANTS.appointmentStatus.cancelled });
+      let confirmedAppointment = await appointmentModel.updateMany(
+        {
+          expertId,
+          status: APP_CONSTANTS.appointmentStatus.confirmed,
+          endAppointmentTime: {
+            $lt: currentTime.getTime(),
+          },
+        },
+        { status: APP_CONSTANTS.appointmentStatus.cancelled }
+      );
 
       if (filterType == "Pending") {
-        data = await appointmentModel.find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        data = await appointmentModel
+          .find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({ 'startAppointmentTime': -1 });
-        count = await appointmentModel.find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).countDocuments()
-      }
-      else if (filterType == "Upcoming") {
+          .sort({ startAppointmentTime: -1 });
+        count = await appointmentModel
+          .find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
+          .countDocuments();
+      } else if (filterType == "Upcoming") {
         let now = new Date();
-        data = await appointmentModel.find({
-          expertId, status: APP_CONSTANTS.appointmentStatus.confirmed, endAppointmentTime: {
-            $gte: now.getTime()
-          }
-        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } }).populate('expertId.userId')
+        data = await appointmentModel
+          .find({
+            expertId,
+            status: APP_CONSTANTS.appointmentStatus.confirmed,
+            endAppointmentTime: {
+              $gte: now.getTime(),
+            },
+          })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
+          .populate("expertId.userId")
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({ 'startAppointmentTime': -1 });
-        count = await appointmentModel.find({
-          expertId, status: APP_CONSTANTS.appointmentStatus.confirmed, endAppointmentTime: {
-            $gte: now.getTime()
-          }
-        }).countDocuments();
-      }
-      else if (filterType == "Cancelled") {
-        data = await appointmentModel.find({
-          expertId, status: APP_CONSTANTS.appointmentStatus.cancelled,
-
-        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+          .sort({ startAppointmentTime: -1 });
+        count = await appointmentModel
+          .find({
+            expertId,
+            status: APP_CONSTANTS.appointmentStatus.confirmed,
+            endAppointmentTime: {
+              $gte: now.getTime(),
+            },
+          })
+          .countDocuments();
+      } else if (filterType == "Cancelled") {
+        data = await appointmentModel
+          .find({
+            expertId,
+            status: APP_CONSTANTS.appointmentStatus.cancelled,
+          })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({ 'startAppointmentTime': -1 });
+          .sort({ startAppointmentTime: -1 });
 
-        count = await appointmentModel.find({
-          expertId,
-          status: APP_CONSTANTS.appointmentStatus.cancelled,
-
-        }).countDocuments()
-      }
-      else if (filterType == "rejected") {
-        data = await appointmentModel.find({
-          expertId, status: APP_CONSTANTS.appointmentStatus.rejected,
-
-        }).populate('userId').populate({ path: 'expertId', populate: { path: "userId practiceArea" } })
+        count = await appointmentModel
+          .find({
+            expertId,
+            status: APP_CONSTANTS.appointmentStatus.cancelled,
+          })
+          .countDocuments();
+      } else if (filterType == "rejected") {
+        data = await appointmentModel
+          .find({
+            expertId,
+            status: APP_CONSTANTS.appointmentStatus.rejected,
+          })
+          .populate("userId")
+          .populate({
+            path: "expertId",
+            populate: { path: "userId practiceArea" },
+          })
           .skip(parseInt((req.body.page - 1) * req.body.limit))
           .limit(parseInt(req.body.limit))
-          .sort({ 'startAppointmentTime': -1 });
+          .sort({ startAppointmentTime: -1 });
 
-        count = await appointmentModel.find({
-          expertId,
-          status: APP_CONSTANTS.appointmentStatus.rejected,
-
-        }).countDocuments()
+        count = await appointmentModel
+          .find({
+            expertId,
+            status: APP_CONSTANTS.appointmentStatus.rejected,
+          })
+          .countDocuments();
       }
 
       universalFunctions.sendSuccess(
@@ -418,14 +488,13 @@ module.exports = {
         },
         res
       );
-    }
-    catch (error) {
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
   updateAppointment: async (req, res) => {
     try {
-      let appointmentId = req.body.id
+      let appointmentId = req.body.id;
       let payload = req.body.payload;
       const Appointment = await appointmentModel.findByIdAndUpdate(
         { _id: appointmentId },
@@ -440,30 +509,31 @@ module.exports = {
         },
         res
       );
-      
+
       let userDetails = await User.findOne({ _id: Appointment.userId });
-     
+
       if (payload.status == "confirmed") {
-        await expertTimeAvailable.findOneAndUpdate({ _id: Appointment.timeSlotId }, { isAvailable: false });
-        await sendNotification(userDetails,payload.status)
-       
+        await expertTimeAvailable.findOneAndUpdate(
+          { _id: Appointment.timeSlotId },
+          { isAvailable: false }
+        );
+        await sendNotification(userDetails, payload.status);
+      } else {
+        await sendNotification(userDetails, payload.status);
+
+        await expertTimeAvailable.findOneAndUpdate(
+          { _id: Appointment.timeSlotId },
+          { isAvailable: true }
+        );
       }
-      else {
-        await sendNotification(userDetails,payload.status)
-        
-        await expertTimeAvailable.findOneAndUpdate({ _id: Appointment.timeSlotId }, { isAvailable: true })
-      }
-      
-      
-    }
-    catch (error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
       universalFunctions.sendError(error, res);
     }
   },
   cancelAppointmentByExpert: async (req, res) => {
     try {
-      let appointmentId = req.body.id
+      let appointmentId = req.body.id;
       let payload = req.body.payload;
       const Appointment = await appointmentModel.findByIdAndUpdate(
         { _id: appointmentId },
@@ -480,14 +550,14 @@ module.exports = {
       );
       if (payload.status == "cancelled") {
         let userDetails = await User.findOne({ _id: Appointment.userId });
-        await expertTimeAvailable.findOneAndUpdate({ _id: Appointment.timeSlotId }, { isAvailable: true })
-        await sendNotification(userDetails,payload.status)
-
+        await expertTimeAvailable.findOneAndUpdate(
+          { _id: Appointment.timeSlotId },
+          { isAvailable: true }
+        );
+        await sendNotification(userDetails, payload.status);
       }
-     
-    }
-    catch (error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
       universalFunctions.sendError(error, res);
     }
   },
@@ -498,14 +568,16 @@ module.exports = {
       payload.expertId = id;
 
       // console.log(payload,"here is body ")
-      let start = payload.startAppointmentTime, end = payload.endAppointmentTime, appointmentDate = payload.appointmentDate;
+      let start = payload.startAppointmentTime,
+        end = payload.endAppointmentTime,
+        appointmentDate = payload.appointmentDate;
 
-      //  start =new Date(appointmentDate+' '+start); 
+      //  start =new Date(appointmentDate+' '+start);
       // console.log(localdate,"here is ");
       // console.log(moment.utc(moment(localdate)).format(),'start time 11')
       // start=moment.utc(moment(localdate)).format();
 
-      // end =new Date(appointmentDate+' '+end); 
+      // end =new Date(appointmentDate+' '+end);
       // console.log(end,'endddd',start,'starrtttt');
       // console.log(localdate ,new Date(localdate),"here is ");
       // console.log(moment.utc(moment(localdate)).format(),'start time')
@@ -514,55 +586,59 @@ module.exports = {
       let data = await expertTimeAvailable.find({
         $and: [
           {
-            "expertId": id
+            expertId: id,
           },
           {
-            "appointmentDate": new Date(appointmentDate)
-          }, {
+            appointmentDate: new Date(appointmentDate),
+          },
+          {
             $or: [
               {
                 $and: [
                   {
-                    "startAppointmentTime": {
-                      $gt: new Date(start)
-                    }
-                  }, {
-                    "startAppointmentTime": {
-                      $lte: new Date(end)
-                    }
-                  }
-                ]
-              }, {
+                    startAppointmentTime: {
+                      $gt: new Date(start),
+                    },
+                  },
+                  {
+                    startAppointmentTime: {
+                      $lte: new Date(end),
+                    },
+                  },
+                ],
+              },
+              {
                 $and: [
                   {
-                    "endAppointmentTime": {
-                      $gt: new Date(start)
-                    }
-                  }, {
-                    "endAppointmentTime": {
-                      $lte: new Date(end)
-                    }
-                  }
-                ]
-              }, {
+                    endAppointmentTime: {
+                      $gt: new Date(start),
+                    },
+                  },
+                  {
+                    endAppointmentTime: {
+                      $lte: new Date(end),
+                    },
+                  },
+                ],
+              },
+              {
                 $and: [
                   {
-                    "startAppointmentTime": {
-                      $lt: new Date(start)
-                    }
-                  }, {
-                    "endAppointmentTime": {
-                      $gt: new Date(end)
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-
-        ]
-      }
-      )
+                    startAppointmentTime: {
+                      $lt: new Date(start),
+                    },
+                  },
+                  {
+                    endAppointmentTime: {
+                      $gt: new Date(end),
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
 
       // console.log(data,"jhhjh")
       if (data.length > 0) {
@@ -589,18 +665,16 @@ module.exports = {
           },
           res
         );
-
       }
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
       universalFunctions.sendError(error, res);
     }
   },
   getAvailableTimeForUser: async (req, res) => {
     try {
       let payload = req.body;
-      console.log(payload, "here is body ")
+      console.log(payload, "here is body ");
       const expertTime = await expertTimeAvailable.find(payload);
       if (!expertTime) {
         throw Boom.badRequest("invalid id or token");
@@ -613,9 +687,8 @@ module.exports = {
         },
         res
       );
-
     } catch (err) {
-      console.log(error)
+      console.log(error);
       universalFunctions.sendError(error, res);
     }
   },
@@ -623,9 +696,11 @@ module.exports = {
     try {
       let id = req.user.expertId;
       let payload = {
-        expertId: id
-      }
-      const chatappointmentdata = await chatappointment.find(payload).populate({ path: "userId expertId" });
+        expertId: id,
+      };
+      const chatappointmentdata = await chatappointment
+        .find(payload)
+        .populate({ path: "userId expertId" });
       if (!chatappointmentdata) {
         throw Boom.badRequest("invalid id or token");
       }
@@ -637,17 +712,16 @@ module.exports = {
         },
         res
       );
-
     } catch (err) {
-      console.log(err)
+      console.log(err);
       universalFunctions.sendError(err, res);
     }
   },
   updateChatAppointment: async (req, res) => {
     try {
-      let appointmentId = req.body.id
+      let appointmentId = req.body.id;
       let payload = req.body.payload;
-      console.log(payload, "here is body ")
+      console.log(payload, "here is body ");
       const updateChatAppointment = await chatappointment.findByIdAndUpdate(
         { _id: appointmentId },
         { $set: payload },
@@ -664,9 +738,8 @@ module.exports = {
         },
         res
       );
-    }
-    catch (error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
       universalFunctions.sendError(error, res);
     }
   },
@@ -675,8 +748,12 @@ module.exports = {
       let id = req.query.id;
       // console.log(req.user ,'sscs');
       // console.log(req.query,'kjk');
-      const chatappointmentdata = await chatappointment.findOne({ _id: id }).populate({ path: "userId expertId" });
-      const expertProfileData = await User.findOne({ _id: chatappointmentdata.expertId.userId });
+      const chatappointmentdata = await chatappointment
+        .findOne({ _id: id })
+        .populate({ path: "userId expertId" });
+      const expertProfileData = await User.findOne({
+        _id: chatappointmentdata.expertId.userId,
+      });
       if (!chatappointmentdata) {
         throw Boom.badRequest("invalid id or token");
       }
@@ -688,34 +765,33 @@ module.exports = {
         },
         res
       );
-
     } catch (err) {
-      console.log(err)
+      console.log(err);
       universalFunctions.sendError(err, res);
     }
   },
-
 
   setExpertStatus: async (req, res) => {
     try {
       let id = req.user.expertId;
       const schema = Joi.object({
-
         status: Joi.string(),
       });
       let { status } = req.body;
       let newStatus;
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      if (status === 'Unavailable')
+      if (status === "Unavailable")
         newStatus = APP_CONSTANTS.activityStatus.unavailable;
-      else if (status === 'Active')
+      else if (status === "Active")
         newStatus = APP_CONSTANTS.activityStatus.active;
-      else if (status === 'Busy')
-        newStatus = APP_CONSTANTS.activityStatus.busy;
-      let expert = await expertUser.findByIdAndUpdate({ _id: id }, { status: newStatus });
+      else if (status === "Busy") newStatus = APP_CONSTANTS.activityStatus.busy;
+      let expert = await expertUser.findByIdAndUpdate(
+        { _id: id },
+        { status: newStatus }
+      );
 
       if (!expert) {
-        throw Boom.badRequest('Expert not found');
+        throw Boom.badRequest("Expert not found");
       }
 
       universalFunctions.sendSuccess(
@@ -725,34 +801,35 @@ module.exports = {
           data: { expert },
         },
         res
-      )
-    }
-    catch (error) {
+      );
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
-  }
-  ,
+  },
   twilioVideoChatTokenExpert: async (req, res) => {
-
-
     try {
       const schema = Joi.object({
         appointmentId: Joi.string().required(),
-
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      let appointments = await Appointment.findOne({ _id: req.body.appointmentId }).populate({
-        path: 'expertId', populate: {
-          path: "userId"
-        }
+      let appointments = await Appointment.findOne({
+        _id: req.body.appointmentId,
+      }).populate({
+        path: "expertId",
+        populate: {
+          path: "userId",
+        },
       });
 
       if (!appointments.videoChatId) {
         let roomId = appointments.appointDateandTime + req.body.appointmentId;
 
-        appointments = await Appointment.findByIdAndUpdate({ _id: req.body.appointmentId }, { videoChatId: roomId }, { new: true }).populate({ path: 'expertId', populate: { path: 'userId' } })
+        appointments = await Appointment.findByIdAndUpdate(
+          { _id: req.body.appointmentId },
+          { videoChatId: roomId },
+          { new: true }
+        ).populate({ path: "expertId", populate: { path: "userId" } });
       }
-
 
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
@@ -760,53 +837,83 @@ module.exports = {
       videoGrant = new VideoGrant({ room: appointments.videoChatId });
       chatGrant = new ChatGrant({
         serviceSid: Config.serviceSid,
-      })
+      });
       let sid, participantId, convoId;
 
       const convo = await client.conversations.conversations.list();
-      convo.forEach(con => {
-        if (con.uniqueName == appointments.videoChatId)
-          sid = con.sid;
-      })
+      convo.forEach((con) => {
+        if (con.uniqueName == appointments.videoChatId) sid = con.sid;
+      });
       if (!sid) {
-        await client.conversations.v1.conversations.create({ friendlyName: appointments.videoChatId, uniqueName: appointments.videoChatId })
-          .then(conversation => { console.log(conversation.sid); sid = conversation.sid; })
-          .catch(error => { console.log(error, 'error') });
+        await client.conversations.v1.conversations
+          .create({
+            friendlyName: appointments.videoChatId,
+            uniqueName: appointments.videoChatId,
+          })
+          .then((conversation) => {
+            console.log(conversation.sid);
+            sid = conversation.sid;
+          })
+          .catch((error) => {
+            console.log(error, "error");
+          });
         if (!sid) {
-          throw Boom.badRequest('Internal Server Error');
+          throw Boom.badRequest("Internal Server Error");
         }
       }
 
       convoId = sid;
 
-      await client.conversations.conversations(convoId)
-        .participants
-        .create({ identity: "Expert " + appointments?.expertId?.userId?.firstName + " " + appointments?.expertId?.userId?.lastName + " " })
-        .then(participant => { console.log(participant.sid); participantId = participant.sid; })
-        .catch(error => { console.log(error); });
+      await client.conversations
+        .conversations(convoId)
+        .participants.create({
+          identity:
+            "Expert " +
+            appointments?.expertId?.userId?.firstName +
+            " " +
+            appointments?.expertId?.userId?.lastName +
+            " ",
+        })
+        .then((participant) => {
+          console.log(participant.sid);
+          participantId = participant.sid;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       const token = new AccessToken(
         Config.twilioAccountSid,
         Config.twilioApiKey,
-        Config.twilioApiSecret,
+        Config.twilioApiSecret
       );
       token.addGrant(videoGrant);
       token.addGrant(chatGrant);
-      token.identity = "Expert " + appointments?.expertId?.userId?.firstName + " " + appointments?.expertId?.userId?.lastName + " ";
+      token.identity =
+        "Expert " +
+        appointments?.expertId?.userId?.firstName +
+        " " +
+        appointments?.expertId?.userId?.lastName +
+        " ";
       if (!token) {
-        throw Boom.badRequest("token not found")
+        throw Boom.badRequest("token not found");
       }
 
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Room successfully joined",
-          data: { token: token.toJwt(), roomId: appointments.videoChatId, identity: appointments?.expertId?.userId?.firstName + " " + appointments?.expertId?.userId?.lastName }
+          data: {
+            token: token.toJwt(),
+            roomId: appointments.videoChatId,
+            identity:
+              appointments?.expertId?.userId?.firstName +
+              " " +
+              appointments?.expertId?.userId?.lastName,
+          },
         },
         res
       );
-
-    }
-    catch (error) {
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
@@ -819,42 +926,46 @@ module.exports = {
       // let payload = req.body;
       let message;
       req.body.token.map(async (obj, index) => {
-        if (obj.deviceType == '2') {
+        if (obj.deviceType == "2") {
           message = {
             data: {
-              title: 'Expert accepted your chat request',
-              body: `your request for chat room with our expert has been ${req.body.messageType == '1' ? 'accepted' : 'rejected'}`,
+              title: "Expert accepted your chat request",
+              body: `your request for chat room with our expert has been ${
+                req.body.messageType == "1" ? "accepted" : "rejected"
+              }`,
               type: "addProperty",
               // propertyId: payload.id,
-              sound: 'default',
+              sound: "default",
             },
           };
-        }
-        else if (obj.deviceType == '3') {
+        } else if (obj.deviceType == "3") {
           message = {
             notification: {
-              title: 'Expert accepted your chat request',
-              body: `your request for chat room with our expert has been ${req.body.messageType == '1' ? 'accepted' : 'rejected'}`,
+              title: "Expert accepted your chat request",
+              body: `your request for chat room with our expert has been ${
+                req.body.messageType == "1" ? "accepted" : "rejected"
+              }`,
               type: "addProperty",
               // propertyId: payload.id,
-              sound: 'default',
+              sound: "default",
               badge: "0",
             },
           };
         }
-
 
         var options = { priority: "high" };
         const firebaseFunction = await admin
           .messaging()
           .sendToDevice([obj.deviceToken], message, options);
         console.log("firebaseFunction", firebaseFunction);
-      })
+      });
 
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,
-          message: `successfully send ${req.body.messageType == '1' ? 'admission' : 'rejection'} notification`,
+          message: `successfully send ${
+            req.body.messageType == "1" ? "admission" : "rejection"
+          } notification`,
           // data: firebaseFunction,
         },
         res
@@ -868,11 +979,23 @@ module.exports = {
   twlioVoiceCallExpert: async (req, res) => {
     try {
       let id = req.user.expertId;
-      const expert = await Expert_User.findOne({ _id: id }).populate({ path: 'userId' });
+      const expert = await Expert_User.findOne({ _id: id }).populate({
+        path: "userId",
+      });
 
-      let reqdAppointment = await appointmentModel.findOne({ _id: req.body.appointmentId }).populate({ path: 'expertId', populate: { path: "userId" } }).populate('userId');
-      let userIdentity = req.body.appointmentId + reqdAppointment.userId.firstName + reqdAppointment.userId.lastName + reqdAppointment.userId._id;
-      let identity = req.body.appointmentId + reqdAppointment.expertId.userId.firstName + reqdAppointment.expertId.userId._id;
+      let reqdAppointment = await appointmentModel
+        .findOne({ _id: req.body.appointmentId })
+        .populate({ path: "expertId", populate: { path: "userId" } })
+        .populate("userId");
+      let userIdentity =
+        req.body.appointmentId +
+        reqdAppointment.userId.firstName +
+        reqdAppointment.userId.lastName +
+        reqdAppointment.userId._id;
+      let identity =
+        req.body.appointmentId +
+        reqdAppointment.expertId.userId.firstName +
+        reqdAppointment.expertId.userId._id;
 
       const accessToken = new AccessToken(
         accountSid,
@@ -890,121 +1013,119 @@ module.exports = {
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
-          message: 'success',
+          message: "success",
           data: {
             identity: identity,
             token: accessToken.toJwt(),
             userIdentity,
-
-          }
+          },
         },
         res
-      )
-
-    }
-    catch (error) {
+      );
+    } catch (error) {
       universalFunctions.sendError(error, res);
     }
   },
 
   twilioVideoMarkComplete: async (req, res) => {
-
     try {
-
-      let appointments = await appointmentModel.findByIdAndUpdate({ _id: req.body.appointmentId }, {
-        status:
-          APP_CONSTANTS.appointmentStatus.completed,
-      }, { new: true }
+      let appointments = await appointmentModel.findByIdAndUpdate(
+        { _id: req.body.appointmentId },
+        {
+          status: APP_CONSTANTS.appointmentStatus.completed,
+        },
+        { new: true }
       );
 
       if (!appointments) {
-        throw Boom.badRequest('could not complete')
+        throw Boom.badRequest("could not complete");
       }
 
-      universalFunctions.sendSuccess({
-        statusCode: 200,
-        message: "success",
-        data: {
-          appointmentDetails: appointments
-        }
-      },
-        res)
-
-    }
-    catch (error) {
-
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "success",
+          data: {
+            appointmentDetails: appointments,
+          },
+        },
+        res
+      );
+    } catch (error) {
       throw universalFunctions.sendError(error, res);
-
     }
   },
   twilioAudioMarkComplete: async (req, res) => {
     try {
-      let appointments = await appointmentModel.findByIdAndUpdate({ _id: req.body.appointmentId }, {
-        status:
-          APP_CONSTANTS.appointmentStatus.completed,
-      }, { new: true }
+      let appointments = await appointmentModel.findByIdAndUpdate(
+        { _id: req.body.appointmentId },
+        {
+          status: APP_CONSTANTS.appointmentStatus.completed,
+        },
+        { new: true }
       );
 
       if (!appointments) {
-        throw Boom.badRequest('could not complete')
+        throw Boom.badRequest("could not complete");
       }
 
-      universalFunctions.sendSuccess({
-        statusCode: 200,
-        message: "success",
-        data: {
-          appointmentDetails: appointments
-        }
-      },
-        res)
-    }
-    catch (error) {
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "success",
+          data: {
+            appointmentDetails: appointments,
+          },
+        },
+        res
+      );
+    } catch (error) {
       throw universalFunctions.sendError(error, res);
     }
   },
   getSingleAppointment: async (req, res) => {
-
     try {
-      let appointments = await appointmentModel.findOne({ _id: req.body.appointmentId });
+      let appointments = await appointmentModel.findOne({
+        _id: req.body.appointmentId,
+      });
 
       if (!appointments) {
-        throw Boom.badRequest('no such appointment');
-
+        throw Boom.badRequest("no such appointment");
       }
 
-      universalFunctions.sendSuccess({
-        statusCode: 200,
-        message: 'success',
-        data: {
-          appointmentDetails: appointments
-        }
-      }, res)
-    }
-    catch (error) {
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "success",
+          data: {
+            appointmentDetails: appointments,
+          },
+        },
+        res
+      );
+    } catch (error) {
       throw universalFunctions.sendError(error, res);
     }
   },
 
   timeSlotsOfUserSingleDay: async (req, res) => {
     try {
-
       let { expertId, appointmentDate, duration } = req.query;
       let curentdate = new Date();
 
       const expertTime = await expertTimeAvailable.find({
         $and: [
           {
-            "expertId": expertId
-          }, {
-            "appointmentDate": appointmentDate,
-
-          }, {
-            "duration": duration
+            expertId: expertId,
           },
-
-        ]
+          {
+            appointmentDate: appointmentDate,
+          },
+          {
+            duration: duration,
+          },
+        ],
       });
-
 
       if (!expertTime) {
         throw Boom.badRequest("invalid id or token");
@@ -1015,15 +1136,13 @@ module.exports = {
           expertId: expertId,
           appointmentDate: appointmentDate,
           timeSlotId: e._id ? e._id : "",
-
-
         });
         if (data.length > 0) {
           e.avialble = false;
         } else {
           e.avialble = true;
         }
-      })
+      });
 
       universalFunctions.sendSuccess(
         {
@@ -1033,16 +1152,17 @@ module.exports = {
         },
         res
       );
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
       universalFunctions.sendError(error, res);
     }
   },
   deleteTimeSlot: async (req, res) => {
     try {
       // console.log("this is id"  , req.body.payload)
-      let deleteTmeSlot = await expertTimeAvailable.deleteOne({ _id: req.body.id })
+      let deleteTmeSlot = await expertTimeAvailable.deleteOne({
+        _id: req.body.id,
+      });
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1055,7 +1175,62 @@ module.exports = {
       return universalFunctions.sendError(err, res);
     }
   },
+  setExpertPriceDetails: async (req, res) => {
+    try {
+      const schema = {
+        priceDetails: Joi.array().items(
+          Joi.object({
+            pricePerMinuteOrSms: Joi.number(),
+            discountPerMinuteOrSms: Joi.number(),
+            callType: Joi.string().valid(
+              APP_CONSTANTS.callType.audio.value,
+              APP_CONSTANTS.callType.video.value,
+              APP_CONSTANTS.callType.chat.value
+            ),
+          })
+        ),
+      };
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
 
+      let expertData = await expertUser.findOneAndUpdate(
+        { _id: req.user.expertId },
+        { priceDetails: req.body.priceDetails }
+      );
+      console.log("expertDatahfjhfjfhfhfjfhf", expertData);
+      if (!expertData) {
+        throw Boom.notFound("Expert Not Found");
+      }
+      return universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: {},
+        },
+        res
+      );
+    } catch (err) {
+      return universalFunctions.sendError(err, res);
+    }
+  },
+  getExpertPriceDetails: async (req, res) => {
+    try {
+      let expertData = await expertUser
+        .findOne({ _id: req.user.expertId })
+        .select({ priceDetails: 1, _id: 0 });
+
+      if (!expertData) {
+        throw Boom.notFound("Expert Not Found");
+      }
+      return universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: expertData,
+        },
+        res
+      );
+    } catch (err) {
+      return universalFunctions.sendError(err, res);
+    }
+  },
 };
-
-
