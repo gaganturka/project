@@ -149,6 +149,7 @@ exports.deleteCategoriesData = async (req, res) => {
     return universalFunctions.sendError(err, res);
   }
 };
+
 exports.createPracticeArea = async (req, res) => {
   try {
     const schema = {
@@ -343,6 +344,7 @@ exports.deletePracticeArea = async (req, res) => {
 };
 exports.getCategoryDetails = async (req, res) => {
   try {
+    console.log("this is id",req.params.id)
     const category = await models.categories.findOne({ _id: req.params.id });
     if (!category) {
       throw Boom.badRequest("cannot find any expert");
@@ -364,6 +366,7 @@ exports.getCategoryDetails = async (req, res) => {
 
 exports.getPracticeAreaDetails = async (req, res) => {
   try {
+    console.log("this is id",req.params.id)
     const practice = await models.practicearea.findOne({ _id: req.params.id });
     if (!practice) {
       throw Boom.badRequest("cannot find any expert");

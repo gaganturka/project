@@ -219,80 +219,139 @@ module.exports = {
         total;
       let filter = {};
       if (req.body.sortBy == "1") {
-        if (req.body.practiceArea !== "") {
+       
+        if (req.body.category !== "" && req.body.practiceArea === "") {
           expert = await expertUser
             .find({
-              // category: req.body.category,
+              category: req.body.category,
               isApprovedByAdmin: true,
               status: APP_CONSTANTS.activityStatus.active,
-              practiceArea: req.body.practiceArea,
             })
-            .populate("category")
             .populate("practiceArea")
-            .populate("userId")
             .populate(payload)
-            .sort({ noOfHoursOfSessionsDone: -1 })
+            .populate("category")
+            .populate("userId")
+            .sort({ "rating.avgRating": -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
-          total = await expertUser
+        } else if (req.body.category === "" && req.body.practiceArea !== "") {
+          expert = await expertUser
             .find({
-              category: req.body.practiceArea,
+              practiceArea: req.body.practiceArea,
               isApprovedByAdmin: true,
               status: APP_CONSTANTS.activityStatus.active,
             })
-            .countDocuments();
-        } else {
-          if (req.body.search) {
-            filter["$or"] = [
-              { firstName: { $regex: req.body.search, $options: "i" } },
-            ];
-          }
-          let allExportDatas = await expertUser
-            .find({ isApprovedByAdmin: true })
             .populate("practiceArea")
-            .populate("category")
             .populate(payload)
-            .populate({ path: "userId", match: filter })
-            .sort({ "rating.avgRating": -1 });
-          let expertArray = [];
-          allExportDatas.map((ele) => {
-            if (ele.userId !== null) {
-              expertArray.push(ele);
-            }
-          });
-          let i;
-          for (
-            i = parseInt((req.body.page - 1) * req.body.limit);
-            i < parseInt((req.body.page - 1) * req.body.limit) + req.body.limit;
-            i++
-          ) {
-            if (expertArray[i] != null) expert.push(expertArray[i]);
-          }
+            .populate("category")
+            .populate("userId")
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+            .limit(parseInt(req.body.limit));
+        } else if (req.body.category !== "" && req.body.practiceArea !== "") {
+          expert = await expertUser
+            .find({
+              practiceArea: req.body.practiceArea,
+              category: req.body.category,
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+            })
+            .populate("practiceArea")
+            .populate(payload)
+            .populate("category")
+            .populate("userId")
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+            .limit(parseInt(req.body.limit));
         }
-      } else if (req.body.sortBy == "2") {
-        if (req.body.practiceArea !== "") {
+        else if(req.body.search){
+         
+          filter["$or"] = [
+            { firstName: { $regex: req.body.search, $options: "i" } },
+          ];
+        let allExportDatas = await expertUser
+          .find({ isApprovedByAdmin: true })
+          .populate("practiceArea")
+          .populate("category")
+          .populate(payload)
+          .populate({ path: "userId", match: filter })
+          .sort({ "rating.avgRating": -1 });
+        let expertArray = [];
+        allExportDatas.map((ele) => {
+          if (ele.userId !== null) {
+            expertArray.push(ele);
+          }
+        });
+        let i;
+        for (
+          i = parseInt((req.body.page - 1) * req.body.limit);
+          i < parseInt((req.body.page - 1) * req.body.limit) + req.body.limit;
+          i++
+        ) {
+          if (expertArray[i] != null) expert.push(expertArray[i]);
+        }
+      
+
+      } 
+        else {
           expert = await expertUser
             .find({
-              // category: req.body.category,
               isApprovedByAdmin: true,
               status: APP_CONSTANTS.activityStatus.active,
-              practiceArea: req.body.practiceArea,
-              // category:req.body.category,
+            })
+            .populate("practiceArea")
+            .populate(payload)
+            .populate("category")
+            .populate("userId")
+            .sort({ "rating.avgRating": -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+            .limit(parseInt(req.body.limit));
+        }
+       
+      } else if (req.body.sortBy == "2") {
+        if (req.body.category !== "" && req.body.practiceArea === "") {
+          expert = await expertUser
+            .find({
+              category: req.body.category,
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
             })
             .populate("category")
             .populate("practiceArea")
-            .populate("userId")
             .populate(payload)
+            .populate("userId")
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
-          total = await expertUser
+        } else if (req.body.category === "" && req.body.practiceArea !== "") {
+          expert = await expertUser
             .find({
-              category: req.body.practiceArea,
+              practiceArea: req.body.practiceArea,
               isApprovedByAdmin: true,
               status: APP_CONSTANTS.activityStatus.active,
             })
-            .countDocuments();
+            .populate("category")
+            .populate("practiceArea")
+            .populate(payload)
+            .populate("userId")
+            .sort({ noOfHoursOfSessionsDone: -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+            .limit(parseInt(req.body.limit));
+        } else if (req.body.category !== "" && req.body.practiceArea !== "") {
+          expert = await expertUser
+            .find({
+              practiceArea: req.body.practiceArea,
+              category: req.body.category,
+              isApprovedByAdmin: true,
+              status: APP_CONSTANTS.activityStatus.active,
+            })
+            .populate("category")
+            .populate("practiceArea")
+            .populate(payload)
+            .populate("userId")
+            .sort({ noOfHoursOfSessionsDone: -1 })
+            .skip(parseInt((req.body.page - 1) * req.body.limit))
+            .limit(parseInt(req.body.limit));
         } else {
           expert = await expertUser
             .find({
@@ -301,19 +360,133 @@ module.exports = {
             })
             .populate("category")
             .populate("practiceArea")
-            .populate({ path: "userId", match: filter })
             .populate(payload)
+            .populate("userId")
             .sort({ noOfHoursOfSessionsDone: -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
-          total = await expertUser
-            .find({
-              isApprovedByAdmin: true,
-              status: APP_CONSTANTS.activityStatus.active,
-            })
-            .countDocuments();
         }
       }
+      // if (req.body.sortBy == "1") {
+      //   if (req.body.practiceArea !== "") {
+      //     expert = await expertUser
+      //       .find({
+      //         // category: req.body.category,
+      //         isApprovedByAdmin: true,
+      //         status: APP_CONSTANTS.activityStatus.active,
+      //         practiceArea: req.body.practiceArea,
+      //       })
+      //       .populate("category")
+      //       .populate("practiceArea")
+      //       .populate("userId")
+      //       .populate(payload)
+      //       .sort({ noOfHoursOfSessionsDone: -1 })
+      //       .skip(parseInt((req.body.page - 1) * req.body.limit))
+      //       .limit(parseInt(req.body.limit));
+      //     total = await expertUser
+      //       .find({
+      //         category: req.body.practiceArea,
+      //         isApprovedByAdmin: true,
+      //         status: APP_CONSTANTS.activityStatus.active,
+      //       })
+      //       .countDocuments();
+      //   }
+      //   else if(req.body.category !== ""){
+      //     expert = await expertUser
+      //       .find({
+      //         category: req.body.category,
+      //         isApprovedByAdmin: true,
+      //         status: APP_CONSTANTS.activityStatus.active,
+      //         // category: req.body.category,
+      //       })
+      //       .populate("category")
+      //       .populate("practiceArea")
+      //       .populate("userId")
+      //       .populate(payload)
+      //       .sort({ noOfHoursOfSessionsDone: -1 })
+      //       .skip(parseInt((req.body.page - 1) * req.body.limit))
+      //       .limit(parseInt(req.body.limit));
+      //     total = await expertUser
+      //       .find({
+      //         category: req.body.practiceArea,
+      //         isApprovedByAdmin: true,
+      //         status: APP_CONSTANTS.activityStatus.active,
+      //       })
+      //       .countDocuments();
+      //   }
+      //    else {
+      //     if (req.body.search) {
+      //       filter["$or"] = [
+      //         { firstName: { $regex: req.body.search, $options: "i" } },
+      //       ];
+      //     }
+      //     let allExportDatas = await expertUser
+      //       .find({ isApprovedByAdmin: true })
+      //       .populate("practiceArea")
+      //       .populate("category")
+      //       .populate(payload)
+      //       .populate({ path: "userId", match: filter })
+      //       .sort({ "rating.avgRating": -1 });
+      //     let expertArray = [];
+      //     allExportDatas.map((ele) => {
+      //       if (ele.userId !== null) {
+      //         expertArray.push(ele);
+      //       }
+      //     });
+      //     let i;
+      //     for (
+      //       i = parseInt((req.body.page - 1) * req.body.limit);
+      //       i < parseInt((req.body.page - 1) * req.body.limit) + req.body.limit;
+      //       i++
+      //     ) {
+      //       if (expertArray[i] != null) expert.push(expertArray[i]);
+      //     }
+      //   }
+      // } else if (req.body.sortBy == "2") {
+      //   if (req.body.practiceArea !== "") {
+      //     expert = await expertUser
+      //       .find({
+      //         // category: req.body.category,
+      //         isApprovedByAdmin: true,
+      //         status: APP_CONSTANTS.activityStatus.active,
+      //         practiceArea: req.body.practiceArea,
+      //         // category:req.body.category,
+      //       })
+      //       .populate("category")
+      //       .populate("practiceArea")
+      //       .populate("userId")
+      //       .populate(payload)
+      //       .sort({ noOfHoursOfSessionsDone: -1 })
+      //       .skip(parseInt((req.body.page - 1) * req.body.limit))
+      //       .limit(parseInt(req.body.limit));
+      //     total = await expertUser
+      //       .find({
+      //         category: req.body.practiceArea,
+      //         isApprovedByAdmin: true,
+      //         status: APP_CONSTANTS.activityStatus.active,
+      //       })
+      //       .countDocuments();
+      //   } else {
+      //     expert = await expertUser
+      //       .find({
+      //         isApprovedByAdmin: true,
+      //         status: APP_CONSTANTS.activityStatus.active,
+      //       })
+      //       .populate("category")
+      //       .populate("practiceArea")
+      //       .populate({ path: "userId", match: filter })
+      //       .populate(payload)
+      //       .sort({ noOfHoursOfSessionsDone: -1 })
+      //       .skip(parseInt((req.body.page - 1) * req.body.limit))
+      //       .limit(parseInt(req.body.limit));
+      //     total = await expertUser
+      //       .find({
+      //         isApprovedByAdmin: true,
+      //         status: APP_CONSTANTS.activityStatus.active,
+      //       })
+      //       .countDocuments();
+      //   }
+      // }
 
       if (!expert) {
         throw Boom.badRequest("cannot find any expert");

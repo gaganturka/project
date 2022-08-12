@@ -37,12 +37,12 @@ router
   .get(categorieController.getPracticeAreaDataPopulated);
 router
   .route("/getPracticeAreaDetails/:id")
-  .get(isAdmin.isAdmin, categorieController.getPracticeAreaDetails);
+  .get( categorieController.getPracticeAreaDetails);
 router
   .route("/getCategoryDetails/:id")
-  .get(isAdmin.isAdmin, categorieController.getCategoryDetails);
+  .get( categorieController.getCategoryDetails);
   router
   .route("/getPracticeAreaDataInGroups")
   .get(categorieController.getPracticeAreaDataInGroups);
-
+  
 module.exports = router;
