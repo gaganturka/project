@@ -17,13 +17,13 @@ const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const { v4: uuidv4 } = require("uuid");
 // const { admin } =require("../utils/pushNotification");
 const VoiceGrant = AccessToken.VoiceGrant;
-const ThawaniClient = require("thawani-node");
+// const ThawaniClient = require("thawani-node");
 
-const api = new ThawaniClient({
-  secretKey: APP_CONSTANTS.thwani.testing_secret_key,
-  publishableKey: APP_CONSTANTS.thwani.testing_publishable_key,
-  dev: true,
-});
+// const api = new ThawaniClient({
+//   secretKey: APP_CONSTANTS.thwani.testing_secret_key,
+//   publishableKey: APP_CONSTANTS.thwani.testing_publishable_key,
+//   dev: true,
+// });
 
 const VideoGrant = AccessToken.VideoGrant;
 const ChatGrant = AccessToken.ChatGrant;
@@ -122,18 +122,18 @@ module.exports = {
         { deviceType: req.body.deviceType, deviceToken: req.body.token },
       ];
 
-      if (
-        !users.customerId ||
-        users.customerId === "" ||
-        users.customerId === null
-      ) {
-        const thawaniCustomer = await api.customer.create(users._id);
+      // if (
+      //   !users.customerId ||
+      //   users.customerId === "" ||
+      //   users.customerId === null
+      // ) {
+      //   const thawaniCustomer = await api.customer.create(users._id);
 
-        await User.findOneAndUpdate(
-          { _id: users._id },
-          { customerId: thawaniCustomer.data.id }
-        );
-      }
+      //   await User.findOneAndUpdate(
+      //     { _id: users._id },
+      //     { customerId: thawaniCustomer.data.id }
+      //   );
+      // }
 
       await User.findByIdAndUpdate(
         { _id: users._id },

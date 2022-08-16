@@ -5,7 +5,7 @@ const ExpertAdminRoutes = require("./expert.admin");
 const BorhanUserAdminRoutes = require("./borhanuser.admin");
 const ExpertPanelRoutes = require("./expert.panel");
 const AppRoutes = require("./app.route");
-const ThwaniRoutes = require("./PaymentGateway/thwaniRoutes");
+
 
 module.exports = {
   AUTH_ROUTES,
@@ -15,5 +15,5 @@ module.exports = {
   BorhanUserAdminRoutes,
   ExpertPanelRoutes,
   AppRoutes,
-  ThwaniRoutes
+ 
 };

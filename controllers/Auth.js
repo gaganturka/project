@@ -11,13 +11,13 @@ const responseMessages = require("../resources/response.json");
 const jwtFunction = require("../utils/jwtFunction");
 const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
-const ThawaniClient = require("thawani-node");
+// const ThawaniClient = require("thawani-node");
 
-const api = new ThawaniClient({
-  secretKey: APP_CONSTANTS.thwani.testing_secret_key,
-  publishableKey: APP_CONSTANTS.thwani.testing_publishable_key,
-  dev: true,
-});
+// const api = new ThawaniClient({
+//   secretKey: APP_CONSTANTS.thwani.testing_secret_key,
+//   publishableKey: APP_CONSTANTS.thwani.testing_publishable_key,
+//   dev: true,
+// });
 // initializeApp({
 //   serviceAccountId: 'my-client-id@my-project-id.iam.gserviceaccount.com',
 // });
@@ -125,12 +125,12 @@ module.exports = {
 
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
 
-      const thawaniCustomer = await api.customer.create(user._id);
+      // const thawaniCustomer = await api.customer.create(user._id);
 
-      await User.findOneAndUpdate(
-        { _id: user._id },
-        { customerId: thawaniCustomer.data.id }
-      );
+      // await User.findOneAndUpdate(
+      //   { _id: user._id },
+      //   { customerId: thawaniCustomer.data.id }
+      // );
 
       const token = await jwtFunction.jwtGenerator(user._id);
 
@@ -218,12 +218,12 @@ module.exports = {
       });
 
       await expertUser.findByIdAndUpdate(expertUserr._id, { userId: user._id });
-      const thawaniCustomer = await api.customer.create(user._id);
+      // const thawaniCustomer = await api.customer.create(user._id);
 
-      await User.findOneAndUpdate(
-        { _id: user._id },
-        { customerId: thawaniCustomer.data.id }
-      );
+      // await User.findOneAndUpdate(
+      //   { _id: user._id },
+      //   { customerId: thawaniCustomer.data.id }
+      // );
 
       const token = await jwtFunction.jwtGenerator(user._id);
 
@@ -259,18 +259,18 @@ module.exports = {
             .findOne({ userId: user._id })
             .select({ customerId: 1 });
 
-          if (
-            !user.customerId ||
-            user.customerId === "" ||
-            user.customerId === null
-          ) {
-            const thawaniCustomer = await api.customer.create(user._id);
+          // if (
+          //   !user.customerId ||
+          //   user.customerId === "" ||
+          //   user.customerId === null
+          // ) {
+          //   const thawaniCustomer = await api.customer.create(user._id);
 
-            await User.findOneAndUpdate(
-              { _id: user._id },
-              { customerId: thawaniCustomer.data.id }
-            );
-          }
+          //   await User.findOneAndUpdate(
+          //     { _id: user._id },
+          //     { customerId: thawaniCustomer.data.id }
+          //   );
+          // }
 
           let newToken = [
             {
