@@ -24,6 +24,11 @@ const VoiceGrant = AccessToken.VoiceGrant;
 //   publishableKey: APP_CONSTANTS.thwani.testing_publishable_key,
 //   dev: true,
 // });
+const thawaniHeader = {
+  headers: { "thawani-api-key": APP_CONSTANTS.thwani.testing_secret_key },
+};
+
+const axios = require("axios");
 
 const VideoGrant = AccessToken.VideoGrant;
 const ChatGrant = AccessToken.ChatGrant;
@@ -122,18 +127,22 @@ module.exports = {
         { deviceType: req.body.deviceType, deviceToken: req.body.token },
       ];
 
-      // if (
-      //   !users.customerId ||
-      //   users.customerId === "" ||
-      //   users.customerId === null
-      // ) {
-      //   const thawaniCustomer = await api.customer.create(users._id);
-
-      //   await User.findOneAndUpdate(
-      //     { _id: users._id },
-      //     { customerId: thawaniCustomer.data.id }
-      //   );
-      // }
+      if (
+        !users.customerId ||
+        users.customerId === "" ||
+        users.customerId === null
+      ) {
+        const thawaniCustomer = await axios.post(
+          `${APP_CONSTANTS.thwani.testing_url}/customers`,
+          { client_customer_id: user._id },
+          thawaniHeader
+        );
+  
+        await User.findOneAndUpdate(
+          { _id: user._id },
+          { customerId: thawaniCustomer.data.data.id }
+        );
+      }
 
       await User.findByIdAndUpdate(
         { _id: users._id },
