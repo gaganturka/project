@@ -1535,22 +1535,29 @@ module.exports = {
       let payload = {
         userId: id,
       };
+      let { skip, limit } = req.query;
+      console.log("this is query",req.query)
       const chatappointmentdata = await chatappointment
         .find(payload)
-        .populate({ path: "userId expertId userId" })
+        .populate({ path: "userId expertId userId" }).skip(parseInt(skip))
+        .limit(parseInt(limit));
+
+      let count = await chatappointment.count({ payload}).populate({ path: "userId expertId userId" });
+
       if (!chatappointmentdata) {
         throw Boom.badRequest("invalid id or token");
       }
+      
       let tempobj = JSON.parse(JSON.stringify(chatappointmentdata));
       await universalFunctions.asyncForEach(tempobj, async (e, index) => {
-        let expertData = await User.findOne({ _id: e.expertId.userId });
+        let expertData = await User.findOne({ _id: e.expertId.userId })
         e.expertData = expertData;
       });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Successfull get appointment",
-          data: tempobj,
+          data: {tempobj,count}
         },
         res
       );
@@ -1769,15 +1776,19 @@ module.exports = {
   },
   getNewsLetter: async (req, res) => {
     try {
+      let {limit,skip}=req.query;
+      console.log("this is payload" ,req.query)
       let newLetterData = await newLatter.find(
        { isDeleted: false } 
       )
-
+      .skip(parseInt(skip))
+      .limit(parseInt(limit));
+    let count = await newLatter.count({ isDeleted: false });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "All newLetterData ",
-          data: newLetterData,
+          data: {newLetterData,count: count}
         },
         res
       );

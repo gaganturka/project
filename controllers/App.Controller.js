@@ -1762,7 +1762,7 @@ module.exports = {
     try {
       let { skip, limit = 10 } = req.query;
       let feedback = await Testimony.find({ isDeleted: false })
-        .select({ feedback: 1, name: 1 })
+        .select({ feedback: 1, name: 1,image:1 })
         .sort({ createdAt: -1 })
         .skip(parseInt(skip))
         .limit(parseInt(limit));
