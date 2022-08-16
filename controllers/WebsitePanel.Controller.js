@@ -1537,7 +1537,7 @@ module.exports = {
       };
       const chatappointmentdata = await chatappointment
         .find(payload)
-        .populate({ path: "userId expertId userId" });
+        .populate({ path: "userId expertId userId" })
       if (!chatappointmentdata) {
         throw Boom.badRequest("invalid id or token");
       }
