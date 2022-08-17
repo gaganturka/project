@@ -127,22 +127,22 @@ module.exports = {
         { deviceType: req.body.deviceType, deviceToken: req.body.token },
       ];
 
-      if (
-        !users.customerId ||
-        users.customerId === "" ||
-        users.customerId === null
-      ) {
-        const thawaniCustomer = await axios.post(
-          `${APP_CONSTANTS.thwani.testing_url}/customers`,
-          { client_customer_id: user._id },
-          thawaniHeader
-        );
+      // if (
+      //   !users.customerId ||
+      //   users.customerId === "" ||
+      //   users.customerId === null
+      // ) {
+      //   const thawaniCustomer = await axios.post(
+      //     `${APP_CONSTANTS.thwani.testing_url}/customers`,
+      //     { client_customer_id: user._id },
+      //     thawaniHeader
+      //   );
   
-        await User.findOneAndUpdate(
-          { _id: user._id },
-          { customerId: thawaniCustomer.data.data.id }
-        );
-      }
+      //   await User.findOneAndUpdate(
+      //     { _id: user._id },
+      //     { customerId: thawaniCustomer.data.data.id }
+      //   );
+      // }
 
       await User.findByIdAndUpdate(
         { _id: users._id },

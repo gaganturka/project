@@ -29,6 +29,10 @@ router
   .route("/getPracticeAreaData")
   .get(categorieController.getPracticeAreaData);
   router
+  .route("/getParticularPracticeAreaCateories")
+  .get(categorieController.getParticularPracticeAreaCateories);
+  
+  router
   .route("/getPracticeAreaCategories/:id")
   .get(categorieController.getPracticeAreaCategories);
   
