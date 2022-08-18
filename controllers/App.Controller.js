@@ -41,12 +41,12 @@ const frontEndUserUrl = Config.FRONTEND_USER_URL;
 const thawaniHeader = {
   headers: { "thawani-api-key": APP_CONSTANTS.thwani.testing_secret_key },
 };
-const ThawaniClient = require("thawani-node");
-const api = new ThawaniClient({
-  secretKey: APP_CONSTANTS.thwani.testing_secret_key,
-  publishableKey: APP_CONSTANTS.thwani.testing_publishable_key,
-  dev: true,
-});
+// const ThawaniClient = require("thawani-node");
+// const api = new ThawaniClient({
+//   secretKey: APP_CONSTANTS.thwani.testing_secret_key,
+//   publishableKey: APP_CONSTANTS.thwani.testing_publishable_key,
+//   dev: true,
+// });
 const axios = require("axios");
 
 module.exports = {
@@ -2314,38 +2314,26 @@ module.exports = {
       //   userId: req.user.id,
       //   paymentStatus: payload.paymentStatus,
       // });
-      const thawaniSession = await api.session.create({
-        client_reference_id: "1232545454",
-        mode: payload.paymentMode,
-        products: [
-          {
-            name: payload.productName,
-            quantity: 1,
-            unit_amount: payload.amount,
-          },
-        ],
-        success_url: "https://company.com/success",
-        cancel_url: "https://company.com/cancel",
-        // customer_id: customerId,
-      });
-      // const thawaniSession = await axios.post(
-      //   `${APP_CONSTANTS.thwani.testing_url}/session`,
-      //   thawaniHeader,
-      //   {
-      //     client_reference_id: "1232545454",
-      //     mode: payload.paymentMode,
-      //     products: [
-      //       {
-      //         name: payload.productName,
-      //         quantity: 1,
-      //         unit_amount: payload.amount,
-      //       },
-      //     ],
-      //     success_url: "https://company.com/success",
-      //     cancel_url: "https://company.com/cancel",
-      //     // customer_id: customerId,
-      //   }
-      // );
+      console.log(APP_CONSTANTS.thwani.testing_url);
+      const thawaniSession = await axios.post(
+        `${APP_CONSTANTS.thwani.testing_url}/checkout/session`,
+
+        {
+          client_reference_id: "1232545454",
+          mode: payload.paymentMode,
+          products: [
+            {
+              name: payload.productName,
+              quantity: 1,
+              unit_amount: payload.amount,
+            },
+          ],
+          success_url: "https://company.com/success",
+          cancel_url: "https://company.com/cancel",
+          // customer_id: customerId,
+        },
+        thawaniHeader
+      );
       console.log(thawaniSession);
       universalFunctions.sendSuccess(
         {
