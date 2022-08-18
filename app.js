@@ -33,6 +33,7 @@ connectToMongo();
 const app = express();
 const port = process.env.PORT || 5000;
 app.use("/public", express.static("public"));
+app.use("/uploads", express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
