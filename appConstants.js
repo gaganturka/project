@@ -28,6 +28,8 @@ const appointmentStatus = {
   rejected: "rejected",
 };
 
+
+
 const chatRoomStatus = {
   cancelled: "cancelled",
   confirmed: "confirmed",
@@ -50,7 +52,7 @@ const pushNotificationMessage = {
 const thwani = {
   testing_secret_key: "rRQ26GcsZzoEhbrP2HZvLYDbn9C9et",
   testing_publishable_key: "HGvTMLDssJghr9tlN9gr4DVYt0qyBy",
-  testing_url: "https://uatcheckout.thawani.om/api/v1/",
+  testing_url: "https://uatcheckout.thawani.om/api/v1",
 };
 
 const paymentType = {
@@ -73,6 +75,7 @@ const paymentStatus = {
   Success: "success",
   Failed: "failed",
   Processing: "processing",
+  Pending: "pending",
 };
 
 let nodemailerAuth = {
