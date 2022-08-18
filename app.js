@@ -3,6 +3,7 @@ const connectToMongo = require("./db");
 const express = require("express");
 const bodyParser = require("body-parser");
 var cors = require("cors");
+const fs = require('fs');
 const {
   AUTH_ROUTES,
   CategoryRoutes,
@@ -17,8 +18,14 @@ const cookieSession = require("cookie-session");
 const passportSetup = require("./config/passport");
 const passport = require("passport");
 const authRoute = require("./routes/google");
-// require("./")
-// var cors=require('cors')
+
+// If Uploads directory does not exists then create new one
+var dir = './uploads';
+
+if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+}
+
 const router = express.Router();
 connectToMongo();
 
@@ -26,6 +33,7 @@ connectToMongo();
 const app = express();
 const port = process.env.PORT || 5000;
 app.use("/public", express.static("public"));
+app.use("/uploads", express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
