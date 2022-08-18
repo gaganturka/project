@@ -2314,20 +2314,20 @@ module.exports = {
       //   userId: req.user.id,
       //   paymentStatus: payload.paymentStatus,
       // });
-      // const thawaniSession = await api.session.create({
-      //   client_reference_id: "1232545454",
-      //   mode: payload.paymentMode,
-      //   products: [
-      //     {
-      //       name: payload.productName,
-      //       quantity: 1,
-      //       unit_amount: payload.amount,
-      //     },
-      //   ],
-      //   success_url: "https://company.com/success",
-      //   cancel_url: "https://company.com/cancel",
-      //   // customer_id: customerId,
-      // });
+      const thawaniSession = await api.session.create({
+        client_reference_id: "1232545454",
+        mode: payload.paymentMode,
+        products: [
+          {
+            name: payload.productName,
+            quantity: 1,
+            unit_amount: payload.amount,
+          },
+        ],
+        success_url: "https://company.com/success",
+        cancel_url: "https://company.com/cancel",
+        // customer_id: customerId,
+      });
       // const thawaniSession = await axios.post(
       //   `${APP_CONSTANTS.thwani.testing_url}/session`,
       //   thawaniHeader,
