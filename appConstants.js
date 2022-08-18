@@ -81,7 +81,7 @@ const paymentStatus = {
 let nodemailerAuth = {
   host: "smtp.office365.com",
   port: 587,
-  secure: true,
+  secure: false,
   auth: {
     user: "manpreetgoga2000@gmail.com",
     pass: "goga0001",
