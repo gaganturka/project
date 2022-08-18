@@ -103,4 +103,6 @@ router.route("/getNewsLetter").get(
   WebsiteController.getNewsLetter
 );
 
+router.route("/createSession").post(AppController.createSession);
+
 module.exports = router;

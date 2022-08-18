@@ -131,16 +131,16 @@ module.exports = {
 
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
 
-      // const thawaniCustomer = await axios.post(
-      //   `${APP_CONSTANTS.thwani.testing_url}/customers`,
-      //   { client_customer_id: user._id },
-      //   thawaniHeader
-      // );
+      const thawaniCustomer = await axios.post(
+        `${APP_CONSTANTS.thwani.testing_url}/customers`,
+        { client_customer_id: user._id },
+        thawaniHeader
+      );
 
-      // await User.findOneAndUpdate(
-      //   { _id: user._id },
-      //   { customerId: thawaniCustomer.data.data.id }
-      // );
+      await User.findOneAndUpdate(
+        { _id: user._id },
+        { customerId: thawaniCustomer.data.data.id }
+      );
 
       const token = await jwtFunction.jwtGenerator(user._id);
 

@@ -47,6 +47,7 @@ router
     router.route("/getAvailableTimeForUser").get(appCreation.getAvailableTimeForUser);
     
     router.route("/bookAppointment").post(checkAuth,appCreation.bookAppointment);
+    
 
     
 
