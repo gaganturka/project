@@ -7,7 +7,7 @@ const { Config } = require("../config");
 let upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "./public/images");
+      cb(null, "./uploads");
     },
     filename: function (req, file, cb) {
       cb(null, Date.now() + file.originalname); //use Date.now() for unique file keys
