@@ -230,10 +230,7 @@ module.exports = {
       const schema = Joi.object({
         firstName: Joi.string(),
         lastName: Joi.string(),
-        email: Joi.string().email({
-          minDomainSegments: 2,
-          tlds: { allow: ["com", "net"] },
-        }),
+        email: Joi.string().email(),
         expertId: Joi.string(),
         bio: Joi.string(),
         getAudioFilePath: Joi.string().allow(""),
