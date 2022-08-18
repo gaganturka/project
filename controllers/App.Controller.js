@@ -2314,7 +2314,7 @@ module.exports = {
       //   userId: req.user.id,
       //   paymentStatus: payload.paymentStatus,
       // });
-      console.log(APP_CONSTANTS.thwani.testing_url);
+
       const thawaniSession = await axios.post(
         `${APP_CONSTANTS.thwani.testing_url}/checkout/session`,
 
@@ -2330,16 +2330,21 @@ module.exports = {
           ],
           success_url: "https://company.com/success",
           cancel_url: "https://company.com/cancel",
-          // customer_id: customerId,
         },
         thawaniHeader
       );
-      console.log(thawaniSession);
+
+      const thawaniSessionDetails = await axios.get(
+        `${APP_CONSTANTS.thwani.testing_url}/checkout/session/checkout_8wGLGi9SSPGDT5Fotj9hSUtjbbaaiG5a3oiWHGp3OwXxH2UNTY`,
+
+        thawaniHeader
+      );
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
-          data: {},
+          data: thawaniSession.data.data.session_id,
         },
         res
       );

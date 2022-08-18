@@ -1,64 +1,62 @@
 const User = require("../models/User");
 const borhanUser = require("../models/Borhan_User");
 const expertUser = require("../models/Expert_User");
-const adminUser=require('../models/Admin_User');
+const adminUser = require("../models/Admin_User");
+const SubscriptionType = require("../models/paymentGateway/subscriptionType");
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
 const APP_CONSTANTS = require("../appConstants");
-const responseMessages= require( "../resources/response.json");
+const responseMessages = require("../resources/response.json");
 const { Config } = require("../config");
-const favExpertModel=require('../models/Fav_Expert');
+const favExpertModel = require("../models/Fav_Expert");
 const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
 const { isBuffer } = require("lodash");
 
-
 module.exports = {
   getExpertApprovedByAdmin: async (req, res) => {
-    try{
-    const expert = await expertUser.findByIdAndUpdate(
-      { _id: req.params._id },
-      { isApprovedByAdmin: true }
-    );
-    if (!expert) {
-      throw Boom.badRequest("invalid id");
-    }
+    try {
+      const expert = await expertUser.findByIdAndUpdate(
+        { _id: req.params._id },
+        { isApprovedByAdmin: true }
+      );
+      if (!expert) {
+        throw Boom.badRequest("invalid id");
+      }
 
-    universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "approval completed",
-        data: expert,
-      },
-      res
-    );
-    }
-    catch(error)
-    {
-      universalFunctions.sendError(error,res);
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "approval completed",
+          data: expert,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
     }
   },
   getExpertRejectedByAdmin: async (req, res) => {
-    try{
-    const expert = await expertUser.findByIdAndDelete({ _id: req.params._id });
-    if (!expert) {
-      throw Boom.badRequest("invalid id expert couldnt be deleted");
-    }
+    try {
+      const expert = await expertUser.findByIdAndDelete({
+        _id: req.params._id,
+      });
+      if (!expert) {
+        throw Boom.badRequest("invalid id expert couldnt be deleted");
+      }
 
-    universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "completely deleted expert",
-        data: expert,
-      },
-      res
-    );
-    }
-    catch(error)
-    {
-      universalFunctions.sendError(error,res);
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "completely deleted expert",
+          data: expert,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
     }
   },
   showExperts: async (req, res) => {
@@ -67,18 +65,17 @@ module.exports = {
         limit: Joi.number(),
         page: Joi.number(),
         search: Joi.string().allow(""),
-        filterType:Joi.string(),
+        filterType: Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-      let filterType
+      let filterType;
       let expert = [];
-      let count=0;
-      let finalExperts=[];
+      let count = 0;
+      let finalExperts = [];
       let page = req.body.page;
       let limit = req.body.limit;
       let filter = {};
-      if(req.body.filterType=="1" && req.body.search=='')
-      {
+      if (req.body.filterType == "1" && req.body.search == "") {
         finalExperts = await expertUser
           .find({ isApprovedByAdmin: true })
           .populate("userId")
@@ -86,35 +83,46 @@ module.exports = {
           .populate("category")
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
-        count = await expertUser.find({ isApprovedByAdmin: true }).countDocuments();
+        count = await expertUser
+          .find({ isApprovedByAdmin: true })
+          .countDocuments();
         // console.log("this is expoert" ,finalExperts )
-      }
-      else if(req.body.filterType =='3')
-      {
+      } else if (req.body.filterType == "3") {
         finalExperts = await expertUser
-          .find({ isApprovedByAdmin: true,accountType:APP_CONSTANTS.accountType.freelancer })
+          .find({
+            isApprovedByAdmin: true,
+            accountType: APP_CONSTANTS.accountType.freelancer,
+          })
           .populate("userId")
           .populate("practiceArea")
           .populate("category")
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
-        count = await expertUser.find({ isApprovedByAdmin: true,accountType:APP_CONSTANTS.accountType.freelancer }).countDocuments();
-      // filterType=APP_CONSTANTS.accountType.freelancer;
-      }
-      else if(req.body.filterType =='2')
-      {
+        count = await expertUser
+          .find({
+            isApprovedByAdmin: true,
+            accountType: APP_CONSTANTS.accountType.freelancer,
+          })
+          .countDocuments();
+        // filterType=APP_CONSTANTS.accountType.freelancer;
+      } else if (req.body.filterType == "2") {
         finalExperts = await expertUser
-          .find({ isApprovedByAdmin: true,accountType:APP_CONSTANTS.accountType.expert })
+          .find({
+            isApprovedByAdmin: true,
+            accountType: APP_CONSTANTS.accountType.expert,
+          })
           .populate("userId")
           .populate("practiceArea")
           .populate("category")
           .skip(parseInt((page - 1) * limit))
           .limit(parseInt(limit));
-        count = await expertUser.find({ isApprovedByAdmin: true,accountType:APP_CONSTANTS.accountType.expert }).countDocuments();
-        
-      }
-      else if(req.body.search)
-      {
+        count = await expertUser
+          .find({
+            isApprovedByAdmin: true,
+            accountType: APP_CONSTANTS.accountType.expert,
+          })
+          .countDocuments();
+      } else if (req.body.search) {
         filter["$or"] = [
           { firstName: { $regex: req.body.search, $options: "i" } },
           {
@@ -125,30 +133,29 @@ module.exports = {
           .find({ isApprovedByAdmin: true })
           .populate({ path: "userId", match: filter })
           .populate("practiceArea")
-          .populate("category")
-          // .skip(parseInt((page - 1) * limit))
-          // .limit(parseInt(limit));
+          .populate("category");
+        // .skip(parseInt((page - 1) * limit))
+        // .limit(parseInt(limit));
         expertData.map((ele) => {
-          if(ele !=null)
-          {
-          if (ele.userId != null) {
-            expert.push(ele);
+          if (ele != null) {
+            if (ele.userId != null) {
+              expert.push(ele);
+            }
           }
-        }
         });
         count = expert.length;
         let i;
-        for(i=parseInt((page - 1) * limit);i<parseInt((page - 1) * limit)+limit;i++)
-        {
-          if(expert[i]!=null)
-            finalExperts.push(expert[i]);
+        for (
+          i = parseInt((page - 1) * limit);
+          i < parseInt((page - 1) * limit) + limit;
+          i++
+        ) {
+          if (expert[i] != null) finalExperts.push(expert[i]);
         }
-
-      }
-      else{
+      } else {
         throw Boom.badRequest(responseMessages.INVALID_CREDENTIALS);
       }
-      
+
       // console.log("searchhhhi", req.body.search, "search mai kya hai");
       // if (req.body.search) {
       //   filter["$or"] = [
@@ -180,8 +187,7 @@ module.exports = {
       //       finalExperts.push(expert[i]);
       //   }
       // }
-     
-       
+
       // if (req.body.search) {
       //   let expertData = await expertUser
       //     .find({ isApprovedByAdmin: true,accountType:filterType })
@@ -452,7 +458,7 @@ module.exports = {
             lastName: req.body.lastName,
             profilePic: req.body.profilePic,
             isEmailVerified: false,
-            otp: req.body.otp,  
+            otp: req.body.otp,
           },
         }
       );
@@ -472,60 +478,102 @@ module.exports = {
     }
   },
   deleteExpertByAdmin: async (req, res) => {
-    try{
-    const expert = await expertUser.findByIdAndDelete({ _id: req.params._id });
-    if (!expert) {
-      throw Boom.badRequest("invalid id expert couldnt be deleted");
-    }
-    console.log("deleted expert is", expert);
-    const user = await User.findByIdAndDelete({ _id: expert.userId });
+    try {
+      const expert = await expertUser.findByIdAndDelete({
+        _id: req.params._id,
+      });
+      if (!expert) {
+        throw Boom.badRequest("invalid id expert couldnt be deleted");
+      }
+      console.log("deleted expert is", expert);
+      const user = await User.findByIdAndDelete({ _id: expert.userId });
 
-    if (!user) {
-      throw Boom.badRequest("invalid id expert couldnt be deleted");
-    }
+      if (!user) {
+        throw Boom.badRequest("invalid id expert couldnt be deleted");
+      }
 
-    const favExp=await favExpertModel.deleteMany({expertId: req.params._id})
-    // if (!favExp) {
-    //   throw Boom.badRequest("invalid id expert couldnt be deleted");
-    // }
+      const favExp = await favExpertModel.deleteMany({
+        expertId: req.params._id,
+      });
+      // if (!favExp) {
+      //   throw Boom.badRequest("invalid id expert couldnt be deleted");
+      // }
 
-    console.log("deleted user is", user);
+      console.log("deleted user is", user);
 
-    universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "completely deleted expert",
-      },
-      res
-    );
-    }
-    catch(err)
-    {
-      universalFunctions.sendError(err,res);
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "completely deleted expert",
+        },
+        res
+      );
+    } catch (err) {
+      universalFunctions.sendError(err, res);
     }
   },
-  
-  getAdminDetails: async (req,res)=>{
-    try{
-      let  id=req.user.id
-      console.log(req.user,'req.user',id);
-      let admin=await User.findOne({_id:id}).populate('userData.data');
-      if(!admin)
-      {
+
+  getAdminDetails: async (req, res) => {
+    try {
+      let id = req.user.id;
+      console.log(req.user, "req.user", id);
+      let admin = await User.findOne({ _id: id }).populate("userData.data");
+      if (!admin) {
         throw Boom.badRequest(responseMessages.INVALID_CREDENTIALS);
       }
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "completely deleted expert",
-          data:admin
+          data: admin,
         },
         res
       );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
     }
-    catch(error)
-    {
-      universalFunctions.sendError(error,res);
+  },
+  addSubscriptionTypeByAdmin: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        planName: Joi.string().required(),
+        planAmount: Joi.number().required(),
+        walletAmount: Joi.number().required(),
+        discountValue: Joi.number(),
+        planDuration: Joi.string().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let subscriptionCount = await SubscriptionType.count({
+        isDeleted: false,
+        subscriptionFor: "borhanUser",
+      });
+      if (subscriptionCount >= 3) {
+        throw Boom.badRequest("Max 3 Types Of Subscription Plan is allowed");
+      }
+      let subscriptionExist = await SubscriptionType.findOne({
+        planName: req.body.planName,
+        isDeleted: false,
+      });
+      if (subscriptionExist) {
+        throw Boom.badRequest(
+          "Subscription Type With Same Name Already Exists"
+        );
+      }
+      req.body.subscriptionFor = "borhanUser";
+      req.body.isDeleted = false;
+      await SubscriptionType.create(req.body);
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Subscription Type Added Successfully",
+          data: {},
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
     }
-  }
+  },
 };

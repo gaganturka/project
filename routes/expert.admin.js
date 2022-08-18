@@ -29,9 +29,11 @@ router
 router
   .route("/deleteExpertByAdmin/:_id")
   .delete(isAdmin.isAdmin, ExpertController.deleteExpertByAdmin);
-  
-  router
+
+router
   .route("/getAdminDetails")
   .get(isAdmin.isAdmin, ExpertController.getAdminDetails);
-
+router
+  .route("/addSubscriptionTypeByAdmin")
+  .post(isAdmin.isAdmin, ExpertController.addSubscriptionTypeByAdmin);
 module.exports = router;
