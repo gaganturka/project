@@ -576,4 +576,117 @@ module.exports = {
       universalFunctions.sendError(error, res);
     }
   },
+  getSubscriptionTypeByAdmin: async (req, res) => {
+    try {
+      let subscriptionData = await SubscriptionType.find({
+        subscriptionFor: "borhanUser",
+        isDeleted: false,
+      });
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: subscriptionData,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  editSubscriptionTypeByAdmin: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+        planName: Joi.string().required(),
+        planAmount: Joi.number().required(),
+        walletAmount: Joi.number().required(),
+        discountValue: Joi.number(),
+        planDuration: Joi.string().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let subscriptionData = await SubscriptionType.findOneAndUpdate(
+        { _id: req.body.id, isDeleted: false },
+        {
+          planName: req.body.planName,
+          planAmount: req.body.planAmount,
+          walletAmount: req.body.walletAmount,
+          discountValue: req.body.discountValue,
+          planDuration: req.body.planDuration,
+        }
+      );
+      if (!subscriptionData) {
+        throw Boom.badRequest("No such subscription type");
+      }
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Subscription Type Edited Successfully",
+          data: {},
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  deleteSubscriptionTypeByAdmin: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let subscriptionData = await SubscriptionType.findOneAndUpdate(
+        { _id: req.body.id, isDeleted: false },
+        {
+          isDeleted: true,
+        }
+      );
+      if (!subscriptionData) {
+        throw Boom.badRequest("No such subscription type");
+      }
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Subscription Type Deleted Successfully",
+          data: {},
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  getSubscriptionTypeByIdForAdmin: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        id: Joi.string().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+
+      let subscriptionData = await SubscriptionType.findOne({
+        _id: req.body.id,
+        isDeleted: false,
+      });
+      if (!subscriptionData) {
+        throw Boom.badRequest("No such subscription type");
+      }
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: subscriptionData,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
 };

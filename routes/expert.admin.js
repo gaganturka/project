@@ -36,4 +36,18 @@ router
 router
   .route("/addSubscriptionTypeByAdmin")
   .post(isAdmin.isAdmin, ExpertController.addSubscriptionTypeByAdmin);
+router
+  .route("/getSubscriptionTypeByAdmin")
+  .get(isAdmin.isAdmin, ExpertController.getSubscriptionTypeByAdmin);
+
+router
+  .route("/editSubscriptionTypeByAdmin")
+  .post(isAdmin.isAdmin, ExpertController.editSubscriptionTypeByAdmin);
+router
+  .route("/deleteSubscriptionTypeByAdmin")
+  .post(isAdmin.isAdmin, ExpertController.deleteSubscriptionTypeByAdmin);
+router
+  .route("/getSubscriptionTypeByIdForAdmin")
+  .post(isAdmin.isAdmin, ExpertController.getSubscriptionTypeByIdForAdmin);
+  
 module.exports = router;
