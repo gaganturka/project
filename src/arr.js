@@ -43,7 +43,7 @@
 // console.log(repeatedAnimals(['cat', 'cat', 'dog', 'goat', 'lion', 'lion']))
 
 
-/////////.     convert array of number to array of string e.g 1: a in 2: ab and [2,3] = [ab, abc]
+/////////.     convert array of number to array of alphabats e.g 1: a in 2: ab and [2,3] = [ab, abc]
 /***in this ques we have to give a alphabts insted of no. .so firstly we made a function that will return alphabts
  * and then making another function in which we passing a arr and updateing its value with alphabts
  */
@@ -67,6 +67,8 @@
 // }
 
 // console.log(encodeNumberWithString([1,2,100]))
+
+
 
 
 /////////                 alternative way of same que.
@@ -101,14 +103,14 @@
 
 // console.log('AB'.toLowerCase())
 
- let a = 'ab'
- let b = 'cd'
- let c = 'abcd'
- console.log((a + b) == c)
+//  let a = 'ab'
+//  let b = 'cd'
+//  let c = 'abcd'
+//  console.log((a + b) == c)
 
-if((a + b) == c){
-    console.log('Yes')
-}else{
-    console.log('No')
+// if((a + b) == c){
+//     console.log('Yes')
+// }else{
+//     console.log('No')
 
-}
+// }

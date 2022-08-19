@@ -43,15 +43,9 @@ const { version } = require("punycode")
 //     return sum
 // }
 
-// let obj = {
-//     hi :1,
-//     oo : {
-//         ki :2,
-//         kii : 4
-//     }
-// }
-
 // console.log(evenSum(obj))
+
+;
 
 ////////////////////////////......................reverse array without using extra array...............///////////////////
 //        OR|
@@ -96,7 +90,6 @@ const { version } = require("punycode")
 
 // const result = reverse([1,2,3,4,5,6])
 // console.log(result)
-
 
 
 
@@ -158,31 +151,25 @@ const { version } = require("punycode")
 
 
 
-// function integer(num) {
+// function integer(num) {////////// negative number also be a integer so we check to them in if
 //     const match = '1,2,3,4,5,6,7,8,9,0'
 //     if (num[0] == '-') {
-
 //         for (let i = 1; i < num.length; i++) {
-
 //             if (match.indexOf(num[i]) == -1) {
-
 //                 return 'No'
 //             }
 //         }
 //         return 'Yes'
 //     } else {
 //         for (let i = 0; i < num.length; i++) {
-
 //             if (match.indexOf(num[i]) == -1) {
-
 //                 return 'No'
 //             }
 //         }
 //         return 'Yes'
 //     }
 // }
-// let result = integer('1234')
-// console.log(result)
+
 
 ////approach 2 => use regex => /^-?[0-9]+$/
 // ? define that - may or may not be present
@@ -211,12 +198,11 @@ const { version } = require("punycode")
 // it give largest 2 number and if u want sum of largest number in array then write
 // in return [firstMax+secondMax]
 
-
 ////////////..................... Rotate array by K elements ...............////////////
 
 
 // function rotateArrayByKEle(arr,K){
-  
+
 // let temp = (new Array(arr.length).fill(0))
 // for(let i=0; i<arr.length; i++){
 //     let ele = (i+K)%arr.length    // taking a reminder as when value of i+k will greater then arr.length then ele
@@ -226,6 +212,8 @@ const { version } = require("punycode")
 // }
 // let result =rotateArrayByKEle([1,2,3,4,5,6,7],3)
 // console.log(result)
+
+
 
 
 /// Or rotating array in parts or we can say 'optimalKRotations'.
@@ -249,7 +237,20 @@ const { version } = require("punycode")
 // Rotate(arr,3)
 // console.log(arr)
 
+
+
 /////////////////................... Swap 2 strings.....REMAINING.......///////////
+
+/////swap to number
+// a=15, b=10
+// a= a+b//// 15 + 10 =25
+// b= a-b /// 25 - 10 = 15
+// a= a-b ///  25 -15 = 10
+// console.log(a,b);
+
+
+//////////Swap to string
+
 
 // let a ='somekj', b='Good1234'
 // /// join string with concat

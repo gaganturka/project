@@ -27,7 +27,7 @@
 //we have to find which element repeat(occure) in array most
 
 
-// const arr = [1,2,3,3,3,4,4,5,5,5,6,6,6,6,6,6]
+// const arr = [1,2,3,3,3,4,4,5,5,5,5,5,5,5,5,6,6,6,6,6,6]
 // console.log(arr.length)
 // let max_occ = 0, max_char_occ = null
 // for(let i=0; i<arr.length; i++){
@@ -49,9 +49,10 @@
 
 
 
+
 // try to decrease time complex city of above problem
 
-// const arr =[1,2,2,3,3,4,4,5,5,6,7,7,7,4,4,3]
+// const arr =[1,2,2,3,3,4,4,5,5,6,7,7,7,4,7,7,4,3]
 
 // let max_occ = 0
 // let max_occ_char = null
@@ -79,6 +80,7 @@
 // // else if key not present then simple add that ele as a key thats value will be 1 then simple console them
 // console.log(freq_count)
 // console.log(max_occ_char , '&&', max_occ)
+
 
 
 
@@ -131,7 +133,7 @@
 // }
 // }
 // console.log(count)
-//let hi = arr.sort()
+// let hi = arr.sort()
 
 // console.log(hi)
 // let sortt = []
@@ -142,6 +144,7 @@
 //     // console.log(temp)
 // }
 // console.log(sortt)
+
 
 
 // .................. Sorted array ........../
@@ -203,6 +206,8 @@
 // }
 // console.log(final)
 
+
+
 ///////////////////////////////////////////////////....................MUTIple POINTER METHOD(we are taking sorted array)....................////////////
 
 
@@ -250,6 +255,7 @@
 //.........................         find that 2 number whose sum equal to given number
 // const arr = [-5,1,2,3,4,5,6,7,8,9]
 
+
 // let i=0
 // let j = arr.length -1
 // let sum = 12
@@ -286,7 +292,6 @@
 // }
 
 // console.log(result);
-
 
 
 // ////////////                           find the number that is closest to sum X
@@ -368,7 +373,7 @@
 
 
 
-// 
+
 // const arr =[1,2,3,4]
 
 // const arrr = arr.splice(1,2,5,4,'dweddw')

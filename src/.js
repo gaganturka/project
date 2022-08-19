@@ -31,13 +31,13 @@ const { stringify } = require("querystring");
 
 
 // console.log(obj1 == obj3)
-// console.log(obj1 === obj3)
+// console.log(obj1 === obj2)
 
 // const str = '123' 
-// const str1 = sdffs
+// const str1 = 'sdffs'
 
 
-// console.log(str + '' + str1)
+// console.log(str + str1)
 
 // const obj1 = {
 
@@ -86,7 +86,11 @@ const { stringify } = require("querystring");
 
 
 
-
+// // tempplate String
+// let name = 'Gagan'
+// let age = "21"
+// let aboutMe = `i am ${name} and i am ${age} years old`
+// console.log(aboutMe);
 
 
 
@@ -130,6 +134,7 @@ const { stringify } = require("querystring");
 
 
 // reduce
+// let number = [1,3,4,2,5]
 // const sum = number.reduce((acc,cur) => {
 //     return acc+cur
 // },100)
@@ -162,6 +167,9 @@ const { stringify } = require("querystring");
 // arr.fill(0,5)
 // console.log(arr);
  
+                              
+
+
 //call
 // const user1 = {
 //     name : "gagan",

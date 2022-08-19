@@ -4,6 +4,8 @@
 ///******************************* write mid in this manner => mid= left + (right-left)/2 */
   //               binary
 
+const { arrayBuffer } = require("stream/consumers");
+
 ////  mid => left + right/2 -left/2 => left/2 + right/2 => (left + right)/2
 // function binary(arr, search,left,right){
 //     if(right>=left){
@@ -24,22 +26,7 @@
 // console.log(binary([1,2,3,4,5,6,7,8,9],9,0,8))
 
 
-function binary (arr, search, left, right){
- let mid = left + right/2 -left/2
-  if(search == arr[mid]){
-    return mid
-  }
-if(arr[mid] > search){
-  return binary(arr, search, left, mid-1)
-}
-if(arr[mid] < search){
-  return binary(arr, search, mid +1 , right)
-}
-return false
 
-}
-let ans = binary([71,72,73,74,75,76,77,78],76,0,6)
-console.log(ans);
 /////////////........... bubble sort ..........////////////////
 
 // but time complex city of bubble sort is o(n square)
@@ -64,3 +51,4 @@ console.log(ans);
 
 // let result = bubble([1,3,4,2,5,69,0,6,32,76,1])
 // console.log(result)
+

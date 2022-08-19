@@ -79,13 +79,13 @@
 // //4576
 
 // // iteration
-// // n=4
-// // result = 1
-// // for(let i=n; i>0; i--){
-// //         console.log(i)
-// //     result =result * i
+// n=4
+// result = 1
+// for(let i=n; i>0; i--){
+//         console.log(i)
+//     result =result * i
 
-// // }
+// }
 // // console.log(result)
 
 
@@ -146,31 +146,36 @@
 
 
 // //***************** it is acc. to me and i want return in function  */
-// // var result = 1
 
-// // function product(arr){
-// //     if(arr.length == 0){
-// //         return 1
-// //     }
-// //     let ele = arr.pop()
-// //      result = result * ele
+// const arr = [1,2,3,4]
 
-// //      product(arr)
+// var result = 1
 
 
-// //     }
-// //   product([1,2,3,4])
-// //   console.log(result)
+// function product(arr){
+//     if(arr.length == 0){
+//         return 1
+//     }
+//     let ele = arr.pop()
+//      result = result * ele
+
+//      product(arr)
+
+
+//     }
+//   product([1,2,3,4])
+//   console.log(result)
 
 // //// with pop we are taking answer in return 
-// // function product(arr){
-// //     if(arr.length == 1){
-// //         return arr[0]
-// //     }
-// //     let ele = arr.pop()
-// //     return ele* product(arr)
-// // } 
-// // console.log(product([1,2,3,4]))
+// function product(arr){
+//     if(arr.length == 1){
+//         return arr[0]
+//     }
+//     let ele = arr.pop()
+//     return ele* product(arr)
+// } 
+// console.log(product([1,2,3,4]))
+
 
 // // /////////////////////............................(priority to this)alternative way of product of arr........../
 
@@ -201,14 +206,14 @@
 // //.............................. power function ........................//
 // // we will pass number and exponent in function as a(num, exp) in result we want num(power(exp)) like (2(pwer(3))) == 8 in ans
 
-// // function power(num, exp){
-// //     // simple u can return num**exp
-// //     if(exp == 1){
-// //         return num
-// //     }
-// //     return num *power(num, exp-1)
-// // }
-// // console.log(power(2,10))
+// function power(num, exp){
+//     // simple u can return num**exp
+//     if(exp == 1){
+//         return num
+//     }
+//     return num *power(num, exp-1)
+// }
+// console.log(power(2,10))
 
 
 // ////////..........................................REVERSE to string ...............................................//
@@ -217,6 +222,7 @@
 // // function REVERSE(str){
 // // if(str.length <= 1){
 // //     return str
+
 // // }
 
 // // return REVERSE(str.slice(1)) + str[0]
@@ -224,24 +230,25 @@
 
 // // console.log(REVERSE('hi there'))
 
+
 // //////..............................     palindrome ........................................////////////////////////////
 // ////plaindrome = reading to word and number from from front and back is same e.g- level, 12321 
 // //// find the number or string is plaindrome 
 
 
 
-// // function plaindrome(str){
-// //     if(str.length == 1){
-// //         return str[0]
-// //     }
-// //     return plaindrome(str.slice(1)) + str[0]
-// // }
+// function plaindrome(str){
+//     if(str.length == 1){
+//         return str[0]
+//     }
+//     return plaindrome(str.slice(1)) + str[0]
+// }
 
 
-// // function result(res){
-// //     return plaindrome(res) == res
-// // }
-// // console.log(result('abcbaa'))
+// function result(res){
+//     return plaindrome(res) == res
+// }
+// console.log(result('abccba'))
 
 // ////////////////////////..................(mainly we use) alternative ...................../////////////////////////
 
@@ -275,27 +282,40 @@
 // // arrayBuffer.splice()
 
 
-
 // ///////////////............................. flatern array ........................./////////////////////////////
 // ////// == [1,2 ,[3,4],[[[5,6]]]] => [1.2,3,4,5,6]
-
 // ////.. flatrnArr => it will check each element one by one.if not array then it will concat the element in the new "arr"
 // ////else if the element in itself is an array => then it will try to flatern that
 
-// // function flatern(arr){  ///// first arr auto emit 
-// //     let flat = []
-// //     for(let i=0; i<arr.length; i++){
-// //         console.log(arr[i])
-// //         if(Array.isArray(arr[i]) == false){
-// //             flat.push(arr[i])
-// //         }else{
-// //             flat = flat.concat(flatern(arr[i]))
-// //         }
-// //     }
-// //         return flat
+// function flatern(arr){  ///// first arr auto emit 
+//     let flat = []
+//     for(let i=0; i<arr.length; i++){
+//         console.log(arr[i])
+//         if(Array.isArray(arr[i]) == false){
+//             flat.push(arr[i])
+//         }else{
+//             flat = flat.concat(flatern(arr[i]))
+//         }
+//     }
+//         return flat
     
-// // }
-// // console.log(flatern([1,2,[[3,4,4]]]))
+// }
+// console.log(flatern([1,2,[[3,4,4]]]))
+
+////////////////////////////////////......................REVERSE ARRAY............../////////////////////
+
+// function reverseArray(arr,left,right){
+//     if(left < right){
+//         let temp = arr[left]
+//         arr[left] = arr[right]
+//         arr[right] = temp
+//         reverseArray(arr,left+1, right-1)
+//     }
+//     return arr
+
+// }
+// console.log(reverseArray([1,2,3,4,5,6],0,5));
+
 
 
 // ////////////////........................... CapitaliseLetters(first letter only) ......................./////////
@@ -317,44 +337,48 @@
 // // }
 // // console.log(CapitaliseLetters(['acddc', 'there']))
 
+
+
+
+
 // //////////////.............................. reverse each word of string .................../////////////////
 // // ('123', 'abc', 'zas') => ('321', 'cba', 'saz')
 
-// // function reverse(str){
-// //     if(str.length == 0) return ""
+// function reverse(str){
+//     if(str.length == 0) return ""
 
-// //     return reverse(str.slice(1)) + str[0]
-// // }
+//     return reverse(str.slice(1)) + str[0]
+// }
 
-// // function reveseWord(ans){
-// // let split = ans.split(' ')
-// // for(let i=0; i<split.length; i++){
-// //     split[i] = reverse(split[i])
+// function reveseWord(ans){
+// let split = ans.split(' ')
+// for(let i=0; i<split.length; i++){
+//     split[i] = reverse(split[i])
 
-// // }
-// // return split.join(' ')
-// // }
-// // console.log(reveseWord('123 456'))
+// }
+// return split.join(" ")
+// }
+// console.log(reveseWord('123 456'))
 
 // /////////////////.................................Print dublicate ele in arr..................///////////////////
 // //// [1,2,2,3,4,5,5] => [2,5]
 
-// // const arr = [1,2,3,4,4,5,5,9]
+// const arr = [1,2,3,4,4,5,5,9]
 
 
-// // let freq ={}
-// // for (let i=0 ; i<arr.length; i++){
-// //     if(freq.hasOwnProperty(arr[i])){
-// //         freq[arr[i]] += 1
-// //     } else{
-// //         freq[arr[i]] = 1
-// //     }
-// // }
-// // for (let value in freq){
-// //   if(freq[value] > 1){
-// //       console.log(value)
-// //   }
-// // }
+// let freq ={}
+// for (let i=0 ; i<arr.length; i++){
+//     if(freq.hasOwnProperty(arr[i])){
+//         freq[arr[i]] += 1
+//     } else{
+//         freq[arr[i]] = 1
+//     }
+// }
+// for (let value in freq){
+//   if(freq[value] > 1){
+//       console.log(value)
+//   }
+// }
 
 // ///////////////////////////....................... with map ................../////////////////////
 // // const arr = [1,2,3,4,4,5,5,6,7,7]
@@ -393,63 +417,19 @@
 
 
 
+// find unique ele in array
 
+// const arr =[1,2,3,4,4,5]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // const arr =[1,2,3,4,4,5]
-// // let a = 6
-// // let result = 0
-// // function sum (arr){
-// //     if(arr.length == 0) return []
-// //     let ele = arr.pop()
-// //     result += ele
-// //     sum(arr)
-
-// // }
-// // sum([1,2,3,4])
-// // console.log(result)
-
-
-
-// // find unique ele in array
-
-// // const arr =[1,2,3,4,4,5]
-
-// // let freq = {}
-// // for(let i=0; i<arr.length; i++){
-// //     if(freq.hasOwnProperty(arr[i]) ){
-// // freq[arr[i]] += 1
-// //     }else{
-// //         freq[arr[i]] =1
-// //     }
-// // }
-// // console.log(freq[])
+// let freq = {}
+// for(let i=0; i<arr.length; i++){
+//     if(freq.hasOwnProperty(arr[i]) ){
+// freq[arr[i]] += 1
+//     }else{
+//         freq[arr[i]] =1
+//     }
+// }
+// console.log(freq)
 
 
 // // find pairs of ele thats sum is equal to target k
@@ -480,21 +460,14 @@
 
 
 
-// // function cntDistinct(str){
-      
-// //           let s = new Set();
- 
-// //           for (let i = 0; i < str.length; i++) {
- 
-// //               s.add(str[i]);
-// //           }
- 
-     
-// //           return s.size;
-// //         }
-
-
-// //       console.log(cntDistinct('avbparuurofpssofii'));
+// function cntDistinct(str){     
+//           let s = new Set();
+//           for (let i = 0; i < str.length; i++) {
+//                s.add(str[i]);
+//           }  
+//           return s.size;
+//         }
+//       console.log(cntDistinct('avbparuurofpssofii'));
 
 
  
@@ -519,9 +492,9 @@
 
 
 
-let x=1
-for(let i=1 ; i<=128; i+=1){
-    x+=x
-    console.log(x).length
-}
+// let x=1
+// for(let i=1 ; i<=128; i+=1){
+//     x+=x
+//     console.log(x).length
+// }
 

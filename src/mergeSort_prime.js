@@ -5,17 +5,20 @@
 // in merge sort time complexcity is o(nlogn) it is much better then bubble sort so we prefer to merge sort
 // it is used in sort data at huge level like million of data we have to sort .
 
+const { default: is } = require("@sindresorhus/is");
+
+
 // const { count } = require("console")
 
 // function mergeSort(arr, left, right){
 //     if(left>= right){
 //         return
 //     }
-
 //     const mid = parseInt((left+right)/2)
 
 //     mergeSort(arr, left,mid)
 //     mergeSort(arr, mid+1,right)
+
 //     merge(arr,left,mid,right)
 // }
 
@@ -25,7 +28,8 @@
 //     let n2 = right-mid
 
 //     const arr1 = new Array(n1)
-//     const arr2 = new Array(n2)  
+//     const arr2 = new Array(n2)
+
 //     for(let i=0; i<n1; i++){
 //         arr1[i] =arr[left+i]
 //     }
@@ -33,7 +37,7 @@
 //     for(let j=0; j<n2; j++){
 //         arr2[j] = arr[mid+j+1]
 //     }
- 
+
 //     let a=0, b=0 // index of arr1 and arr2
 //     var k = left
 //     while(a<n1 && b < n2){
@@ -65,8 +69,7 @@
 // const arr = [8,95,86,8,0,8,5,4,7,9]
 // let left= 0, right = arr.length-1
 // mergeSort(arr, left, right)
-// console.log(arr)
-
+// console.log(arr);
 
 
 //////////////// most second frequent element but remain
@@ -107,14 +110,17 @@
 
 // function isPrime(number){
 //     for(i=2; i<=parseInt(number/2); i++){
+//         console.log(i);
 //         if(number%i === 0){
 //             return false
 //         }
+        
+
 //     }
 //     return true
 // }
 
-// console.log(isPrime(2))
+// console.log(isPrime(23))
 // console.log(isPrime(3))
 // console.log(isPrime(4))
 // console.log(isPrime(5))
@@ -164,6 +170,8 @@
 
 // primeNo1000()
 
+
+
 ///////////////// ****************** find second largest value in array ******************/////////
 
 // function second(arr){
@@ -186,7 +194,7 @@
 ///////////////............        WE have given array as input o and 1. we need to sort array......///
 ///////// amazon
 
-//// first we have to sort only 2 number then we made 2 variable and intialise a for loop hen taking no. of zero only
+//// first we have to sort only 2 number then we made 2 variable and intialise a for loop then taking no. of zero only
 //// after zero cont we are taking count of one and define one more variable and incrementing the value of that 
 //// as a index means firstly first while loop run after finishing it 2nd loop start so first loop add simple 
 //// zero in arr and second loop simple adding one in it. but here we are making 2 loop
@@ -212,15 +220,16 @@
 //   return arr
 // }
 
+
 // console.log(sort([1,1,1,1,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]))
 
 
 ////////////.                sorting same arr as above it is define trying to complete in 1 loop  //////////////
 
-// now what we are doing we know in sorted arrat on left side is 0 and on right side is 1. so i is definig left and j
+// now what we are doing we know in sorted array on left side is 0 and on right side is 1. so i is definig left and j
 //  is definig as right so if in arr on left side is zero then it is on correct position so we simple increase increase 
 // index of i. but when 1 will come then we storing that index in i and same for j or right but in case of j value alternate
-//or 1 change with 0 and whebn booht loop break we simple swap value .
+//or 1 change with 0 and when booht loop break we simple swap value .
 
 
 // function sort(arr){
@@ -244,6 +253,7 @@
 //   return arr
 // }
 
+
 // console.log(sort([1,1,1,1,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]))
 
 
@@ -251,7 +261,7 @@
 
 
 //// we are making simple map for storing frequency of element then we iterating for of loop on it then we taking
-//// reimder if reminder == 1 means single element exist in our arr so we consoling then we can not doirectly return
+//// reimder if reminder == 1 means single element exist in our arr so we consoling then we can not directly return
 //// ans. becouse in this case it simple return it not check to all value if u want to return then u can push no 
 //// in arrr and in end simple return
 // function uniqueElement(arr){
@@ -270,7 +280,8 @@
 //     }
 //   }
 // }
-// (uniqueElement([1,1,2,3,4,45,35,5,5]))
+
+// uniqueElement([1,1,2,3,4,45,35,5,5])
 
 ////////              write a function to calculate sum of three consecutive number  .....///////////////////////
 //// we have to find sum of 3 consecutive no. in arr we are simple taking three cosecutive no.( arr[i]+arr[i+1] + arr[i+2])
@@ -278,9 +289,9 @@
 //// for loop till <arr.length-3 and in and simple return sum
 
 // function sumOf3ConsecutiveNo(arr){
-//   if(arr.length <3){
-//     return;
-//   }
+// //   if(arr.length <3){
+// //     return;
+// //   }
 //   let sum = -Infinity
 //   for(let i=0; i<arr.length-3;i++){
 //     if((arr[i]+arr[i+1] + arr[i+2])> sum){
@@ -291,13 +302,13 @@
 //   return sum
 // }
 
+
 // console.log(sumOf3ConsecutiveNo([1,3,6,9,100,1,1]))
 
 
 /////////..........    write a function to calcute max. sum of k consecutive number ....///////////////////////////
 /// *****************Time complexcity is n(square) 
 
-// ////???????????????SOLVED?????????????????????????????/ sum why not updating means how zero come every time 
 
 
 // function sumOfkConsecutiveNo(arr,k){
@@ -308,10 +319,9 @@
 
 //   for(let i=0; i<=arr.length-k;i++){
 //     let sum =0
-//      /////////////// ????????????????????????????????????????????????????????????????????????
-
 //     for(let j=i; j<k+i; j++){
 //      sum += arr[j]
+    
 //     }
 //     if(curMax < sum){
 //         curMax = sum
@@ -320,7 +330,7 @@
 //   console.log(curMax)
 // }
 
-// sumOfkConsecutiveNo([1,2,3,4,5,6,1],2)
+// sumOfkConsecutiveNo([1,2,3,4,5,6,1],4)
 
 
 ///////////                same que. with order n 
@@ -345,6 +355,7 @@
 //     }
 //     return currMax
 // }
+
 
 // console.log(sumOfkConsecutive([1,2,3,4,5,6,1],2))
 
@@ -436,9 +447,9 @@
 
 
 
+///////////////////// in array how many number exist whose's sum is equal to sum(variable that we give)////////
 
-
-// const arr = [1, 5, 7, -1, 5] //2
+// const arr = [1, 5, 7, -1, 5] //3
 // let sum =6
 // let count = 0
 // for (let i=0; i< arr.length; i++){
@@ -446,6 +457,7 @@
 //     for(let j=i+1; j<arr.length; j++){
 //         if(arr[i] + arr[j] == sum){
 //             count++
+           
 //         }
 //     }
 // }
@@ -464,13 +476,15 @@
 // let sum = 0
 // for(let key of map){
 //     let sqrt = Math.sqrt(key[0])
+    
 //     if(Math.floor(sqrt) != Math.ceil(sqrt) ){
 //         continue
 //     }
 //     if(sqrt == 1){
 //         continue
 //     }
-//     console.log(sqrt)
+                
+
 //     if(map.get(sqrt)){
 //         sum += (sqrt * sqrt)
 //     }
