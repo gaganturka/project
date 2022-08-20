@@ -1,10 +1,10 @@
 // function multipli(a){
 // let namer  
 //     return function(b){
-//         return a*b
-
-const { type } = require("os");
-const { stringify } = require("querystring");
+// //         return a*b
+// const { type } = require("os");
+// const { stringify } = require("querystring");
+// const { sort } = require("semver");
 
 // const { execFile } = require("child_process")
 // const { request } = require("http")
@@ -184,3 +184,90 @@ const { stringify } = require("querystring");
 // }
 // user1.about.call(user2,"trrthrtf")
 
+
+
+// let array = [1, [2, 3], 2, [55, 2, 3], [2, 3, [4, 5], 6, 1], 4, 5];
+
+// let result = []
+
+// function flat(arr){
+//     for(let i=0; i<arr.length; i++){
+       
+//         if(Array.isArray(arr[i])){
+//             result.concat(flat(arr[i]))
+//         }else{
+//             result.push(arr[i])
+//         }
+//     }
+// }
+// flat(array);
+// console.log(result);
+
+// const arr = [8, 12, 44, 34, 55, 11, 22, 66, 65, 33, 4];
+
+// let obj = {}
+
+// for(let i=0; i<arr.length; i++){
+//     if(obj.hasOwnProperty(arr[i])){
+//        obj[arr[i]]++
+//     }else{
+//         obj[arr[i]] = 1
+//     }
+// }
+
+// let sortt = []
+
+// for(let key in obj){
+//   let temp = new Array(obj[key]).fill(key)
+// sortt = [...sortt, ...temp]
+// }
+
+// console.log(sortt);
+
+
+// // const mongoose = require('mongoose')
+
+// // const blogSchema = new mongoose.Schema({
+// //     title : String,
+
+
+// // })
+// //comunication , !e.g, fast, 
+
+
+//     let a = () => {
+//     setTimeout(() => {
+//     console.log("internal serval call.");
+//     }, "5000");
+//     console.log("One");
+//     };
+
+//     let b = () => {
+//     setTimeout(() => {
+//     console.log("Two");
+//     }, "1000");
+//     console.log("function b called");
+//     };
+
+//     console.log("Coding Test");
+//     a();
+//     b()
+    
+   
+//     for (var i = 0; i < 4; i++) 
+//     {
+//     // global scope
+//     setTimeout(() => console.log(i));
+//     }
+//     // coding Test"
+//     //one
+//     // tow
+//     //i
+//     // function b
+//     //interval
+    
+
+console.group('group')
+console.log('hello');
+console.log('world');
+console.groupEnd()
