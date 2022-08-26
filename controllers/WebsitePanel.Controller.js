@@ -1791,6 +1791,7 @@ module.exports = {
     try {
       const schema = Joi.object({
         subscriptionId: Joi.string().length(24).required(),
+        successUrl: Joi.string().required()
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
@@ -1845,8 +1846,8 @@ module.exports = {
               1000,
           },
         ],
-        success_url: `http://localhost:3000/paymentSuccess/${userPlanData._id}/subscription`,
-        cancel_url: `http://localhost:3000/paymentCanceled/${userPlanData._id}/subscription`,
+        success_url: `${payload.successUrl}/paymentSuccess/${userPlanData._id}/subscription`,
+        cancel_url: `${payload.successUrl}/paymentCanceled/${userPlanData._id}/subscription`,
         customer_id: customerId,
       };
 
