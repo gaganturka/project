@@ -609,7 +609,7 @@ module.exports = {
       let subscriptionExist = await SubscriptionType.findOne({
         planName: req.body.planName,
         isDeleted: false,
-        _id: { $ne: payload.id },
+        _id: { $ne: req.body.id },
       });
       if (subscriptionExist) {
         throw Boom.badRequest(
