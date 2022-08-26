@@ -1791,7 +1791,7 @@ module.exports = {
     try {
       const schema = Joi.object({
         subscriptionId: Joi.string().length(24).required(),
-        successUrl: Joi.string().required()
+        successUrl: Joi.string().required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
@@ -2090,8 +2090,18 @@ module.exports = {
           {
             _id: walletBalance[0]._id,
           },
-          { walletBalance: walletBalance.walletBalance - payload.amount }
+          { walletBalance: walletBalance[0].walletBalance - payload.amount }
         );
+
+        await UserTransactions.create({
+          userId: req.user.id,
+          paymentStatus: "paid",
+          amountPaid: payload.amount,
+
+          date: moment.utc().format(),
+          type: APP_CONSTANTS.userTransactionType.debit,
+          description: `${payload.amount} was deducted from your wallet`,
+        });
         amountToPay = 0;
       } else if (
         totalWalletBalance < payload.amount &&
@@ -2105,6 +2115,15 @@ module.exports = {
           },
           { walletBalance: 0, isActive: false }
         );
+        await UserTransactions.create({
+          userId: req.user.id,
+          paymentStatus: "paid",
+          amountPaid: totalWalletBalance,
+
+          date: moment.utc().format(),
+          type: APP_CONSTANTS.userTransactionType.debit,
+          description: `${payload.amount} was deducted from your wallet`,
+        });
       } else {
         amountToPay = payload.amount;
       }
