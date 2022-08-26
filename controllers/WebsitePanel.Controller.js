@@ -4,8 +4,11 @@ const Newsletter = require("../models/NewsletterSubscribed");
 const expertUser = require("../models/Expert_User");
 const practiceArea = require("../models/Practice_Area");
 const appointment = require("../models/Appointment");
-const newLatter=require("../models/NewsletterSubscribed")
-// const expertTimeAvailable=require("../models/ExpertTimeSlot");
+const newLatter = require("../models/NewsletterSubscribed");
+const SubscriptionType = require("../models/paymentGateway/subscriptionType");
+const UserTransactions = require("../models/paymentGateway/userTransactionsHistory");
+const UserPlans = require("../models/paymentGateway/userPlansBought");
+const axios = require("axios");
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -20,7 +23,7 @@ const Mongoose = require("mongoose");
 const Boom = require("boom");
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const { v4: uuidv4 } = require("uuid");
-// const webpush = require('web-push');
+
 const AccessToken = require("twilio").jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
 
@@ -40,25 +43,12 @@ const publicVapidKey =
   "BKjkBjs0NF8cLaPAYNKFWiGSBcau-q3poapqeXZhbPUfBacozebEplWJBFIes8FioqhMbdpIzYmUzxTdgdrLxXk";
 const privateVapidKey = "_7Xt1bP-K_ckzykka6TX536RB6pX0v8i0SeaLO7W-iw";
 const { admin } = require("../utils/pushNotificationFirebase");
-// const {admin}=require("../config");
-// var admin = require("firebase-admin");
-// var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
+// const moment = require("moment");
 const Expert_User = require("../models/Expert_User");
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   // databaseURL: Config.get("db.firebaseDatabaseUrl"),
-// });
-// var admin = require("firebase-admin");
-// var serviceAccount = require('../borhan-33e53-firebase-adminsdk-rf954-937a2c2dd8.json');
-// const Expert_User = require("../models/Expert_User");
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   // databaseURL: Config.get("db.firebaseDatabaseUrl"),
-// });
-// const privateVapidKey = ;
+const thawaniHeader = {
+  headers: { "thawani-api-key": APP_CONSTANTS.thwani.testing_secret_key },
+};
 
-// Replace with your email
-// webpush.setVapidDetails('mailto:test.seraphic15@gmail.com', 'BKjkBjs0NF8cLaPAYNKFWiGSBcau-q3poapqeXZhbPUfBacozebEplWJBFIes8FioqhMbdpIzYmUzxTdgdrLxXk','_7Xt1bP-K_ckzykka6TX536RB6pX0v8i0SeaLO7W-iw');
 module.exports = {
   sendNotificaton: async (req, res) => {
     const subscription = await registration.pushManager.subscribe({
@@ -219,7 +209,6 @@ module.exports = {
         total;
       let filter = {};
       if (req.body.sortBy == "1") {
-       
         if (req.body.category !== "" && req.body.practiceArea === "") {
           expert = await expertUser
             .find({
@@ -263,37 +252,32 @@ module.exports = {
             .sort({ "rating.avgRating": -1 })
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
-        }
-        else if(req.body.search){
-         
+        } else if (req.body.search) {
           filter["$or"] = [
             { firstName: { $regex: req.body.search, $options: "i" } },
           ];
-        let allExportDatas = await expertUser
-          .find({ isApprovedByAdmin: true })
-          .populate("practiceArea")
-          .populate("category")
-          .populate(payload)
-          .populate({ path: "userId", match: filter })
-          .sort({ "rating.avgRating": -1 });
-        let expertArray = [];
-        allExportDatas.map((ele) => {
-          if (ele.userId !== null) {
-            expertArray.push(ele);
+          let allExportDatas = await expertUser
+            .find({ isApprovedByAdmin: true })
+            .populate("practiceArea")
+            .populate("category")
+            .populate(payload)
+            .populate({ path: "userId", match: filter })
+            .sort({ "rating.avgRating": -1 });
+          let expertArray = [];
+          allExportDatas.map((ele) => {
+            if (ele.userId !== null) {
+              expertArray.push(ele);
+            }
+          });
+          let i;
+          for (
+            i = parseInt((req.body.page - 1) * req.body.limit);
+            i < parseInt((req.body.page - 1) * req.body.limit) + req.body.limit;
+            i++
+          ) {
+            if (expertArray[i] != null) expert.push(expertArray[i]);
           }
-        });
-        let i;
-        for (
-          i = parseInt((req.body.page - 1) * req.body.limit);
-          i < parseInt((req.body.page - 1) * req.body.limit) + req.body.limit;
-          i++
-        ) {
-          if (expertArray[i] != null) expert.push(expertArray[i]);
-        }
-      
-
-      } 
-        else {
+        } else {
           expert = await expertUser
             .find({
               isApprovedByAdmin: true,
@@ -307,7 +291,6 @@ module.exports = {
             .skip(parseInt((req.body.page - 1) * req.body.limit))
             .limit(parseInt(req.body.limit));
         }
-       
       } else if (req.body.sortBy == "2") {
         if (req.body.category !== "" && req.body.practiceArea === "") {
           expert = await expertUser
@@ -507,7 +490,7 @@ module.exports = {
           }
         });
       }
-      console.log("this is filter data" ,tempobj )
+      console.log("this is filter data", tempobj);
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -814,6 +797,7 @@ module.exports = {
         appointDateandTime: Joi.date().required(),
         status: Joi.string().allow(""),
         practiceArea: Joi.string().length(24).required(),
+        isPaid: Joi.boolean().required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let start = req.body.startAppointmentTime,
@@ -1136,7 +1120,7 @@ module.exports = {
         practiceArea: Joi.string().length(24).required(),
         appointmentId: Joi.string(),
         isRescheduled: Joi.boolean(),
-        previousTimeSlot:Joi.string().allow("")
+        previousTimeSlot: Joi.string().allow(""),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let start = req.body.startAppointmentTime,
@@ -1148,20 +1132,26 @@ module.exports = {
         },
       });
       payload.userId = userId;
-      const timeSlot=  await expertTimeAvailable.findOneAndUpdate({ _id: req.body.previousTimeSlot },{$set: { isAvailable: true }})
-      console.log("this is data" , timeSlot)
+      const timeSlot = await expertTimeAvailable.findOneAndUpdate(
+        { _id: req.body.previousTimeSlot },
+        { $set: { isAvailable: true } }
+      );
+      console.log("this is data", timeSlot);
       let expert;
       let rescheduledAppointment = await appointment.findByIdAndUpdate(
         req.body.appointmentId,
         payload,
         { new: true }
       );
-      console.log("this is appointment id" , rescheduledAppointment.timeSlotId)
+      console.log("this is appointment id", rescheduledAppointment.timeSlotId);
       if (!rescheduledAppointment) {
         throw Boom.badRequest("cannot find any appointment to reschedule");
       }
-      await expertTimeAvailable.findByIdAndUpdate({ _id: payload.timeSlotId }, { isAvailable: false })
-  
+      await expertTimeAvailable.findByIdAndUpdate(
+        { _id: payload.timeSlotId },
+        { isAvailable: false }
+      );
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1185,9 +1175,9 @@ module.exports = {
         expertDetail.userId &&
         expertDetail.userId.token &&
         expertDetail.userId.token.map((val1) => {
-          val1.deviceToken.map((ele)=>{
+          val1.deviceToken.map((ele) => {
             registrationTokens.push(ele);
-          })
+          });
 
           // registrationTokens.push(val1.deviceToken);
         });
@@ -1273,9 +1263,7 @@ module.exports = {
   },
   getTestimonies: async (req, res) => {
     try {
-      let feedback = await Testimony.find(
-       { isDeleted: false } 
-      ).limit(10);
+      let feedback = await Testimony.find({ isDeleted: false }).limit(10);
 
       universalFunctions.sendSuccess(
         {
@@ -1536,28 +1524,31 @@ module.exports = {
         userId: id,
       };
       let { skip, limit } = req.query;
-      console.log("this is query",req.query)
+      console.log("this is query", req.query);
       const chatappointmentdata = await chatappointment
         .find(payload)
-        .populate({ path: "userId expertId userId" }).skip(parseInt(skip))
+        .populate({ path: "userId expertId userId" })
+        .skip(parseInt(skip))
         .limit(parseInt(limit));
 
-      let count = await chatappointment.count({ payload}).populate({ path: "userId expertId userId" });
+      let count = await chatappointment
+        .count({ payload })
+        .populate({ path: "userId expertId userId" });
 
       if (!chatappointmentdata) {
         throw Boom.badRequest("invalid id or token");
       }
-      
+
       let tempobj = JSON.parse(JSON.stringify(chatappointmentdata));
       await universalFunctions.asyncForEach(tempobj, async (e, index) => {
-        let expertData = await User.findOne({ _id: e.expertId.userId })
+        let expertData = await User.findOne({ _id: e.expertId.userId });
         e.expertData = expertData;
       });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Successfull get appointment",
-          data: {tempobj,count}
+          data: { tempobj, count },
         },
         res
       );
@@ -1776,19 +1767,591 @@ module.exports = {
   },
   getNewsLetter: async (req, res) => {
     try {
-      let {limit,skip}=req.query;
-      console.log("this is payload" ,req.query)
-      let newLetterData = await newLatter.find(
-       { isDeleted: false } 
-      )
-      .skip(parseInt(skip))
-      .limit(parseInt(limit));
-    let count = await newLatter.count({ isDeleted: false });
+      let { limit, skip } = req.query;
+      console.log("this is payload", req.query);
+      let newLetterData = await newLatter
+        .find({ isDeleted: false })
+        .skip(parseInt(skip))
+        .limit(parseInt(limit));
+      let count = await newLatter.count({ isDeleted: false });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "All newLetterData ",
-          data: {newLetterData,count: count}
+          data: { newLetterData, count: count },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+  // payment gateway apis
+  addUserSubscription: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        subscriptionId: Joi.string().length(24).required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+      let customerId = req.user.customerId;
+
+      if (!req.user.customerId) {
+        const thawaniCustomer = await axios.post(
+          `${APP_CONSTANTS.thwani.testing_url}/api/v1/customers`,
+          { client_customer_id: req.user.id },
+          thawaniHeader
+        );
+
+        await User.findOneAndUpdate(
+          { _id: req.user.id },
+          { customerId: thawaniCustomer.data.data.id }
+        );
+        customerId = thawaniCustomer.data.data.id;
+      }
+
+      let subscriptionData = await SubscriptionType.findOne({
+        _id: payload.subscriptionId,
+      });
+      if (!subscriptionData) {
+        throw Boom.badRequest("No such subscription type");
+      }
+      // create planData
+
+      let userPlanData = await UserPlans.create({
+        userId: req.user.id,
+        subscriptionId: payload.subscriptionId,
+        isActive: false,
+        paymentType: "subscription",
+        planName: subscriptionData.planName,
+        planBoughtAt: moment.utc().format(),
+        expiryDate: moment()
+          .add(subscriptionData.planDuration, "months")
+          .utc()
+          .format(),
+        walletBalance: subscriptionData.walletAmount,
+        walletAmountReceived: subscriptionData.walletAmount,
+      });
+
+      const dataToSend = {
+        client_reference_id: req.user.id,
+        mode: "payment",
+        products: [
+          {
+            name: subscriptionData.planName,
+            quantity: 1,
+            unit_amount:
+              (subscriptionData.planAmount - subscriptionData.discountValue) *
+              1000,
+          },
+        ],
+        success_url: `http://localhost:3000/paymentSuccess/${userPlanData._id}/subscription`,
+        cancel_url: `http://localhost:3000/paymentCanceled/${userPlanData._id}/subscription`,
+        customer_id: customerId,
+      };
+
+      const thawaniSession = await axios.post(
+        `${APP_CONSTANTS.thwani.testing_url}/api/v1/checkout/session`,
+        dataToSend,
+        thawaniHeader
+      );
+
+      await UserPlans.updateOne(
+        { _id: userPlanData._id },
+        {
+          paymentStatus: thawaniSession.data.data.payment_status,
+          sessionId: thawaniSession.data.data.session_id,
+          amountPaid: thawaniSession.data.data.total_amount / 1000,
+        }
+      );
+
+      let redirectUrl =
+        APP_CONSTANTS.thwani.testing_url +
+        "/pay/" +
+        thawaniSession.data.data.session_id +
+        "?key=" +
+        APP_CONSTANTS.thwani.testing_publishable_key;
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: redirectUrl,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  updateUserSubscription: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        transactionId: Joi.string().length(24).required(),
+        paymentType: Joi.string(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+      console.log(payload);
+
+      const transactionData = await UserPlans.findOne({
+        _id: payload.transactionId,
+      }).select({ sessionId: 1 });
+
+      if (!transactionData) {
+        throw Boom.badRequest("No Such User Plan");
+      }
+
+      const thawaniSession = await axios.get(
+        `${APP_CONSTANTS.thwani.testing_url}/api/v1/checkout/session/${transactionData.sessionId}`,
+
+        thawaniHeader
+      );
+
+      await UserTransactions.create({
+        userId: req.user.id,
+        paymentStatus: thawaniSession.data.data.payment_status,
+        amountPaid: thawaniSession.data.data.total_amount / 1000,
+        planName: thawaniSession.data.data.products[0].name,
+        sessionId: thawaniSession.data.data.session_id,
+        date: moment.utc().format(),
+        type: APP_CONSTANTS.userTransactionType.credit,
+        description: `${
+          thawaniSession.data.data.products[0].name.charAt(0).toUpperCase() +
+          thawaniSession.data.data.products[0].name.slice(1)
+        } Subscription Plan Bought`,
+      });
+
+      await UserPlans.findOneAndUpdate(
+        {
+          _id: transactionData._id,
+        },
+        {
+          paymentStatus: thawaniSession.data.data.payment_status,
+          isActive:
+            thawaniSession.data.data.payment_status === "paid" ? true : false,
+        }
+      );
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: {},
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  getExpertPricingDetailsAccordingToCallType: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        expertId: Joi.string().length(24).required(),
+        callType: Joi.string().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+
+      let expertData = await expertUser
+        .findOne({ _id: payload.expertId })
+        .select({ priceDetails: 1, _id: 0 });
+
+      if (!expertData) {
+        throw Boom.notFound("Expert Not Found");
+      }
+      console.log(expertData);
+
+      if (!expertData.priceDetails || expertData.priceDetails.length <= 0) {
+        throw Boom.badRequest("Expert Has Not Set His Price Details Yet");
+      }
+
+      expertData = JSON.parse(JSON.stringify(expertData));
+
+      let callTypeData = expertData.priceDetails.find((c) => {
+        return c.callType === payload.callType;
+      });
+      let walletBalance = await UserPlans.find({
+        userId: req.user.id,
+        isActive: true,
+      })
+        .select({ walletBalance: 1 })
+        .sort({ createdAt: -1 });
+
+      let totalWalletBalance = 0;
+      if (walletBalance && walletBalance.length > 0) {
+        for (let i = 0; i < walletBalance.length; i++) {
+          totalWalletBalance += walletBalance[i].walletBalance;
+        }
+      }
+
+      let balanceToSend = 0;
+      if (
+        callTypeData.pricePerMinuteOrSms !== 0 &&
+        totalWalletBalance &&
+        totalWalletBalance > 0
+      ) {
+        balanceToSend = Math.ceil(
+          totalWalletBalance /
+            (callTypeData.pricePerMinuteOrSms -
+              callTypeData.discountPerMinuteOrSms)
+        );
+      } else if (
+        callTypeData.pricePerMinuteOrSms === 0 &&
+        totalWalletBalance &&
+        totalWalletBalance > 0
+      ) {
+        balanceToSend = totalWalletBalance;
+      }
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: { balanceToSend },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  getAmountCharged: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        expertId: Joi.string().length(24).required(),
+        callType: Joi.string().required(),
+        callMinutes: Joi.number().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+
+      let expertData = await expertUser
+        .findOne({ _id: payload.expertId })
+        .select({ priceDetails: 1, _id: 0 });
+
+      if (!expertData) {
+        throw Boom.notFound("Expert Not Found");
+      }
+
+      expertData = JSON.parse(JSON.stringify(expertData));
+
+      let callTypeData = expertData.priceDetails.find((c) => {
+        return c.callType === payload.callType;
+      });
+
+      let amountCharged =
+        payload.callMinutes *
+        (callTypeData.pricePerMinuteOrSms -
+          callTypeData.discountPerMinuteOrSms);
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: { amountCharged },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  amountToPayForAppointmentBooking: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        amount: Joi.number().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+      console.log(payload);
+
+      let walletBalance = await UserPlans.find({
+        userId: req.user.id,
+        isActive: true,
+      })
+        .select({ walletBalance: 1 })
+        .sort({ createdAt: 1 });
+      let totalWalletBalance = 0;
+      if (walletBalance && walletBalance.length > 0) {
+        for (let i = 0; i < walletBalance.length; i++) {
+          totalWalletBalance += walletBalance[i].walletBalance;
+        }
+      }
+      let amountToPay = 0;
+      if (totalWalletBalance > payload.amount) {
+        await UserPlans.findOneAndUpdate(
+          {
+            _id: walletBalance[0]._id,
+          },
+          { walletBalance: walletBalance.walletBalance - payload.amount }
+        );
+        amountToPay = 0;
+      } else if (
+        totalWalletBalance < payload.amount &&
+        totalWalletBalance > 0
+      ) {
+        amountToPay = payload.amount - totalWalletBalance;
+        await UserPlans.updateMany(
+          {
+            userId: req.user.id,
+            isActive: true,
+          },
+          { walletBalance: 0, isActive: false }
+        );
+      } else {
+        amountToPay = payload.amount;
+      }
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: { amountToPay },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  addUserOneTimePayment: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        amount: Joi.number().required(),
+        planName: Joi.string().required(),
+        successUrl: Joi.string().required(),
+        appointmentId: Joi.string().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+      let customerId = req.user.customerId;
+
+      if (!req.user.customerId) {
+        const thawaniCustomer = await axios.post(
+          `${APP_CONSTANTS.thwani.testing_url}/api/v1/customers`,
+          { client_customer_id: req.user.id },
+          thawaniHeader
+        );
+
+        await User.findOneAndUpdate(
+          { _id: req.user.id },
+          { customerId: thawaniCustomer.data.data.id }
+        );
+        customerId = thawaniCustomer.data.data.id;
+      }
+
+      console.log(payload);
+      // create planData
+
+      let userPlanData = await UserPlans.create({
+        userId: req.user.id,
+        isActive: false,
+        paymentType: "oneTimePayment",
+        planName: payload.planName,
+        planBoughtAt: moment.utc().format(),
+      });
+
+      const dataToSend = {
+        client_reference_id: req.user.id,
+        mode: "payment",
+        products: [
+          {
+            name: payload.planName,
+            quantity: 1,
+            unit_amount: payload.amount * 1000,
+          },
+        ],
+        success_url: `${payload.successUrl}?planId=${userPlanData._id}&appointmentId=${payload.appointmentId}`,
+        cancel_url: `${payload.successUrl}?planId=${userPlanData._id}&appointmentId=${payload.appointmentId}`,
+        customer_id: customerId,
+      };
+
+      console.log(dataToSend);
+
+      const thawaniSession = await axios.post(
+        `${APP_CONSTANTS.thwani.testing_url}/api/v1/checkout/session`,
+        dataToSend,
+        thawaniHeader
+      );
+
+      await UserPlans.updateOne(
+        { _id: userPlanData._id },
+        {
+          paymentStatus: thawaniSession.data.data.payment_status,
+          sessionId: thawaniSession.data.data.session_id,
+          amountPaid: thawaniSession.data.data.total_amount / 1000,
+        }
+      );
+
+      let redirectUrl =
+        APP_CONSTANTS.thwani.testing_url +
+        "/pay/" +
+        thawaniSession.data.data.session_id +
+        "?key=" +
+        APP_CONSTANTS.thwani.testing_publishable_key;
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: redirectUrl,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  updateUserOneTimePayment: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        planId: Joi.string().required(),
+
+        appointmentId: Joi.string().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+
+      const transactionData = await UserPlans.findOne({
+        _id: payload.planId,
+      }).select({ sessionId: 1 });
+
+      if (!transactionData) {
+        throw Boom.badRequest("No Such User Plan");
+      }
+
+      const thawaniSession = await axios.get(
+        `${APP_CONSTANTS.thwani.testing_url}/api/v1/checkout/session/${transactionData.sessionId}`,
+
+        thawaniHeader
+      );
+
+      await UserTransactions.create({
+        userId: req.user.id,
+        paymentStatus: thawaniSession.data.data.payment_status,
+        amountPaid: thawaniSession.data.data.total_amount / 1000,
+        planName: thawaniSession.data.data.products[0].name,
+        sessionId: thawaniSession.data.data.session_id,
+        date: moment.utc().format(),
+        type: APP_CONSTANTS.userTransactionType.credit,
+        description: `A One-time Payment Was Made For ${
+          thawaniSession.data.data.products[0].name.match(/\d+/g)[0]
+        } min ${
+          thawaniSession.data.data.products[0].name.match(/[a-zA-Z]+/g)[0]
+        } Session`,
+      });
+
+      await appointment.findOneAndUpdate(
+        { _id: payload.appointmentId },
+        { isPaid: true }
+      );
+
+      await UserPlans.findOneAndUpdate(
+        {
+          _id: transactionData._id,
+        },
+        {
+          paymentStatus: thawaniSession.data.data.payment_status,
+        }
+      );
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: {
+            isPaid:
+              thawaniSession.data.data.payment_status === "paid" ? true : false,
+          },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  getUserTransactionDetails: async (req, res) => {
+    try {
+      let { limit = 10, skip } = req.query;
+
+      const transactionData = await UserTransactions.find({
+        userId: req.user.id,
+      })
+
+        .sort({ createdAt: -1 })
+        .skip(parseInt(skip))
+        .limit(parseInt(limit));
+
+      const walletData = await UserPlans.find({
+        userId: req.user.id,
+        isActive: true,
+      }).select({ walletBalance: 1 });
+
+      let totalWalletBalance = 0;
+      if (walletData.length > 0) {
+        for (let i = 0; i < walletData.length; i++) {
+          totalWalletBalance += walletData[i].walletBalance;
+        }
+      }
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: { transactionData, totalWalletBalance },
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  getUserPaymentMethodDetails: async (req, res) => {
+    try {
+      let allDetails = [];
+      const thawaniSession = await axios.get(
+        `${APP_CONSTANTS.thwani.testing_url}/api/v1/payment_methods?customer_id=${req.user.customerId}`,
+
+        thawaniHeader
+      );
+      allDetails.push(thawaniSession.data.data);
+      allDetails = allDetails.flat();
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: allDetails,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
+
+  getUserAllActivePlans: async (req, res) => {
+    try {
+      const transactionData = await UserPlans.find({
+        userId: req.user.id,
+        isActive: true,
+      });
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: transactionData,
         },
         res
       );

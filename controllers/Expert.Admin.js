@@ -540,7 +540,7 @@ module.exports = {
         planAmount: Joi.number().required(),
         walletAmount: Joi.number().required(),
         discountValue: Joi.number(),
-        planDuration: Joi.string().required(),
+        planDuration: Joi.number().required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
@@ -603,10 +603,19 @@ module.exports = {
         planAmount: Joi.number().required(),
         walletAmount: Joi.number().required(),
         discountValue: Joi.number(),
-        planDuration: Joi.string().required(),
+        planDuration: Joi.number().required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
-
+      let subscriptionExist = await SubscriptionType.findOne({
+        planName: req.body.planName,
+        isDeleted: false,
+        _id: { $ne: payload.id },
+      });
+      if (subscriptionExist) {
+        throw Boom.badRequest(
+          "Subscription Type With Same Name Already Exists"
+        );
+      }
       let subscriptionData = await SubscriptionType.findOneAndUpdate(
         { _id: req.body.id, isDeleted: false },
         {

@@ -7,6 +7,8 @@ const authUser2 = require("../middleware/authuser2");
 const WebsiteController = require("../controllers/WebsitePanel.Controller");
 const BorhanController = require("../controllers/BorhanUser.Admin");
 const AppController = require("../controllers/App.Controller");
+const AdminController = require("../controllers/Expert.Admin");
+const ExpertController = require("../controllers/ExpertPanel.Controllers");
 // router
 //   .route("/getBorhanUsers")
 //   .post(isAdmin.isAdmin, BorhanController.showBorhanUsers);
@@ -102,7 +104,54 @@ router.route("/getNewsLetter").get(
   // authUser.checkAuth,
   WebsiteController.getNewsLetter
 );
-
+// website payment gateway routes started
 router.route("/createSession").post(AppController.createSession);
+router
+  .route("/getAllSubscriptionTypes")
+  .get(AdminController.getSubscriptionTypeByAdmin);
+
+router
+  .route("/addUserSubscription")
+  .post(authUser.checkAuth, WebsiteController.addUserSubscription);
+
+router
+  .route("/updateUserSubscription")
+  .post(authUser.checkAuth, WebsiteController.updateUserSubscription);
+
+router
+  .route("/getExpertPriceDetails")
+  .get(authUser.checkAuth, ExpertController.getExpertPriceDetails);
+router
+  .route("/getExpertPricingDetailsAccordingToCallType")
+  .post(
+    authUser.checkAuth,
+    WebsiteController.getExpertPricingDetailsAccordingToCallType
+  );
+router
+  .route("/getAmountCharged")
+  .post(authUser.checkAuth, WebsiteController.getAmountCharged);
+
+router
+  .route("/amountToPayForAppointmentBooking")
+  .post(authUser.checkAuth, WebsiteController.amountToPayForAppointmentBooking);
+
+router
+  .route("/addUserOneTimePayment")
+  .post(authUser.checkAuth, WebsiteController.addUserOneTimePayment);
+
+router
+  .route("/updateUserOneTimePayment")
+  .post(authUser.checkAuth, WebsiteController.updateUserOneTimePayment);
+
+router
+  .route("/getUserWalletDetails")
+  .get(authUser.checkAuth, WebsiteController.getUserTransactionDetails);
+
+router
+  .route("/getUserPaymentMethodDetails")
+  .get(authUser.checkAuth, WebsiteController.getUserPaymentMethodDetails);
+router
+  .route("/getUserAllActivePlans")
+  .get(authUser.checkAuth, WebsiteController.getUserAllActivePlans);
 
 module.exports = router;

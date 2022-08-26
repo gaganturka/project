@@ -2335,8 +2335,7 @@ module.exports = {
       );
 
       const thawaniSessionDetails = await axios.get(
-        `${APP_CONSTANTS.thwani.testing_url}/checkout/session/checkout_8wGLGi9SSPGDT5Fotj9hSUtjbbaaiG5a3oiWHGp3OwXxH2UNTY`,
-
+        `${APP_CONSTANTS.thwani.testing_url}/api/v1/checkout/session/checkout_8wGLGi9SSPGDT5Fotj9hSUtjbbaaiG5a3oiWHGp3OwXxH2UNTY`,
         thawaniHeader
       );
 

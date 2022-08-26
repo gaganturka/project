@@ -61,6 +61,10 @@ const AppointmentSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  isPaid: {
+    type: Boolean,
+    default: false,
+  },
   isRejectedByUser: {
     type: Boolean,
     default: false,

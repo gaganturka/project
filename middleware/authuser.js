@@ -23,10 +23,11 @@ const checkAuth = async (req, res, next) => {
       if (!user) {
         throw Boom.unauthorized(responseMessages.USER_NOT_FOUND);
       }
-      let userInfo = {
-        id: user._id,
-      };
-      req.user = userInfo;
+      // let userInfo = {
+      //   id: user._id,
+      // };
+      req.user = user;
+      req.user.id = user._id;
       next();
     } catch (error) {
       return universalFunctions.sendError(error, res);

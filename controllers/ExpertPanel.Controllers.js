@@ -17,13 +17,11 @@ const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const { v4: uuidv4 } = require("uuid");
 // const { admin } =require("../utils/pushNotification");
 const VoiceGrant = AccessToken.VoiceGrant;
-// const ThawaniClient = require("thawani-node");
-
-// const api = new ThawaniClient({
-//   secretKey: APP_CONSTANTS.thwani.testing_secret_key,
-//   publishableKey: APP_CONSTANTS.thwani.testing_publishable_key,
-//   dev: true,
-// });
+const asyncForEach = async (array, callback) => {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+};
 const thawaniHeader = {
   headers: { "thawani-api-key": APP_CONSTANTS.thwani.testing_secret_key },
 };
@@ -55,20 +53,13 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let mobileNo = req.body.mobileNo;
+      console.log(mobileNo);
       let userLogin = await User.findOne({
         mobileNo: mobileNo,
         role: APP_CONSTANTS.role.expert,
       });
       if (!userLogin) {
         throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
-        // universalFunctions.sendError(
-        //   {
-        //     statusCode: 404,
-        //     message: responseMessages.USER_NOT_FOUND,
-        //   },
-        //   res
-        // );
-        // throw Boom.badRequest(responseMessages.USER_NOT_FOUND);
       }
       let createOtp = Math.floor(100000 + Math.random() * 900000) + "";
       let isExits = await otpModel.findOne({ mobileNo: mobileNo });
@@ -126,23 +117,6 @@ module.exports = {
       let newToken = [
         { deviceType: req.body.deviceType, deviceToken: req.body.token },
       ];
-
-      // if (
-      //   !users.customerId ||
-      //   users.customerId === "" ||
-      //   users.customerId === null
-      // ) {
-      //   const thawaniCustomer = await axios.post(
-      //     `${APP_CONSTANTS.thwani.testing_url}/customers`,
-      //     { client_customer_id: user._id },
-      //     thawaniHeader
-      //   );
-  
-      //   await User.findOneAndUpdate(
-      //     { _id: user._id },
-      //     { customerId: thawaniCustomer.data.data.id }
-      //   );
-      // }
 
       await User.findByIdAndUpdate(
         { _id: users._id },
@@ -1197,12 +1171,26 @@ module.exports = {
         ),
       };
       await universalFunctions.validateRequestPayload(req.body, res, schema);
+      // console.log(req.body.priceDetails)
+      await asyncForEach(req.body.priceDetails, async (e) => {
+        if (
+          e.discountPerMinuteOrSms &&
+          e.pricePerMinuteOrSms &&
+          e.pricePerMinuteOrSms > 0 &&
+          e.discountPerMinuteOrSms >= e.pricePerMinuteOrSms
+        ) {
+          throw Boom.badRequest("Price Must be greater than discount value");
+        } else if (e.pricePerMinuteOrSms === 0) {
+          e.discountPerMinuteOrSms = 0;
+        }
+      });
+      
 
       let expertData = await expertUser.findOneAndUpdate(
         { _id: req.user.expertId },
         { priceDetails: req.body.priceDetails }
       );
-      console.log("expertDatahfjhfjfhfhfjfhf", expertData);
+
       if (!expertData) {
         throw Boom.notFound("Expert Not Found");
       }
@@ -1215,18 +1203,21 @@ module.exports = {
         res
       );
     } catch (err) {
+      console.log(err);
       return universalFunctions.sendError(err, res);
     }
   },
   getExpertPriceDetails: async (req, res) => {
     try {
+      let { expertId } = req.query;
       let expertData = await expertUser
-        .findOne({ _id: req.user.expertId })
+        .findOne({ _id: req.user.expertId ? req.user.expertId : expertId })
         .select({ priceDetails: 1, _id: 0 });
 
       if (!expertData) {
         throw Boom.notFound("Expert Not Found");
       }
+
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,

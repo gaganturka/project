@@ -28,8 +28,6 @@ const appointmentStatus = {
   rejected: "rejected",
 };
 
-
-
 const chatRoomStatus = {
   cancelled: "cancelled",
   confirmed: "confirmed",
@@ -52,7 +50,7 @@ const pushNotificationMessage = {
 const thwani = {
   testing_secret_key: "rRQ26GcsZzoEhbrP2HZvLYDbn9C9et",
   testing_publishable_key: "HGvTMLDssJghr9tlN9gr4DVYt0qyBy",
-  testing_url: "https://uatcheckout.thawani.om/api/v1",
+  testing_url: "https://uatcheckout.thawani.om",
 };
 
 const paymentType = {
@@ -66,9 +64,25 @@ const subscriptionType = {
   platinum: { name: "platinum", duration: "3months", value: 1700 },
 };
 
+const userTransactionType = {
+  credit: "credit",
+  debit: "debit",
+};
+
+const userPlanPaymentType = {
+  subscription: "subscription",
+  oneTimePayment: "oneTimePayment",
+};
+
 const currency = {
   display: "$",
   value: "USD",
+};
+
+const userPlanPaymentStatus = {
+  cancelled: "cancelled",
+  unpaid: "unpaid",
+  paid: "paid",
 };
 
 const paymentStatus = {
@@ -104,6 +118,8 @@ let callTimings = {
   fullHour: { display: "1 Hour", value: "60minutes" },
 };
 
+
+
 module.exports = {
   role,
   activityStatus,
@@ -122,5 +138,8 @@ module.exports = {
   emailFrom,
   contactUs,
   callType,
-  callTimings
+  callTimings,
+  userTransactionType,
+  userPlanPaymentType,
+  userPlanPaymentStatus
 };

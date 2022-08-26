@@ -93,7 +93,7 @@ module.exports = {
       let user = await User.findOne({
         $or: [{ mobileNo: req.body.mobileNo }, { email: req.body.email }],
       }).populate("userData.data");
-    console.log("this is user" , user)
+      console.log("this is user", user);
       if (user !== null) {
         throw Boom.badRequest("user already exists");
       }
@@ -127,12 +127,12 @@ module.exports = {
         ],
       });
 
-      console.log("this is user data" , user)
+      console.log("this is user data", user);
 
       await borhanUser.findByIdAndUpdate(borhanuser._id, { userId: user._id });
 
       const thawaniCustomer = await axios.post(
-        `${APP_CONSTANTS.thwani.testing_url}/customers`,
+        `${APP_CONSTANTS.thwani.testing_url}/api/v1/customers`,
         { client_customer_id: user._id },
         thawaniHeader
       );
@@ -229,7 +229,7 @@ module.exports = {
 
       await expertUser.findByIdAndUpdate(expertUserr._id, { userId: user._id });
       const thawaniCustomer = await axios.post(
-        `${APP_CONSTANTS.thwani.testing_url}/customers`,
+        `${APP_CONSTANTS.thwani.testing_url}/api/v1/customers`,
         { client_customer_id: user._id },
         thawaniHeader
       );
@@ -272,23 +272,6 @@ module.exports = {
           let borhanUserData = await borhanUser
             .findOne({ userId: user._id })
             .select({ customerId: 1 });
-
-          if (
-            !user.customerId ||
-            user.customerId === "" ||
-            user.customerId === null
-          ) {
-            // const thawaniCustomer = await axios.post(
-            //   `${APP_CONSTANTS.thwani.testing_url}/customers`,
-            //   { client_customer_id: user._id },
-            //   thawaniHeader
-            // );
-      
-            // await User.findOneAndUpdate(
-            //   { _id: user._id },
-            //   { customerId: thawaniCustomer.data.data.id }
-            // );
-          }
 
           let newToken = [
             {
