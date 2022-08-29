@@ -154,4 +154,8 @@ router
   .route("/getUserAllActivePlans")
   .get(authUser.checkAuth, WebsiteController.getUserAllActivePlans);
 
+
+router
+  .route("/getExpertChatCharges")
+  .post(authUser.checkAuth, WebsiteController.getExpertChatCharges);
 module.exports = router;

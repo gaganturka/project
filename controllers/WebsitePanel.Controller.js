@@ -1918,10 +1918,9 @@ module.exports = {
         sessionId: thawaniSession.data.data.session_id,
         date: moment.utc().format(),
         type: APP_CONSTANTS.userTransactionType.credit,
-        description: `${
-          thawaniSession.data.data.products[0].name.charAt(0).toUpperCase() +
+        description: `${thawaniSession.data.data.products[0].name.charAt(0).toUpperCase() +
           thawaniSession.data.data.products[0].name.slice(1)
-        } Subscription Plan Bought`,
+          } Subscription Plan Bought`,
       });
 
       await UserPlans.findOneAndUpdate(
@@ -1997,8 +1996,8 @@ module.exports = {
       ) {
         balanceToSend = Math.ceil(
           totalWalletBalance /
-            (callTypeData.pricePerMinuteOrSms -
-              callTypeData.discountPerMinuteOrSms)
+          (callTypeData.pricePerMinuteOrSms -
+            callTypeData.discountPerMinuteOrSms)
         );
       } else if (
         callTypeData.pricePerMinuteOrSms === 0 &&
@@ -2086,13 +2085,8 @@ module.exports = {
       }
       let amountToPay = 0;
       if (totalWalletBalance > payload.amount) {
-        await UserPlans.findOneAndUpdate(
-          {
-            _id: walletBalance[0]._id,
-          },
-          { walletBalance: walletBalance[0].walletBalance - payload.amount }
-        );
 
+        await deductMoneyFromMultipleWallets(req.user.id, payload.amount)
         await UserTransactions.create({
           userId: req.user.id,
           paymentStatus: "paid",
@@ -2100,7 +2094,7 @@ module.exports = {
 
           date: moment.utc().format(),
           type: APP_CONSTANTS.userTransactionType.debit,
-          description: `${payload.amount} was deducted from your wallet`,
+          description: `${payload.amount} OMR Was Deducted From Your Wallet`,
         });
         amountToPay = 0;
       } else if (
@@ -2108,22 +2102,8 @@ module.exports = {
         totalWalletBalance > 0
       ) {
         amountToPay = payload.amount - totalWalletBalance;
-        await UserPlans.updateMany(
-          {
-            userId: req.user.id,
-            isActive: true,
-          },
-          { walletBalance: 0, isActive: false }
-        );
-        await UserTransactions.create({
-          userId: req.user.id,
-          paymentStatus: "paid",
-          amountPaid: totalWalletBalance,
 
-          date: moment.utc().format(),
-          type: APP_CONSTANTS.userTransactionType.debit,
-          description: `${payload.amount} was deducted from your wallet`,
-        });
+
       } else {
         amountToPay = payload.amount;
       }
@@ -2148,6 +2128,7 @@ module.exports = {
         planName: Joi.string().required(),
         successUrl: Joi.string().required(),
         appointmentId: Joi.string().required(),
+        amountInUpdateOtpApi: Joi.number().required()
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
@@ -2188,8 +2169,8 @@ module.exports = {
             unit_amount: payload.amount * 1000,
           },
         ],
-        success_url: `${payload.successUrl}?planId=${userPlanData._id}&appointmentId=${payload.appointmentId}`,
-        cancel_url: `${payload.successUrl}?planId=${userPlanData._id}&appointmentId=${payload.appointmentId}`,
+        success_url: `${payload.successUrl}?planId=${userPlanData._id}&appointmentId=${payload.appointmentId}&amount=${payload.amountInUpdateOtpApi}`,
+        cancel_url: `${payload.successUrl}?planId=${userPlanData._id}&appointmentId=${payload.appointmentId}&amount=${payload.amountInUpdateOtpApi}`,
         customer_id: customerId,
       };
 
@@ -2234,7 +2215,7 @@ module.exports = {
     try {
       const schema = Joi.object({
         planId: Joi.string().required(),
-
+        amount: Joi.number().required(),
         appointmentId: Joi.string().required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
@@ -2254,6 +2235,38 @@ module.exports = {
         thawaniHeader
       );
 
+      let walletBalance = await UserPlans.find({
+        userId: req.user.id,
+        isActive: true,
+      })
+        .select({ walletBalance: 1 })
+        .sort({ createdAt: 1 });
+      let totalWalletBalance = 0;
+      if (walletBalance && walletBalance.length > 0) {
+        for (let i = 0; i < walletBalance.length; i++) {
+          totalWalletBalance += walletBalance[i].walletBalance;
+        }
+      }
+      if (totalWalletBalance > 0 && payload.amount !== totalWalletBalance) {
+        if (thawaniSession.data.data.payment_status === "paid") {
+          await UserPlans.updateMany(
+            {
+              userId: req.user.id,
+              isActive: true,
+            },
+            { walletBalance: 0, isActive: false }
+          );
+        }
+        await UserTransactions.create({
+          userId: req.user.id,
+          paymentStatus: thawaniSession.data.data.payment_status,
+          amountPaid: totalWalletBalance,
+
+          date: moment.utc().format(),
+          type: APP_CONSTANTS.userTransactionType.debit,
+          description: `${totalWalletBalance} OMR Was Deducted From Your Wallet`,
+        });
+      }
       await UserTransactions.create({
         userId: req.user.id,
         paymentStatus: thawaniSession.data.data.payment_status,
@@ -2262,11 +2275,9 @@ module.exports = {
         sessionId: thawaniSession.data.data.session_id,
         date: moment.utc().format(),
         type: APP_CONSTANTS.userTransactionType.credit,
-        description: `A One-time Payment Was Made For ${
-          thawaniSession.data.data.products[0].name.match(/\d+/g)[0]
-        } min ${
-          thawaniSession.data.data.products[0].name.match(/[a-zA-Z]+/g)[0]
-        } Session`,
+        description: `A One-time Payment Was Made For ${thawaniSession.data.data.products[0].name.match(/\d+/g)[0]
+          } min ${thawaniSession.data.data.products[0].name.match(/[a-zA-Z]+/g)[0]
+          } Session`,
       });
 
       await appointment.findOneAndUpdate(
@@ -2379,4 +2390,72 @@ module.exports = {
       universalFunctions.sendError(error, res);
     }
   },
+
+  getExpertChatCharges: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        expertId: Joi.string().length(24).required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+
+      let expertData = await expertUser
+        .findOne({ _id: payload.expertId })
+        .select({ priceDetails: 1, _id: 0 });
+
+      if (!expertData) {
+        throw Boom.notFound("Expert Not Found");
+      }
+
+      if (!expertData.priceDetails || expertData.priceDetails.length <= 0) {
+        throw Boom.badRequest("Expert Has Not Set His Price Details Yet");
+      }
+
+      expertData = JSON.parse(JSON.stringify(expertData));
+
+      let callTypeData = expertData.priceDetails.find((c) => {
+        return c.callType === "chat";
+      });
+
+      let walletBalance = await UserPlans.find({
+        userId: req.user.id,
+        isActive: true,
+      })
+        .select({ walletBalance: 1 })
+        .sort({ createdAt: 1 });
+      let totalWalletBalance = 0;
+      if (walletBalance && walletBalance.length > 0) {
+        for (let i = 0; i < walletBalance.length; i++) {
+          totalWalletBalance += walletBalance[i].walletBalance;
+        }
+      }
+      let amountToPay = callTypeData.pricePerMinuteOrSms - callTypeData.discountPerMinuteOrSms
+      if (amountToPay > 0 && totalWalletBalance < amountToPay) {
+        throw Boom.badRequest("Insuficient Balance In Your Wallet! To Send SMS Please Buy Membership")
+      }
+
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: amountToPay,
+        },
+        res
+      );
+    } catch (error) {
+      universalFunctions.sendError(error, res);
+    }
+  },
 };
+
+
+const deductMoneyFromMultipleWallets = async (userId, amount) => {
+  try {
+    await UserPlans.findOneAndUpdate(
+      {
+        userId: userId, isActive: true
+      }, { $inc: { walletBalance: -amount } });
+  } catch (err) {
+    throw err
+  }
+}
