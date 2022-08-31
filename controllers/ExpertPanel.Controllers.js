@@ -309,13 +309,13 @@ module.exports = {
       );
 
       const Appointment = await appointmentModel
-        .find({ expertId: id })
+        .find({ expertId: id, isPaid: true })
         .populate({ path: "userId" })
         .skip(parseInt((req.body.page - 1) * req.body.limit))
         .limit(parseInt(req.body.limit))
         .sort({ startAppointmentTime: -1 });
       let count = await appointmentModel
-        .find({ expertId: id })
+        .find({ expertId: id, isPaid: true })
         .countDocuments();
       if (!Appointment) {
         throw Boom.badRequest("invalid id or token");
@@ -371,7 +371,7 @@ module.exports = {
 
       if (filterType == "Pending") {
         data = await appointmentModel
-          .find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending })
+          .find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending, isPaid: true })
           .populate("userId")
           .populate({
             path: "expertId",
@@ -381,7 +381,7 @@ module.exports = {
           .limit(parseInt(req.body.limit))
           .sort({ startAppointmentTime: -1 });
         count = await appointmentModel
-          .find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending })
+          .find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending, isPaid: true })
           .populate("userId")
           .populate({
             path: "expertId",
@@ -394,6 +394,8 @@ module.exports = {
           .find({
             expertId,
             status: APP_CONSTANTS.appointmentStatus.confirmed,
+            isPaid: true,
+
             endAppointmentTime: {
               $gte: now.getTime(),
             },
@@ -410,7 +412,7 @@ module.exports = {
         count = await appointmentModel
           .find({
             expertId,
-            status: APP_CONSTANTS.appointmentStatus.confirmed,
+            status: APP_CONSTANTS.appointmentStatus.confirmed, isPaid: true,
             endAppointmentTime: {
               $gte: now.getTime(),
             },
@@ -420,7 +422,7 @@ module.exports = {
         data = await appointmentModel
           .find({
             expertId,
-            status: APP_CONSTANTS.appointmentStatus.cancelled,
+            status: APP_CONSTANTS.appointmentStatus.cancelled, isPaid: true,
           })
           .populate("userId")
           .populate({
@@ -434,14 +436,14 @@ module.exports = {
         count = await appointmentModel
           .find({
             expertId,
-            status: APP_CONSTANTS.appointmentStatus.cancelled,
+            status: APP_CONSTANTS.appointmentStatus.cancelled, isPaid: true,
           })
           .countDocuments();
       } else if (filterType == "rejected") {
         data = await appointmentModel
           .find({
             expertId,
-            status: APP_CONSTANTS.appointmentStatus.rejected,
+            status: APP_CONSTANTS.appointmentStatus.rejected, isPaid: true,
           })
           .populate("userId")
           .populate({
@@ -455,7 +457,7 @@ module.exports = {
         count = await appointmentModel
           .find({
             expertId,
-            status: APP_CONSTANTS.appointmentStatus.rejected,
+            status: APP_CONSTANTS.appointmentStatus.rejected, isPaid: true,
           })
           .countDocuments();
       }
@@ -959,7 +961,7 @@ module.exports = {
       const expert = await expertUser.findOne({ _id: id }).populate({
         path: "userId",
       });
-      // console.log("hello there", req.user, req.body)
+      console.log("hello there", req.user, req.body)
 
       let reqdAppointment = await appointmentModel
         .findOne({ _id: req.body.appointmentId })
@@ -1064,7 +1066,7 @@ module.exports = {
   getSingleAppointment: async (req, res) => {
     try {
       let appointments = await appointmentModel.findOne({
-        _id: req.body.appointmentId,
+        _id: req.body.appointmentId, isPaid: true
       });
 
       if (!appointments) {
