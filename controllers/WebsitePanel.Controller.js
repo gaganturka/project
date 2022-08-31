@@ -910,7 +910,7 @@ module.exports = {
       // let start=req.body.startAppointmentTime,end= req.body.endAppointmentTime;
       if (filterType == "All") {
         data = await appointment
-          .find({ userId: userId })
+          .find({ userId: userId, isPaid: true })
           .populate("userId")
           .populate({
             path: "expertId",
@@ -921,7 +921,7 @@ module.exports = {
           .sort({ startAppointmentTime: -1 });
         //  expert=await expert.find({_id:data.expertId._id});
         count = await appointment
-          .find({ userId: userId })
+          .find({ userId: userId, isPaid: true })
           .populate("userId")
           .populate({
             path: "expertId",
@@ -933,6 +933,7 @@ module.exports = {
         data = await appointment
           .find({
             userId: userId,
+            isPaid: true,
             status: APP_CONSTANTS.appointmentStatus.confirmed,
             endAppointmentTime: {
               $gte: now.getTime(),
@@ -950,6 +951,7 @@ module.exports = {
         count = await appointment
           .find({
             userId: userId,
+            isPaid: true,
             status: APP_CONSTANTS.appointmentStatus.confirmed,
             endAppointmentTime: {
               $gte: now.getTime(),
@@ -959,7 +961,7 @@ module.exports = {
       } else if (filterType == "Reschedule") {
         let now = new Date();
         data = await appointment
-          .find({ userId: userId, isRescheduled: true })
+          .find({ userId: userId, isRescheduled: true, isPaid: true })
           .populate("userId")
           .populate({
             path: "expertId",
@@ -970,12 +972,13 @@ module.exports = {
           .sort({ startAppointmentTime: -1 });
         //  expert=await expert.find({_id:data.expertId._id});
         count = await appointment
-          .find({ userId: userId, isRescheduled: true })
+          .find({ userId: userId, isRescheduled: true, isPaid: true })
           .countDocuments();
       } else if (filterType == "Completed") {
         data = await appointment
           .find({
             userId: userId,
+            isPaid: true,
             status: APP_CONSTANTS.appointmentStatus.completed,
           })
           .populate("userId")
@@ -989,6 +992,7 @@ module.exports = {
         count = await appointment
           .find({
             userId: userId,
+            isPaid: true,
             status: APP_CONSTANTS.appointmentStatus.completed,
           })
           .countDocuments();
@@ -996,6 +1000,7 @@ module.exports = {
         data = await appointment
           .find({
             userId: userId,
+            isPaid: true,
             status: APP_CONSTANTS.appointmentStatus.cancelled,
           })
           .populate("userId")
@@ -1010,6 +1015,7 @@ module.exports = {
         count = await appointment
           .find({
             userId: userId,
+            isPaid: true,
             status: APP_CONSTANTS.appointmentStatus.cancelled,
           })
           .countDocuments();
@@ -1017,6 +1023,7 @@ module.exports = {
         data = await appointment
           .find({
             userId: userId,
+            isPaid: true,
             status: APP_CONSTANTS.appointmentStatus.rejected,
           })
           .populate("userId")
@@ -1031,6 +1038,7 @@ module.exports = {
         count = await appointment
           .find({
             userId: userId,
+            isPaid: true,
             status: APP_CONSTANTS.appointmentStatus.rejected,
           })
           .countDocuments();
