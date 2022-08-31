@@ -14,6 +14,7 @@ const favExpertModel = require("../models/Fav_Expert");
 const Boom = require("boom");
 const universalFunctions = require("../utils/universalFunctions");
 const { isBuffer } = require("lodash");
+const { PayloadContext } = require("twilio/lib/rest/api/v2010/account/recording/addOnResult/payload");
 
 module.exports = {
   getExpertApprovedByAdmin: async (req, res) => {
@@ -538,29 +539,33 @@ module.exports = {
       const schema = Joi.object({
         planName: Joi.string().required(),
         planAmount: Joi.number().required(),
-        walletAmount: Joi.number().required(),
+        walletAmount: Joi.number(),
         discountValue: Joi.number(),
         planDuration: Joi.number().required(),
+        subscriptionFor: Joi.string().required()
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
       let subscriptionCount = await SubscriptionType.count({
         isDeleted: false,
-        subscriptionFor: "borhanUser",
+        subscriptionFor: req.body.subscriptionFor,
       });
-      if (subscriptionCount >= 3) {
-        throw Boom.badRequest("Max 3 Types Of Subscription Plan is allowed");
+      if (req.body.subscriptionFor === "borhanUser" && subscriptionCount >= 3) {
+        throw Boom.badRequest("Max 3 Types Of Subscription Plans Are Allowed For User");
+      } else if (req.body.subscriptionFor === "borhanExpert" && subscriptionCount >= 1) {
+        throw Boom.badRequest("Max 1 Type Of Subscription Plans Is Allowed For Expert");
       }
       let subscriptionExist = await SubscriptionType.findOne({
         planName: req.body.planName,
         isDeleted: false,
+        subscriptionFor: req.body.subscriptionFor
       });
       if (subscriptionExist) {
         throw Boom.badRequest(
           "Subscription Type With Same Name Already Exists"
         );
       }
-      req.body.subscriptionFor = "borhanUser";
+
       req.body.isDeleted = false;
       await SubscriptionType.create(req.body);
 
@@ -579,7 +584,7 @@ module.exports = {
   getSubscriptionTypeByAdmin: async (req, res) => {
     try {
       let subscriptionData = await SubscriptionType.find({
-        subscriptionFor: "borhanUser",
+
         isDeleted: false,
       });
 
@@ -601,15 +606,17 @@ module.exports = {
         id: Joi.string().required(),
         planName: Joi.string().required(),
         planAmount: Joi.number().required(),
-        walletAmount: Joi.number().required(),
+        walletAmount: Joi.number(),
         discountValue: Joi.number(),
         planDuration: Joi.number().required(),
+        subscriptionFor: Joi.string().required()
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let subscriptionExist = await SubscriptionType.findOne({
         planName: req.body.planName,
         isDeleted: false,
         _id: { $ne: req.body.id },
+        subscriptionFor: req.body.subscriptionFor
       });
       if (subscriptionExist) {
         throw Boom.badRequest(
@@ -624,6 +631,7 @@ module.exports = {
           walletAmount: req.body.walletAmount,
           discountValue: req.body.discountValue,
           planDuration: req.body.planDuration,
+          subscriptionFor: req.body.subscriptionFor
         }
       );
       if (!subscriptionData) {
