@@ -910,9 +910,8 @@ module.exports = {
           message = {
             data: {
               title: "Expert accepted your chat request",
-              body: `your request for chat room with our expert has been ${
-                req.body.messageType == "1" ? "accepted" : "rejected"
-              }`,
+              body: `your request for chat room with our expert has been ${req.body.messageType == "1" ? "accepted" : "rejected"
+                }`,
               type: "addProperty",
               // propertyId: payload.id,
               sound: "default",
@@ -922,9 +921,8 @@ module.exports = {
           message = {
             notification: {
               title: "Expert accepted your chat request",
-              body: `your request for chat room with our expert has been ${
-                req.body.messageType == "1" ? "accepted" : "rejected"
-              }`,
+              body: `your request for chat room with our expert has been ${req.body.messageType == "1" ? "accepted" : "rejected"
+                }`,
               type: "addProperty",
               // propertyId: payload.id,
               sound: "default",
@@ -943,9 +941,8 @@ module.exports = {
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,
-          message: `successfully send ${
-            req.body.messageType == "1" ? "admission" : "rejection"
-          } notification`,
+          message: `successfully send ${req.body.messageType == "1" ? "admission" : "rejection"
+            } notification`,
           // data: firebaseFunction,
         },
         res
@@ -959,9 +956,10 @@ module.exports = {
   twlioVoiceCallExpert: async (req, res) => {
     try {
       let id = req.user.expertId;
-      const expert = await Expert_User.findOne({ _id: id }).populate({
+      const expert = await expertUser.findOne({ _id: id }).populate({
         path: "userId",
       });
+      // console.log("hello there", req.user, req.body)
 
       let reqdAppointment = await appointmentModel
         .findOne({ _id: req.body.appointmentId })
@@ -1184,7 +1182,7 @@ module.exports = {
           e.discountPerMinuteOrSms = 0;
         }
       });
-      
+
 
       let expertData = await expertUser.findOneAndUpdate(
         { _id: req.user.expertId },
