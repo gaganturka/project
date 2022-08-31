@@ -12,7 +12,7 @@ const {
   BorhanUserAdminRoutes,
   ExpertPanelRoutes,
   AppRoutes,
-  
+  FirmRoutes
 } = require("./routes");
 const cookieSession = require("cookie-session");
 const passportSetup = require("./config/passport");
@@ -70,7 +70,7 @@ app.use("/admin", BorhanUserAdminRoutes);
 app.use("/expert", ExpertPanelRoutes);
 app.use("/auth", authRoute);
 app.use("/app", AppRoutes);
-
+app.use("/firm", FirmRoutes);
 app.get("/", (req, res) => {
   res.send("Hello Satyam");
 });
