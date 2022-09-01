@@ -105,7 +105,7 @@ router.route("/getNewsLetter").get(
   WebsiteController.getNewsLetter
 );
 // website payment gateway routes started
-router.route("/createSession").post(AppController.createSession);
+
 router
   .route("/getAllSubscriptionTypes")
   .get(AdminController.getSubscriptionTypeByAdmin);

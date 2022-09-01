@@ -8,7 +8,7 @@ const appointment = require("../models/Appointment");
 const practiceModel = require("../models/Practice_Area");
 const favouriteExport = require("../models/Fav_Expert");
 const UserRequest = require("../models/UserRequests");
-const UserPayment = require("../models/userPayment");
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
@@ -1940,7 +1940,7 @@ module.exports = {
   bookAppointment: async (req, res) => {
     try {
       let userId = req.user.id;
-      let payload = req.body;
+
       const schema = Joi.object({
         timeSlotId: Joi.string().length(24).required(),
         expertId: Joi.string().length(24).required(),
@@ -1956,6 +1956,8 @@ module.exports = {
         timeZone: Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+      console.log("payload", payload)
       let start = req.body.startAppointmentTime,
         end = req.body.endAppointmentTime;
       let data = await appointment.find({
@@ -2248,102 +2250,6 @@ module.exports = {
           statusCode: 200,
           message: "completely deleted user",
           data: totalPrice,
-        },
-        res
-      );
-    } catch (err) {
-      universalFunctions.sendError(err, res);
-    }
-  },
-
-  //payment gateway apis
-
-  createSession: async (req, res) => {
-    try {
-      const schema = Joi.object({
-        paymentStatus: Joi.string().required(),
-        paymentMode: Joi.string().required(),
-        productName: Joi.string().required(),
-        amount: Joi.number().required(),
-      });
-
-      await universalFunctions.validateRequestPayload(req.body, res, schema);
-      let payload = req.body;
-
-      // let userDetails = await User.findOne({ _id: req.user.id });
-      // let customerId;
-      // if (!userDetails.customerId) {
-      //   const thawaniCustomer = await axios.post(
-      //     `${APP_CONSTANTS.thwani.testing_url}/customers`,
-      //     { client_customer_id: req.user.id },
-      //     thawaniHeader
-      //   );
-
-      //   await User.findOneAndUpdate(
-      //     { _id: user._id },
-      //     { customerId: thawaniCustomer.data.data.id }
-      //   );
-      //   customerId = thawaniCustomer.data.data.id;
-      // }
-      // customerId = userDetails.customerId;
-
-      // var options = {
-      //   method: "POST",
-      //   url: `https://uatcheckout.thawani.om/api/v1/checkout/session`,
-      //   thawaniHeader,
-      //   data: {
-      //     client_reference_id: req.user.id,
-      //     mode: payload.paymentMode,
-      //     products: [
-      //       {
-      //         name: payload.productName,
-      //         quantity: 1,
-      //         unit_amount: payload.amount,
-      //       },
-      //     ],
-      //     success_url: `${frontEndUserUrl}/success`,
-      //     cancel_url: `${frontEndUserUrl}/failed`,
-      //     customer_id: customerId,
-      //     // metadata: {
-      //     //   Customer_name: "rohit",
-      //     //   order_id: 0,
-      //     // },
-      //   },
-      // };
-      // let userPayment = await UserPayment.create({
-      //   userId: req.user.id,
-      //   paymentStatus: payload.paymentStatus,
-      // });
-
-      const thawaniSession = await axios.post(
-        `${APP_CONSTANTS.thwani.testing_url}/checkout/session`,
-
-        {
-          client_reference_id: "1232545454",
-          mode: payload.paymentMode,
-          products: [
-            {
-              name: payload.productName,
-              quantity: 1,
-              unit_amount: payload.amount,
-            },
-          ],
-          success_url: "https://company.com/success",
-          cancel_url: "https://company.com/cancel",
-        },
-        thawaniHeader
-      );
-
-      const thawaniSessionDetails = await axios.get(
-        `${APP_CONSTANTS.thwani.testing_url}/api/v1/checkout/session/checkout_8wGLGi9SSPGDT5Fotj9hSUtjbbaaiG5a3oiWHGp3OwXxH2UNTY`,
-        thawaniHeader
-      );
-
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "Success",
-          data: thawaniSession.data.data.session_id,
         },
         res
       );
