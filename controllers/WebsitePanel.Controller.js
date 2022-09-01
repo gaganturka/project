@@ -784,7 +784,7 @@ module.exports = {
   bookAppointment: async (req, res) => {
     try {
       let userId = req.user.id;
-      let payload = req.body;
+
       const schema = Joi.object({
         timeSlotId: Joi.string().length(24).required(),
         expertId: Joi.string().length(24).required(),
@@ -800,6 +800,24 @@ module.exports = {
         isPaid: Joi.boolean().required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+      console.log("payload", payload)
+      let expertData = await expertUser.findOne({ _id: expertId }).select({ priceDetails: 1 })
+      if (!expertData) {
+        throw Boom.notFound("No Such Expert")
+      }
+      if (!expertData.priceDetails || expertData.priceDetails.length <= 0) {
+        throw Boom.notFound("Expert Has Not Yet Set Price Details")
+      }
+      let callData = expertData.priceDetails.find((u) => { return u.callType === payload.expertData.priceDetails })
+      let discount = 0;
+      let valueAfterDiscount = 0;
+      if (callData.pricePerMinuteOrSms > 0) {
+        discount = (parseInt(payload.duration)) * (callData.discountPerMinuteOrSms)
+        valueAfterDiscount = (parseInt(payload.duration)) * (callData.pricePerMinuteOrSms - callData.discountPerMinuteOrSms)
+      }
+      payload.discount = discount > 0 ? discount : 0
+      payload.valueAfterDiscount = valueAfterDiscount > 0 ? valueAfterDiscount : 0
       let start = req.body.startAppointmentTime,
         end = req.body.endAppointmentTime;
       let data = await appointment.find({
@@ -856,7 +874,7 @@ module.exports = {
             registrationTokens.push(ele);
           });
         });
-      console.log("this is export token", registrationTokens);
+      // console.log("this is export token", registrationTokens);
       admin
         .messaging()
         .sendToDevice(registrationTokens, message)
