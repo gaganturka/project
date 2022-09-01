@@ -2291,7 +2291,7 @@ module.exports = {
 
       await appointment.findOneAndUpdate(
         { _id: payload.appointmentId },
-        { isPaid: true }
+        { isPaid: thawaniSession.data.data.payment_status === "paid" ? true : false }
       );
 
       await UserPlans.findOneAndUpdate(
