@@ -1919,7 +1919,7 @@ module.exports = {
         thawaniHeader
       );
 
-      await UserTransactions.create({
+      await UserTransactions.findOneAndUpdate({ userId: req.user.id, sessionId: thawaniSession.data.data.session_id }, {
         userId: req.user.id,
         paymentStatus: thawaniSession.data.data.payment_status,
         amountPaid: thawaniSession.data.data.total_amount / 1000,
@@ -1930,7 +1930,7 @@ module.exports = {
         description: `${thawaniSession.data.data.products[0].name.charAt(0).toUpperCase() +
           thawaniSession.data.data.products[0].name.slice(1)
           } Subscription Plan Bought`,
-      });
+      }, { upsert: true, new: true });
 
       await UserPlans.findOneAndUpdate(
         {
