@@ -802,14 +802,14 @@ module.exports = {
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
       console.log("payload", payload)
-      let expertData = await expertUser.findOne({ _id: expertId }).select({ priceDetails: 1 })
+      let expertData = await expertUser.findOne({ _id: payload.expertId }).select({ priceDetails: 1 })
       if (!expertData) {
         throw Boom.notFound("No Such Expert")
       }
       if (!expertData.priceDetails || expertData.priceDetails.length <= 0) {
         throw Boom.notFound("Expert Has Not Yet Set Price Details")
       }
-      let callData = expertData.priceDetails.find((u) => { return u.callType === payload.expertData.priceDetails })
+      let callData = expertData.priceDetails.find((u) => { return u.callType === payload.appointmentType })
       let discount = 0;
       let valueAfterDiscount = 0;
       if (callData.pricePerMinuteOrSms > 0) {
