@@ -89,4 +89,12 @@ router
   .route("/buyExpertSubscriptionPlan")
   .post(isexpert.isExpert, ExpertController.buyExpertSubscriptionPlan);
 
+router
+  .route("/updateExpertSubscriptionPlan")
+  .post(isexpert.isExpert, ExpertController.updateExpertSubscriptionPlan);
+
+router
+  .route("/getExpertActiveSubscriptionPlans")
+  .get(isexpert.isExpert, ExpertController.getExpertActiveSubscriptionPlans);
+
 module.exports = router;

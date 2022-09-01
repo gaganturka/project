@@ -17,6 +17,7 @@ const AccessToken = require("twilio").jwt.AccessToken;
 const { Config } = require("../config");
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const { v4: uuidv4 } = require("uuid");
+const ExpertTransaction = require("../models/paymentGateway/expertTransactionHistory")
 // const { admin } =require("../utils/pushNotification");
 const VoiceGrant = AccessToken.VoiceGrant;
 const asyncForEach = async (array, callback) => {
@@ -1290,7 +1291,7 @@ module.exports = {
           },
         ],
         success_url: `${payload.successUrl}/paymentSuccess/${expertPlanData._id}/subscription`,
-        cancel_url: `${payload.successUrl}/paymentCanceled/${expertPlanData._id}/subscription`,
+        cancel_url: `${payload.successUrl}/paymentCancelled/${expertPlanData._id}/subscription`,
         customer_id: customerId,
       };
       const thawaniSession = await axios.post(
@@ -1332,19 +1333,70 @@ module.exports = {
         transactionId: Joi.string().length(24).required(),
         paymentType: Joi.string(),
       });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
       console.log("expertSubData", payload, req.user)
-   
 
-     
+      const transactionData = await ExpertPlan.findOne({
+        _id: payload.transactionId,
+      }).select({ sessionId: 1 });
 
-     
+      if (!transactionData) {
+        throw Boom.badRequest("No Such Expert Plan");
+      }
+      const thawaniSession = await axios.get(
+        `${APP_CONSTANTS.thwani.testing_url}/api/v1/checkout/session/${transactionData.sessionId}`,
 
-     
+        thawaniHeader
+      );
+      await ExpertTransaction.create({
+        expertId: req.user.id,
+        paymentStatus: thawaniSession.data.data.payment_status,
+        amountPaid: thawaniSession.data.data.total_amount / 1000,
+        planName: thawaniSession.data.data.products[0].name,
+        sessionId: thawaniSession.data.data.session_id,
+        date: moment.utc().format(),
+        type: APP_CONSTANTS.userTransactionType.credit,
+        description: `${thawaniSession.data.data.products[0].name.charAt(0).toUpperCase() +
+          thawaniSession.data.data.products[0].name.slice(1)
+          } Subscription Plan Bought`,
+      });
+
+      await ExpertPlan.findOneAndUpdate(
+        {
+          _id: transactionData._id,
+        },
+        {
+          paymentStatus: thawaniSession.data.data.payment_status,
+          isActive:
+            thawaniSession.data.data.payment_status === "paid" ? true : false,
+        }
+      );
+
+
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
-          data: redirectUrl,
+          data: {},
+        },
+        res
+      );
+    } catch (err) {
+      return universalFunctions.sendError(err, res);
+    }
+  },
+
+  getExpertActiveSubscriptionPlans: async (req, res) => {
+    try {
+      const planData = await ExpertPlan.find({
+        expertId: req.user.id, isActive: true
+      })
+      return universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: planData,
         },
         res
       );
