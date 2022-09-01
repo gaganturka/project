@@ -1682,6 +1682,7 @@ module.exports = {
       accessToken.identity = identity;
       const grant = new VoiceGrant({
         outgoingApplicationSid: Config.twiMLSID,
+        pushCredentialSid: "CRc27673d4126e6f3172e1f68f34056077",
         incomingAllow: true,
       });
       accessToken.addGrant(grant);

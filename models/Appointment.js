@@ -76,13 +76,15 @@ const AppointmentSchema = new Schema({
   question: {
     type: String,
   },
-  videoChatId:{
-    type:String,
-    default:"",
+  discount: { type: Number },
+  valueAfterDiscount: { type: Number },
+  videoChatId: {
+    type: String,
+    default: "",
   },
-  isRescheduled:{
-    type:Boolean,
-    default:false
+  isRescheduled: {
+    type: Boolean,
+    default: false
   }
 });
 

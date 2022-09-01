@@ -3,6 +3,8 @@ const borhanUser = require("../models/Borhan_User");
 const expertUser = require("../models/Expert_User");
 const appointmentModel = require("../models/Appointment");
 const expertTimeAvailable = require("../models/ExpertTimeSlot");
+const ExpertPlan = require("../models/paymentGateway/expertPlansBought")
+const SubscriptionType = require("../models/paymentGateway/subscriptionType")
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -985,6 +987,7 @@ module.exports = {
       accessToken.identity = identity;
       const grant = new VoiceGrant({
         outgoingApplicationSid: Config.twiMLSID,
+        pushCredentialSid: "CRc27673d4126e6f3172e1f68f34056077",
         incomingAllow: true,
       });
       accessToken.addGrant(grant);
@@ -1223,6 +1226,125 @@ module.exports = {
           statusCode: 200,
           message: "Success",
           data: expertData,
+        },
+        res
+      );
+    } catch (err) {
+      return universalFunctions.sendError(err, res);
+    }
+  },
+  buyExpertSubscriptionPlan: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        subscriptionId: Joi.string().length(24).required(),
+        successUrl: Joi.string().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+      console.log("expertSubData", payload, req.user)
+      let customerId = req.user.customerId;
+
+      if (!req.user.customerId) {
+        const thawaniCustomer = await axios.post(
+          `${APP_CONSTANTS.thwani.testing_url}/api/v1/customers`,
+          { client_customer_id: req.user.id },
+          thawaniHeader
+        );
+
+        await User.findOneAndUpdate(
+          { _id: req.user.id },
+          { customerId: thawaniCustomer.data.data.id }
+        );
+        customerId = thawaniCustomer.data.data.id;
+      }
+      let subscriptionData = await SubscriptionType.findOne({
+        _id: payload.subscriptionId,
+      });
+      if (!subscriptionData) {
+        throw Boom.badRequest("No such subscription type");
+      }
+      let expertPlanData = await ExpertPlan.create({
+        expertId: req.user.id,
+        subscriptionId: payload.subscriptionId,
+        isActive: false,
+        paymentType: "subscription",
+        planName: subscriptionData.planName,
+        planBoughtAt: moment.utc().format(),
+        expiryDate: moment()
+          .add(subscriptionData.planDuration, "months")
+          .utc()
+          .format(),
+
+      });
+
+      const dataToSend = {
+        client_reference_id: req.user.id,
+        mode: "payment",
+        products: [
+          {
+            name: subscriptionData.planName,
+            quantity: 1,
+            unit_amount:
+              (subscriptionData.planAmount - subscriptionData.discountValue) *
+              1000,
+          },
+        ],
+        success_url: `${payload.successUrl}/paymentSuccess/${expertPlanData._id}/subscription`,
+        cancel_url: `${payload.successUrl}/paymentCanceled/${expertPlanData._id}/subscription`,
+        customer_id: customerId,
+      };
+      const thawaniSession = await axios.post(
+        `${APP_CONSTANTS.thwani.testing_url}/api/v1/checkout/session`,
+        dataToSend,
+        thawaniHeader
+      );
+
+      await ExpertPlan.updateOne(
+        { _id: expertPlanData._id },
+        {
+          paymentStatus: thawaniSession.data.data.payment_status,
+          sessionId: thawaniSession.data.data.session_id,
+          amountPaid: thawaniSession.data.data.total_amount / 1000,
+        }
+      );
+
+      let redirectUrl =
+        APP_CONSTANTS.thwani.testing_url +
+        "/pay/" +
+        thawaniSession.data.data.session_id +
+        "?key=" +
+        APP_CONSTANTS.thwani.testing_publishable_key;
+      return universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: redirectUrl,
+        },
+        res
+      );
+    } catch (err) {
+      return universalFunctions.sendError(err, res);
+    }
+  },
+  updateExpertSubscriptionPlan: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        transactionId: Joi.string().length(24).required(),
+        paymentType: Joi.string(),
+      });
+      console.log("expertSubData", payload, req.user)
+   
+
+     
+
+     
+
+     
+      return universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: redirectUrl,
         },
         res
       );

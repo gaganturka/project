@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const isexpert = require("../middleware/isexpert");
 const ExpertController = require("../controllers/ExpertPanel.Controllers");
+const ExpertAdminController = require("../controllers/Expert.Admin");
 
 router.route("/sendOtpExpertUser").post(ExpertController.sendOtpExpertUser);
 router.route("/exportLogin").post(ExpertController.exportLogin);
@@ -79,5 +80,13 @@ router
 router
   .route("/getExpertPriceDetails")
   .get(isexpert.isExpert, ExpertController.getExpertPriceDetails);
-  
+
+router
+  .route("/getSubscriptionTypeByAdmin")
+  .get(isexpert.isExpert, ExpertAdminController.getSubscriptionTypeByAdmin);
+
+router
+  .route("/buyExpertSubscriptionPlan")
+  .post(isexpert.isExpert, ExpertController.buyExpertSubscriptionPlan);
+
 module.exports = router;
