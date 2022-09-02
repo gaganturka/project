@@ -15,7 +15,7 @@ const expertEarningsSchema = new Schema(
         },
         expertId: {
             type: Schema.Types.ObjectId,
-            ref: "user",
+            
         },
         date: { type: Date },
         totalAmountRecieved: { type: Number },

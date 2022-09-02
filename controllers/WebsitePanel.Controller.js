@@ -2349,6 +2349,11 @@ module.exports = {
         .skip(parseInt(skip))
         .limit(parseInt(limit));
 
+      const transactionCount = await UserTransactions.count({
+        userId: req.user.id,
+      })
+
+
       const walletData = await UserPlans.find({
         userId: req.user.id,
         isActive: true,
@@ -2365,7 +2370,11 @@ module.exports = {
         {
           statusCode: 200,
           message: "Success",
-          data: { transactionData, totalWalletBalance },
+          data: {
+            transactionData,
+            totalWalletBalance,
+            pages: transactionCount > 0 ? Math.ceil(transactionCount / parseInt(limit)) : 0
+          },
         },
         res
       );

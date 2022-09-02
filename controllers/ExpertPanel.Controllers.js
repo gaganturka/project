@@ -5,6 +5,7 @@ const appointmentModel = require("../models/Appointment");
 const expertTimeAvailable = require("../models/ExpertTimeSlot");
 const ExpertPlan = require("../models/paymentGateway/expertPlansBought")
 const SubscriptionType = require("../models/paymentGateway/subscriptionType")
+const ExpertEarning = require("../models/paymentGateway/expertEarnings")
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -1013,8 +1014,15 @@ module.exports = {
 
   twilioVideoMarkComplete: async (req, res) => {
     try {
-      let appointments = await appointmentModel.findByIdAndUpdate(
-        { _id: req.body.appointmentId },
+      const schema = Joi.object({
+        appointmentId: Joi.string().length(24).required(),
+
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+
+      let appointments = await appointmentModel.findOneAndUpdate(
+        { _id: payload.appointmentId },
         {
           status: APP_CONSTANTS.appointmentStatus.completed,
         },
@@ -1025,6 +1033,27 @@ module.exports = {
         throw Boom.badRequest("could not complete");
       }
 
+      // add expert earnings
+      let amountEarned = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.expertInDecimal
+      let amountPaidToAdmin = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.adminInDecimal
+
+      // find expert is subscribed or not
+      let expertSubCount = await ExpertPlan.count({ expertId: req.user.id, isActive: true })
+      if (expertSubCount > 0) {
+        amountEarned = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withSubscription.expertInDecimal
+        amountPaidToAdmin = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withSubscription.adminInDecimal
+      }
+      // console.log("req.user", amountEarned, amountPaidToAdmin)
+      await ExpertEarning.create({
+        appointmentId: payload.appointmentId,
+        userId: appointments.userId,
+        expertId: appointments.expertId,
+        date: moment.utc().format(),
+        totalAmountRecieved: appointments.valueAfterDiscount,
+        discount: appointments.discount,
+        amountEarned: amountEarned,
+        amountPaidToAdmin: amountPaidToAdmin
+      })
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1041,8 +1070,14 @@ module.exports = {
   },
   twilioAudioMarkComplete: async (req, res) => {
     try {
+      const schema = Joi.object({
+        appointmentId: Joi.string().length(24).required(),
+
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
       let appointments = await appointmentModel.findByIdAndUpdate(
-        { _id: req.body.appointmentId },
+        { _id: payload.appointmentId },
         {
           status: APP_CONSTANTS.appointmentStatus.completed,
         },
@@ -1052,6 +1087,29 @@ module.exports = {
       if (!appointments) {
         throw Boom.badRequest("could not complete");
       }
+
+
+      // add expert earnings
+      let amountEarned = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.expertInDecimal
+      let amountPaidToAdmin = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.adminInDecimal
+
+      // find expert is subscribed or not
+      let expertSubCount = await ExpertPlan.count({ expertId: req.user.id, isActive: true })
+      if (expertSubCount > 0) {
+        amountEarned = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withSubscription.expertInDecimal
+        amountPaidToAdmin = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withSubscription.adminInDecimal
+      }
+      // console.log("req.user", amountEarned, amountPaidToAdmin)
+      await ExpertEarning.create({
+        appointmentId: payload.appointmentId,
+        userId: appointments.userId,
+        expertId: appointments.expertId,
+        date: moment.utc().format(),
+        totalAmountRecieved: appointments.valueAfterDiscount,
+        discount: appointments.discount,
+        amountEarned: amountEarned,
+        amountPaidToAdmin: amountPaidToAdmin
+      })
 
       universalFunctions.sendSuccess(
         {
@@ -1397,6 +1455,59 @@ module.exports = {
           statusCode: 200,
           message: "Success",
           data: planData,
+        },
+        res
+      );
+    } catch (err) {
+      return universalFunctions.sendError(err, res);
+    }
+  },
+
+  getExpertAllTransactions: async (req, res) => {
+    try {
+      let { skip, limit = 10 } = req.query
+      const transactionData = await ExpertTransaction.find({
+        expertId: req.user.id
+      }).sort({ createdAt: -1 }).skip(parseInt(skip)).limit(parseInt(limit))
+      const transactionCount = await ExpertTransaction.count({
+        expertId: req.user.id
+      })
+      return universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: {
+            transactionData,
+            pages: transactionCount > 0 ? Math.ceil(transactionCount / parseInt(limit)) : 0,
+          }
+        },
+        res
+      );
+    } catch (err) {
+      return universalFunctions.sendError(err, res);
+    }
+  },
+
+  getExpertAllEarnings: async (req, res) => {
+    try {
+      let { skip, limit = 10 } = req.query
+
+      const earningData = await ExpertEarning.find({
+        expertId: req.user.expertId
+      }).sort({ createdAt: -1 }).skip(parseInt(skip)).limit(parseInt(limit))
+
+      const earningCount = await ExpertEarning.count({
+        expertId: req.user.expertId
+      })
+
+      return universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: {
+            earningData,
+            pages: earningCount > 0 ? Math.ceil(earningCount / parseInt(limit)) : 0,
+          }
         },
         res
       );

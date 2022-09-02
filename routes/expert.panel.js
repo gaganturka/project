@@ -97,4 +97,12 @@ router
   .route("/getExpertActiveSubscriptionPlans")
   .get(isexpert.isExpert, ExpertController.getExpertActiveSubscriptionPlans);
 
+router
+  .route("/getExpertAllTransactions")
+  .get(isexpert.isExpert, ExpertController.getExpertAllTransactions);
+
+router
+  .route("/getExpertAllEarnings")
+  .get(isexpert.isExpert, ExpertController.getExpertAllEarnings);
+
 module.exports = router;

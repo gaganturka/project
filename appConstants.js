@@ -118,6 +118,11 @@ let callTimings = {
   fullHour: { display: "1 Hour", value: "60minutes" },
 };
 
+let expertAndAdminEarning = {
+  withoutSubscription: { expertInPercentage: 70, expertInDecimal: 0.7, adminInPercentage: 30, adminInDecimal: 0.3 },
+  withSubscription: { expertInPercentage: 75, expertInDecimal: 0.75, adminInPercentage: 25, adminInDecimal: 0.25 }
+}
+
 
 
 module.exports = {
@@ -141,5 +146,6 @@ module.exports = {
   callTimings,
   userTransactionType,
   userPlanPaymentType,
-  userPlanPaymentStatus
+  userPlanPaymentStatus,
+  expertAndAdminEarning
 };
