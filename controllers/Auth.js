@@ -203,6 +203,8 @@ module.exports = {
         accountType: req.body.accountType,
 
         rating: { noOfRating: 0, ratingCount: 0, avgRating: 0 },
+        totalPending: 0,
+        totalEarning: 0,
       });
 
       user = await User.create({

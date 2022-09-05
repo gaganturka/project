@@ -1080,6 +1080,15 @@ module.exports = {
         amountEarned: amountEarned,
         amountPaidToAdmin: amountPaidToAdmin,
       });
+      // update totalEarning and total Pending of expert
+      await expertUser.findOneAndUpdate(
+        { _id: appointments.expertId },
+        {
+          totalEarning: { $inc: amountEarned },
+          totalPending: { $inc: amountEarned },
+        }
+      );
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1145,6 +1154,15 @@ module.exports = {
         amountEarned: amountEarned,
         amountPaidToAdmin: amountPaidToAdmin,
       });
+
+      // update totalEarning and total Pending of expert
+      await expertUser.findOneAndUpdate(
+        { _id: appointments.expertId },
+        {
+          totalEarning: { $inc: amountEarned },
+          totalPending: { $inc: amountEarned },
+        }
+      );
 
       universalFunctions.sendSuccess(
         {
@@ -1550,12 +1568,10 @@ module.exports = {
       const earningCount = await ExpertEarning.count({
         expertId: req.user.expertId,
       });
-      let totalAmountEarned = 0;
-      if (earningData && earningData.length > 0) {
-        for (let i = 0; i < earningData.length; i++) {
-          totalAmountEarned += earningData[i].amountEarned;
-        }
-      }
+      let expertData = await expertUser
+        .findOne({ _id: req.user.expertId })
+        .select({ totalEarning: 1, totalPending: 1 });
+
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1564,7 +1580,12 @@ module.exports = {
             earningData,
             pages:
               earningCount > 0 ? Math.ceil(earningCount / parseInt(limit)) : 0,
-            totalAmountEarned,
+            totalAmountEarned: expertData.totalEarning
+              ? expertData.totalEarning
+              : 0,
+            totalAmountPending: expertData.totalPending
+              ? expertData.totalPending
+              : 0,
           },
         },
         res

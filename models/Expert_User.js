@@ -29,6 +29,8 @@ const ExpertUserSchema = new Schema(
         },
       },
     ],
+    totalEarning:{ type: Number },
+    totalPending:{ type: Number },
     practiceArea: [
       {
         type: Schema.Types.ObjectId,
