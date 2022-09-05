@@ -3,9 +3,9 @@ const borhanUser = require("../models/Borhan_User");
 const expertUser = require("../models/Expert_User");
 const appointmentModel = require("../models/Appointment");
 const expertTimeAvailable = require("../models/ExpertTimeSlot");
-const ExpertPlan = require("../models/paymentGateway/expertPlansBought")
-const SubscriptionType = require("../models/paymentGateway/subscriptionType")
-const ExpertEarning = require("../models/paymentGateway/expertEarnings")
+const ExpertPlan = require("../models/paymentGateway/expertPlansBought");
+const SubscriptionType = require("../models/paymentGateway/subscriptionType");
+const ExpertEarning = require("../models/paymentGateway/expertEarnings");
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -18,7 +18,7 @@ const AccessToken = require("twilio").jwt.AccessToken;
 const { Config } = require("../config");
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const { v4: uuidv4 } = require("uuid");
-const ExpertTransaction = require("../models/paymentGateway/expertTransactionHistory")
+const ExpertTransaction = require("../models/paymentGateway/expertTransactionHistory");
 // const { admin } =require("../utils/pushNotification");
 const VoiceGrant = AccessToken.VoiceGrant;
 const asyncForEach = async (array, callback) => {
@@ -375,7 +375,11 @@ module.exports = {
 
       if (filterType == "Pending") {
         data = await appointmentModel
-          .find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending, isPaid: true })
+          .find({
+            expertId,
+            status: APP_CONSTANTS.appointmentStatus.pending,
+            isPaid: true,
+          })
           .populate("userId")
           .populate({
             path: "expertId",
@@ -385,7 +389,11 @@ module.exports = {
           .limit(parseInt(req.body.limit))
           .sort({ startAppointmentTime: -1 });
         count = await appointmentModel
-          .find({ expertId, status: APP_CONSTANTS.appointmentStatus.pending, isPaid: true })
+          .find({
+            expertId,
+            status: APP_CONSTANTS.appointmentStatus.pending,
+            isPaid: true,
+          })
           .populate("userId")
           .populate({
             path: "expertId",
@@ -416,7 +424,8 @@ module.exports = {
         count = await appointmentModel
           .find({
             expertId,
-            status: APP_CONSTANTS.appointmentStatus.confirmed, isPaid: true,
+            status: APP_CONSTANTS.appointmentStatus.confirmed,
+            isPaid: true,
             endAppointmentTime: {
               $gte: now.getTime(),
             },
@@ -426,7 +435,8 @@ module.exports = {
         data = await appointmentModel
           .find({
             expertId,
-            status: APP_CONSTANTS.appointmentStatus.cancelled, isPaid: true,
+            status: APP_CONSTANTS.appointmentStatus.cancelled,
+            isPaid: true,
           })
           .populate("userId")
           .populate({
@@ -440,14 +450,16 @@ module.exports = {
         count = await appointmentModel
           .find({
             expertId,
-            status: APP_CONSTANTS.appointmentStatus.cancelled, isPaid: true,
+            status: APP_CONSTANTS.appointmentStatus.cancelled,
+            isPaid: true,
           })
           .countDocuments();
       } else if (filterType == "rejected") {
         data = await appointmentModel
           .find({
             expertId,
-            status: APP_CONSTANTS.appointmentStatus.rejected, isPaid: true,
+            status: APP_CONSTANTS.appointmentStatus.rejected,
+            isPaid: true,
           })
           .populate("userId")
           .populate({
@@ -461,7 +473,8 @@ module.exports = {
         count = await appointmentModel
           .find({
             expertId,
-            status: APP_CONSTANTS.appointmentStatus.rejected, isPaid: true,
+            status: APP_CONSTANTS.appointmentStatus.rejected,
+            isPaid: true,
           })
           .countDocuments();
       }
@@ -916,8 +929,9 @@ module.exports = {
           message = {
             data: {
               title: "Expert accepted your chat request",
-              body: `your request for chat room with our expert has been ${req.body.messageType == "1" ? "accepted" : "rejected"
-                }`,
+              body: `your request for chat room with our expert has been ${
+                req.body.messageType == "1" ? "accepted" : "rejected"
+              }`,
               type: "addProperty",
               // propertyId: payload.id,
               sound: "default",
@@ -927,8 +941,9 @@ module.exports = {
           message = {
             notification: {
               title: "Expert accepted your chat request",
-              body: `your request for chat room with our expert has been ${req.body.messageType == "1" ? "accepted" : "rejected"
-                }`,
+              body: `your request for chat room with our expert has been ${
+                req.body.messageType == "1" ? "accepted" : "rejected"
+              }`,
               type: "addProperty",
               // propertyId: payload.id,
               sound: "default",
@@ -947,8 +962,9 @@ module.exports = {
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,
-          message: `successfully send ${req.body.messageType == "1" ? "admission" : "rejection"
-            } notification`,
+          message: `successfully send ${
+            req.body.messageType == "1" ? "admission" : "rejection"
+          } notification`,
           // data: firebaseFunction,
         },
         res
@@ -965,7 +981,7 @@ module.exports = {
       const expert = await expertUser.findOne({ _id: id }).populate({
         path: "userId",
       });
-      console.log("hello there", req.user, req.body)
+      console.log("hello there", req.user, req.body);
 
       let reqdAppointment = await appointmentModel
         .findOne({ _id: req.body.appointmentId })
@@ -1016,7 +1032,6 @@ module.exports = {
     try {
       const schema = Joi.object({
         appointmentId: Joi.string().length(24).required(),
-
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
@@ -1034,14 +1049,25 @@ module.exports = {
       }
 
       // add expert earnings
-      let amountEarned = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.expertInDecimal
-      let amountPaidToAdmin = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.adminInDecimal
+      let amountEarned =
+        appointments.valueAfterDiscount *
+        APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.expertInDecimal;
+      let amountPaidToAdmin =
+        appointments.valueAfterDiscount *
+        APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.adminInDecimal;
 
       // find expert is subscribed or not
-      let expertSubCount = await ExpertPlan.count({ expertId: req.user.id, isActive: true })
+      let expertSubCount = await ExpertPlan.count({
+        expertId: req.user.id,
+        isActive: true,
+      });
       if (expertSubCount > 0) {
-        amountEarned = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withSubscription.expertInDecimal
-        amountPaidToAdmin = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withSubscription.adminInDecimal
+        amountEarned =
+          appointments.valueAfterDiscount *
+          APP_CONSTANTS.expertAndAdminEarning.withSubscription.expertInDecimal;
+        amountPaidToAdmin =
+          appointments.valueAfterDiscount *
+          APP_CONSTANTS.expertAndAdminEarning.withSubscription.adminInDecimal;
       }
       // console.log("req.user", amountEarned, amountPaidToAdmin)
       await ExpertEarning.create({
@@ -1052,8 +1078,8 @@ module.exports = {
         totalAmountRecieved: appointments.valueAfterDiscount,
         discount: appointments.discount,
         amountEarned: amountEarned,
-        amountPaidToAdmin: amountPaidToAdmin
-      })
+        amountPaidToAdmin: amountPaidToAdmin,
+      });
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1072,7 +1098,6 @@ module.exports = {
     try {
       const schema = Joi.object({
         appointmentId: Joi.string().length(24).required(),
-
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
@@ -1088,16 +1113,26 @@ module.exports = {
         throw Boom.badRequest("could not complete");
       }
 
-
       // add expert earnings
-      let amountEarned = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.expertInDecimal
-      let amountPaidToAdmin = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.adminInDecimal
+      let amountEarned =
+        appointments.valueAfterDiscount *
+        APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.expertInDecimal;
+      let amountPaidToAdmin =
+        appointments.valueAfterDiscount *
+        APP_CONSTANTS.expertAndAdminEarning.withoutSubscription.adminInDecimal;
 
       // find expert is subscribed or not
-      let expertSubCount = await ExpertPlan.count({ expertId: req.user.id, isActive: true })
+      let expertSubCount = await ExpertPlan.count({
+        expertId: req.user.id,
+        isActive: true,
+      });
       if (expertSubCount > 0) {
-        amountEarned = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withSubscription.expertInDecimal
-        amountPaidToAdmin = appointments.valueAfterDiscount * APP_CONSTANTS.expertAndAdminEarning.withSubscription.adminInDecimal
+        amountEarned =
+          appointments.valueAfterDiscount *
+          APP_CONSTANTS.expertAndAdminEarning.withSubscription.expertInDecimal;
+        amountPaidToAdmin =
+          appointments.valueAfterDiscount *
+          APP_CONSTANTS.expertAndAdminEarning.withSubscription.adminInDecimal;
       }
       // console.log("req.user", amountEarned, amountPaidToAdmin)
       await ExpertEarning.create({
@@ -1108,8 +1143,8 @@ module.exports = {
         totalAmountRecieved: appointments.valueAfterDiscount,
         discount: appointments.discount,
         amountEarned: amountEarned,
-        amountPaidToAdmin: amountPaidToAdmin
-      })
+        amountPaidToAdmin: amountPaidToAdmin,
+      });
 
       universalFunctions.sendSuccess(
         {
@@ -1128,7 +1163,8 @@ module.exports = {
   getSingleAppointment: async (req, res) => {
     try {
       let appointments = await appointmentModel.findOne({
-        _id: req.body.appointmentId, isPaid: true
+        _id: req.body.appointmentId,
+        isPaid: true,
       });
 
       if (!appointments) {
@@ -1247,7 +1283,6 @@ module.exports = {
         }
       });
 
-
       let expertData = await expertUser.findOneAndUpdate(
         { _id: req.user.expertId },
         { priceDetails: req.body.priceDetails }
@@ -1300,7 +1335,7 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
-      console.log("expertSubData", payload, req.user)
+      console.log("expertSubData", payload, req.user);
       let customerId = req.user.customerId;
 
       if (!req.user.customerId) {
@@ -1333,7 +1368,6 @@ module.exports = {
           .add(subscriptionData.planDuration, "months")
           .utc()
           .format(),
-
       });
 
       const dataToSend = {
@@ -1393,7 +1427,7 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
-      console.log("expertSubData", payload, req.user)
+      console.log("expertSubData", payload, req.user);
 
       const transactionData = await ExpertPlan.findOne({
         _id: payload.transactionId,
@@ -1407,18 +1441,26 @@ module.exports = {
 
         thawaniHeader
       );
-      await ExpertTransaction.findOneAndUpdate({ expertId: req.user.id, sessionId: thawaniSession.data.data.session_id }, {
-        expertId: req.user.id,
-        paymentStatus: thawaniSession.data.data.payment_status,
-        amountPaid: thawaniSession.data.data.total_amount / 1000,
-        planName: thawaniSession.data.data.products[0].name,
-        sessionId: thawaniSession.data.data.session_id,
-        date: moment.utc().format(),
-        type: APP_CONSTANTS.userTransactionType.credit,
-        description: `${thawaniSession.data.data.products[0].name.charAt(0).toUpperCase() +
-          thawaniSession.data.data.products[0].name.slice(1)
+      await ExpertTransaction.findOneAndUpdate(
+        {
+          expertId: req.user.id,
+          sessionId: thawaniSession.data.data.session_id,
+        },
+        {
+          expertId: req.user.id,
+          paymentStatus: thawaniSession.data.data.payment_status,
+          amountPaid: thawaniSession.data.data.total_amount / 1000,
+          planName: thawaniSession.data.data.products[0].name,
+          sessionId: thawaniSession.data.data.session_id,
+          date: moment.utc().format(),
+          type: APP_CONSTANTS.userTransactionType.credit,
+          description: `${
+            thawaniSession.data.data.products[0].name.charAt(0).toUpperCase() +
+            thawaniSession.data.data.products[0].name.slice(1)
           } Subscription Plan Bought`,
-      }, { upsert: true, new: true });
+        },
+        { upsert: true, new: true }
+      );
 
       await ExpertPlan.findOneAndUpdate(
         {
@@ -1430,7 +1472,6 @@ module.exports = {
             thawaniSession.data.data.payment_status === "paid" ? true : false,
         }
       );
-
 
       return universalFunctions.sendSuccess(
         {
@@ -1448,8 +1489,9 @@ module.exports = {
   getExpertActiveSubscriptionPlans: async (req, res) => {
     try {
       const planData = await ExpertPlan.find({
-        expertId: req.user.id, isActive: true
-      })
+        expertId: req.user.id,
+        isActive: true,
+      });
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -1465,21 +1507,27 @@ module.exports = {
 
   getExpertAllTransactions: async (req, res) => {
     try {
-      let { skip, limit = 10 } = req.query
+      let { skip, limit = 10 } = req.query;
       const transactionData = await ExpertTransaction.find({
-        expertId: req.user.id
-      }).sort({ createdAt: -1 }).skip(parseInt(skip)).limit(parseInt(limit))
-      const transactionCount = await ExpertTransaction.count({
-        expertId: req.user.id
+        expertId: req.user.id,
       })
+        .sort({ createdAt: -1 })
+        .skip(parseInt(skip))
+        .limit(parseInt(limit));
+      const transactionCount = await ExpertTransaction.count({
+        expertId: req.user.id,
+      });
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
           data: {
             transactionData,
-            pages: transactionCount > 0 ? Math.ceil(transactionCount / parseInt(limit)) : 0,
-          }
+            pages:
+              transactionCount > 0
+                ? Math.ceil(transactionCount / parseInt(limit))
+                : 0,
+          },
         },
         res
       );
@@ -1490,24 +1538,34 @@ module.exports = {
 
   getExpertAllEarnings: async (req, res) => {
     try {
-      let { skip, limit = 10 } = req.query
+      let { skip, limit = 10 } = req.query;
 
       const earningData = await ExpertEarning.find({
-        expertId: req.user.expertId
-      }).sort({ createdAt: -1 }).skip(parseInt(skip)).limit(parseInt(limit))
+        expertId: req.user.expertId,
+      })
+        .sort({ createdAt: -1 })
+        .skip(parseInt(skip))
+        .limit(parseInt(limit));
 
       const earningCount = await ExpertEarning.count({
-        expertId: req.user.expertId
-      })
-
+        expertId: req.user.expertId,
+      });
+      let totalAmountEarned = 0;
+      if (earningData && earningData.length > 0) {
+        for (let i = 0; i < earningData.length; i++) {
+          totalAmountEarned += earningData[i].amountEarned;
+        }
+      }
       return universalFunctions.sendSuccess(
         {
           statusCode: 200,
           message: "Success",
           data: {
             earningData,
-            pages: earningCount > 0 ? Math.ceil(earningCount / parseInt(limit)) : 0,
-          }
+            pages:
+              earningCount > 0 ? Math.ceil(earningCount / parseInt(limit)) : 0,
+            totalAmountEarned,
+          },
         },
         res
       );
