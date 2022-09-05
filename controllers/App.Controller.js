@@ -1865,6 +1865,8 @@ module.exports = {
   getAvailableTimeForUser: async (req, res) => {
     try {
       let { expertId, appointmentDate, duration, timeZone } = req.query;
+     
+
       let curentdate = new Date();
 
       const expertTime = await expertTimeAvailable.find({
@@ -1957,7 +1959,7 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
-      console.log("payload", payload)
+      console.log("payload", payload);
       let start = req.body.startAppointmentTime,
         end = req.body.endAppointmentTime;
       let data = await appointment.find({

@@ -801,23 +801,30 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
-      console.log("payload", payload)
-      let expertData = await expertUser.findOne({ _id: payload.expertId }).select({ priceDetails: 1 })
+      console.log("payload", payload);
+      let expertData = await expertUser
+        .findOne({ _id: payload.expertId })
+        .select({ priceDetails: 1 });
       if (!expertData) {
-        throw Boom.notFound("No Such Expert")
+        throw Boom.notFound("No Such Expert");
       }
       if (!expertData.priceDetails || expertData.priceDetails.length <= 0) {
-        throw Boom.notFound("Expert Has Not Yet Set Price Details")
+        throw Boom.notFound("Expert Has Not Yet Set Price Details");
       }
-      let callData = expertData.priceDetails.find((u) => { return u.callType === payload.appointmentType })
+      let callData = expertData.priceDetails.find((u) => {
+        return u.callType === payload.appointmentType;
+      });
       let discount = 0;
       let valueAfterDiscount = 0;
       if (callData.pricePerMinuteOrSms > 0) {
-        discount = (parseInt(payload.duration)) * (callData.discountPerMinuteOrSms)
-        valueAfterDiscount = (parseInt(payload.duration)) * (callData.pricePerMinuteOrSms - callData.discountPerMinuteOrSms)
+        discount = parseInt(payload.duration) * callData.discountPerMinuteOrSms;
+        valueAfterDiscount =
+          parseInt(payload.duration) *
+          (callData.pricePerMinuteOrSms - callData.discountPerMinuteOrSms);
       }
-      payload.discount = discount > 0 ? discount : 0
-      payload.valueAfterDiscount = valueAfterDiscount > 0 ? valueAfterDiscount : 0
+      payload.discount = discount > 0 ? discount : 0;
+      payload.valueAfterDiscount =
+        valueAfterDiscount > 0 ? valueAfterDiscount : 0;
       let start = req.body.startAppointmentTime,
         end = req.body.endAppointmentTime;
       let data = await appointment.find({
@@ -840,6 +847,7 @@ module.exports = {
         throw Boom.badRequest("already an appointment at this time");
       }
       let createAppointment = await appointment.create(payload);
+      console.log("createAppointment", createAppointment);
       await expertTimeAvailable.findOneAndUpdate(
         { _id: createAppointment.timeSlotId },
         { isAvailable: false }
@@ -1332,6 +1340,7 @@ module.exports = {
   getAvailableTimeForUser: async (req, res) => {
     try {
       let { expertId, appointmentDate, duration } = req.query;
+
       let curentdate = new Date();
 
       const expertTime = await expertTimeAvailable.find({
@@ -1357,18 +1366,20 @@ module.exports = {
         throw Boom.badRequest("invalid id or token");
       }
       let tempobj = JSON.parse(JSON.stringify(expertTime));
-      await universalFunctions.asyncForEach(tempobj, async (e, index) => {
-        let data = await appointment.find({
-          expertId: expertId,
-          appointmentDate: appointmentDate,
-          timeSlotId: e._id ? e._id : "",
-        });
-        // if (data.length > 0) {
-        //   e.avialble = false;
-        // } else {
-        //   e.avialble = true;
-        // }
-      });
+      // await universalFunctions.asyncForEach(tempobj, async (e, index) => {
+      //   let data = await appointment.find({
+      //     expertId: expertId,
+      //     appointmentDate: appointmentDate,
+      //     timeSlotId: e._id ? e._id : "",
+      //     isPaid: false,
+      //   });
+      //   // if (data.length > 0) {
+      //   //   e.avialble = false;
+      //   // } else {
+      //   //   e.avialble = true;
+      //   // }
+      // });
+      console.log("tempobj", tempobj);
 
       universalFunctions.sendSuccess(
         {
@@ -1937,18 +1948,23 @@ module.exports = {
         thawaniHeader
       );
 
-      await UserTransactions.findOneAndUpdate({ userId: req.user.id, sessionId: thawaniSession.data.data.session_id }, {
-        userId: req.user.id,
-        paymentStatus: thawaniSession.data.data.payment_status,
-        amountPaid: thawaniSession.data.data.total_amount / 1000,
-        planName: thawaniSession.data.data.products[0].name,
-        sessionId: thawaniSession.data.data.session_id,
-        date: moment.utc().format(),
-        type: APP_CONSTANTS.userTransactionType.credit,
-        description: `${thawaniSession.data.data.products[0].name.charAt(0).toUpperCase() +
-          thawaniSession.data.data.products[0].name.slice(1)
+      await UserTransactions.findOneAndUpdate(
+        { userId: req.user.id, sessionId: thawaniSession.data.data.session_id },
+        {
+          userId: req.user.id,
+          paymentStatus: thawaniSession.data.data.payment_status,
+          amountPaid: thawaniSession.data.data.total_amount / 1000,
+          planName: thawaniSession.data.data.products[0].name,
+          sessionId: thawaniSession.data.data.session_id,
+          date: moment.utc().format(),
+          type: APP_CONSTANTS.userTransactionType.credit,
+          description: `${
+            thawaniSession.data.data.products[0].name.charAt(0).toUpperCase() +
+            thawaniSession.data.data.products[0].name.slice(1)
           } Subscription Plan Bought`,
-      }, { upsert: true, new: true });
+        },
+        { upsert: true, new: true }
+      );
 
       await UserPlans.findOneAndUpdate(
         {
@@ -2023,8 +2039,8 @@ module.exports = {
       ) {
         balanceToSend = Math.ceil(
           totalWalletBalance /
-          (callTypeData.pricePerMinuteOrSms -
-            callTypeData.discountPerMinuteOrSms)
+            (callTypeData.pricePerMinuteOrSms -
+              callTypeData.discountPerMinuteOrSms)
         );
       } else if (
         callTypeData.pricePerMinuteOrSms === 0 &&
@@ -2112,8 +2128,7 @@ module.exports = {
       }
       let amountToPay = 0;
       if (totalWalletBalance > payload.amount) {
-
-        await deductMoneyFromMultipleWallets(req.user.id, payload.amount)
+        await deductMoneyFromMultipleWallets(req.user.id, payload.amount);
         await UserTransactions.create({
           userId: req.user.id,
           paymentStatus: "paid",
@@ -2129,8 +2144,6 @@ module.exports = {
         totalWalletBalance > 0
       ) {
         amountToPay = payload.amount - totalWalletBalance;
-
-
       } else {
         amountToPay = payload.amount;
       }
@@ -2155,10 +2168,11 @@ module.exports = {
         planName: Joi.string().required(),
         successUrl: Joi.string().required(),
         appointmentId: Joi.string().required(),
-        amountInUpdateOtpApi: Joi.number().required()
+        amountInUpdateOtpApi: Joi.number().required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
+     
       let customerId = req.user.customerId;
 
       if (!req.user.customerId) {
@@ -2302,15 +2316,30 @@ module.exports = {
         sessionId: thawaniSession.data.data.session_id,
         date: moment.utc().format(),
         type: APP_CONSTANTS.userTransactionType.credit,
-        description: `A One-time Payment Was Made For ${thawaniSession.data.data.products[0].name.match(/\d+/g)[0]
-          } min ${thawaniSession.data.data.products[0].name.match(/[a-zA-Z]+/g)[0]
-          } Session`,
+        description: `A One-time Payment Was Made For ${
+          thawaniSession.data.data.products[0].name.match(/\d+/g)[0]
+        } min ${
+          thawaniSession.data.data.products[0].name.match(/[a-zA-Z]+/g)[0]
+        } Session`,
       });
 
-      await appointment.findOneAndUpdate(
+      let appointmentData = await appointment.findOneAndUpdate(
         { _id: payload.appointmentId },
-        { isPaid: thawaniSession.data.data.payment_status === "paid" ? true : false }
+        {
+          isPaid:
+            thawaniSession.data.data.payment_status === "paid" ? true : false,
+        }
       );
+
+      let expertTimeData = await expertTimeAvailable.findOneAndUpdate(
+        { _id: appointmentData.timeSlotId },
+        {
+          isAvailable:
+            thawaniSession.data.data.payment_status === "paid" ? false : true,
+        }
+      );
+
+      
 
       await UserPlans.findOneAndUpdate(
         {
@@ -2351,8 +2380,7 @@ module.exports = {
 
       const transactionCount = await UserTransactions.count({
         userId: req.user.id,
-      })
-
+      });
 
       const walletData = await UserPlans.find({
         userId: req.user.id,
@@ -2373,7 +2401,10 @@ module.exports = {
           data: {
             transactionData,
             totalWalletBalance,
-            pages: transactionCount > 0 ? Math.ceil(transactionCount / parseInt(limit)) : 0
+            pages:
+              transactionCount > 0
+                ? Math.ceil(transactionCount / parseInt(limit))
+                : 0,
           },
         },
         res
@@ -2465,9 +2496,12 @@ module.exports = {
           totalWalletBalance += walletBalance[i].walletBalance;
         }
       }
-      let amountToPay = callTypeData.pricePerMinuteOrSms - callTypeData.discountPerMinuteOrSms
+      let amountToPay =
+        callTypeData.pricePerMinuteOrSms - callTypeData.discountPerMinuteOrSms;
       if (amountToPay > 0 && totalWalletBalance < amountToPay) {
-        throw Boom.badRequest("Insuficient Balance In Your Wallet! To Send SMS Please Buy Membership")
+        throw Boom.badRequest(
+          "Insuficient Balance In Your Wallet! To Send SMS Please Buy Membership"
+        );
       }
 
       universalFunctions.sendSuccess(
@@ -2484,14 +2518,16 @@ module.exports = {
   },
 };
 
-
 const deductMoneyFromMultipleWallets = async (userId, amount) => {
   try {
     await UserPlans.findOneAndUpdate(
       {
-        userId: userId, isActive: true
-      }, { $inc: { walletBalance: -amount } });
+        userId: userId,
+        isActive: true,
+      },
+      { $inc: { walletBalance: -amount } }
+    );
   } catch (err) {
-    throw err
+    throw err;
   }
-}
+};
