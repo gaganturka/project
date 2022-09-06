@@ -84,7 +84,7 @@ app.get("/", (req, res) => {
 //   next(createError(404));
 // });
 //fixture user
-cron.schedule("0 3 * * *", async () => {
+cron.schedule("0 1 * * *", async () => {
   await updateExpertSubscriptionEveryNight();
   await updateUserSubscriptionEveryNight();
 });
