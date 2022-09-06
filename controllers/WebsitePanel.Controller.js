@@ -2172,7 +2172,7 @@ module.exports = {
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
-     
+
       let customerId = req.user.customerId;
 
       if (!req.user.customerId) {
@@ -2322,24 +2322,27 @@ module.exports = {
           thawaniSession.data.data.products[0].name.match(/[a-zA-Z]+/g)[0]
         } Session`,
       });
+      let appointmentData;
+      if (thawaniSession.data.data.payment_status === "paid") {
+        appointmentData = await appointment.findOneAndUpdate(
+          { _id: payload.appointmentId },
+          {
+            isPaid: true,
+          }
+        );
+      } else {
+        appointmentData = await appointment.findOneAndDelete({
+          _id: payload.appointmentId,
+        });
+      }
 
-      let appointmentData = await appointment.findOneAndUpdate(
-        { _id: payload.appointmentId },
-        {
-          isPaid:
-            thawaniSession.data.data.payment_status === "paid" ? true : false,
-        }
-      );
-
-      let expertTimeData = await expertTimeAvailable.findOneAndUpdate(
+      await expertTimeAvailable.findOneAndUpdate(
         { _id: appointmentData.timeSlotId },
         {
           isAvailable:
             thawaniSession.data.data.payment_status === "paid" ? false : true,
         }
       );
-
-      
 
       await UserPlans.findOneAndUpdate(
         {
