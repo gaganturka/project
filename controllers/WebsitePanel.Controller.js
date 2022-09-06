@@ -840,6 +840,7 @@ module.exports = {
         },
         expertId: payload.expertId,
         appointmentDate: payload.appointmentDate,
+        isPaid: true,
       });
       payload.userId = userId;
       // console.log(data,'daaaaattaa')
@@ -850,7 +851,7 @@ module.exports = {
       console.log("createAppointment", createAppointment);
       await expertTimeAvailable.findOneAndUpdate(
         { _id: createAppointment.timeSlotId },
-        { isAvailable: false }
+        { isAvailable: payload.isPaid ? false : true }
       );
 
       universalFunctions.sendSuccess(
@@ -862,37 +863,39 @@ module.exports = {
         res
       );
 
-      // Send Push Notification
-      let expertDetail = await expertUser
-        .findOne({ _id: req.body.expertId })
-        .populate("userId");
+      if (payload.isPaid) {
+        // Send Push Notification
+        let expertDetail = await expertUser
+          .findOne({ _id: req.body.expertId })
+          .populate("userId");
 
-      let message = {
-        notification: {
-          title: APP_CONSTANTS.pushNotificationMessage.title,
-          body: APP_CONSTANTS.pushNotificationMessage.bookAppointmentByUser,
-        },
-      };
-      let registrationTokens = [];
-      expertDetail &&
-        expertDetail.userId &&
-        expertDetail.userId.token &&
-        expertDetail.userId.token.map((val1) => {
-          val1.deviceToken.map((ele) => {
-            registrationTokens.push(ele);
+        let message = {
+          notification: {
+            title: APP_CONSTANTS.pushNotificationMessage.title,
+            body: APP_CONSTANTS.pushNotificationMessage.bookAppointmentByUser,
+          },
+        };
+        let registrationTokens = [];
+        expertDetail &&
+          expertDetail.userId &&
+          expertDetail.userId.token &&
+          expertDetail.userId.token.map((val1) => {
+            val1.deviceToken.map((ele) => {
+              registrationTokens.push(ele);
+            });
           });
-        });
-      // console.log("this is export token", registrationTokens);
-      admin
-        .messaging()
-        .sendToDevice(registrationTokens, message)
-        .then((response) => {
-          console.log("Send Notification Response:", response);
-          return null;
-        })
-        .catch((error) => {
-          console.log("Error sending message:", error);
-        });
+        // console.log("this is export token", registrationTokens);
+        admin
+          .messaging()
+          .sendToDevice(registrationTokens, message)
+          .then((response) => {
+            console.log("Send Notification Response:", response);
+            return null;
+          })
+          .catch((error) => {
+            console.log("Error sending message:", error);
+          });
+      }
     } catch (error) {
       return universalFunctions.sendError(error, res);
     }
@@ -2322,20 +2325,14 @@ module.exports = {
           thawaniSession.data.data.products[0].name.match(/[a-zA-Z]+/g)[0]
         } Session`,
       });
-      let appointmentData;
-      if (thawaniSession.data.data.payment_status === "paid") {
-        appointmentData = await appointment.findOneAndUpdate(
-          { _id: payload.appointmentId },
-          {
-            isPaid: true,
-          }
-        );
-      } else {
-        appointmentData = await appointment.findOneAndDelete({
-          _id: payload.appointmentId,
-        });
-      }
 
+      let appointmentData = await appointment.findOneAndUpdate(
+        { _id: payload.appointmentId },
+        {
+          isPaid:
+            thawaniSession.data.data.payment_status === "paid" ? true : false,
+        }
+      );
       await expertTimeAvailable.findOneAndUpdate(
         { _id: appointmentData.timeSlotId },
         {
@@ -2364,6 +2361,39 @@ module.exports = {
         },
         res
       );
+      if (thawaniSession.data.data.payment_status === "paid") {
+        // Send Push Notification
+        let expertDetail = await expertUser
+          .findOne({ _id: appointmentData.expertId })
+          .populate("userId");
+
+        let message = {
+          notification: {
+            title: APP_CONSTANTS.pushNotificationMessage.title,
+            body: APP_CONSTANTS.pushNotificationMessage.bookAppointmentByUser,
+          },
+        };
+        let registrationTokens = [];
+        expertDetail &&
+          expertDetail.userId &&
+          expertDetail.userId.token &&
+          expertDetail.userId.token.map((val1) => {
+            val1.deviceToken.map((ele) => {
+              registrationTokens.push(ele);
+            });
+          });
+        // console.log("this is export token", registrationTokens);
+        admin
+          .messaging()
+          .sendToDevice(registrationTokens, message)
+          .then((response) => {
+            console.log("Send Notification Response:", response);
+            return null;
+          })
+          .catch((error) => {
+            console.log("Error sending message:", error);
+          });
+      }
     } catch (error) {
       universalFunctions.sendError(error, res);
     }
