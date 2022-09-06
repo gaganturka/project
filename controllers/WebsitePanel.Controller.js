@@ -2613,6 +2613,28 @@ module.exports = {
       universalFunctions.sendError(err, res);
     }
   },
+  updateUserRefundEveryTenMinutes: async () => {
+    try {
+      let chatData = await chatappointment.find({ lastMessageBy: "user" });
+      await universalFunctions.asyncForEach(chatData, async (chat) => {
+        let newDate = moment.utc().format();
+        var duration = moment.duration(newDate.diff(chat.lastMessageSentAt));
+        var hours = duration.asHours();
+        if (parseInt(hours) >= 24) {
+          await chatappointment.findOneAndUpdate(
+            { _id: chat._id },
+            { totalMoneyDeducted: 0 }
+          );
+          await borhanUser.findOneAndUpdate(
+            { _id: chat.userId },
+            { $inc: { totalRefunded: chat.totalMoneyDeducted } }
+          );
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  },
 };
 
 const deductMoneyFromMultipleWallets = async (userId, amount) => {

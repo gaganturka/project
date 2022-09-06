@@ -24,6 +24,7 @@ const {
 } = require("./controllers/ExpertPanel.Controllers");
 const {
   updateUserSubscriptionEveryNight,
+  updateUserRefundEveryTenMinutes,
 } = require("./controllers/WebsitePanel.Controller");
 // If Uploads directory does not exists then create new one
 var dir = "./uploads";
@@ -84,6 +85,9 @@ app.get("/", (req, res) => {
 //   next(createError(404));
 // });
 //fixture user
+cron.schedule("*/15 * * * *", async () => {
+  await updateUserRefundEveryTenMinutes();
+});
 cron.schedule("0 1 * * *", async () => {
   await updateExpertSubscriptionEveryNight();
   await updateUserSubscriptionEveryNight();
