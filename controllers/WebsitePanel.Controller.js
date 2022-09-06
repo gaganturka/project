@@ -2579,6 +2579,40 @@ module.exports = {
       console.log(err);
     }
   },
+  updateUserChatRoom: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        chatAppointmentId: Joi.string().required(),
+        amountPaidForSms: Joi.number().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+
+      let appointmentData = await chatappointment.findOneAndUpdate(
+        {
+          _id: payload.chatAppointmentId,
+        },
+        {
+          lastMessageBy: "user",
+          lastMessageSentAt: moment.utc().format(),
+          $inc: { totalMoneyDeducted: payload.amountPaidForSms },
+        }
+      );
+      if (!appointmentData) {
+        throw Boom.notFound("No Such Chat Appointment");
+      }
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: {},
+        },
+        res
+      );
+    } catch (err) {
+      universalFunctions.sendError(err, res);
+    }
+  },
 };
 
 const deductMoneyFromMultipleWallets = async (userId, amount) => {

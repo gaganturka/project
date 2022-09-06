@@ -154,8 +154,11 @@ router
   .route("/getUserAllActivePlans")
   .get(authUser.checkAuth, WebsiteController.getUserAllActivePlans);
 
-
 router
   .route("/getExpertChatCharges")
   .post(authUser.checkAuth, WebsiteController.getExpertChatCharges);
+
+router
+  .route("/updateUserChatRoom")
+  .post(authUser.checkAuth, WebsiteController.updateUserChatRoom);
 module.exports = router;
