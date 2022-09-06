@@ -3,7 +3,7 @@ const connectToMongo = require("./db");
 const express = require("express");
 const bodyParser = require("body-parser");
 var cors = require("cors");
-const fs = require('fs');
+const fs = require("fs");
 const {
   AUTH_ROUTES,
   CategoryRoutes,
@@ -12,18 +12,24 @@ const {
   BorhanUserAdminRoutes,
   ExpertPanelRoutes,
   AppRoutes,
-  FirmRoutes
+  FirmRoutes,
 } = require("./routes");
 const cookieSession = require("cookie-session");
 const passportSetup = require("./config/passport");
 const passport = require("passport");
 const authRoute = require("./routes/google");
-
+var cron = require("node-cron");
+const {
+  updateExpertSubscriptionEveryNight,
+} = require("./controllers/ExpertPanel.Controllers");
+const {
+  updateUserSubscriptionEveryNight,
+} = require("./controllers/WebsitePanel.Controller");
 // If Uploads directory does not exists then create new one
-var dir = './uploads';
+var dir = "./uploads";
 
-if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir);
 }
 
 const router = express.Router();
@@ -78,8 +84,13 @@ app.get("/", (req, res) => {
 //   next(createError(404));
 // });
 //fixture user
+cron.schedule("0 3 * * *", async () => {
+  await updateExpertSubscriptionEveryNight();
+  await updateUserSubscriptionEveryNight();
+});
 const { fixture } = require("./fixture/fixtureUser");
 fixture();
+
 app.listen(port, () => {
   console.log(`Bohanbackend listening at http://localhost:${port}`);
 });

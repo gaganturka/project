@@ -2549,6 +2549,36 @@ module.exports = {
       universalFunctions.sendError(error, res);
     }
   },
+  updateUserSubscriptionEveryNight: async () => {
+    try {
+      let userData = await User.find({ role: APP_CONSTANTS.role.borhanuser });
+      await universalFunctions.asyncForEach(userData, async (user) => {
+        let newDate = moment.utc().format();
+        let userPlans = await UserPlans.find({
+          userId: user._id,
+          isActive: true,
+        });
+        if (userPlans.length > 0) {
+          userPlans.forEach(async (p) => {
+            if (p.expiryDate < newDate) {
+              await UserPlans.findOneAndUpdate({
+                _id: p._id,
+                isActive: false,
+              });
+              console.log(`User Plan ${p._id} updated successfully`);
+            } else {
+              console.log(`User Plan ${p._id} hasn't changed`);
+            }
+          });
+          console.log("User Plans updated successfully");
+        } else {
+          console.log("No Plan To Update");
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  },
 };
 
 const deductMoneyFromMultipleWallets = async (userId, amount) => {
