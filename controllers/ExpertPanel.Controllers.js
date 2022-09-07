@@ -496,6 +496,7 @@ module.exports = {
     try {
       let appointmentId = req.body.id;
       let payload = req.body.payload;
+
       const Appointment = await appointmentModel.findByIdAndUpdate(
         { _id: appointmentId },
         { $set: payload },
@@ -524,6 +525,11 @@ module.exports = {
         await expertTimeAvailable.findOneAndUpdate(
           { _id: Appointment.timeSlotId },
           { isAvailable: true }
+        );
+
+        await borhanUser.findOneAndUpdate(
+          { userId: Appointment.userId },
+          { $inc: { totalRefunded: Appointment.valueAfterDiscount } }
         );
       }
     } catch (error) {
