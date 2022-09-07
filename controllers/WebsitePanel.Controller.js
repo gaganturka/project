@@ -23,6 +23,7 @@ const Mongoose = require("mongoose");
 const Boom = require("boom");
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const { v4: uuidv4 } = require("uuid");
+const ExpertPlan = require("../models/paymentGateway/expertPlansBought");
 
 const AccessToken = require("twilio").jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
@@ -2633,6 +2634,61 @@ module.exports = {
       });
     } catch (err) {
       console.log(err);
+    }
+  },
+  getAllPremiumExperts: async (req, res) => {
+    try {
+      let expertData = await ExpertPlan.find({ isActive: true }).distinct(
+        "expertId"
+      );
+
+      let userData = await expertUser.aggregate([
+        { $match: { userId: { $in: expertData } } },
+        {
+          $lookup: {
+            localField: "userId",
+            from: "users",
+            foreignField: "_id",
+            as: "userId",
+            pipeline: [
+              { $project: { firstName: 1, lastName: 1, profilePic: 1 } },
+            ],
+          },
+        },
+        {
+          $lookup: {
+            localField: "practiceArea",
+            from: "practiceareas",
+            foreignField: "_id",
+            as: "practiceArea",
+            pipeline: [{ $project: { name: 1, description: 1 } }],
+          },
+        },
+        { $sample: { size: 10 } },
+        {
+          $project: {
+            rating: 1,
+            experience: 1,
+            userId: 1,
+            practiceArea: 1,
+          },
+        },
+      ]);
+      userData.forEach((u) => {
+        if (u.userId.length > 0) {
+          u.userId = u.userId[0];
+        }
+      });
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: userData,
+        },
+        res
+      );
+    } catch (err) {
+      universalFunctions.sendError(err, res);
     }
   },
 };

@@ -161,4 +161,9 @@ router
 router
   .route("/updateUserChatRoom")
   .post(authUser.checkAuth, WebsiteController.updateUserChatRoom);
+
+router
+  .route("/getAllPremiumExperts")
+  .get(WebsiteController.getAllPremiumExperts);
+
 module.exports = router;
