@@ -1344,46 +1344,19 @@ module.exports = {
   getAvailableTimeForUser: async (req, res) => {
     try {
       let { expertId, appointmentDate, duration } = req.query;
-
-      let curentdate = new Date();
-
       const expertTime = await expertTimeAvailable.find({
-        $and: [
-          {
-            expertId: expertId,
-          },
-          {
-            appointmentDate: appointmentDate,
-          },
-          {
-            duration: duration,
-          },
-          {
-            startAppointmentTime: {
-              $gte: curentdate,
-            },
-          },
-        ],
+        duration: duration,
+        expertId: expertId,
+        startAppointmentTime: {
+          $gte: new Date(),
+        },
+        appointmentDate: new Date(appointmentDate),
       });
 
       if (!expertTime) {
         throw Boom.badRequest("invalid id or token");
       }
       let tempobj = JSON.parse(JSON.stringify(expertTime));
-      // await universalFunctions.asyncForEach(tempobj, async (e, index) => {
-      //   let data = await appointment.find({
-      //     expertId: expertId,
-      //     appointmentDate: appointmentDate,
-      //     timeSlotId: e._id ? e._id : "",
-      //     isPaid: false,
-      //   });
-      //   // if (data.length > 0) {
-      //   //   e.avialble = false;
-      //   // } else {
-      //   //   e.avialble = true;
-      //   // }
-      // });
-      console.log("tempobj", tempobj);
 
       universalFunctions.sendSuccess(
         {
@@ -1833,7 +1806,7 @@ module.exports = {
     try {
       const schema = Joi.object({
         subscriptionId: Joi.string().length(24).required(),
-        successUrl: Joi.string().required(),
+        // successUrl: Joi.string().required(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
@@ -1888,8 +1861,8 @@ module.exports = {
               1000,
           },
         ],
-        success_url: `${payload.successUrl}/paymentSuccess/${userPlanData._id}/subscription`,
-        cancel_url: `${payload.successUrl}/paymentCanceled/${userPlanData._id}/subscription`,
+        success_url: `https://borhan-website.vercel.app/paymentSuccess/${userPlanData._id}/subscription`,
+        cancel_url: `https://borhan-website.vercel.app/paymentCanceled/${userPlanData._id}/subscription`,
         customer_id: customerId,
       };
 
@@ -2679,6 +2652,26 @@ module.exports = {
           u.userId = u.userId[0];
         }
       });
+      universalFunctions.sendSuccess(
+        {
+          statusCode: 200,
+          message: "Success",
+          data: userData,
+        },
+        res
+      );
+    } catch (err) {
+      universalFunctions.sendError(err, res);
+    }
+  },
+  connectWithExpert: async (req, res) => {
+    try {
+      const schema = Joi.object({
+        expertId: Joi.string().required(),
+      });
+      await universalFunctions.validateRequestPayload(req.body, res, schema);
+      let payload = req.body;
+
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
