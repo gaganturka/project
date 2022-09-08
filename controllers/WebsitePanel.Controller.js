@@ -1861,8 +1861,8 @@ module.exports = {
               1000,
           },
         ],
-        success_url: `https://borhan-website.vercel.app/paymentSuccess/${userPlanData._id}/subscription`,
-        cancel_url: `https://borhan-website.vercel.app/paymentCanceled/${userPlanData._id}/subscription`,
+        success_url: `https://borhan-website.vercel.app/paymentSuccess/${userPlanData._id}/subscription/${req.user.id}`,
+        cancel_url: `https://borhan-website.vercel.app/paymentCanceled/${userPlanData._id}/subscription${req.user.id}`,
         customer_id: customerId,
       };
 
@@ -1905,11 +1905,11 @@ module.exports = {
     try {
       const schema = Joi.object({
         transactionId: Joi.string().length(24).required(),
+        userId: Joi.string().length(24).required(),
         paymentType: Joi.string(),
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
       let payload = req.body;
-      console.log(payload);
 
       const transactionData = await UserPlans.findOne({
         _id: payload.transactionId,
@@ -1926,9 +1926,12 @@ module.exports = {
       );
 
       await UserTransactions.findOneAndUpdate(
-        { userId: req.user.id, sessionId: thawaniSession.data.data.session_id },
         {
-          userId: req.user.id,
+          userId: payload.userId,
+          sessionId: thawaniSession.data.data.session_id,
+        },
+        {
+          userId: payload.userId,
           paymentStatus: thawaniSession.data.data.payment_status,
           amountPaid: thawaniSession.data.data.total_amount / 1000,
           planName: thawaniSession.data.data.products[0].name,

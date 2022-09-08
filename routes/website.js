@@ -116,7 +116,7 @@ router
 
 router
   .route("/updateUserSubscription")
-  .post(authUser.checkAuth, WebsiteController.updateUserSubscription);
+  .post(WebsiteController.updateUserSubscription);
 
 router
   .route("/getExpertPriceDetails")
