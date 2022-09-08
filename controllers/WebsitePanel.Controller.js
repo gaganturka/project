@@ -1861,8 +1861,8 @@ module.exports = {
               1000,
           },
         ],
-        success_url: `https://borhan-website.vercel.app/paymentSuccess/${userPlanData._id}/subscription/${req.user.id}`,
-        cancel_url: `https://borhan-website.vercel.app/paymentCanceled/${userPlanData._id}/subscription${req.user.id}`,
+        success_url: `${APP_CONSTANTS.FRONTEND_WEBSITE_URL}/paymentSuccess/${userPlanData._id}/subscription/${req.user.id}`,
+        cancel_url: `${APP_CONSTANTS.FRONTEND_WEBSITE_URL}/paymentCanceled/${userPlanData._id}/subscription/${req.user.id}`,
         customer_id: customerId,
       };
 
