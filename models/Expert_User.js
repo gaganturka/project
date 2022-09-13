@@ -55,7 +55,7 @@ const ExpertUserSchema = new Schema(
       type: String,
       enum: [
         APP_CONSTANTS.activityStatus.active,
-        APP_CONSTANTS.activityStatus.busy,
+        // APP_CONSTANTS.activityStatus.busy,
         APP_CONSTANTS.activityStatus.unavailable,
       ],
       default: APP_CONSTANTS.activityStatus.active,
