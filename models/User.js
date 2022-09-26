@@ -72,6 +72,27 @@ const UserSchema = new Schema(
         fireBaseToken: {
             type: String,
         },
+        country: {
+            type: String
+        },
+        state: {
+            type: String
+        },
+        city: {
+            type: String
+        },
+        zipcode: {
+            type: String
+        },
+        dateOfBirth: {
+            type: String
+        },
+        street: {
+            type: String
+        },
+        area: {
+            type: String
+        }
     },
     {
         toJSON: {virtuals: true},

@@ -20,7 +20,10 @@ const {
     getRoles,
     getRoleById,
     editRole,
-    getSelectOptions
+    getSelectOptions,
+    getRolesOptions,
+    getEmployeeTypes,
+    addEmployee
 } = require("../controllers/Firm.Controllers");
 
 router
@@ -97,5 +100,17 @@ router
 router
     .route("/get-select-options")
     .get(isFirmAdmin, getSelectOptions);
+
+router
+    .route("/get-roles-options")
+    .get(isFirmAdmin, getRolesOptions);
+
+router
+    .route("/get-employee-types")
+    .get(isFirmAdmin, getEmployeeTypes);
+
+router
+    .route("/employees")
+    .post(isFirmAdmin, addEmployee);
 
 module.exports = router;

@@ -8,11 +8,20 @@ const APP_CONSTANTS = require("../../appConstants");
 const responseMessages = require("../../resources/response.json");
 
 const index = async (req, res) => {
-    let models = await FirmEmployeeTypes.paginate({});
+    let models = await FirmEmployeeTypes.paginate({
+        name: {$regex: req.query.search ? req.query.search : '', $options: "i"},
+    }, {
+        sort: {
+            updatedAt: 'desc'
+        },
+        page: req.query.page ? req.query.page : 1,
+        limit: req.query.limit ? req.query.limit : APP_CONSTANTS.PER_PAGE,
+    });
     universalFunctions.sendSuccess({
         data: models,
     }, res);
 };
+
 
 const create = async (req, res) => {
     try {

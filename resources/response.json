@@ -1,5 +1,6 @@
 {
   "ROLE_ALREADY_EXISTS": "Role exist already.",
+  "EMPLOYEE_ALREADY_EXISTS": "Employee exist already.",
   "SUCCESS": "Success",
   "USER_NOT_FOUND": "User not found.",
   "USER_CREATED": "User Created",
