@@ -116,7 +116,7 @@ router
 
 router
   .route("/updateUserSubscription")
-  .post(WebsiteController.updateUserSubscription);
+  .post(authUser.checkAuth, WebsiteController.updateUserSubscription);
 
 router
   .route("/getExpertPriceDetails")
@@ -154,16 +154,8 @@ router
   .route("/getUserAllActivePlans")
   .get(authUser.checkAuth, WebsiteController.getUserAllActivePlans);
 
+
 router
   .route("/getExpertChatCharges")
   .post(authUser.checkAuth, WebsiteController.getExpertChatCharges);
-
-router
-  .route("/updateUserChatRoom")
-  .post(authUser.checkAuth, WebsiteController.updateUserChatRoom);
-
-router
-  .route("/getAllPremiumExperts")
-  .get(WebsiteController.getAllPremiumExperts);
-
 module.exports = router;

@@ -4,10 +4,10 @@ const { Schema } = mongoose;
 const APP_CONSTANTS = require("../appConstants");
 
 const AppointmenChatSchema = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: "user",
-  },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "user",
+      },
   expertId: {
     type: Schema.Types.ObjectId,
     ref: "expert",
@@ -19,17 +19,16 @@ const AppointmenChatSchema = new Schema({
       APP_CONSTANTS.appointmentStatus.pending,
       APP_CONSTANTS.appointmentStatus.cancelled,
     ],
-    default: APP_CONSTANTS.appointmentStatus.pending,
+    default:APP_CONSTANTS.appointmentStatus.pending
   },
-  question: {
+   question: {
     type: String,
+
   },
-  chatRoomId: {
+  chatRoomId:{
     type: String,
-  },
-  lastMessageBy: { type: String, enum: ["user", "expert"] },
-  lastMessageSentAt: { type: Date },
-  totalMoneyDeducted: { type: Number, default: 0 },
+  }
+
 });
 
 module.exports = mongoose.model("chatappointment", AppointmenChatSchema);

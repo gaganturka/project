@@ -83,7 +83,7 @@ module.exports = {
         profilePic: Joi.string().allow(""),
         firebaseUid: Joi.string().required(),
         fireBaseToken: Joi.string().allow(),
-        deviceType: Joi.string().allow(""),
+        deviceType: Joi.string().allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
@@ -310,7 +310,6 @@ module.exports = {
   },
   adminLogin: async (req, res) => {
     try {
-      //  console.log('thid odi bpody - ', req.file, req.files)
       const schema = Joi.object({
         email: Joi.string().email({
           minDomainSegments: 2,
@@ -330,6 +329,10 @@ module.exports = {
       // );
       const token = await jwtFunction.jwtGenerator(user._id);
 
+      //Delete password field
+      const userr = JSON.parse(JSON.stringify(user));
+      delete userr.password;
+
       // console.log(user,APP_CONSTANTS.role.borhanuser,us)
       if (user !== null) {
         if (
@@ -340,7 +343,7 @@ module.exports = {
             {
               statusCode: 200,
               message: "You are signed in as admin",
-              data: token,
+              data: {token: token, user: userr},
             },
             res
           );

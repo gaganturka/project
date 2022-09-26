@@ -2,12 +2,14 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const APP_CONSTANTS = require("../appConstants");
 const responseMessages=  require("../resources/response.json");
-const universalFunctions = require( "../utils/universalFunctions");const Boom = require("boom");
+const universalFunctions = require( "../utils/universalFunctions");
+const Boom = require("boom");
 const { Config } = require("../config");
 module.exports = {
   isAdmin: async (req, res, next) => {
     try {
       const token = req.header("auth-token")|| req.headers["x-access-token"] || req.query["x-access-token"] || req.headers["authorization"];
+      console.log('ADMIN TOKEN == ', token);
       if (!token) {
         // res
         //   .status(403)

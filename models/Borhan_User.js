@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const BorhanUserSchema = new Schema({
   isSubscribed: {
     type: Boolean,
-    default: false,
+    default:false
   },
   balance: {
     type: Number,
@@ -17,6 +17,5 @@ const BorhanUserSchema = new Schema({
     type: Date,
     default: new Date(),
   },
-  totalRefunded: { type: Number, default: 0 },
 });
 module.exports = mongoose.model("borhanuser", BorhanUserSchema);

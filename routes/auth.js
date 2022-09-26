@@ -17,4 +17,5 @@ router.route("/adminlogin").post(userCreation.adminLogin);
 router.route("/generateotp").post(userCreation.otpGeneration);
 router.route("/otpsendertofrontend").post(userCreation.otpSenderToFrontend);
 
+
 module.exports = router;

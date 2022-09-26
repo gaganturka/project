@@ -21,12 +21,12 @@ module.exports = {
       const schema = Joi.object({
         limit: Joi.number(),
         page: Joi.number(),
-        search: Joi.string().allow(""),
+        search: Joi.string().allow("")
       });
       await universalFunctions.validateRequestPayload(req.body, res, schema);
 
       let page = req.body.page;
-      let limit = req.body.limit;
+      let limit = req.body.limit; 
       // let filter = {
       //   isApprovedByAdmin: true,
       // };
@@ -68,7 +68,6 @@ module.exports = {
         throw Boom.badRequest("cannot find any user");
       }
 
-      // console.log("userrrr", user, "useerrrrr");
       universalFunctions.sendSuccess(
         {
           statusCode: 200,
@@ -90,12 +89,10 @@ module.exports = {
     if (!borhan) {
       throw Boom.badRequest("invalid id user couldnt be deleted");
     }
-    // console.log("deleted borhanuser is", borhan);
     const user = await User.findByIdAndDelete({ _id: borhan.userId });
     if (!user) {
       throw Boom.badRequest("invalid id user couldnt be deleted");
     }
-    // console.log("deleted user is", user);
 
     universalFunctions.sendSuccess(
       {

@@ -1,4 +1,5 @@
 {
+  "ROLE_ALREADY_EXISTS": "Role exist already.",
   "SUCCESS": "Success",
   "USER_NOT_FOUND": "User not found.",
   "USER_CREATED": "User Created",
@@ -89,5 +90,22 @@
   "DATA_NOT_FOUND": "Data Not Found",
   "APPOINTMENT_DATA_NOT_FOUND": " Appointment Data Not Found",
   "MOBILE_NUMBER_REGISTERD_EXPERT_USER": "This Mobile Number is already registered as Expert User, please use another Mobile Number",
-  "TESTIMONY_NOT_FOUND": "Testimony Not Found"
+  "TESTIMONY_NOT_FOUND": "Testimony Not Found",
+  "EMPLOYEE_TYPE_ALREADY_EXIST": "Employee Type with same name already exist",
+  "EMPLOYEE_TYPE_NOT_FOUND": "Employee Type not Found",
+  "ACCOUNT_NO_FIRM": "Account doesn't linked to any firm",
+  "CONTACT_EMAIL_ALREADY_EXIST": "Contact Email already exist",
+  "CONTACT_NOT_FOUND": "Contact not Found",
+  "COMPANY_ALREADY_EXIST": "Company already exist",
+  "FIRM_COMPANY_NOT_FOUND": "Company not Found",
+  "PRACTICE_AREA_ALREADY_EXIST": "Practice Area already exist",
+  "PRACTICE_AREA_NOT_FOUND": "Practice Area not Found",
+  "ACTIVITY_TYPE_ALREADY_EXIST": "Activity Type already exist",
+  "ACTIVITY_TYPE_NOT_FOUND": "Activity Type not Found",
+  "CONTACT_GROUP_ALREADY_EXIST": "Contact Group already exist",
+  "CONTACT_GROUP_NOT_FOUND": "Contact Group not Found",
+  "EMPLOYEE_ALREADY_EXIST": "Employee with same email already exist",
+  "EMPLOYEE_NOT_FOUND": "Employee not Found",
+  "CASE_ALREADY_EXIST": "Case already exist",
+  "CASE_NOT_FOUND": "Case not Found"
 }

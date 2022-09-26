@@ -6,7 +6,6 @@ const expertTimeAvailable = require("../models/ExpertTimeSlot");
 const ExpertPlan = require("../models/paymentGateway/expertPlansBought");
 const SubscriptionType = require("../models/paymentGateway/subscriptionType");
 const ExpertEarning = require("../models/paymentGateway/expertEarnings");
-const chatRoom = require("../models/Chat_Rooms");
 const otpModel = require("../models/Otp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -496,7 +495,6 @@ module.exports = {
     try {
       let appointmentId = req.body.id;
       let payload = req.body.payload;
-
       const Appointment = await appointmentModel.findByIdAndUpdate(
         { _id: appointmentId },
         { $set: payload },
@@ -525,11 +523,6 @@ module.exports = {
         await expertTimeAvailable.findOneAndUpdate(
           { _id: Appointment.timeSlotId },
           { isAvailable: true }
-        );
-
-        await borhanUser.findOneAndUpdate(
-          { userId: Appointment.userId },
-          { $inc: { totalRefunded: Appointment.valueAfterDiscount } }
         );
       }
     } catch (error) {
@@ -1091,7 +1084,8 @@ module.exports = {
       await expertUser.findOneAndUpdate(
         { _id: appointments.expertId },
         {
-          $inc: { totalEarning: amountEarned, totalPending: amountEarned },
+          totalEarning: { $inc: amountEarned },
+          totalPending: { $inc: amountEarned },
         }
       );
 
@@ -1165,7 +1159,8 @@ module.exports = {
       await expertUser.findOneAndUpdate(
         { _id: appointments.expertId },
         {
-          $inc: { totalEarning: amountEarned, totalPending: amountEarned },
+          totalEarning: { $inc: amountEarned },
+          totalPending: { $inc: amountEarned },
         }
       );
 
@@ -1597,139 +1592,6 @@ module.exports = {
       );
     } catch (err) {
       return universalFunctions.sendError(err, res);
-    }
-  },
-
-  updateExpertSubscriptionEveryNight: async () => {
-    try {
-      let userData = await User.find({ role: APP_CONSTANTS.role.expert });
-      await universalFunctions.asyncForEach(userData, async (user) => {
-        let newDate = moment.utc().format();
-        let userPlans = await ExpertPlan.find({
-          expertId: user._id,
-          isActive: true,
-        });
-        if (userPlans.length > 0) {
-          userPlans.forEach(async (p) => {
-            if (p.expiryDate < newDate) {
-              await ExpertPlan.findOneAndUpdate({
-                _id: p._id,
-                isActive: false,
-              });
-              console.log(`User Plan ${p._id} updated successfully`);
-            } else {
-              console.log(`User Plan ${p._id} hasn't changed`);
-            }
-          });
-          console.log("User Plans updated successfully");
-        } else {
-          console.log("No Plan To Update");
-        }
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  },
-
-  updateExpertChatRoom: async (req, res) => {
-    try {
-      const schema = Joi.object({
-        chatAppointmentId: Joi.string().required(),
-      });
-      await universalFunctions.validateRequestPayload(req.body, res, schema);
-      let payload = req.body;
-
-      let appointmentData = await chatappointment.findOneAndUpdate(
-        {
-          _id: payload.chatAppointmentId,
-        },
-        {
-          lastMessageBy: "expert",
-          lastMessageSentAt: moment.utc().format(),
-          totalMoneyDeducted: 0,
-        }
-      );
-      if (!appointmentData) {
-        throw Boom.notFound("No Such Chat Appointment");
-      }
-      if (appointmentData.totalMoneyDeducted > 0) {
-        // update expert earning
-        let expertData = await expertUser
-          .findOne({ _id: req.user.expertId })
-          .select({ priceDetails: 1, _id: 0 });
-
-        if (!expertData) {
-          throw Boom.notFound("Expert Not Found");
-        }
-
-        if (!expertData.priceDetails || expertData.priceDetails.length <= 0) {
-          throw Boom.badRequest("Expert Has Not Set His Price Details Yet");
-        }
-
-        expertData = JSON.parse(JSON.stringify(expertData));
-
-        let callTypeData = expertData.priceDetails.find((c) => {
-          return c.callType === "chat";
-        });
-
-        let amountEarned =
-          appointmentData.totalMoneyDeducted *
-          APP_CONSTANTS.expertAndAdminEarning.withoutSubscription
-            .expertInDecimal;
-        let amountPaidToAdmin =
-          appointmentData.totalMoneyDeducted *
-          APP_CONSTANTS.expertAndAdminEarning.withoutSubscription
-            .adminInDecimal;
-
-        // find expert is subscribed or not
-        let expertSubCount = await ExpertPlan.count({
-          expertId: req.user.id,
-          isActive: true,
-        });
-        if (expertSubCount > 0) {
-          amountEarned =
-            appointmentData.totalMoneyDeducted *
-            APP_CONSTANTS.expertAndAdminEarning.withSubscription
-              .expertInDecimal;
-          amountPaidToAdmin =
-            appointmentData.totalMoneyDeducted *
-            APP_CONSTANTS.expertAndAdminEarning.withSubscription.adminInDecimal;
-        }
-        await ExpertEarning.create({
-          chatId: appointmentData._id,
-          userId: appointmentData.userId,
-          expertId: appointmentData.expertId,
-          date: moment.utc().format(),
-          totalAmountRecieved: appointmentData.totalMoneyDeducted,
-          discount:
-            callTypeData.discountPerMinuteOrSms > 0
-              ? (appointmentData.totalMoneyDeducted *
-                  callTypeData.discountPerMinuteOrSms) /
-                (callTypeData.pricePerMinuteOrSms -
-                  callTypeData.discountPerMinuteOrSms)
-              : 0,
-          amountEarned: amountEarned,
-          amountPaidToAdmin: amountPaidToAdmin,
-        });
-
-        // update totalEarning and total Pending of expert
-        await expertUser.findOneAndUpdate(
-          { _id: req.user.expertId },
-          {
-            $inc: { totalEarning: amountEarned, totalPending: amountEarned },
-          }
-        );
-      }
-      universalFunctions.sendSuccess(
-        {
-          statusCode: 200,
-          message: "Success",
-          data: {},
-        },
-        res
-      );
-    } catch (err) {
-      universalFunctions.sendError(err, res);
     }
   },
 };

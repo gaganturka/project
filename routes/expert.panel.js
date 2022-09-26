@@ -105,8 +105,4 @@ router
   .route("/getExpertAllEarnings")
   .get(isexpert.isExpert, ExpertController.getExpertAllEarnings);
 
-router
-  .route("/updateExpertChatRoom")
-  .post(isexpert.isExpert, ExpertController.updateExpertChatRoom);
-
 module.exports = router;

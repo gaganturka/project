@@ -5,57 +5,48 @@ const {checkAuth} = require("../middleware/authuser");
 const Upload = require("../controllers/Upload");
 router.route("/createBorhanUser").post(appCreation.createBorhanUser);
 router.route("/userLoginOtp").post(appCreation.userLoginOtp);
-router.route("/getDesktopPage").get(checkAuth,appCreation.desktopPage);
+router.route("/getDesktopPage").get(checkAuth, appCreation.desktopPage);
 router.route("/getUserProfile").get(checkAuth, appCreation.getUserDetails);
 router.route("/getAllUpcomingAppointments").post(checkAuth, appCreation.getAllUpcomingAppointments);
 router.route("/getAllExpertData").post(checkAuth, appCreation.getAllExpertData);
 router
-  .route("/getActiveExportData")
-  .post(checkAuth, appCreation.getActiveExportData);
+    .route("/getActiveExportData")
+    .post(checkAuth, appCreation.getActiveExportData);
 
-  router
-  .route("/logoutUser")
-  .get(checkAuth, appCreation.logoutUser);
-  router.route("/getAllOnlinePremiumExpertsData").post(checkAuth, appCreation.getAllOnlinePremiumExpertsData);
-  router.route("/getAllFilteredExperts").post(checkAuth,appCreation.getFilteredExperts);
 router
-  .route("/updateProfileUser")
-  .post(checkAuth, appCreation.updateProfileUser);
+    .route("/logoutUser")
+    .get(checkAuth, appCreation.logoutUser);
+router.route("/getAllOnlinePremiumExpertsData").post(checkAuth, appCreation.getAllOnlinePremiumExpertsData);
+router.route("/getAllFilteredExperts").post(checkAuth, appCreation.getFilteredExperts);
 router
-  .route("/getAppointmentDetail")
-  .post(checkAuth, appCreation.getAppointmentDetails);
-  router
+    .route("/updateProfileUser")
+    .post(checkAuth, appCreation.updateProfileUser);
+router
+    .route("/getAppointmentDetail")
+    .post(checkAuth, appCreation.getAppointmentDetails);
+router
     .route("/createFavouriteExpert")
     .post(checkAuth, appCreation.createFavouriteExpert);
-  router
+router
     .route("/getFavouriteExpert")
     .post(checkAuth, appCreation.getFavouriteExpert);
-  router
+router
     .route("/appointmentCancel")
     .post(checkAuth, appCreation.appointmentCancel);
-  router
+router
     .route("/rescheduleAppointment")
     .post(checkAuth, appCreation.rescheduleAppointment);
-    router.route("/getChatAppointmentUser").get(checkAuth,appCreation.getChatAppointmentUser);
-    router.route("/bookChatAppointment").post(checkAuth,appCreation.bookChatAppointment);        
+router.route("/getChatAppointmentUser").get(checkAuth, appCreation.getChatAppointmentUser);
+router.route("/bookChatAppointment").post(checkAuth, appCreation.bookChatAppointment);
 
-    router.route('/getExpertDetails').post(checkAuth,appCreation.getExpertDetails);
-    
-    router.route("/getTestimonies").get(appCreation.getTestimonies);
-    router.route("/createTestimony").post(checkAuth,appCreation.createTestimony);
-    router.route("/giveExpertRating").post(checkAuth,appCreation.giveExpertRating);
-    router.route("/getAvailableTimeForUser").get(appCreation.getAvailableTimeForUser);
-    
-    router.route("/bookAppointment").post(checkAuth,appCreation.bookAppointment);
-    
+router.route('/getExpertDetails').post(checkAuth, appCreation.getExpertDetails);
 
-    
+router.route("/getTestimonies").get(appCreation.getTestimonies);
+router.route("/createTestimony").post(checkAuth, appCreation.createTestimony);
+router.route("/giveExpertRating").post(checkAuth, appCreation.giveExpertRating);
+router.route("/getAvailableTimeForUser").get(appCreation.getAvailableTimeForUser);
 
-    
-  
-
-  
-
+router.route("/bookAppointment").post(checkAuth, appCreation.bookAppointment);
 
 
 module.exports = router;
