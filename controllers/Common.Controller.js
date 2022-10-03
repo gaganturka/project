@@ -13,7 +13,7 @@ const countries = async (req, res) => {
 };
 
 const states = async (req, res) => {
-    if (req.query.countryCode != undefined) {
+    if (req.query.countryCode !== undefined) {
         universalFunctions.sendSuccess({
             data: State.getStatesOfCountry(req.query.countryCode),
         }, res);
@@ -32,7 +32,7 @@ const cities = async (req, res) => {
             }, res);
         } else {
             universalFunctions.sendError({
-                message: 'Field stateCode is required'
+                message: 'Field stateCode is required' 
             }, res);
         }
     } else {
