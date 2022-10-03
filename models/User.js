@@ -87,7 +87,7 @@ const UserSchema = new Schema(
         dateOfBirth: {
             type: String
         },
-        street: {
+        streetNo: {
             type: String
         },
         area: {

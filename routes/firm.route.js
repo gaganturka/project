@@ -23,7 +23,13 @@ const {
     getSelectOptions,
     getRolesOptions,
     getEmployeeTypes,
-    addEmployee
+    addEmployee,
+    getEmployees,
+    getEmployeeById,
+    editEmployee,
+    addEventLocation,
+    getEventLocation,
+    addEvent
 } = require("../controllers/Firm.Controllers");
 
 router
@@ -112,5 +118,29 @@ router
 router
     .route("/employees")
     .post(isFirmAdmin, addEmployee);
+
+router
+    .route("/employees")
+    .get(isFirmAdmin, getEmployees);
+
+router
+    .route("/employees/:employeeId")
+    .get(isFirmAdmin, getEmployeeById);
+
+router
+    .route("/employees/:employeeId")
+    .patch(isFirmAdmin, editEmployee);
+
+router
+    .route("/location")
+    .post(isFirmAdmin, addEventLocation);
+
+router
+    .route("/location")
+    .get(isFirmAdmin, getEventLocation);
+
+router
+    .route("/addEvent")
+    .post(isFirmAdmin, addEvent);
 
 module.exports = router;
