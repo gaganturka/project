@@ -26,6 +26,7 @@ const activityTypesRoutes = require('./routes/firm/activity-types.route');
 const contactGroupsRoutes = require('./routes/firm/contact-groups.route');
 const employeesRoutes = require('./routes/firm/employees.route');
 const casesRoutes = require('./routes/firm/cases.route');
+const  timeEnteries = require('./routes/firm/timeEntries-route')
 
 const cookieSession = require("cookie-session");
 const passportSetup = require("./config/passport");
@@ -97,6 +98,7 @@ app.use("/firm/activity-types", activityTypesRoutes);
 app.use("/firm/contact-groups", contactGroupsRoutes);
 app.use("/firm/employees", employeesRoutes);
 app.use("/firm/cases", casesRoutes);
+app.use("/firm/time-entry", timeEnteries)
 
 
 app.get("/", (req, res) => {

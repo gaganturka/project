@@ -8,6 +8,7 @@ const APP_CONSTANTS = require("../../appConstants");
 const responseMessages = require("../../resources/response.json");
 
 const index = async (req, res) => {
+    console.log('quer',req.query);
     let models = await FirmContactGroups.paginate({
         firmId: req.firm._id,
         name: {$regex: req.query.search ? req.query.search : '', $options: "i"},
