@@ -6,7 +6,8 @@ const responseMessages = require("../../resources/response.json");
 const mongoose = require('mongoose')
 const moment = require('moment')
 
-const Joi = require('@hapi/joi')
+const Joi = require('@hapi/joi');
+const { unknown } = require('joi/lib/types/object');
 
 
 
@@ -119,6 +120,7 @@ const view = async (req, res) => {
 
 const update = async (req, res) => {
     try {
+        console.log('hvjhbkhbjlknhjvjklhjknbjhvghknjhmgbk', req.body       );
 
         const requestBody = req.body
         const { firmId, firmCaseId, firmCaseEmployeeId, firmActivityTypeId, isBillable, description, date, rate, duration, amount, rateType } = requestBody
@@ -136,7 +138,7 @@ const update = async (req, res) => {
             duration: Joi.number(),
             amount: Joi.number(),
             rateType: Joi.string()
-        })
+        }).unknown(true)
 
 
         await universalFunctions.validateRequestPayload(req.body, res, schema);
