@@ -7,6 +7,7 @@ route.route("/").post(isFirmAdmin, expensesController.create)
 route.route("/").get( expensesController.index)
 route.route("/:id").patch(expensesController.update)
 route.route("/:id").delete(expensesController.deletee)
+route.route("/:id").get(isFirmAdmin, expensesController.view)
 
 
 module.exports = route

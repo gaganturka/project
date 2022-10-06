@@ -185,7 +185,7 @@ const deletee = async (req, res) => {
 
 const index = async (req, res) => {
     try {
-        console.log(req.params), req.firm;
+        console.log(req.params, req.firm)
         const model = await firmCase.findOne({
             _id: req.params.id,
             firmId: req.firm.id
