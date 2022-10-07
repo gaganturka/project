@@ -142,14 +142,36 @@ const getPopulateData = (req) => {
     let populateRef = [];
     let referencesAsked = req.query.with;
     if (referencesAsked !== undefined && referencesAsked !== null) {
-        for (let reference of referencesAsked){
+        for (let reference of referencesAsked) {
             populateRef.push(reference);
         }
     }
     return populateRef;
 }
 
+const isEmptyData = (data) => {
+    if (data !== undefined && data !== "undefined" && data !== '' && data !== null) {
+        return false;
+    }else{
+        return true;
+    }
+}
+
+const concatStrings = (separator, ...strings) => {
+    let finalString = '';
+    for (let string of strings) {
+        if (string !== null && string !== undefined) {
+            string = string.toString().trim();
+            finalString += string + separator;
+        }
+    }
+    finalString = finalString.trim();
+    return finalString;
+}
+
 module.exports = {
+    concatStrings,
+    isEmptyData,
     validateRequestPayload,
     sendSuccess,
     sendError,

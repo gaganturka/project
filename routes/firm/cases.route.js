@@ -9,5 +9,6 @@ router.route("/:id").get(isFirmAdmin, casesController.view);
 router.route("/:id").patch(isFirmAdmin, casesController.update);
 
 router.route("/case-employees/:id").get(isFirmAdmin, casesController.caseEmployees);
+router.route("/invoice-items/:id").get(isFirmAdmin, casesController.invoiceAbleItems);
 
 module.exports = router;

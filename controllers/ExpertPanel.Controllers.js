@@ -37,6 +37,7 @@ const ChatGrant = AccessToken.ChatGrant;
 const accountSid = Config.twilioAccountSid;
 const authToken = Config.authToken;
 const twilio = require("twilio");
+
 const client = new twilio(accountSid, authToken);
 
 // const User = require("../models/User");

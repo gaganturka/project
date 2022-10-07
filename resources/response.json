@@ -109,5 +109,9 @@
   "EMPLOYEE_ALREADY_EXIST": "Employee with same email already exist",
   "EMPLOYEE_NOT_FOUND": "Employee not Found",
   "CASE_ALREADY_EXIST": "Case already exist",
-  "CASE_NOT_FOUND": "Case not Found"
+  "CASE_NOT_FOUND": "Case not Found",
+  "INVOICE_ALREADY_EXIST": "Invoice Number already exist",
+  "INVOICE_ITEMS_MISSING": "Invoice items are required",
+  "INVOICE_NOT_FOUND": "Invoice not Found",
+  "INVOICE_NO_DELETE_PAYMENTS": "Invoice can't be delete, as it has some payments."
 }

@@ -165,9 +165,38 @@ const activityRateTypes = [
     'flat',
 ];
 
+const invoicePaymentTerms = {
+    dueDate: "Due Date",
+    dueOnReceipt: "Due on Receipt",
+    net15: "Net 15",
+    net30: "Net 30",
+    net60: "Net 60",
+};
+
+const invoiceStatus = {
+    draft: "Draft",
+    sent: "Sent",
+    unsent: "Unsent",
+    forwarded: "Forwarded",
+    paid: "Paid",
+    partialPaid: "Partial Paid",
+    overdue: "Overdue",
+};
+
+const invoiceItemTypes = {
+    flatFee: "flatFee",
+    timeEntries: "timeEntries",
+    expenses: "expenses",
+    unpaidInvoiceForwarded: "unpaidInvoiceForwarded",
+    adjustments: "adjustments"
+};
+
 const PER_PAGE = 10;
 
 module.exports = {
+    invoiceItemTypes,
+    invoicePaymentTerms,
+    invoiceStatus,
     courtTypes,
     officeTypes,
     PER_PAGE,

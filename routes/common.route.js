@@ -12,4 +12,7 @@ router.route("/office-types").get(isLoggedIn, CommonController.officeTypes);
 router.route("/court-types").get(isLoggedIn, CommonController.courtTypes);
 router.route("/case-billing-methods").get(isLoggedIn, CommonController.caseBillingMethods);
 
+router.route("/invoices/statuses").get(isLoggedIn, CommonController.invoiceStatues);
+router.route("/invoices/payment-terms").get(isLoggedIn, CommonController.invoicePaymentTerms);
+
 module.exports = router;

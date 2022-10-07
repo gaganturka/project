@@ -21,6 +21,8 @@ const FirmCaseTimeEntriesSchema = new Schema({
             enum: APP_CONSTANTS.activityRateTypes,
             required: true
         },
+        firmInvoiceId: {type: Schema.Types.ObjectId, ref: "FirmInvoices", default: null},
+        firmInvoiceItemId: {type: Schema.Types.ObjectId, ref: "FirmInvoiceItems", default: null},
     },
     {timestamps: true}
 );

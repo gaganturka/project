@@ -32,7 +32,7 @@ const cities = async (req, res) => {
             }, res);
         } else {
             universalFunctions.sendError({
-                message: 'Field stateCode is required' 
+                message: 'Field stateCode is required'
             }, res);
         }
     } else {
@@ -66,4 +66,26 @@ const caseBillingMethods = async (req, res) => {
     }, res);
 };
 
-module.exports = {countries, states, cities, contactTypes, courtTypes, officeTypes, caseBillingMethods};
+const invoiceStatues = async (req, res) => {
+    universalFunctions.sendSuccess({
+        data: APP_CONSTANTS.invoiceStatus,
+    }, res);
+};
+
+const invoicePaymentTerms = async (req, res) => {
+    universalFunctions.sendSuccess({
+        data: APP_CONSTANTS.invoicePaymentTerms,
+    }, res);
+};
+
+module.exports = {
+    countries,
+    states,
+    cities,
+    contactTypes,
+    courtTypes,
+    officeTypes,
+    caseBillingMethods,
+    invoiceStatues,
+    invoicePaymentTerms,
+};

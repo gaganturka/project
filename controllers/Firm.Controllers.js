@@ -784,7 +784,7 @@ const getEmployees = async (req, res) => {
       limit: Joi.number(),
       page: Joi.number(),
       search: Joi.string().allow(""),
-    });
+    }).unknown(true);
     await universalFunctions.validateRequestPayload(req.query, res, schema);
 
     let page = req.query.page;

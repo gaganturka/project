@@ -1,6 +1,7 @@
 const Firm = require("../../models/Firm");
 const User = require("../../models/User");
 const FirmContacts = require("../../models/FirmContacts");
+const FirmCases = require("../../models/FirmCases");
 const universalFunctions = require("../../utils/universalFunctions");
 const Joi = require("@hapi/joi");
 const Boom = require("boom");
@@ -151,5 +152,29 @@ const update = async (req, res) => {
     }
 };
 
+const cases = async (req, res) => {
+    try {
+        const model = await FirmContacts.findOne({
+            _id: req.params.id,
+            firmId: req.firm.id
+        });
+        if (model != null) {
+            let models = await FirmCases.find({
+                firmId: req.firm._id,
+                billingContactId: req.params.id
+            });
+            universalFunctions.sendSuccess({
+                data: {
+                    cases: models,
+                    contact: model
+                },
+            }, res);
+        } else {
+            throw new Error(responseMessages.CONTACT_NOT_FOUND);
+        }
+    } catch (err) {
+        universalFunctions.sendError(err, res);
+    }
+};
 
-module.exports = {index, create, view, update};
+module.exports = {index, create, view, update, cases};
