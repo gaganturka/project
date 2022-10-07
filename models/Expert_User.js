@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
 const APP_CONSTANTS = require("../appConstants");
+const UserPlans = require("../models/paymentGateway/userPlansBought");
 
 const ExpertUserSchema = new Schema(
     {
