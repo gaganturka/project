@@ -132,34 +132,7 @@ FirmInvoicesSchema.methods.linkInvoiceItems = function (invoiceItems) {
             firmInvoiceId: this._id
         });
         for (let invoiceItem of invoiceItems) {
-            if (invoiceItem.referenceId != null) {
-                switch (invoiceItem.itemType) {
-                    case "timeEntries":
-                        await FirmCaseTimeEntries.findOneAndUpdate({
-                            _id: invoiceItem.referenceId
-                        }, {
-                            firmInvoiceId: this._id,
-                            firmInvoiceItemId: invoiceItem._id,
-                        });
-                        break;
-                    case "expenses":
-                        await FirmCaseExpenses.findOneAndUpdate({
-                            _id: invoiceItem.referenceId
-                        }, {
-                            firmInvoiceId: this._id,
-                            firmInvoiceItemId: invoiceItem._id,
-                        });
-                        break;
-                    case "unpaidInvoiceForwarded":
-                        await self.findOneAndUpdate({
-                            _id: invoiceItem.referenceId
-                        }, {
-                            firmInvoiceId: this._id,
-                            firmInvoiceItemId: invoiceItem._id,
-                        });
-                        break;
-                }
-            }
+            await invoiceItem.linkToInvoice();
         }
         return resolve(true);
     });
@@ -171,37 +144,7 @@ FirmInvoicesSchema.methods.unLinkInvoiceItems = function (invoiceItems) {
             firmInvoiceId: this._id
         });
         for (let invoiceItem of invoiceItems) {
-            if (invoiceItem.referenceId != null) {
-                switch (invoiceItem.itemType) {
-                    case "timeEntries":
-                        await FirmCaseTimeEntries.findOneAndUpdate({
-                            _id: invoiceItem.referenceId,
-                            firmInvoiceItemId: invoiceItem._id
-                        }, {
-                            firmInvoiceId: null,
-                            firmInvoiceItemId: null
-                        });
-                        break;
-                    case "expenses":
-                        await FirmCaseExpenses.findOneAndUpdate({
-                            _id: invoiceItem.referenceId,
-                            firmInvoiceItemId: invoiceItem._id
-                        }, {
-                            firmInvoiceId: null,
-                            firmInvoiceItemId: null
-                        });
-                        break;
-                    case "unpaidInvoiceForwarded":
-                        await self.findOneAndUpdate({
-                            _id: invoiceItem.referenceId,
-                            firmInvoiceItemId: invoiceItem._id
-                        }, {
-                            firmInvoiceId: null,
-                            firmInvoiceItemId: null
-                        });
-                        break;
-                }
-            }
+            await invoiceItem.unLinkFromInvoice();
         }
         return resolve(true);
     });
@@ -210,6 +153,15 @@ FirmInvoicesSchema.methods.unLinkInvoiceItems = function (invoiceItems) {
 FirmInvoicesSchema.methods.saveInvoiceItems = function (invoiceItems) {
     return new Promise(async (resolve, reject) => {
         let invoiceItemIds = [];
+
+        let deleteAbleInvoiceItemIds = [];
+        let originalInvoiceItems = await FirmInvoicesItems.find({
+            firmInvoiceId: this._id
+        });
+        for (let originalInvoiceItem of originalInvoiceItems) {
+            deleteAbleInvoiceItemIds.push(originalInvoiceItem._id);
+        }
+
         try {
             for (let invoiceItem of invoiceItems) {
 
@@ -244,6 +196,16 @@ FirmInvoicesSchema.methods.saveInvoiceItems = function (invoiceItems) {
 
                 if (allowToAdd) {
                     let invoiceItemModal = new FirmInvoicesItems();
+
+                    if (invoiceItem._id !== undefined) {
+                        invoiceItemModal = await FirmInvoicesItems.findOne({
+                            _id: invoiceItem._id
+                        });
+                        if (invoiceItemModal == null) {
+                            invoiceItemModal = new FirmInvoicesItems();
+                        }
+                    }
+
                     invoiceItemModal.firmId = this.firmId;
                     invoiceItemModal.firmInvoiceId = this._id;
 
@@ -290,6 +252,19 @@ FirmInvoicesSchema.methods.saveInvoiceItems = function (invoiceItems) {
                     invoiceItemIds.push(invoiceItemModal._id);
                 }
             }
+
+            if (deleteAbleInvoiceItemIds.length > 0) {
+                for (let deleteAbleInvoiceItemId of deleteAbleInvoiceItemIds) {
+                    const deleteAbleModel = await FirmInvoicesItems.findOne({
+                        _id: deleteAbleInvoiceItemId
+                    });
+                    if (deleteAbleModel != null) {
+                        await deleteAbleModel.unLinkFromInvoice();
+                        await unLinkFromInvoice.remove();
+                    }
+                }
+            }
+
             return resolve(invoiceItemIds);
         } catch (error) {
             return reject(error);

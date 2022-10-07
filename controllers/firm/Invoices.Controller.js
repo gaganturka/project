@@ -128,8 +128,8 @@ const view = async (req, res) => {
         let model = await FirmInvoices.findOne({
             _id: req.params.id,
             firmId: req.firm.id
-        }).populate(["firmId", "firmCaseId"]);
-        if (model != null) { 
+        }).populate(req.query.populate ? req.query.populate : []);
+        if (model != null) {
             model = JSON.parse(JSON.stringify(model));
             model.invoiceItems = await FirmInvoicesItems.find({
                 firmInvoiceId: model._id
@@ -138,7 +138,7 @@ const view = async (req, res) => {
                 data: model,
             }, res);
         } else {
-            throw new Error(responseMessages.CONTACT_NOT_FOUND);
+            throw new Error(responseMessages.INVOICE_NOT_FOUND);
         }
     } catch (err) {
         universalFunctions.sendError(err, res);
@@ -147,10 +147,11 @@ const view = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const {email} = req.body;
+        const {invoiceNumber, invoiceItems, firmContactId} = req.body;
 
         const schema = Joi.object({
-            email: Joi.string().email(),
+            invoiceNumber: Joi.string().label("Invoice Number"),
+            firmContactId: Joi.string().required().label("Client"),
         }).unknown(true);
 
         await universalFunctions.validateRequestPayload(req.body, res, schema);
@@ -161,26 +162,46 @@ const update = async (req, res) => {
         });
         if (model != null) {
 
-            if (email != null) {
-                let modelWithSame = await FirmInvoices.findOne({
-                    email: email,
-                    firmId: req.firm.id,
-                    _id: {$ne: model._id}
-                });
-                if (modelWithSame != null) {
-                    throw Boom.badRequest(responseMessages.CONTACT_EMAIL_ALREADY_EXIST);
-                }
+            let modelWithSame = await FirmInvoices.findOne({
+                invoiceNumber: invoiceNumber,
+                firmId: req.firm.id,
+                _id: {$ne: model._id}
+            });
+            if (modelWithSame != null) {
+                throw Boom.badRequest(responseMessages.INVOICE_ALREADY_EXIST);
+            }
+
+            let contact = await FirmContacts.findOne({
+                _id: firmContactId,
+                firmId: req.firm.id
+            });
+
+            if (contact == null) {
+                throw Boom.badRequest(responseMessages.CONTACT_NOT_FOUND);
             }
 
             Object.assign(model, req.body);
             model.updatedBy = req.user.id;
 
-            await model.save()
-            return universalFunctions.sendSuccess({
-                data: model,
-            }, res);
+            model.receiptName = universalFunctions.concatStrings(
+                ' ',
+                contact.firstName,
+                contact.middleName,
+                contact.lastName,
+            );
+
+            model.saveInvoiceItems(invoiceItems).then(async (ids) => {
+                await model.save();
+                await model.linkInvoiceItems();
+                return universalFunctions.sendSuccess({
+                    data: model,
+                }, res);
+            }).catch(error => {
+                throw error;
+            });
+
         } else {
-            throw new Error(responseMessages.CONTACT_NOT_FOUND);
+            throw new Error(responseMessages.INVOICE_NOT_FOUND);
         }
     } catch (err) {
         universalFunctions.handleError(err, res);
@@ -208,7 +229,7 @@ const deleteRecord = async (req, res) => {
                 }, res);
             }
         } else {
-            throw new Error(responseMessages.ACTIVITY_TYPE_NOT_FOUND);
+            throw new Error(responseMessages.INVOICE_NOT_FOUND);
         }
     } catch (err) {
         universalFunctions.sendError(err, res);

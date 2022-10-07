@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
 const APP_CONSTANTS = require("../appConstants");
+const FirmCaseTimeEntries = require("./FirmCaseTimeEntries");
+const FirmCaseExpenses = require("./FirmCaseExpenses");
 
 const FirmInvoicesItemsSchema = new Schema({
         firmId: {type: Schema.Types.ObjectId, ref: "Firm", required: true},
@@ -32,6 +34,91 @@ const FirmInvoicesItemsSchema = new Schema({
     },
     {timestamps: true}
 );
+
+FirmInvoicesItemsSchema.methods.linkToInvoice = function () {
+    return new Promise(async (resolve) => {
+        if (this.referenceId != null) {
+            switch (this.itemType) {
+                case "timeEntries":
+                    await FirmCaseTimeEntries.findOneAndUpdate({
+                        _id: this.referenceId
+                    }, {
+                        firmInvoiceId: this.firmInvoiceId,
+                        firmInvoiceItemId: this._id,
+                    });
+                    return resolve(true);
+                    break;
+                case "expenses":
+                    await FirmCaseExpenses.findOneAndUpdate({
+                        _id: this.referenceId
+                    }, {
+                        firmInvoiceId: this.firmInvoiceId,
+                        firmInvoiceItemId: this._id,
+                    });
+                    return resolve(true);
+                    break;
+                case "unpaidInvoiceForwarded":
+                    await self.findOneAndUpdate({
+                        _id: this.referenceId
+                    }, {
+                        firmInvoiceId: this.firmInvoiceId,
+                        firmInvoiceItemId: this._id,
+                    });
+                    return resolve(true);
+                    break;
+                default:
+                    return resolve(false);
+                    break;
+            }
+        }else{
+            return resolve(false);
+        }
+    });
+};
+
+FirmInvoicesItemsSchema.methods.unLinkFromInvoice = function () {
+    return new Promise(async (resolve) => {
+        if (this.referenceId != null) {
+            switch (this.itemType) {
+                case "timeEntries":
+                    await FirmCaseTimeEntries.findOneAndUpdate({
+                        _id: this.referenceId,
+                        firmInvoiceItemId: this._id
+                    }, {
+                        firmInvoiceId: null,
+                        firmInvoiceItemId: null,
+                    });
+                    return resolve(true);
+                    break;
+                case "expenses":
+                    await FirmCaseExpenses.findOneAndUpdate({
+                        _id: this.referenceId,
+                        firmInvoiceItemId: this._id
+                    }, {
+                        firmInvoiceId: null,
+                        firmInvoiceItemId: null,
+                    });
+                    return resolve(true);
+                    break;
+                case "unpaidInvoiceForwarded":
+                    await self.findOneAndUpdate({
+                        _id: this.referenceId,
+                        firmInvoiceItemId: this._id
+                    }, {
+                        firmInvoiceId: null,
+                        firmInvoiceItemId: null,
+                    });
+                    return resolve(true);
+                    break;
+                default:
+                    return resolve(false);
+                    break;
+            }
+        }else{
+            return resolve(false);
+        }
+    });
+};
 
 
 module.exports = mongoose.model("FirmInvoicesItems", FirmInvoicesItemsSchema);
