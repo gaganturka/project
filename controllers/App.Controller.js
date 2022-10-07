@@ -8,6 +8,7 @@ const appointment = require("../models/Appointment");
 const practiceModel = require("../models/Practice_Area");
 const favouriteExport = require("../models/Fav_Expert");
 const UserRequest = require("../models/UserRequests");
+const UserPlans = require("../models/paymentGateway/userPlansBought");
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -1660,6 +1661,18 @@ module.exports = {
 
             expertDetails = JSON.parse(JSON.stringify(expertDetails));
             expertDetails.userPriceDetails = priceTypes;
+
+            //check if user have any subscription bought or not
+            const userPlanModel = await UserPlans.find({
+                userId: req.user.id,
+                isActive: true,
+            });
+
+            if (userPlanModel != null && userPlanModel.length > 0) {
+                expertDetails.haveSubscription = true;
+            }else{
+                expertDetails.haveSubscription = false;
+            }
 
             universalFunctions.sendSuccess(
                 {
