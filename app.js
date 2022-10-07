@@ -34,7 +34,14 @@ const cookieSession = require("cookie-session");
 const passportSetup = require("./config/passport");
 const passport = require("passport");
 const authRoute = require("./routes/google");
-
+var cron = require("node-cron");
+const {
+  updateExpertSubscriptionEveryNight,
+} = require("./controllers/ExpertPanel.Controllers");
+const {
+  updateUserSubscriptionEveryNight,
+  updateUserRefundEveryTenMinutes,
+} = require("./controllers/WebsitePanel.Controller");
 // If Uploads directory does not exists then create new one
 var dir = './uploads';
 
@@ -114,8 +121,16 @@ app.get("/", (req, res) => {
 //   next(createError(404));
 // });
 //fixture user
-const {fixture} = require("./fixture/fixtureUser");
+cron.schedule("*/15 * * * *", async () => {
+  await updateUserRefundEveryTenMinutes();
+});
+cron.schedule("0 1 * * *", async () => {
+  await updateExpertSubscriptionEveryNight();
+  await updateUserSubscriptionEveryNight();
+});
+const { fixture } = require("./fixture/fixtureUser");
 fixture();
+
 app.listen(port, () => {
-    console.log(`Bohanbackend listening at http://localhost:${port}`);
+  console.log(`Bohanbackend listening at http://localhost:${port}`);
 });

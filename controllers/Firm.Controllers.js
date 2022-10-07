@@ -77,21 +77,21 @@ const addFirm = async (req, res) => {
     });
 
     await FirmAdminUser.findOneAndUpdate(
-      { _id: firmAdmin._id },
-      {
-        $set: {
-          userId: userAdded._id,
-          firmId: firm._id,
-        },
-      }
+        { _id: firmAdmin._id },
+        {
+          $set: {
+            userId: userAdded._id,
+            firmId: firm._id,
+          },
+        }
     );
 
     universalFunctions.sendSuccess(
-      {
-        message: "Firm Added Successfully",
-        data: firm,
-      },
-      res
+        {
+          message: "Firm Added Successfully",
+          data: firm,
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -122,19 +122,19 @@ const loginFirm = async (req, res) => {
 
     //Generate JWT Token
     const token = jwt.sign(
-      {
-        email: email,
-        userId: user._id.toString(),
-      },
-      Config.jwtsecret
+        {
+          email: email,
+          userId: user._id.toString(),
+        },
+        Config.jwtsecret
     );
     return universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Success",
-        data: { token: token, user: userr },
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Success",
+          data: { token: token, user: userr },
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -145,12 +145,12 @@ const getAllFirms = async (req, res) => {
   try {
     const firmData = await FirmAdminUser.find().populate("userId", "email");
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Success",
-        data: firmData,
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Success",
+          data: firmData,
+        },
+        res
     );
   } catch (error) {
     universalFunctions.sendError(err, res);
@@ -165,12 +165,12 @@ const getFirmById = async (req, res) => {
       throw Boom.notFound("No Such Firm");
     }
     return universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Success",
-        data: firmUser,
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Success",
+          data: firmUser,
+        },
+        res
     );
   } catch (err) {
     console.log(err);
@@ -191,12 +191,12 @@ const editFirm = async (req, res) => {
     let payload = req.body;
     await FirmAdminUser.findOneAndUpdate({ _id: payload.firmId }, payload);
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Firm Edited Successfully",
-        data: {},
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Firm Edited Successfully",
+          data: {},
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -217,12 +217,12 @@ const addContactGroup = async (req, res) => {
     });
     if (groupExist.length !== 0) {
       return universalFunctions.sendSuccess(
-        {
-          statusCode: 409,
-          message: "Group already exist",
-          data: {},
-        },
-        res
+          {
+            statusCode: 409,
+            message: "Group already exist",
+            data: {},
+          },
+          res
       );
     }
     const contactGroup = await FirmContactGroups.create({
@@ -232,11 +232,11 @@ const addContactGroup = async (req, res) => {
       updatedBy: req.user.id,
     });
     universalFunctions.sendSuccess(
-      {
-        message: "Contact Group Added Successfully",
-        data: {},
-      },
-      res
+        {
+          message: "Contact Group Added Successfully",
+          data: {},
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -253,12 +253,12 @@ const getContactGroupById = async (req, res) => {
       throw Boom.notFound("No Such Group");
     }
     return universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Success",
-        data: contactGroup,
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Success",
+          data: contactGroup,
+        },
+        res
     );
   } catch (err) {
     return universalFunctions.sendError(err, res);
@@ -274,16 +274,16 @@ const editContactGroup = async (req, res) => {
     await universalFunctions.validateRequestPayload(req.body, res, schema);
     let payload = req.body;
     await FirmContactGroups.findOneAndUpdate(
-      { _id: payload.contactGroupId },
-      payload
+        { _id: payload.contactGroupId },
+        payload
     );
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Group Edited Successfully",
-        data: {},
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Group Edited Successfully",
+          data: {},
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -302,7 +302,7 @@ const getContactGroups = async (req, res) => {
     let page = req.body.page;
     let limit = req.body.limit;
     let userData = [],
-      count;
+        count;
 
     if (req.body.search) {
       let user = await FirmContactGroups.aggregate([
@@ -321,8 +321,8 @@ const getContactGroups = async (req, res) => {
       userData = await FirmContactGroups.find({
         createdBy: req.user.id,
       })
-        .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
 
       count = await FirmContactGroups.find({
         createdBy: req.user.id,
@@ -334,15 +334,15 @@ const getContactGroups = async (req, res) => {
     }
 
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Success",
-        data: {
-          list: userData,
-          count: count,
+        {
+          statusCode: 200,
+          message: "Success",
+          data: {
+            list: userData,
+            count: count,
+          },
         },
-      },
-      res
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -362,12 +362,12 @@ const addCaseStages = async (req, res) => {
     });
     if (caseExist.length !== 0) {
       return universalFunctions.sendSuccess(
-        {
-          statusCode: 409,
-          message: "Case Stage already exist",
-          data: {},
-        },
-        res
+          {
+            statusCode: 409,
+            message: "Case Stage already exist",
+            data: {},
+          },
+          res
       );
     }
     await FirmCaseStages.create({
@@ -377,11 +377,11 @@ const addCaseStages = async (req, res) => {
       updatedBy: req.user.id,
     });
     universalFunctions.sendSuccess(
-      {
-        message: "Case Stage Added Successfully",
-        data: {},
-      },
-      res
+        {
+          message: "Case Stage Added Successfully",
+          data: {},
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -398,12 +398,12 @@ const getCaseStageById = async (req, res) => {
       throw Boom.notFound("No Such Case Stage");
     }
     return universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Success",
-        data: caseStage,
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Success",
+          data: caseStage,
+        },
+        res
     );
   } catch (err) {
     return universalFunctions.sendError(err, res);
@@ -416,12 +416,12 @@ const editCaseStage = async (req, res) => {
     let payload = req.body;
     await FirmCaseStages.findOneAndUpdate({ _id: caseStageId }, payload);
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Case Stage Edited Successfully",
-        data: {},
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Case Stage Edited Successfully",
+          data: {},
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -440,7 +440,7 @@ const getCaseStages = async (req, res) => {
     let page = req.body.page;
     let limit = req.body.limit;
     let userData = [],
-      count;
+        count;
 
     if (req.body.search) {
       let user = await FirmCaseStages.aggregate([
@@ -457,8 +457,8 @@ const getCaseStages = async (req, res) => {
       count = userData.length;
     } else {
       userData = await FirmCaseStages.find({ createdBy: req.user.id })
-        .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
 
       count = await FirmCaseStages.find({
         createdBy: req.user.id,
@@ -470,15 +470,15 @@ const getCaseStages = async (req, res) => {
     }
 
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Success",
-        data: {
-          list: userData,
-          count: count,
+        {
+          statusCode: 200,
+          message: "Success",
+          data: {
+            list: userData,
+            count: count,
+          },
         },
-      },
-      res
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -503,11 +503,11 @@ const addRole = async (req, res) => {
         updatedBy: req.user._id,
       });
       return universalFunctions.sendSuccess(
-        {
-          message: "Role Added Successfully",
-          data: {},
-        },
-        res
+          {
+            message: "Role Added Successfully",
+            data: {},
+          },
+          res
       );
     }
     throw Boom.badRequest(responseMessages.ROLE_ALREADY_EXISTS);
@@ -529,7 +529,7 @@ const getRoles = async (req, res) => {
     let page = req.body.page;
     let limit = req.body.limit;
     let userData = [],
-      count;
+        count;
 
     if (req.body.search) {
       let user = await FirmEmployeeRoles.aggregate([
@@ -546,8 +546,8 @@ const getRoles = async (req, res) => {
       count = userData.length;
     } else {
       userData = await FirmEmployeeRoles.find({ createdBy: req.user._id })
-        .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
 
       count = await FirmEmployeeRoles.find({
         createdBy: req.user._id,
@@ -559,15 +559,15 @@ const getRoles = async (req, res) => {
     }
 
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Success",
-        data: {
-          list: userData,
-          count: count,
+        {
+          statusCode: 200,
+          message: "Success",
+          data: {
+            list: userData,
+            count: count,
+          },
         },
-      },
-      res
+        res
     );
   } catch (err) {
     console.log(err);
@@ -580,12 +580,12 @@ const getRoleById = async (req, res) => {
   try {
     const result = await FirmEmployeeRoles.findById(roleId);
     return universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Success",
-        data: result,
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Success",
+          data: result,
+        },
+        res
     );
   } catch (err) {
     return universalFunctions.sendError(err, res);
@@ -602,17 +602,17 @@ const editRole = async (req, res) => {
     });
     await universalFunctions.validateRequestPayload(req.body, res, schema);
     const result = await FirmEmployeeRoles.findOneAndUpdate(
-      { _id: roleId },
-      { $set: { name: role, modules: modules } }
+        { _id: roleId },
+        { $set: { name: role, modules: modules } }
     );
     // const updatedModules =
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Role Edited Successfully",
-        data: {},
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Role Edited Successfully",
+          data: {},
+        },
+        res
     );
   } catch (err) {
     console.log(err);
@@ -623,12 +623,12 @@ const editRole = async (req, res) => {
 const getSelectOptions = async (req, res) => {
   const options = APP_CONSTANTS.firmEmployeeModules;
   universalFunctions.sendSuccess(
-    {
-      statusCode: 200,
-      message: "",
-      data: options,
-    },
-    res
+      {
+        statusCode: 200,
+        message: "",
+        data: options,
+      },
+      res
   );
 };
 
@@ -639,12 +639,12 @@ const getRolesOptions = async (req, res) => {
       return { value: role._id, label: role.name };
     });
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "",
-        data: updatedRolesOptions,
-      },
-      res
+        {
+          statusCode: 200,
+          message: "",
+          data: updatedRolesOptions,
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -659,12 +659,12 @@ const getEmployeeTypes = async (req, res) => {
       return { value: empType._id, label: empType.name };
     });
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "",
-        data: updatedEmployeeTypes,
-      },
-      res
+        {
+          statusCode: 200,
+          message: "",
+          data: updatedEmployeeTypes,
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -765,12 +765,12 @@ const addEmployee = async (req, res) => {
     }
 
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Employee Added !",
-        data: "",
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Employee Added !",
+          data: "",
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -790,7 +790,7 @@ const getEmployees = async (req, res) => {
     let page = req.query.page;
     let limit = req.query.limit;
     let userData = [],
-      count;
+        count;
 
     if (req.query.search) {
       console.log("QUERY SEARCH = ", req.query.search);
@@ -810,9 +810,9 @@ const getEmployees = async (req, res) => {
       userData = await FirmEmployee.find({
         $and: [{ createdBy: req.user._id }, { firmId: req.user.userData.data }],
       })
-        .populate("userId")
-        .skip(parseInt((page - 1) * limit))
-        .limit(parseInt(limit));
+          .populate("userId")
+          .skip(parseInt((page - 1) * limit))
+          .limit(parseInt(limit));
 
       count = await FirmEmployee.find({
         createdBy: req.user._id,
@@ -823,15 +823,15 @@ const getEmployees = async (req, res) => {
     }
 
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Success",
-        data: {
-          list: userData,
-          count: count,
+        {
+          statusCode: 200,
+          message: "Success",
+          data: {
+            list: userData,
+            count: count,
+          },
         },
-      },
-      res
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -844,12 +844,12 @@ const getEmployeeById = async (req, res) => {
   try {
     const result = await FirmEmployee.findById(employeeId).populate("userId");
     return universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Success",
-        data: result,
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Success",
+          data: result,
+        },
+        res
     );
   } catch (error) {
     return universalFunctions.sendError(err, res);
@@ -866,16 +866,16 @@ const editEmployee = async (req, res) => {
     });
     await universalFunctions.validateRequestPayload(req.body, res, schema);
     const result = await FirmEmployee.findOneAndUpdate(
-      { _id: employeeId },
-      { $set: { status: status, ratePerHour: ratePerHour } }
+        { _id: employeeId },
+        { $set: { status: status, ratePerHour: ratePerHour } }
     );
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Employee Edited Successfully",
-        data: {},
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Employee Edited Successfully",
+          data: {},
+        },
+        res
     );
   } catch (err) {
     console.log(err);
@@ -918,12 +918,12 @@ const addEventLocation = async (req, res) => {
     console.log("RESPONSE = ", req.user);
 
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Event Location Added !",
-        data: "",
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Event Location Added !",
+          data: "",
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);
@@ -1006,7 +1006,7 @@ const addEventLocation = async (req, res) => {
 // };
 
 const getEventLocation = async (req, res) => {
-    
+
 }
 
 const addEvent = async (req, res) => {
@@ -1064,12 +1064,12 @@ const addEvent = async (req, res) => {
     });
 
     universalFunctions.sendSuccess(
-      {
-        statusCode: 200,
-        message: "Event Added !",
-        data: "",
-      },
-      res
+        {
+          statusCode: 200,
+          message: "Event Added !",
+          data: "",
+        },
+        res
     );
   } catch (err) {
     universalFunctions.sendError(err, res);

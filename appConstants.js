@@ -193,7 +193,10 @@ const invoiceItemTypes = {
 
 const PER_PAGE = 10;
 
+const FRONTEND_WEBSITE_URL = "https://borhan-website.vercel.app";
+
 module.exports = {
+    FRONTEND_WEBSITE_URL,
     invoiceItemTypes,
     invoicePaymentTerms,
     invoiceStatus,
