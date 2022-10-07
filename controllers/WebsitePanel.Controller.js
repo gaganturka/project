@@ -1829,15 +1829,11 @@ module.exports = {
         try {
             const schema = Joi.object({
                 subscriptionId: Joi.string().length(24).required(),
-                //successUrl: Joi.string().required(),
+                successUrl: Joi.string().required(),
             });
             await universalFunctions.validateRequestPayload(req.body, res, schema);
             let payload = req.body;
             let customerId = req.user.customerId;
-
-            if (universalFunctions.isEmptyData(payload?.successUrl)) {
-                payload['successUrl'] = Config.FRONTEND_CUSTOMER_URL;
-            }
 
             if (!req.user.customerId) {
                 const thawaniCustomer = await axios.post(
