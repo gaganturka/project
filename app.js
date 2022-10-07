@@ -28,6 +28,7 @@ const employeesRoutes = require('./routes/firm/employees.route');
 const casesRoutes = require('./routes/firm/cases.route');
 const timeEnteries = require('./routes/firm/timeEntries-route')
 const invoiceRoutes = require('./routes/firm/invoices.route')
+const expenses = require('./routes/firm/expenses')
 
 const cookieSession = require("cookie-session");
 const passportSetup = require("./config/passport");
@@ -99,13 +100,16 @@ app.use("/firm/activity-types", activityTypesRoutes);
 app.use("/firm/contact-groups", contactGroupsRoutes);
 //app.use("/firm/employees", employeesRoutes);
 app.use("/firm/cases", casesRoutes);
-app.use("/firm/time-entry", timeEnteries)
-app.use("/firm/invoices", invoiceRoutes)
+app.use("/firm/time-entry", timeEnteries);
+app.use("/firm/invoices", invoiceRoutes);
+
+app.use("/firm/case-expense-entries", expenses);
 
 
 app.get("/", (req, res) => {
-    res.send("Hello Satyam");
-});
+        res.send("Hello World!");
+    }
+);
 // app.use(function (req, res, next) {
 //   next(createError(404));
 // });
