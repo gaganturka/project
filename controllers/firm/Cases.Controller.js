@@ -1,8 +1,13 @@
 const Firm = require("../../models/Firm");
 const User = require("../../models/User");
+
 const FirmCases = require("../../models/FirmCases");
 const FirmCaseContacts = require("../../models/FirmCaseContacts");
 const FirmCaseEmployees = require("../../models/FirmCaseEmployees");
+const FirmInvoicesItems = require("../../models/FirmInvoicesItems");
+const FirmCaseTimeEntries = require("../../models/FirmCaseTimeEntries");
+const FirmCaseExpenses = require("../../models/FirmCaseExpenses");
+
 const universalFunctions = require("../../utils/universalFunctions");
 const Joi = require("@hapi/joi");
 const Boom = require("boom");
@@ -128,7 +133,7 @@ const view = async (req, res) => {
                 data: model
             }, res);
         } else {
-            throw new Error(responseMessages.PRACTICE_AREA_NOT_FOUND);
+            throw new Error(responseMessages.CASE_NOT_FOUND);
         }
     } catch (err) {
         universalFunctions.sendError(err, res);
@@ -279,5 +284,110 @@ const caseEmployees = async (req, res) => {
     }, res);
 };
 
+const invoiceAbleItems = async (req, res) => {
+    try {
+        let caseModel = await FirmCases.findOne({
+            _id: req.params.id,
+            firmId: req.firm.id
+        });
+        if (caseModel != null) {
+            let invoiceAbleItems = [];
 
-module.exports = {index, create, view, update, caseEmployees};
+            //flat fee
+            let pendingCaseFee = 0;
+            if (caseModel.flatFee > 0) {
+                pendingCaseFee = caseModel.flatFee;
+            }
+
+            let totalPaid = await FirmInvoicesItems.aggregate([
+                {
+                    $match: {
+                        itemType: APP_CONSTANTS.invoiceItemTypes.flatFee,
+                        referenceId: caseModel._id.toString()
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        total: {
+                            $sum: "$total"
+                        }
+                    }
+                }
+            ]);
+
+            if (totalPaid != null && totalPaid.length > 0) {
+                pendingCaseFee = pendingCaseFee - totalPaid[0]['total'];
+            }
+
+            if (pendingCaseFee > 0) {
+                invoiceAbleItems.push({
+                    referenceId: caseModel._id,
+                    itemType: APP_CONSTANTS.invoiceItemTypes.flatFee,
+                    item: 'Flat Fee',
+                    notes: 'Case Flat Fee',
+                    total: pendingCaseFee
+                });
+            }
+
+            //time entries
+            let timeEntries = await FirmCaseTimeEntries.find({
+                firmCaseId: caseModel._id,
+                isBillable: true,
+                firmInvoiceItemId: {$eq: null}
+            }).populate(['firmActivityTypeId']);
+
+            if (timeEntries != null && timeEntries.length > 0) {
+                for (let timeEntryModel of timeEntries) {
+                    invoiceAbleItems.push({
+                        referenceId: timeEntryModel._id,
+                        itemType: APP_CONSTANTS.invoiceItemTypes.timeEntries,
+                        item: timeEntryModel.firmActivityTypeId?.name,
+                        date: timeEntryModel.date,
+                        notes: timeEntryModel.description,
+                        rate: timeEntryModel.rate,
+                        duration: timeEntryModel.duration,
+                        rateType: timeEntryModel.rateType,
+                        total: timeEntryModel.amount,
+                    });
+                }
+            }
+
+            //expenses
+            let expenses = await FirmCaseExpenses.find({
+                firmCaseId: caseModel._id,
+                isBillable: true,
+                firmInvoiceItemId: {$eq: null}
+            }).populate(['firmActivityTypeId']);
+
+            if (expenses != null && expenses.length > 0) {
+                for (let expenseModel of expenses) {
+                    invoiceAbleItems.push({
+                        referenceId: expenseModel._id,
+                        itemType: APP_CONSTANTS.invoiceItemTypes.expenses,
+                        item: expenseModel.firmActivityTypeId?.name,
+                        date: expenseModel.date,
+                        notes: expenseModel.description,
+                        rate: expenseModel.cost,
+                        quantity: expenseModel.quantity,
+                        total: expenseModel.amount,
+                    });
+                }
+            }
+
+            return universalFunctions.sendSuccess({
+                data: {
+                    case: caseModel,
+                    invoiceAbleItems
+                }
+            }, res);
+        } else {
+            throw new Error(responseMessages.CASE_NOT_FOUND);
+        }
+    } catch (err) {
+        universalFunctions.sendError(err, res);
+    }
+};
+
+
+module.exports = {index, create, view, update, caseEmployees, invoiceAbleItems};

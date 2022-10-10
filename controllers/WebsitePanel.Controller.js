@@ -23,6 +23,7 @@ const Mongoose = require("mongoose");
 const Boom = require("boom");
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const {v4: uuidv4} = require("uuid");
+const ExpertPlan = require("../models/paymentGateway/expertPlansBought");
 
 const AccessToken = require("twilio").jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
@@ -840,6 +841,7 @@ module.exports = {
                 },
                 expertId: payload.expertId,
                 appointmentDate: payload.appointmentDate,
+                isPaid: true,
             });
             payload.userId = userId;
             // console.log(data,'daaaaattaa')
@@ -850,7 +852,7 @@ module.exports = {
             console.log("createAppointment", createAppointment);
             await expertTimeAvailable.findOneAndUpdate(
                 {_id: createAppointment.timeSlotId},
-                {isAvailable: false}
+                {isAvailable: payload.isPaid ? false : true}
             );
 
             universalFunctions.sendSuccess(
@@ -862,37 +864,39 @@ module.exports = {
                 res
             );
 
-            // Send Push Notification
-            let expertDetail = await expertUser
-                .findOne({_id: req.body.expertId})
-                .populate("userId");
+            if (payload.isPaid) {
+                // Send Push Notification
+                let expertDetail = await expertUser
+                    .findOne({_id: req.body.expertId})
+                    .populate("userId");
 
-            let message = {
-                notification: {
-                    title: APP_CONSTANTS.pushNotificationMessage.title,
-                    body: APP_CONSTANTS.pushNotificationMessage.bookAppointmentByUser,
-                },
-            };
-            let registrationTokens = [];
-            expertDetail &&
-            expertDetail.userId &&
-            expertDetail.userId.token &&
-            expertDetail.userId.token.map((val1) => {
-                val1.deviceToken.map((ele) => {
-                    registrationTokens.push(ele);
+                let message = {
+                    notification: {
+                        title: APP_CONSTANTS.pushNotificationMessage.title,
+                        body: APP_CONSTANTS.pushNotificationMessage.bookAppointmentByUser,
+                    },
+                };
+                let registrationTokens = [];
+                expertDetail &&
+                expertDetail.userId &&
+                expertDetail.userId.token &&
+                expertDetail.userId.token.map((val1) => {
+                    val1.deviceToken.map((ele) => {
+                        registrationTokens.push(ele);
+                    });
                 });
-            });
-            // console.log("this is export token", registrationTokens);
-            admin
-                .messaging()
-                .sendToDevice(registrationTokens, message)
-                .then((response) => {
-                    console.log("Send Notification Response:", response);
-                    return null;
-                })
-                .catch((error) => {
-                    console.log("Error sending message:", error);
-                });
+                // console.log("this is export token", registrationTokens);
+                admin
+                    .messaging()
+                    .sendToDevice(registrationTokens, message)
+                    .then((response) => {
+                        console.log("Send Notification Response:", response);
+                        return null;
+                    })
+                    .catch((error) => {
+                        console.log("Error sending message:", error);
+                    });
+            }
         } catch (error) {
             return universalFunctions.sendError(error, res);
         }
@@ -1340,46 +1344,19 @@ module.exports = {
     getAvailableTimeForUser: async (req, res) => {
         try {
             let {expertId, appointmentDate, duration} = req.query;
-
-            let curentdate = new Date();
-
             const expertTime = await expertTimeAvailable.find({
-                $and: [
-                    {
-                        expertId: expertId,
-                    },
-                    {
-                        appointmentDate: appointmentDate,
-                    },
-                    {
-                        duration: duration,
-                    },
-                    {
-                        startAppointmentTime: {
-                            $gte: curentdate,
-                        },
-                    },
-                ],
+                duration: duration,
+                expertId: expertId,
+                startAppointmentTime: {
+                    $gte: new Date(),
+                },
+                appointmentDate: new Date(appointmentDate),
             });
 
             if (!expertTime) {
                 throw Boom.badRequest("invalid id or token");
             }
             let tempobj = JSON.parse(JSON.stringify(expertTime));
-            // await universalFunctions.asyncForEach(tempobj, async (e, index) => {
-            //   let data = await appointment.find({
-            //     expertId: expertId,
-            //     appointmentDate: appointmentDate,
-            //     timeSlotId: e._id ? e._id : "",
-            //     isPaid: false,
-            //   });
-            //   // if (data.length > 0) {
-            //   //   e.avialble = false;
-            //   // } else {
-            //   //   e.avialble = true;
-            //   // }
-            // });
-            console.log("tempobj", tempobj);
 
             universalFunctions.sendSuccess(
                 {
@@ -1829,7 +1806,7 @@ module.exports = {
         try {
             const schema = Joi.object({
                 subscriptionId: Joi.string().length(24).required(),
-                successUrl: Joi.string().required(),
+                // successUrl: Joi.string().required(),
             });
             await universalFunctions.validateRequestPayload(req.body, res, schema);
             let payload = req.body;
@@ -1884,8 +1861,8 @@ module.exports = {
                             1000,
                     },
                 ],
-                success_url: `${payload.successUrl}/paymentSuccess/${userPlanData._id}/subscription`,
-                cancel_url: `${payload.successUrl}/paymentCanceled/${userPlanData._id}/subscription`,
+                success_url: `${APP_CONSTANTS.FRONTEND_WEBSITE_URL}/paymentSuccess/${userPlanData._id}/subscription/${req.user.id}`,
+                cancel_url: `${APP_CONSTANTS.FRONTEND_WEBSITE_URL}/paymentCanceled/${userPlanData._id}/subscription/${req.user.id}`,
                 customer_id: customerId,
             };
 
@@ -1928,11 +1905,11 @@ module.exports = {
         try {
             const schema = Joi.object({
                 transactionId: Joi.string().length(24).required(),
+                userId: Joi.string().length(24).required(),
                 paymentType: Joi.string(),
             });
             await universalFunctions.validateRequestPayload(req.body, res, schema);
             let payload = req.body;
-            console.log(payload);
 
             const transactionData = await UserPlans.findOne({
                 _id: payload.transactionId,
@@ -1949,9 +1926,12 @@ module.exports = {
             );
 
             await UserTransactions.findOneAndUpdate(
-                {userId: req.user.id, sessionId: thawaniSession.data.data.session_id},
                 {
-                    userId: req.user.id,
+                    userId: payload.userId,
+                    sessionId: thawaniSession.data.data.session_id,
+                },
+                {
+                    userId: payload.userId,
                     paymentStatus: thawaniSession.data.data.payment_status,
                     amountPaid: thawaniSession.data.data.total_amount / 1000,
                     planName: thawaniSession.data.data.products[0].name,
@@ -2006,8 +1986,7 @@ module.exports = {
             if (!expertData) {
                 throw Boom.notFound("Expert Not Found");
             }
-
-            //console.log(expertData);
+            console.log(expertData);
 
             if (!expertData.priceDetails || expertData.priceDetails.length <= 0) {
                 throw Boom.badRequest("Expert Has Not Set His Price Details Yet");
@@ -2289,20 +2268,14 @@ module.exports = {
                     thawaniSession.data.data.products[0].name.match(/[a-zA-Z]+/g)[0]
                 } Session`,
             });
-            let appointmentData;
-            if (thawaniSession.data.data.payment_status === "paid") {
-                appointmentData = await appointment.findOneAndUpdate(
-                    {_id: payload.appointmentId},
-                    {
-                        isPaid: true,
-                    }
-                );
-            } else {
-                appointmentData = await appointment.findOneAndDelete({
-                    _id: payload.appointmentId,
-                });
-            }
 
+            let appointmentData = await appointment.findOneAndUpdate(
+                {_id: payload.appointmentId},
+                {
+                    isPaid:
+                        thawaniSession.data.data.payment_status === "paid" ? true : false,
+                }
+            );
             await expertTimeAvailable.findOneAndUpdate(
                 {_id: appointmentData.timeSlotId},
                 {
@@ -2331,6 +2304,39 @@ module.exports = {
                 },
                 res
             );
+            if (thawaniSession.data.data.payment_status === "paid") {
+                // Send Push Notification
+                let expertDetail = await expertUser
+                    .findOne({_id: appointmentData.expertId})
+                    .populate("userId");
+
+                let message = {
+                    notification: {
+                        title: APP_CONSTANTS.pushNotificationMessage.title,
+                        body: APP_CONSTANTS.pushNotificationMessage.bookAppointmentByUser,
+                    },
+                };
+                let registrationTokens = [];
+                expertDetail &&
+                expertDetail.userId &&
+                expertDetail.userId.token &&
+                expertDetail.userId.token.map((val1) => {
+                    val1.deviceToken.map((ele) => {
+                        registrationTokens.push(ele);
+                    });
+                });
+                // console.log("this is export token", registrationTokens);
+                admin
+                    .messaging()
+                    .sendToDevice(registrationTokens, message)
+                    .then((response) => {
+                        console.log("Send Notification Response:", response);
+                        return null;
+                    })
+                    .catch((error) => {
+                        console.log("Error sending message:", error);
+                    });
+            }
         } catch (error) {
             universalFunctions.sendError(error, res);
         }
@@ -2484,6 +2490,167 @@ module.exports = {
             );
         } catch (error) {
             universalFunctions.sendError(error, res);
+        }
+    },
+    updateUserSubscriptionEveryNight: async () => {
+        try {
+            let userData = await User.find({role: APP_CONSTANTS.role.borhanuser});
+            await universalFunctions.asyncForEach(userData, async (user) => {
+                let newDate = moment.utc().format();
+                let userPlans = await UserPlans.find({
+                    userId: user._id,
+                    isActive: true,
+                });
+                if (userPlans.length > 0) {
+                    userPlans.forEach(async (p) => {
+                        if (p.expiryDate < newDate) {
+                            await UserPlans.findOneAndUpdate({
+                                _id: p._id,
+                                isActive: false,
+                            });
+                            console.log(`User Plan ${p._id} updated successfully`);
+                        } else {
+                            console.log(`User Plan ${p._id} hasn't changed`);
+                        }
+                    });
+                    console.log("User Plans updated successfully");
+                } else {
+                    console.log("No Plan To Update");
+                }
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    },
+    updateUserChatRoom: async (req, res) => {
+        try {
+            const schema = Joi.object({
+                chatAppointmentId: Joi.string().required(),
+                amountPaidForSms: Joi.number().required(),
+            });
+            await universalFunctions.validateRequestPayload(req.body, res, schema);
+            let payload = req.body;
+
+            let appointmentData = await chatappointment.findOneAndUpdate(
+                {
+                    _id: payload.chatAppointmentId,
+                },
+                {
+                    lastMessageBy: "user",
+                    lastMessageSentAt: moment.utc().format(),
+                    $inc: {totalMoneyDeducted: payload.amountPaidForSms},
+                }
+            );
+            if (!appointmentData) {
+                throw Boom.notFound("No Such Chat Appointment");
+            }
+            universalFunctions.sendSuccess(
+                {
+                    statusCode: 200,
+                    message: "Success",
+                    data: {},
+                },
+                res
+            );
+        } catch (err) {
+            universalFunctions.sendError(err, res);
+        }
+    },
+    updateUserRefundEveryTenMinutes: async () => {
+        try {
+            let chatData = await chatappointment.find({lastMessageBy: "user"});
+            await universalFunctions.asyncForEach(chatData, async (chat) => {
+                let newDate = moment.utc().format();
+                var duration = moment.duration(newDate.diff(chat.lastMessageSentAt));
+                var hours = duration.asHours();
+                if (parseInt(hours) >= 24) {
+                    await chatappointment.findOneAndUpdate(
+                        {_id: chat._id},
+                        {totalMoneyDeducted: 0}
+                    );
+                    await borhanUser.findOneAndUpdate(
+                        {_id: chat.userId},
+                        {$inc: {totalRefunded: chat.totalMoneyDeducted}}
+                    );
+                }
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    },
+    getAllPremiumExperts: async (req, res) => {
+        try {
+            let expertData = await ExpertPlan.find({isActive: true}).distinct(
+                "expertId"
+            );
+
+            let userData = await expertUser.aggregate([
+                {$match: {userId: {$in: expertData}}},
+                {
+                    $lookup: {
+                        localField: "userId",
+                        from: "users",
+                        foreignField: "_id",
+                        as: "userId",
+                        pipeline: [
+                            {$project: {firstName: 1, lastName: 1, profilePic: 1}},
+                        ],
+                    },
+                },
+                {
+                    $lookup: {
+                        localField: "practiceArea",
+                        from: "practiceareas",
+                        foreignField: "_id",
+                        as: "practiceArea",
+                        pipeline: [{$project: {name: 1, description: 1}}],
+                    },
+                },
+                {$sample: {size: 10}},
+                {
+                    $project: {
+                        rating: 1,
+                        experience: 1,
+                        userId: 1,
+                        practiceArea: 1,
+                    },
+                },
+            ]);
+            userData.forEach((u) => {
+                if (u.userId.length > 0) {
+                    u.userId = u.userId[0];
+                }
+            });
+            universalFunctions.sendSuccess(
+                {
+                    statusCode: 200,
+                    message: "Success",
+                    data: userData,
+                },
+                res
+            );
+        } catch (err) {
+            universalFunctions.sendError(err, res);
+        }
+    },
+    connectWithExpert: async (req, res) => {
+        try {
+            const schema = Joi.object({
+                expertId: Joi.string().required(),
+            });
+            await universalFunctions.validateRequestPayload(req.body, res, schema);
+            let payload = req.body;
+
+            universalFunctions.sendSuccess(
+                {
+                    statusCode: 200,
+                    message: "Success",
+                    data: userData,
+                },
+                res
+            );
+        } catch (err) {
+            universalFunctions.sendError(err, res);
         }
     },
 };

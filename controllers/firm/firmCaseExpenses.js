@@ -1,69 +1,73 @@
-const firmCase = require('../../models/FirmCaseTimeEntries')
+const firmExpense = require('../../models/FirmCaseExpenses')
 const universalFunctions = require("../../utils/universalFunctions");
 const responseMessages = require("../../resources/response.json");
-// const {FirmActivityTypes} = require('../../models/FirmActivityTypes')
-
-const mongoose = require('mongoose')
-const moment = require('moment')
 
 const Joi = require('@hapi/joi');
-const { unknown } = require('joi/lib/types/object');
+const mongoose = require('mongoose');
 
-
-
-
-const create = async (req, res) => {
-    try {
-
+const create = async (req,res) => {
+    try{
         const requestBody = req.body
-        const { firmId, firmCaseId, firmCaseEmployeeId, firmActivityTypeId, isBillable, description, date, rate, duration, amount, rateType } = requestBody
 
+        const { firmId, firmCaseId, firmCaseEmployeeId, firmActivityTypeId, isBillable, description, date, cost, quantity, amount } = requestBody
 
         const schema = Joi.object({
-            firmId: Joi.string().hex().length(24).required(),
-            firmCaseId: Joi.string().hex().length(24).required(),
-            firmCaseEmployeeId: Joi.string().hex().length(24),
-            firmActivityTypeId: Joi.string().hex().length(24).required(),
-            isBillable: Joi.boolean().required(),
-            description: Joi.string(),
-            date: Joi.date(),
-            rate: Joi.number().required(),
-            duration: Joi.number().default(1),
-            amount: Joi.number().required(),
-            rateType: Joi.string().required()
+            firmId : Joi.string().hex().length(24).required(),
+            firmCaseId : Joi.string().hex().length(24).required(),
+            firmCaseEmployeeId : Joi.string().hex().length(24),
+            firmActivityTypeId : Joi.string().hex().length(24).required(),
+            isBillable : Joi.boolean().required(),
+            description : Joi.string(),
+            date : Joi.date(),
+            cost : Joi.number().required(),
+            quantity : Joi.number(),
+            amount : Joi.number().required()
         })
+        console.log(requestBody);
         requestBody['firmId'] = (req.firm._id).toString()
-
-        let amountt = ''
-        if (requestBody.rateType == 'hourly') {
-            amountt = +requestBody.rate * +requestBody.duration
-        } else {
-            amountt = rate
-        }
-
-        requestBody['amount'] = amountt
-        console.log('resss', requestBody);
-
+        requestBody['amount'] = +(+requestBody.cost * +requestBody.quantity)
+        console.log('hggfhgjvj',requestBody.amount);
         await universalFunctions.validateRequestPayload(req.body, res, schema)
 
-        model = new firmCase();
+
+        model = new firmExpense();
         Object.assign(model, req.body);
 
 
 
         await model.save();
+        console.log('modal', model);
         return universalFunctions.sendSuccess({
             data: model,
         }, res);
 
-    }
-    catch (err) {
+    } catch(err){
+        console.log(err)
         res.json(err)
     }
-
 }
 
 const view = async (req, res) => {
+    try {
+        console.log(req.firm, req.params)
+        const model = await firmExpense.findOne({
+            _id : req.params.id, 
+            // firmId: req.firm._id
+        });
+        console.log('mpasdxfdfgv', model);
+        if (model != null) {
+            return universalFunctions.sendSuccess({
+                data: model,
+            }, res);
+        } else {
+            throw new Error(responseMessages.CONTACT_GROUP_NOT_FOUND);
+        }
+    } catch (err) {
+        universalFunctions.sendError(err, res);
+    }
+};
+
+const index = async (req, res) => {
     try {
         console.log('ndbdjbdsbdqjkbdjhsdbw',req.query);
         let queryFields = {}
@@ -101,7 +105,7 @@ const view = async (req, res) => {
 
         //   (queryFields).populate('firmActivityTypeId'
 
-        const model = await firmCase.paginate(queryFields, options
+        const model = await firmExpense.paginate(queryFields, options
         )//paginate({},{ offset: 3, limit: 2})
 
         console.log(model);
@@ -118,32 +122,34 @@ const view = async (req, res) => {
     }
 };
 
+
+
+
 const update = async (req, res) => {
     try {
-        console.log('hvjhbkhbjlknhjvjklhjknbjhvghknjhmgbk', req.body       );
 
         const requestBody = req.body
-        const { firmId, firmCaseId, firmCaseEmployeeId, firmActivityTypeId, isBillable, description, date, rate, duration, amount, rateType } = requestBody
+
+        const { firmId, firmCaseId, firmCaseEmployeeId, firmActivityTypeId, isBillable, description, date, cost, quantity, amount } = requestBody
 
 
         const schema = Joi.object({
-            firmId: Joi.string().hex().length(24),
-            firmCase: Joi.string().hex().length(24),
-            firmCaseEmployeeId: Joi.string().hex().length(24),
-            firmActivityTypeId: Joi.string().hex().length(24),
-            isBillable: Joi.boolean(),
-            description: Joi.string(),
-            date: Joi.date(),
-            rate: Joi.number(),
-            duration: Joi.number(),
-            amount: Joi.number(),
-            rateType: Joi.string()
+            firmId : Joi.string().hex().length(24).required(),
+            firmCaseId : Joi.string().hex().length(24).required(),
+            firmCaseEmployeeId : Joi.string().hex().length(24),
+            firmActivityTypeId : Joi.string().hex().length(24).required(),
+            isBillable : Joi.boolean().required(),
+            description : Joi.string(),
+            date : Joi.date(),
+            cost : Joi.number().required(),
+            quantity : Joi.number(),
+            amount : Joi.number().required()
         }).unknown(true)
 
 
         await universalFunctions.validateRequestPayload(req.body, res, schema);
 
-        const model = await firmCase.findOne({
+        const model = await firmExpense.findOne({
             _id: req.params.id,
         });
         if (model != null) {
@@ -167,7 +173,7 @@ const update = async (req, res) => {
 
 const deletee = async (req, res) => {
     try {
-        let categorieData = await firmCase.deleteOne({
+        let categorieData = await firmExpense.deleteOne({
             _id: req.params.id,
         });
         return universalFunctions.sendSuccess(
@@ -183,26 +189,8 @@ const deletee = async (req, res) => {
     }
 };
 
-const index = async (req, res) => {
-    try {
-        console.log(req.params, req.firm)
-        const model = await firmCase.findOne({
-            _id: req.params.id,
-            firmId: req.firm.id
-        });
-        if (model != null) {
-            return universalFunctions.sendSuccess({
-                data: model,
-            }, res);
-        } else {
-            throw new Error(responseMessages.CONTACT_GROUP_NOT_FOUND);
-        }
-    } catch (err) {
-        universalFunctions.sendError(err, res);
-    }
-};
 
 
 
 
-module.exports = { create, view, update, deletee, index }
+module.exports = { create, update, deletee, index, view }

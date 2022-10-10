@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
-const UserPlans = require("../models/paymentGateway/userPlansBought");
 const APP_CONSTANTS = require("../appConstants");
+const UserPlans = require("../models/paymentGateway/userPlansBought");
 
 const ExpertUserSchema = new Schema(
     {
@@ -56,7 +56,7 @@ const ExpertUserSchema = new Schema(
             type: String,
             enum: [
                 APP_CONSTANTS.activityStatus.active,
-                APP_CONSTANTS.activityStatus.busy,
+                // APP_CONSTANTS.activityStatus.busy,
                 APP_CONSTANTS.activityStatus.unavailable,
             ],
             default: APP_CONSTANTS.activityStatus.active,
@@ -131,6 +131,7 @@ const ExpertUserSchema = new Schema(
         toObject: {virtuals: true},
     }
 );
+
 ExpertUserSchema.virtual("expertlisting", {
     ref: "favexpert", //must be changed to the name you used for Comment model.
     foreignField: "expertId",

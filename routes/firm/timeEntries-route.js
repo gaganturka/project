@@ -6,7 +6,7 @@ const isFirmAdmin = require("../../middleware/isFirmAdmin");
 
 router.route("/").post(isFirmAdmin, timeEntriesController.create)
 router.route("/").get(timeEntriesController.view)
-router.route("/:id").put(timeEntriesController.update)
+router.route("/:id").patch(timeEntriesController.update)
 router.route("/:id").delete(timeEntriesController.deletee)
 router.route("/:id").get(isFirmAdmin, timeEntriesController.index)
 

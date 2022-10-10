@@ -12,14 +12,11 @@ const FirmCaseExpensesSchema = new Schema({
         isBillable: {type: Boolean, required: true},
         description: {type: String},
         date: {type: Date},
-        rate: {type: Number, required: true},
-        duration: {type: Number},
+        cost: {type: Number, required: true},
+        quantity: {type: Number},
         amount: {type: Number, required: true},
-        rateType: {
-            type: String,
-            enum: APP_CONSTANTS.activityRateTypes,
-            required: true
-        },
+        firmInvoiceId: {type: Schema.Types.ObjectId, ref: "FirmInvoices", default: null},
+        firmInvoiceItemId: {type: Schema.Types.ObjectId, ref: "FirmInvoiceItems", default: null},
     },
     {timestamps: true}
 );
