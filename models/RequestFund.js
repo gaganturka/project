@@ -4,40 +4,34 @@ const {Schema} = mongoose;
 const mongoosePaginate = require('mongoose-paginate-v2');
 const APP_CONSTANTS = require("../appConstants");
 
-const FirmEventLocationSchema = new Schema(
+const RequestFundSchema = new Schema(
     {   
         firmId: {
             type: Schema.Types.ObjectId,
             ref: "Firm",
           },
-        name: {
+        caseContactId: {
+            type: Schema.Types.ObjectId,
+            ref: "FirmCases",
+        },
+        amount: {
             type: String,
             required: true
         },
-        address1: {
+        dueDate: {
+            type: String,
+            required: true,
+        },
+        depositInto: {
+            type: Schema.Types.ObjectId,
+            ref: "FirmBankAccount",
+        },
+        message: {
             type: String,
             required: true
         },
-        address2: {
-            type: String,
-            required: true
-        },
-        country: {
-            type: String,
-            required: true
-        },
-        state: {
-            type: String,
-            required: true
-        },
-        city: {
-            type: String,
-            required: true
-        },
-        zipcode: {
-            type: String,
-            required: true
-        }
+        createdBy: {type: Schema.Types.ObjectId, ref: "user", required: true},
+        updatedBy: {type: Schema.Types.ObjectId, ref: "user"}
     },
     {
         toJSON: {virtuals: true},
@@ -45,6 +39,6 @@ const FirmEventLocationSchema = new Schema(
     }
 );
 
-FirmEventLocationSchema.plugin(mongoosePaginate);
+RequestFundSchema.plugin(mongoosePaginate);
 
-module.exports = mongoose.model("FirmLocation", FirmEventLocationSchema);
+module.exports = mongoose.model("RequestFund", RequestFundSchema);

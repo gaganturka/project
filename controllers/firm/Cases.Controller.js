@@ -18,7 +18,8 @@ const index = async (req, res) => {
         sort: {
             updatedAt: 'desc'
         },
-        populate: universalFunctions.getPopulateData(req),
+        // populate: universalFunctions.getPopulateData(req),
+        populate: 'billingContactId',
         page: req.query.page ? req.query.page : 1,
         limit: req.query.limit ? req.query.limit : APP_CONSTANTS.PER_PAGE,
     });
